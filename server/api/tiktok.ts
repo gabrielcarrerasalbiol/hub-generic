@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { InsertVideo, InsertChannel } from '@shared/schema';
+import { InsertVideo, InsertChannel } from '../../shared/schema';
 
 // TikTok API keys and configuration
 const TIKTOK_API_KEY = process.env.TIKTOK_API_KEY || '';

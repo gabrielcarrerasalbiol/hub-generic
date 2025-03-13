@@ -9,7 +9,7 @@ const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 export async function classifyContentWithGemini(
   videoTitle: string,
   videoDescription: string,
-  categories: { id: number; name: string; description?: string }[]
+  categories: { id: number; name: string; description: string | null }[]
 ): Promise<{
   categories: number[];
   relevance: number;

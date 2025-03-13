@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { InsertVideo, InsertChannel } from '@shared/schema';
+import { InsertVideo, InsertChannel } from '../../shared/schema';
 
 // Twitter API configuration
 const TWITTER_API_KEY = process.env.TWITTER_API_KEY || '';

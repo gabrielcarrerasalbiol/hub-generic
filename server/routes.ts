@@ -3,8 +3,9 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import { classifyContent, enhanceSearch } from "./api/openai";
+import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
-import { CategoryType, PlatformType, insertFavoriteSchema } from "@shared/schema";
+import { CategoryType, PlatformType, insertFavoriteSchema } from "../shared/schema";
 
 // Demo user ID - in a real app, this would come from authentication
 const DEMO_USER_ID = 1;
@@ -65,20 +66,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const videoDetails = await getYouTubeVideoDetails(videoIds);
         
         // Get categories for classification
-        const categories = await storage.getCategories();
+        const dbCategories = await storage.getCategories();
+        const categories = dbCategories.map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          description: cat.description || ''
+        }));
         
         for (const video of videoDetails.items) {
           // Try to classify content, but don't block if it fails
           let categoryIds: number[] = [];
           try {
-            const classification = await classifyContent(
-              video.snippet.title,
-              video.snippet.description,
-              categories
-            );
-            categoryIds = classification.categories;
+            // First try with Anthropic Claude (primary)
+            try {
+              const classification = await classifyContentWithAnthropicClaude(
+                video.snippet.title,
+                video.snippet.description,
+                categories
+              );
+              categoryIds = classification.categories;
+            } catch (claudeError) {
+              console.warn("Claude classification failed, falling back to Gemini:", claudeError);
+              // Fallback to Gemini
+              const classification = await classifyContent(
+                video.snippet.title,
+                video.snippet.description,
+                categories
+              );
+              categoryIds = classification.categories;
+            }
           } catch (error) {
-            console.warn("Could not classify video content, continuing without categories:", error);
+            console.warn("Could not classify video content with any AI service, continuing without categories:", error);
           }
           
           const videoSchema = convertYouTubeVideoToSchema(video, categoryIds);
@@ -90,9 +108,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  // Run the seed functions
-  await seedInitialChannels();
-  await seedInitialVideos();
+  // Run the seed functions in the background after server starts
+  setTimeout(async () => {
+    try {
+      await seedInitialChannels();
+      await seedInitialVideos();
+    } catch (error) {
+      console.error("Error seeding initial data:", error);
+    }
+  }, 1000);
 
   // API Routes
   app.get("/api/videos", async (req: Request, res: Response) => {
@@ -173,9 +197,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Enhance search with AI if possible
       let enhancedQuery = query;
       try {
-        enhancedQuery = await enhanceSearch(query);
+        // First try with Anthropic Claude (primary)
+        try {
+          enhancedQuery = await enhanceSearchWithAnthropicClaude(query);
+        } catch (claudeError) {
+          console.warn("Claude search enhancement failed, falling back to Gemini:", claudeError);
+          // Fallback to Gemini
+          enhancedQuery = await enhanceSearch(query);
+        }
       } catch (error) {
-        console.log("Search enhancement failed, using original query");
+        console.log("Search enhancement failed with all AI services, using original query");
       }
       
       // Search local database
@@ -192,7 +223,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
               .map(item => item.id.videoId!);
               
             const videoDetails = await getYouTubeVideoDetails(videoIds);
-            const categories = await storage.getCategories();
+            const categories = (await storage.getCategories()).map(cat => ({
+              id: cat.id,
+              name: cat.name,
+              description: cat.description || null
+            }));
             
             // Add new videos to database
             for (const video of videoDetails.items) {
@@ -201,14 +236,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 // Try to classify content, but don't block if it fails
                 let categoryIds: number[] = [];
                 try {
-                  const classification = await classifyContent(
-                    video.snippet.title,
-                    video.snippet.description,
-                    categories
-                  );
-                  categoryIds = classification.categories;
+                  // First try with Anthropic Claude (primary)
+                  try {
+                    const classification = await classifyContentWithAnthropicClaude(
+                      video.snippet.title,
+                      video.snippet.description,
+                      categories
+                    );
+                    categoryIds = classification.categories;
+                  } catch (claudeError) {
+                    console.warn("Claude classification failed, falling back to Gemini:", claudeError);
+                    // Fallback to Gemini
+                    const classification = await classifyContent(
+                      video.snippet.title,
+                      video.snippet.description,
+                      categories
+                    );
+                    categoryIds = classification.categories;
+                  }
                 } catch (error) {
-                  console.warn("Could not classify video content, continuing without categories:", error);
+                  console.warn("Could not classify video content with any AI service, continuing without categories:", error);
                 }
                 
                 const videoSchema = convertYouTubeVideoToSchema(video, categoryIds);
@@ -383,7 +430,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/categories", async (req: Request, res: Response) => {
     try {
-      const categories = await storage.getCategories();
+      const categories = (await storage.getCategories()).map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        description: cat.description || null
+      }));
       res.json(categories);
     } catch (error) {
       console.error("Error fetching categories:", error);

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { InsertVideo, InsertChannel } from '@shared/schema';
+import { InsertVideo, InsertChannel } from '../../shared/schema';
 
 // YouTube API constants
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || '';

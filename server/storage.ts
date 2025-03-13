@@ -2,7 +2,7 @@ import {
   User, InsertUser, Video, InsertVideo, Channel, 
   InsertChannel, Category, InsertCategory, Favorite, 
   InsertFavorite, videos, categories, channels, favorites 
-} from "@shared/schema";
+} from "../shared/schema";
 
 // Storage interface defining all operations
 export interface IStorage {
@@ -91,10 +91,11 @@ export class MemStorage implements IStorage {
     ];
 
     defaultCategories.forEach(cat => {
-      this.createCategory({
+      const category: InsertCategory = {
         name: cat.name,
-        description: cat.description,
-      });
+        description: cat.description || null,
+      };
+      this.createCategory(category);
     });
   }
 
@@ -183,7 +184,23 @@ export class MemStorage implements IStorage {
 
   async createVideo(video: InsertVideo): Promise<Video> {
     const id = this.videoIdCounter++;
-    const newVideo = { ...video, id };
+    const newVideo: Video = {
+      id,
+      title: video.title,
+      description: video.description || null,
+      thumbnailUrl: video.thumbnailUrl || null,
+      videoUrl: video.videoUrl,
+      embedUrl: video.embedUrl,
+      platform: video.platform,
+      channelId: video.channelId,
+      channelTitle: video.channelTitle,
+      channelThumbnail: video.channelThumbnail || null,
+      viewCount: video.viewCount || 0,
+      duration: video.duration || null,
+      publishedAt: video.publishedAt || null,
+      categoryIds: video.categoryIds || [],
+      externalId: video.externalId
+    };
     this.videos.set(id, newVideo);
     return newVideo;
   }
@@ -240,7 +257,17 @@ export class MemStorage implements IStorage {
 
   async createChannel(channel: InsertChannel): Promise<Channel> {
     const id = this.channelIdCounter++;
-    const newChannel = { ...channel, id };
+    const newChannel: Channel = {
+      id,
+      title: channel.title,
+      description: channel.description || null,
+      thumbnailUrl: channel.thumbnailUrl || null,
+      bannerUrl: channel.bannerUrl || null,
+      platform: channel.platform,
+      externalId: channel.externalId,
+      subscriberCount: channel.subscriberCount || null,
+      videoCount: channel.videoCount || null
+    };
     this.channels.set(id, newChannel);
     return newChannel;
   }
@@ -265,7 +292,11 @@ export class MemStorage implements IStorage {
 
   async createCategory(category: InsertCategory): Promise<Category> {
     const id = this.categoryIdCounter++;
-    const newCategory = { ...category, id };
+    const newCategory: Category = {
+      id,
+      name: category.name,
+      description: category.description || null
+    };
     this.categoryMap.set(id, newCategory);
     return newCategory;
   }
@@ -287,7 +318,12 @@ export class MemStorage implements IStorage {
 
   async createFavorite(favorite: InsertFavorite): Promise<Favorite> {
     const id = this.favoriteIdCounter++;
-    const newFavorite = { ...favorite, id, createdAt: new Date().toISOString() };
+    const newFavorite: Favorite = {
+      id,
+      userId: favorite.userId,
+      videoId: favorite.videoId,
+      createdAt: new Date()
+    };
     this.favoriteMap.set(id, newFavorite);
     return newFavorite;
   }

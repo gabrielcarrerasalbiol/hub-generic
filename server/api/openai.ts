@@ -1,9 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Initialize Gemini client
-const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-interface ClassificationResult {
+export interface ClassificationResult {
   categories: number[];
   relevance: number;
   confidence: number;
@@ -15,7 +14,7 @@ interface ClassificationResult {
 export async function classifyContent(
   videoTitle: string, 
   videoDescription: string,
-  availableCategories: { id: number; name: string; description?: string }[]
+  availableCategories: { id: number; name: string; description: string | null }[]
 ): Promise<ClassificationResult> {
   try {
     const model = gemini.getGenerativeModel({ model: "gemini-1.5-pro" });

@@ -1,8 +1,14 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { ClassificationResult } from './openai';
 
-// the newest Anthropic model is "claude-3-5-sonnet-20240620" which was released June 20, 2024
-// Claude 3.5 Sonnet provides excellent results for classification tasks with high accuracy
+// Classification result interface for content analysis
+interface ClassificationResult {
+  categories: number[];
+  relevance: number;
+  confidence: number;
+}
+
+// the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
+// Claude 3.7 Sonnet provides excellent results for classification tasks with high accuracy
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
@@ -14,7 +20,7 @@ const anthropic = new Anthropic({
 export async function classifyContentWithAnthropicClaude(
   videoTitle: string, 
   videoDescription: string,
-  availableCategories: { id: number; name: string; description?: string }[]
+  availableCategories: { id: number; name: string; description: string | null }[]
 ): Promise<ClassificationResult> {
   try {
     const prompt = `
@@ -37,13 +43,14 @@ export async function classifyContentWithAnthropicClaude(
     `;
 
     const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20240620",
+      model: "claude-3-7-sonnet-20250219",
       system: "You are a content classification AI specializing in soccer/football content analysis. You always respond with structured JSON data for Real Madrid content classification.",
       max_tokens: 1024,
       messages: [{ role: "user", content: prompt }],
     });
 
-    const responseContent = message.content[0].text;
+    // Safely access text content
+    const responseContent = message.content[0].type === 'text' ? message.content[0].text : '';
     
     // Extract JSON from the response
     const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
@@ -102,13 +109,14 @@ export async function enhanceSearchWithAnthropicClaude(query: string): Promise<s
     `;
 
     const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20240620",
+      model: "claude-3-7-sonnet-20250219",
       system: "You help optimize search queries to find Real Madrid football content. Respond with just the enhanced query text, no explanation.",
       max_tokens: 1024,
       messages: [{ role: "user", content: prompt }],
     });
 
-    const enhancedQuery = message.content[0].text.trim();
+    // Safely access text content
+    const enhancedQuery = message.content[0].type === 'text' ? message.content[0].text.trim() : '';
     
     return enhancedQuery || query;
   } catch (error) {
