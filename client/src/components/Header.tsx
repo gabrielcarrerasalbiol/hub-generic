@@ -37,12 +37,12 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           <Link href="/">
             <a className="flex items-center space-x-2">
               <img 
-                src="https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/1200px-Real_Madrid_CF.svg.png" 
-                alt="Real Madrid Logo" 
-                className="h-10 w-10" 
+                src="/api/logo" 
+                alt="Hub Madridista Logo" 
+                className="h-12" 
               />
               <h1 className="text-xl font-bold text-[#1E3A8A]">
-                RealMadrid<span className="text-[#FEF08A]">Hub</span>
+                Hub<span className="text-[#FEF08A]">Madridista</span>
               </h1>
             </a>
           </Link>

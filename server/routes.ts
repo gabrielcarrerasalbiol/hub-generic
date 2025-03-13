@@ -5,6 +5,7 @@ import { z } from "zod";
 import { classifyContent, enhanceSearch } from "./api/openai";
 import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
+import { generateHubMadridistaLogo } from "./api/gemini";
 import { CategoryType, PlatformType, insertFavoriteSchema } from "../shared/schema";
 
 // Demo user ID - in a real app, this would come from authentication
@@ -509,6 +510,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error removing favorite:", error);
       res.status(500).json({ message: "Failed to remove favorite" });
+    }
+  });
+
+  // Get or generate the logo
+  app.get("/api/logo", async (req: Request, res: Response) => {
+    try {
+      // Generate the logo using Gemini AI
+      const svgContent = await generateHubMadridistaLogo();
+      
+      // Set the appropriate content type for SVG
+      res.setHeader('Content-Type', 'image/svg+xml');
+      res.send(svgContent);
+    } catch (error) {
+      console.error("Error generating logo:", error);
+      res.status(500).json({ message: "Failed to generate logo" });
     }
   });
 

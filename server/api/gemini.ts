@@ -1,11 +1,57 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { writeFile } from "fs/promises";
+import { join } from "path";
 
 // Initialize Gemini client
 const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 /**
- * Analyzes video content using Gemini to classify it into categories
+ * Generates an SVG logo for "Hub Madridista" using Gemini's text generation capabilities
+ * @returns The SVG content as a string
  */
+export async function generateHubMadridistaLogo(): Promise<string> {
+  const model = gemini.getGenerativeModel({ model: "gemini-pro" });
+
+  const prompt = `
+Create an SVG logo for a web application called "Hub Madridista". The logo should:
+1. Include a stylized text of "Hub Madridista" 
+2. Use colors traditionally associated with Real Madrid (white, royal blue, and gold)
+3. Possibly include a simple crown or star element to represent the "royal" aspect
+4. Be clean, modern and work well both at small and large sizes
+5. Be designed as an SVG that will be embedded directly in HTML
+6. Include proper SVG code that can be directly used in a webpage
+7. IMPORTANT: Only return the SVG code and nothing else, no explanation or comments.
+
+The SVG dimensions should be 200x60 pixels and the code should start with <svg> and end with </svg>.
+`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+    
+    // Extract the SVG code
+    const svgMatch = text.match(/<svg[\s\S]*<\/svg>/);
+    if (!svgMatch) {
+      throw new Error("No SVG found in response");
+    }
+    
+    const svgContent = svgMatch[0];
+    
+    // Save to a file 
+    try {
+      await writeFile(join(process.cwd(), 'client', 'public', 'logo.svg'), svgContent);
+    } catch (fileError) {
+      console.error("Error saving logo file:", fileError);
+    }
+    
+    return svgContent;
+  } catch (error) {
+    console.error("Error generating logo with Gemini:", error);
+    throw error;
+  }
+}
+
 export async function classifyContentWithGemini(
   videoTitle: string,
   videoDescription: string,
