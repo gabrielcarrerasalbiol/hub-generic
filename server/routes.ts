@@ -512,20 +512,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get or generate the logo
-  app.get("/api/logo", async (req: Request, res: Response) => {
-    try {
-      // Generate the logo using Gemini AI
-      const svgContent = await generateHubMadridistaLogo();
-      
-      // Set the appropriate content type for SVG
-      res.setHeader('Content-Type', 'image/svg+xml');
-      res.send(svgContent);
-    } catch (error) {
-      console.error("Error generating logo:", error);
-      res.status(500).json({ message: "Failed to generate logo" });
-    }
-  });
+
 
   const httpServer = createServer(app);
   return httpServer;

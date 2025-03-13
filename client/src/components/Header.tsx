@@ -34,17 +34,15 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-3">
           {/* Logo */}
-          <Link href="/">
-            <a className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
               <img 
-                src="/public/logo.svg" 
+                src="/logo.svg" 
                 alt="Hub Madridista Logo" 
                 className="h-12" 
               />
               <h1 className="text-xl font-bold text-[#1E3A8A]">
-                Hub<span className="text-[#FEF08A]">Madridista</span>
+                Hub<span className="text-[#FFD700] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Madridista</span>
               </h1>
-            </a>
           </Link>
           
           {/* Search Bar - Desktop */}
@@ -83,9 +81,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               </button>
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block">
                 <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Mi perfil</a>
-                <Link href="/favorites">
-                  <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Mis favoritos</a>
-                </Link>
+                <Link href="/favorites" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Mis favoritos</Link>
                 <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Configuración</a>
                 <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Cerrar sesión</a>
               </div>
