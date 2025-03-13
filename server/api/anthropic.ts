@@ -1,25 +1,22 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Anthropic from '@anthropic-ai/sdk';
+import { ClassificationResult } from './openai';
 
-// Initialize Gemini client
-const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-
-interface ClassificationResult {
-  categories: number[];
-  relevance: number;
-  confidence: number;
-}
+// the newest Anthropic model is "claude-3-5-sonnet-20240620" which was released June 20, 2024
+// Claude 3.5 Sonnet provides excellent results for classification tasks with high accuracy
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
 
 /**
  * Analyzes video content to classify it into categories and determine its relevance to Real Madrid
+ * Uses Anthropic's Claude 3.5 Sonnet for content classification
  */
-export async function classifyContent(
+export async function classifyContentWithAnthropicClaude(
   videoTitle: string, 
   videoDescription: string,
   availableCategories: { id: number; name: string; description?: string }[]
 ): Promise<ClassificationResult> {
   try {
-    const model = gemini.getGenerativeModel({ model: "gemini-1.5-pro" });
-
     const prompt = `
       Analyze this Real Madrid related content and provide the following:
       1. Which categories from the list below does this content best fit into? Choose all that apply.
@@ -39,12 +36,17 @@ export async function classifyContent(
       - confidence: number from 0-1
     `;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
+    const message = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20240620",
+      system: "You are a content classification AI specializing in soccer/football content analysis. You always respond with structured JSON data for Real Madrid content classification.",
+      max_tokens: 1024,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const responseContent = message.content[0].text;
     
     // Extract JSON from the response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error("No JSON found in response");
     }
@@ -57,7 +59,7 @@ export async function classifyContent(
       confidence: Math.min(1, Math.max(0, parsedResult.confidence || 0)),
     };
   } catch (error) {
-    console.error("Error classifying content with Gemini:", error);
+    console.error("Error classifying content with Claude:", error);
     
     // Return a default classification with fallback categories based on keywords
     const categories: number[] = [];
@@ -89,24 +91,28 @@ export async function classifyContent(
 
 /**
  * Searches content for Real Madrid related material based on a query
+ * Using Anthropic's Claude for enhanced search
  */
-export async function enhanceSearch(query: string): Promise<string> {
+export async function enhanceSearchWithAnthropicClaude(query: string): Promise<string> {
   try {
-    const model = gemini.getGenerativeModel({ model: "gemini-1.5-pro" });
-    
     const prompt = `
       Enhance this search query to find the best Real Madrid football club related content.
       The original search is: "${query}"
       Only return the enhanced search query text, nothing else.
     `;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const enhancedQuery = response.text().trim();
+    const message = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20240620",
+      system: "You help optimize search queries to find Real Madrid football content. Respond with just the enhanced query text, no explanation.",
+      max_tokens: 1024,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const enhancedQuery = message.content[0].text.trim();
     
     return enhancedQuery || query;
   } catch (error) {
-    console.error("Error enhancing search with Gemini:", error);
+    console.error("Error enhancing search with Claude:", error);
     return query; // Return original query if enhancement fails
   }
 }
