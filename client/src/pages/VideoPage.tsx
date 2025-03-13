@@ -1,0 +1,267 @@
+import { useQuery } from "@tanstack/react-query";
+import { useRoute, Link } from "wouter";
+import { Skeleton } from "@/components/ui/skeleton";
+import VideoPlayer from "@/components/VideoPlayer";
+import VideoCard from "@/components/VideoCard";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { Video } from "@shared/schema";
+
+export default function VideoPage() {
+  const { toast } = useToast();
+  const [, params] = useRoute("/video/:id");
+  const videoId = params?.id ? parseInt(params.id) : 0;
+
+  // Fetch video details
+  const { 
+    data: video, 
+    isLoading: isVideoLoading,
+    error: videoError
+  } = useQuery({
+    queryKey: [`/api/videos/${videoId}`],
+    enabled: !!videoId
+  });
+
+  // Fetch related videos
+  const { 
+    data: relatedVideos, 
+    isLoading: isRelatedLoading 
+  } = useQuery({
+    queryKey: ['/api/videos/trending', { limit: 4 }],
+    enabled: !!videoId
+  });
+
+  // Handle adding/removing favorites
+  const handleToggleFavorite = async () => {
+    if (!video) return;
+
+    try {
+      if (video.isFavorite) {
+        // Remove from favorites
+        await apiRequest('DELETE', `/api/favorites/${video.id}`);
+        toast({
+          title: "Video eliminado de favoritos",
+          description: "El video ha sido eliminado de tu lista de favoritos."
+        });
+      } else {
+        // Add to favorites
+        await apiRequest('POST', '/api/favorites', { videoId: video.id });
+        toast({
+          title: "Video añadido a favoritos",
+          description: "El video ha sido añadido a tu lista de favoritos."
+        });
+      }
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: [`/api/videos/${videoId}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/favorites'] });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar los favoritos. Intenta de nuevo más tarde.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Loading state
+  if (isVideoLoading) {
+    return (
+      <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <Skeleton className="w-full aspect-video rounded-lg" />
+            <div className="bg-white rounded-lg shadow-md p-4 mt-4">
+              <Skeleton className="h-7 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-1/2 mb-4" />
+              <Skeleton className="h-5 w-full mb-2" />
+              <Skeleton className="h-5 w-3/4" />
+            </div>
+          </div>
+          
+          <div className="lg:col-span-1">
+            <h2 className="font-bold text-xl mb-4">Videos relacionados</h2>
+            <div className="space-y-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <Skeleton className="w-full aspect-video" />
+                  <div className="p-3">
+                    <Skeleton className="h-5 w-full mb-2" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Error state
+  if (videoError || !video) {
+    return (
+      <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-md p-6 text-center">
+          <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
+          <p>No se pudo cargar el video solicitado.</p>
+          <Link href="/">
+            <a className="mt-4 inline-block text-[#1E3A8A] hover:underline">
+              Volver a la página principal
+            </a>
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  // Format view count
+  const formatViewCount = (count: number): string => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    } else if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
+  };
+
+  // Format publish date
+  const formatPublishedDate = (dateString?: string): string => {
+    if (!dateString) return 'Fecha desconocida';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Hoy';
+    if (diffDays === 1) return 'Ayer';
+    if (diffDays < 7) return `hace ${diffDays} días`;
+    if (diffDays < 30) return `hace ${Math.floor(diffDays / 7)} semanas`;
+    if (diffDays < 365) return `hace ${Math.floor(diffDays / 30)} meses`;
+    return `hace ${Math.floor(diffDays / 365)} años`;
+  };
+
+  // Determine platform-specific styling
+  const getPlatformColor = (platform: string): string => {
+    switch (platform.toLowerCase()) {
+      case 'youtube':
+        return 'bg-red-500';
+      case 'tiktok':
+        return 'bg-black';
+      case 'twitter':
+        return 'bg-blue-400';
+      case 'instagram':
+        return 'bg-pink-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
+  const getPlatformIcon = (platform: string): string => {
+    switch (platform.toLowerCase()) {
+      case 'youtube':
+        return 'fab fa-youtube';
+      case 'tiktok':
+        return 'fab fa-tiktok';
+      case 'twitter':
+        return 'fab fa-twitter';
+      case 'instagram':
+        return 'fab fa-instagram';
+      default:
+        return 'fas fa-play';
+    }
+  };
+
+  return (
+    <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          {/* Video Player */}
+          <VideoPlayer embedUrl={video.embedUrl} title={video.title} />
+          
+          {/* Video Info */}
+          <div className="bg-white rounded-lg shadow-md p-4 mt-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-xl font-semibold mb-1">{video.title}</h1>
+                <p className="text-sm text-gray-600">
+                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium text-white mr-2 ${getPlatformColor(video.platform)}`}>
+                    <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
+                    {video.platform}
+                  </span>
+                  {formatViewCount(video.viewCount)} visualizaciones • {formatPublishedDate(video.publishedAt)}
+                </p>
+              </div>
+              <button 
+                className={`text-2xl ${video.isFavorite ? 'text-[#FEF08A]' : 'text-gray-400 hover:text-[#FEF08A]'}`}
+                onClick={handleToggleFavorite}
+                aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+              >
+                <i className={video.isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+              </button>
+            </div>
+            
+            {/* Channel Link */}
+            <Link href={`/channel/${video.channelId}`}>
+              <a className="flex items-center mt-4 mb-3 hover:bg-gray-50 p-2 rounded-md">
+                <img 
+                  src={video.channelThumbnail || 'https://via.placeholder.com/40'} 
+                  alt={video.channelTitle} 
+                  className="w-10 h-10 rounded-full object-cover" 
+                />
+                <div className="ml-3">
+                  <p className="font-medium">{video.channelTitle}</p>
+                  <p className="text-xs text-gray-500">Ver canal</p>
+                </div>
+              </a>
+            </Link>
+            
+            {/* Video Description */}
+            {video.description && (
+              <div className="mt-3 text-gray-700 whitespace-pre-line text-sm">
+                {video.description.length > 300 
+                  ? `${video.description.substring(0, 300)}...` 
+                  : video.description
+                }
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {/* Related Videos */}
+        <div className="lg:col-span-1">
+          <h2 className="font-bold text-xl mb-4">Videos relacionados</h2>
+          
+          {isRelatedLoading ? (
+            <div className="space-y-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <Skeleton className="w-full aspect-video" />
+                  <div className="p-3">
+                    <Skeleton className="h-5 w-full mb-2" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : relatedVideos && relatedVideos.length > 0 ? (
+            <div className="space-y-4">
+              {relatedVideos
+                .filter((v: Video) => v.id !== video.id)
+                .slice(0, 4)
+                .map((relatedVideo: Video) => (
+                  <VideoCard key={relatedVideo.id} video={relatedVideo} compact />
+                ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-md p-4 text-center">
+              <p>No hay videos relacionados disponibles.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
