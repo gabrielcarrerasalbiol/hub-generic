@@ -5,7 +5,6 @@ import { z } from "zod";
 import { classifyContent, enhanceSearch } from "./api/openai";
 import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
-import { generateHubMadridistaLogo } from "./api/gemini";
 import { CategoryType, PlatformType, insertFavoriteSchema } from "../shared/schema";
 
 // Demo user ID - in a real app, this would come from authentication

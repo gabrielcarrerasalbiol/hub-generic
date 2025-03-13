@@ -7,12 +7,12 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-4 md:mb-0">
             <img 
-              src="https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/1200px-Real_Madrid_CF.svg.png" 
-              alt="Real Madrid Logo" 
-              className="h-8 w-8 mr-2" 
+              src="/public/logo.svg" 
+              alt="Hub Madridista Logo" 
+              className="h-8 mr-2" 
             />
             <span className="text-gray-700 font-medium">
-              RealMadrid<span className="text-[#FEF08A]">Hub</span> &copy; {new Date().getFullYear()}
+              Hub<span className="text-[#FEF08A]">Madridista</span> &copy; {new Date().getFullYear()}
             </span>
           </div>
           
