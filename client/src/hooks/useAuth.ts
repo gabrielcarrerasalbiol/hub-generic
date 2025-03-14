@@ -41,7 +41,31 @@ interface AuthResponse {
 // Variables globales para controlar las solicitudes
 let isUserFetching = false;
 let lastFetchTime = 0;
-const FETCH_COOLDOWN_MS = 2000; // 2 segundos entre solicitudes
+let requestFailCount = 0;
+const FETCH_COOLDOWN_MS = 3000; // 3 segundos entre solicitudes
+const MAX_FAILURES = 3; // Después de 3 fallos, detenemos los intentos
+const GLOBAL_AUTH_FLAG = 'auth_fetch_in_progress';
+
+// Función para detectar y detener bucles de autenticación
+function setupAuthGuard() {
+  if (typeof window === 'undefined') return;
+  
+  // Si ya hay un indicador global de autenticación en progreso
+  if (window.sessionStorage.getItem(GLOBAL_AUTH_FLAG)) {
+    console.log('Evitando ciclo de autenticación redundante');
+    return false;
+  }
+  
+  // Establecer el indicador de bloqueo
+  window.sessionStorage.setItem(GLOBAL_AUTH_FLAG, Date.now().toString());
+  
+  // Limpieza programada
+  setTimeout(() => {
+    window.sessionStorage.removeItem(GLOBAL_AUTH_FLAG);
+  }, 5000);
+  
+  return true;
+}
 
 export const useAuth = create<AuthState>((set, get) => {
   // Obtenemos token de localStorage, pero con seguridad para SSR
@@ -181,6 +205,12 @@ export const useAuth = create<AuthState>((set, get) => {
       const { token, user } = get();
       const now = Date.now();
       
+      // 0. Protección contra bucles de autenticación
+      if (!setupAuthGuard()) {
+        console.log('Auth fetch bloqueado por guardia de bucle');
+        return;
+      }
+      
       // 1. Verificar si hay un token y no hay solicitud en progreso
       if (isUserFetching || !token) {
         return;
@@ -205,6 +235,17 @@ export const useAuth = create<AuthState>((set, get) => {
         return;
       }
       
+      // 4. Verificar si hemos tenido demasiados fallos consecutivos
+      if (requestFailCount >= MAX_FAILURES) {
+        console.log('Solicitudes de autenticación detenidas después de múltiples fallos');
+        // Limpiar estado para un posible reinicio manual
+        localStorage.removeItem('hubmadridista_token');
+        sessionStorage.removeItem('hubmadridista_user');
+        sessionStorage.removeItem(GLOBAL_AUTH_FLAG);
+        set({ user: null, token: null, isLoading: false });
+        return;
+      }
+      
       // Actualizar tiempos y flags
       isUserFetching = true;
       lastFetchTime = now;
@@ -212,21 +253,33 @@ export const useAuth = create<AuthState>((set, get) => {
       
       try {
         const fetchedUser = await apiRequest<UserAuth>('/api/auth/me');
+        // Resetear contador de fallos en caso de éxito
+        requestFailCount = 0;
         set({ user: fetchedUser, isLoading: false });
         
         // Guardar en caché de sesión
         if (typeof window !== 'undefined' && fetchedUser) {
           try {
             window.sessionStorage.setItem('hubmadridista_user', JSON.stringify(fetchedUser));
+            // Limpiar bandera de autenticación en progreso
+            sessionStorage.removeItem(GLOBAL_AUTH_FLAG);
           } catch (e) {
             console.error('Error caching user:', e);
           }
         }
       } catch (error) {
         console.error('Error fetching user:', error);
-        localStorage.removeItem('hubmadridista_token');
-        sessionStorage.removeItem('hubmadridista_user');
-        set({ user: null, token: null, isLoading: false });
+        // Incrementar contador de fallos
+        requestFailCount++;
+        
+        // Solo limpiar tokens después de varios intentos fallidos
+        if (requestFailCount >= MAX_FAILURES) {
+          localStorage.removeItem('hubmadridista_token');
+          sessionStorage.removeItem('hubmadridista_user');
+          set({ user: null, token: null, isLoading: false });
+        } else {
+          set({ isLoading: false });
+        }
       } finally {
         isUserFetching = false;
       }

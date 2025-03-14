@@ -35,19 +35,46 @@ const Routes = () => (
   </Switch>
 );
 
+// Variable global para evitar inicializaciones múltiples
+let isAppInitialized = false;
+const APP_INIT_FLAG = 'app_init_in_progress';
+
 function AppContent() {
   const [isInitialized, setIsInitialized] = useState(false);
   const fetchUser = useAuth((state) => state.fetchUser);
   const { handleTokenFromUrl } = useTokenHandler();
+  const initAttemptRef = useRef(false);
   
   // Este efecto solo se ejecuta una vez al montar el componente
   useEffect(() => {
     let isMounted = true;
     
+    // Prevenir inicializaciones duplicadas
+    if (isAppInitialized || initAttemptRef.current) {
+      setIsInitialized(true);
+      return;
+    }
+    
+    // Verificar si hay otra instancia inicializando
+    if (typeof window !== 'undefined' && window.sessionStorage.getItem(APP_INIT_FLAG)) {
+      console.log('Detectada otra instancia inicializando la app');
+      setIsInitialized(true);
+      return;
+    }
+    
+    // Marcar que estamos iniciando
+    initAttemptRef.current = true;
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(APP_INIT_FLAG, 'true');
+    }
+    
     // Inicializar la aplicación solo una vez
     const runInitialization = async () => {
       try {
         if (typeof window !== 'undefined') {
+          // Limpiar banderas de sesiones anteriores
+          window.sessionStorage.removeItem('auth_fetch_in_progress');
+          
           // Verificar si hay un token en la URL (caso de OAuth)
           await handleTokenFromUrl();
           
@@ -58,11 +85,18 @@ function AppContent() {
             // Solo hacemos fetchUser una vez al inicio si hay token
             await fetchUser();
           }
+          
+          // Marcar que la app ya fue inicializada
+          isAppInitialized = true;
         }
       } catch (error) {
         console.error("Error inicializando la aplicación:", error);
       } finally {
         if (isMounted) {
+          // Limpiar bandera de inicialización
+          if (typeof window !== 'undefined') {
+            window.sessionStorage.removeItem(APP_INIT_FLAG);
+          }
           setIsInitialized(true);
         }
       }
@@ -72,6 +106,9 @@ function AppContent() {
     
     return () => {
       isMounted = false;
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.removeItem(APP_INIT_FLAG);
+      }
     };
   }, []);
 
