@@ -8,6 +8,13 @@ import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, 
 import { recategorizeVideo, recategorizeAllVideos } from "./api/categoryUpdater";
 import { cleanupUnavailableVideos } from "./api/videoValidator";
 import { 
+  getStatisticsOverview, 
+  getStatisticsByCategory, 
+  getStatisticsByPlatform, 
+  getStatisticsByDate, 
+  getTopChannelsByVideos 
+} from "./api/statistics";
+import { 
   CategoryType, PlatformType, insertFavoriteSchema, Video, User, 
   insertChannelSubscriptionSchema, insertNotificationSchema, 
   ChannelSubscription, Notification
