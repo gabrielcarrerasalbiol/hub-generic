@@ -186,6 +186,28 @@ export class PgStorage implements IStorage {
     
     return result.length > 0 ? result[0] : undefined;
   }
+  
+  async deleteVideo(id: number): Promise<boolean> {
+    try {
+      // Primero eliminar cualquier referencia en favoritos
+      await db.delete(favorites)
+        .where(eq(favorites.videoId, id));
+      
+      // Eliminar las notificaciones relacionadas
+      await db.delete(notifications)
+        .where(eq(notifications.videoId, id));
+      
+      // Finalmente, eliminar el video
+      const result = await db.delete(videos)
+        .where(eq(videos.id, id))
+        .returning({ id: videos.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error deleting video:', error);
+      throw error;
+    }
+  }
 
   // Channel operations
   async getChannels(limit = 100, offset = 0): Promise<Channel[]> {

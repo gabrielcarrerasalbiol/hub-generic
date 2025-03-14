@@ -36,6 +36,7 @@ export interface IStorage {
   searchVideos(query: string, limit?: number): Promise<Video[]>;
   createVideo(video: InsertVideo): Promise<Video>;
   updateVideo(id: number, video: Partial<InsertVideo>): Promise<Video | undefined>;
+  deleteVideo(id: number): Promise<boolean>;
 
   // Channel operations
   getChannels(limit?: number, offset?: number): Promise<Channel[]>;
