@@ -151,6 +151,25 @@ export const insertNotificationSchema = createInsertSchema(notifications).omit({
   isRead: true,
 });
 
+// Historial de visualización de videos
+export const viewHistory = pgTable("view_history", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  videoId: integer("video_id").notNull().references(() => videos.id, { onDelete: "cascade" }),
+  watchedAt: timestamp("watched_at").defaultNow().notNull(),
+  watchDuration: integer("watch_duration"), // En segundos
+  completionPercentage: integer("completion_percentage"), // 0-100
+}, (table) => {
+  return {
+    userVideoIndex: primaryKey(table.userId, table.videoId),
+  };
+});
+
+export const insertViewHistorySchema = createInsertSchema(viewHistory).omit({
+  id: true,
+  watchedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -197,6 +216,9 @@ export type Notification = typeof notifications.$inferSelect;
 
 export type InsertPremiumChannel = z.infer<typeof insertPremiumChannelSchema>;
 export type PremiumChannel = typeof premiumChannels.$inferSelect;
+
+export type InsertViewHistory = z.infer<typeof insertViewHistorySchema>;
+export type ViewHistory = typeof viewHistory.$inferSelect;
 
 // Tipos de roles de usuario
 export const UserRole = z.enum(["free", "premium", "admin"]);
