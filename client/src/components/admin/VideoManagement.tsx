@@ -816,16 +816,12 @@ export default function VideoManagement() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {video.categoryIds?.map((catId) => (
-                          <Badge key={catId} className="mr-1 mb-1">
-                            {getCategoryName(catId)}
-                          </Badge>
-                        ))}
-                        {(!video.categoryIds || video.categoryIds.length === 0) && (
-                          <span className="text-muted-foreground text-sm">Sin categorías</span>
-                        )}
-                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {video.categoryIds && video.categoryIds.length > 0
+                          ? video.categoryIds.map(catId => getCategoryName(catId)).join(', ')
+                          : 'Sin categorías'
+                        }
+                      </span>
                     </TableCell>
                     <TableCell className="text-center">
                       {video.featured ? (
