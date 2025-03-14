@@ -1,0 +1,30 @@
+/* Estilos personalizados para la sección de administración */
+
+/* Botón primario en color dorado de Real Madrid */
+.btn-madrid-gold {
+  background-color: #FDBE11 !important;
+  color: #001C58 !important;
+  border: 1px solid #FDBE11 !important;
+}
+
+.btn-madrid-gold:hover {
+  background-color: #E6AB0F !important;
+}
+
+/* Estilos para botón outline en color dorado */
+.btn-madrid-outline {
+  background-color: transparent !important;
+  color: #FDBE11 !important;
+  border: 1px solid #FDBE11 !important;
+}
+
+.btn-madrid-outline:hover {
+  background-color: rgba(253, 190, 17, 0.1) !important;
+}
+
+/* Deshabilitado */
+.btn-madrid-gold:disabled,
+.btn-madrid-outline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

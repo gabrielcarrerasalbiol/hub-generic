@@ -3,6 +3,7 @@ import { Video, Category } from '@shared/schema';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import './admin-styles.css';
 import {
   Table,
   TableBody,
@@ -47,6 +48,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Loader2, Star, Plus, Search, RefreshCw, Trash2, Edit, Eye, ArrowUpDown } from 'lucide-react';
+import { Slider } from "@/components/ui/slider";
 
 export default function VideoManagement() {
   const { toast } = useToast();
@@ -56,8 +58,10 @@ export default function VideoManagement() {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
   const [isRecategorizing, setIsRecategorizing] = useState(false);
   const [isRecategorizingAll, setIsRecategorizingAll] = useState(false);
+  const [isFetchingNewVideos, setIsFetchingNewVideos] = useState(false);
   const [sortField, setSortField] = useState<string>('publishedAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [fetchVideoCount, setFetchVideoCount] = useState<number>(10);
 
   // Obtener todos los videos
   const {
@@ -177,6 +181,34 @@ export default function VideoManagement() {
       });
     }
   });
+  
+  // Mutación para buscar y añadir nuevos videos
+  const fetchNewVideosMutation = useMutation({
+    mutationFn: (count: number) => {
+      setIsFetchingNewVideos(true);
+      return apiRequest('/api/videos/fetch-new', {
+        method: 'POST',
+        body: JSON.stringify({ maxResults: count })
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
+      toast({
+        title: "Búsqueda completada",
+        description: `${data.added} nuevos vídeos añadidos de ${data.total} encontrados`,
+      });
+      setIsFetchingNewVideos(false);
+    },
+    onError: (error: any) => {
+      console.error("Error fetching new videos:", error);
+      toast({
+        title: "Error",
+        description: error?.details || "No se pudieron buscar nuevos vídeos. Verifica las claves de API.",
+        variant: "destructive",
+      });
+      setIsFetchingNewVideos(false);
+    }
+  });
 
   // Preparar datos para edición
   useEffect(() => {
@@ -287,7 +319,7 @@ export default function VideoManagement() {
           
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="btn-madrid-outline">
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Verificar Disponibilidad
               </Button>
@@ -304,6 +336,7 @@ export default function VideoManagement() {
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
                 <AlertDialogAction 
                   onClick={() => verifyVideosAvailabilityMutation.mutate()}
+                  className="btn-madrid-gold"
                 >
                   Continuar
                 </AlertDialogAction>
@@ -315,6 +348,7 @@ export default function VideoManagement() {
             <AlertDialogTrigger asChild>
               <Button 
                 variant="default"
+                className="btn-madrid-gold"
                 disabled={isRecategorizingAll}
               >
                 {isRecategorizingAll ? (
@@ -324,7 +358,7 @@ export default function VideoManagement() {
                   </>
                 ) : (
                   <>
-                    <Plus className="mr-2 h-4 w-4" />
+                    <RefreshCw className="mr-2 h-4 w-4" />
                     Recategorizar Todo
                   </>
                 )}
@@ -342,8 +376,67 @@ export default function VideoManagement() {
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
                 <AlertDialogAction 
                   onClick={() => recategorizeAllVideosMutation.mutate()}
+                  className="btn-madrid-gold"
                 >
                   Continuar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="secondary"
+                className="btn-madrid-gold"
+                disabled={isFetchingNewVideos}
+              >
+                {isFetchingNewVideos ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Buscando...
+                  </>
+                ) : (
+                  <>
+                    <Search className="mr-2 h-4 w-4" />
+                    Buscar Nuevos Videos
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Buscar nuevos videos</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción buscará automáticamente nuevos videos relacionados con el Real Madrid en YouTube
+                  y los añadirá a la base de datos con categorización automática mediante IA.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="py-4">
+                <div className="flex items-center space-x-4">
+                  <Label htmlFor="videoCount">Cantidad de videos a buscar:</Label>
+                  <div className="flex-1">
+                    <Slider
+                      id="videoCount"
+                      min={5}
+                      max={30}
+                      step={5}
+                      value={[fetchVideoCount]}
+                      onValueChange={(values: number[]) => setFetchVideoCount(values[0])}
+                    />
+                  </div>
+                  <div className="w-12 text-center">
+                    <span className="text-lg font-medium">{fetchVideoCount}</span>
+                  </div>
+                </div>
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={() => fetchNewVideosMutation.mutate(fetchVideoCount)}
+                  className="btn-madrid-gold"
+                >
+                  Buscar Videos
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -501,6 +594,7 @@ export default function VideoManagement() {
                                     <Button 
                                       variant="outline" 
                                       size="sm"
+                                      className="btn-madrid-outline"
                                       onClick={() => recategorizeVideoMutation.mutate(editingVideo.id)}
                                       disabled={isRecategorizing}
                                     >
@@ -542,8 +636,8 @@ export default function VideoManagement() {
                             </Tabs>
                             
                             <DialogFooter>
-                              <Button variant="outline" onClick={() => setEditingVideo(null)}>Cancelar</Button>
-                              <Button onClick={handleSaveChanges} disabled={updateVideoMutation.isPending}>
+                              <Button variant="outline" className="btn-madrid-outline" onClick={() => setEditingVideo(null)}>Cancelar</Button>
+                              <Button className="btn-madrid-gold" onClick={handleSaveChanges} disabled={updateVideoMutation.isPending}>
                                 {updateVideoMutation.isPending ? (
                                   <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
