@@ -6,12 +6,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-4 md:mb-0">
-            <img 
-              src="/logo.svg" 
-              alt="Hub Madridista Logo" 
-              className="h-8 mr-2" 
-            />
-            <span className="text-gray-700 font-medium">
+            <span className="text-gray-700 font-bold text-lg">
               Hub<span className="text-[#FFD700] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Madridista</span> &copy; {new Date().getFullYear()}
             </span>
           </div>
