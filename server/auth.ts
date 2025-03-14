@@ -13,10 +13,14 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
 // JWT Secret for signing tokens
-let JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  // Generar un secreto aleatorio seguro para uso temporal en desarrollo
-  JWT_SECRET = crypto.randomBytes(64).toString('hex');
+// Asegurarse de que JWT_SECRET sea siempre un string
+const generateSecureSecret = (): string => {
+  return crypto.randomBytes(64).toString('hex');
+};
+
+const JWT_SECRET: string = process.env.JWT_SECRET || generateSecureSecret();
+
+if (!process.env.JWT_SECRET) {
   console.error('¡ADVERTENCIA! JWT_SECRET no está configurado. Utilizando un secreto temporal. NO USAR EN PRODUCCIÓN.');
   console.error('En producción, establezca JWT_SECRET como variable de entorno.');
   // En producción, deberíamos detener la aplicación aquí
@@ -233,27 +237,30 @@ export function setupPassport() {
 
 // Generate a JWT token for the user
 export function generateToken(user: User): string {
-  // Obtener tiempo de expiración de variable de entorno o usar valor predeterminado
-  const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
-  
-  // JWT_SECRET está definido al principio del archivo y siempre tendrá un valor
-  // ya sea el de la variable de entorno o uno generado aleatoriamente
-  return jwt.sign(
-    { 
+  try {
+    // Payload del token
+    const payload = { 
       id: user.id,
       username: user.username,
       role: user.role,
-      // No incluir información sensible en el token
-    },
-    JWT_SECRET as string, // Asegurarnos que TypeScript entiende que siempre hay un valor
-    { 
-      expiresIn: expiresIn,
-      algorithm: 'HS256', // Algoritmo explícito
-      issuer: 'hub-madridista', // Emisor del token
-      audience: 'hub-madridista-users', // Audiencia del token
-      notBefore: 0, // Token válido inmediatamente
-    }
-  );
+    };
+    
+    // El secreto debe ser buffer o string, aseguramos que sea string
+    const secret = String(JWT_SECRET);
+    
+    // Evitando usar TypeScript para esta llamada por problemas de definición de tipos
+    // @ts-ignore
+    return jwt.sign(payload, secret, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+      algorithm: 'HS256',
+      issuer: 'hub-madridista',
+      audience: 'hub-madridista-users',
+      notBefore: 0
+    });
+  } catch (error) {
+    console.error('Error al generar token JWT:', error);
+    throw new Error('Error en la autenticación');
+  }
 }
 
 // Authentication middleware for protected routes
@@ -271,8 +278,12 @@ export function isAuthenticated(req: Request, res: Response, next: NextFunction)
   }
   
   try {
-    // Verificar el token con opciones específicas para mayor seguridad    
-    const decoded = jwt.verify(token, JWT_SECRET as string, {
+    // Asegurar que JWT_SECRET sea un string
+    const secret = String(JWT_SECRET);
+    
+    // Verificar el token con opciones específicas para mayor seguridad
+    // @ts-ignore - Evitar problemas con los tipos de JWT
+    const decoded = jwt.verify(token, secret, {
       issuer: 'hub-madridista',
       audience: 'hub-madridista-users',
       algorithms: ['HS256'] // Restringe a un solo algoritmo
