@@ -157,7 +157,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
                   "text-sm",
                   isFavorite ? "text-red-500" : "text-gray-400 hover:text-red-500"
                 )}
-                aria-label={isFavorite ? "Quitar canal" : "Agregar canal"}
+                aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
               >
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
@@ -224,7 +224,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
               "text-sm",
               isFavorite ? "text-red-500" : "text-gray-400 hover:text-red-500"
             )}
-            aria-label={isFavorite ? "Quitar canal" : "Agregar canal"}
+            aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
