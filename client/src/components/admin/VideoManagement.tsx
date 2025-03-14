@@ -597,6 +597,12 @@ export default function VideoManagement() {
                     <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
                   </div>
                 </TableHead>
+                <TableHead className="w-[180px]">
+                  <div className="flex items-center" onClick={() => handleSort('channelTitle')}>
+                    Canal
+                    <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
+                  </div>
+                </TableHead>
                 <TableHead>
                   <div className="flex items-center" onClick={() => handleSort('platform')}>
                     Plataforma
@@ -638,8 +644,15 @@ export default function VideoManagement() {
                         onCheckedChange={() => toggleVideoSelection(video.id)}
                       />
                     </TableCell>
-                    <TableCell className="font-medium line-clamp-2">
-                      {video.title}
+                    <TableCell className="font-medium">
+                      <div className="truncate max-w-[250px]" title={video.title}>
+                        {video.title}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="truncate max-w-[180px]" title={video.channelTitle}>
+                        {video.channelTitle}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="capitalize">
@@ -822,7 +835,7 @@ export default function VideoManagement() {
                                 ¿Estás seguro de que deseas eliminar este video?
                                 <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md">
                                   <p className="font-medium">{video.title}</p>
-                                  <p className="text-sm text-muted-foreground mt-1">{video.platform} • {new Date(video.publishedAt).toLocaleDateString()}</p>
+                                  <p className="text-sm text-muted-foreground mt-1">{video.platform} • {video.publishedAt ? new Date(video.publishedAt).toLocaleDateString() : 'Fecha desconocida'}</p>
                                 </div>
                                 Esta acción no se puede deshacer.
                               </AlertDialogDescription>
