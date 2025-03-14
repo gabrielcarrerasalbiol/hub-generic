@@ -40,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Header onToggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 relative">
@@ -57,7 +57,7 @@ export default function Layout({ children }: LayoutProps) {
         <Sidebar isOpen={sidebarOpen} />
         
         {/* Main Content */}
-        <main className="flex-1 px-4 py-4 md:px-6 overflow-x-hidden">
+        <main className="flex-1 px-4 py-4 md:px-6 overflow-x-hidden min-h-[calc(100vh-8rem)]">
           {isServiceBlocked && (
             <Alert variant="destructive" className="mb-4">
               <AlertTriangle className="h-4 w-4" />

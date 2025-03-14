@@ -29,11 +29,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
 
   // Sidebar base classes
   const sidebarClasses = cn(
-    "bg-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto h-[calc(100vh-4rem)] border-r-2 border-[#FDBE11]",
+    "bg-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-[#FDBE11]",
     "md:block", // Always show on desktop
     isOpen 
-      ? "fixed inset-0 w-full md:w-64 z-50" // Open state on mobile
+      ? "fixed inset-0 w-full md:w-64 z-50 h-full" // Open state on mobile
       : "hidden", // Closed state on mobile
+    "md:sticky md:top-16 md:h-[calc(100vh-4rem)]" // Sticky on desktop
   );
 
   return (
