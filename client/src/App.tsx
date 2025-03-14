@@ -16,6 +16,7 @@ import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import CategoryPage from "@/pages/CategoryPage";
+import TrendingPage from "@/pages/TrendingPage";
 import Layout from "@/components/Layout";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
@@ -36,6 +37,7 @@ const Routes = () => (
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password" component={ResetPasswordPage} />
       <Route path="/category/:categorySlug" component={CategoryPage} />
+      <Route path="/trending" component={TrendingPage} />
       <Route component={NotFound} />
     </Switch>
   </Layout>
