@@ -6,6 +6,7 @@ import { classifyContent, enhanceSearch } from "./api/openai";
 import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
 import { recategorizeVideo, recategorizeAllVideos } from "./api/categoryUpdater";
+import { cleanupUnavailableVideos } from "./api/videoValidator";
 import { 
   CategoryType, PlatformType, insertFavoriteSchema, Video, User, 
   insertChannelSubscriptionSchema, insertNotificationSchema, 
@@ -837,6 +838,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error recategorizando todos los videos:", error);
       res.status(500).json({ message: "Error al recategorizar videos" });
+    }
+  });
+  
+  // Endpoint para verificar disponibilidad de videos (eliminar los no disponibles)
+  app.post("/api/videos/verify", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const result = await cleanupUnavailableVideos();
+      
+      res.json({
+        message: `Verificación completada: ${result.removed} videos eliminados de ${result.total} verificados`,
+        ...result
+      });
+    } catch (error) {
+      console.error("Error verificando disponibilidad de videos:", error);
+      res.status(500).json({ message: "Error al verificar videos" });
     }
   });
 
