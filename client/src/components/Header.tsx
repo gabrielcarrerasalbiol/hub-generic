@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/hooks/useAuth';
+import NotificationBell from '@/components/NotificationBell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,9 +98,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <button className="text-gray-700 hover:text-[#1E3A8A]">
-                  <i className="fas fa-bell text-xl"></i>
-                </button>
+                <NotificationBell />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="flex items-center space-x-1">

@@ -3,12 +3,21 @@ import { useRoute } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import VideoCard from "@/components/VideoCard";
+import SubscribeButton from "@/components/SubscribeButton";
 import { Video, Channel } from "@shared/schema";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ChannelPage() {
   // Get the channel ID from the URL
   const [, params] = useRoute("/channel/:id");
   const channelId = params?.id ? parseInt(params.id) : 0;
+  const { user } = useAuth();
+  
+  // Check subscription status
+  const { data: subscriptionStatus } = useQuery({
+    queryKey: [`/api/channels/${channelId}/subscription`],
+    enabled: !!channelId && !!user,
+  });
 
   // Fetch channel details
   const { 
@@ -153,6 +162,14 @@ export default function ChannelPage() {
               <div className="flex items-center mt-2 space-x-4 justify-center md:justify-start">
                 <span className="text-sm text-gray-600"><i className="fas fa-users mr-1"></i> {formatCount(channel.subscriberCount)} suscriptores</span>
                 <span className="text-sm text-gray-600"><i className="fas fa-video mr-1"></i> {formatCount(channel.videoCount)} videos</span>
+              </div>
+              
+              <div className="mt-4">
+                <SubscribeButton 
+                  channelId={channel.id} 
+                  initialSubscribed={subscriptionStatus?.isSubscribed || false}
+                  initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled || false}
+                />
               </div>
               
               {channel.description && (

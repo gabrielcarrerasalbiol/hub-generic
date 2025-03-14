@@ -1,0 +1,170 @@
+import { useState, useEffect } from 'react';
+import { Bell } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
+import { getQueryFn } from '@/lib/queryClient';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
+import { useQueryClient } from '@tanstack/react-query';
+
+// Tipo para las notificaciones
+interface Notification {
+  id: number;
+  userId: number;
+  channelId: number | null;
+  videoId: number | null;
+  type: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export default function NotificationBell() {
+  const { checkAuth, user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Consultar el número de notificaciones no leídas
+  const { data: unreadCount = 0, isLoading: countLoading } = useQuery({
+    queryKey: ['/api/notifications/unread/count'],
+    queryFn: getQueryFn({ on401: 'returnNull' }),
+    enabled: !!user,
+    refetchInterval: 30000, // Refrescar cada 30 segundos
+  });
+
+  // Consultar las notificaciones
+  const { data: notifications = [], isLoading: notificationsLoading } = useQuery({
+    queryKey: ['/api/notifications'],
+    queryFn: getQueryFn<Notification[]>({ on401: 'returnNull' }),
+    enabled: !!user && isOpen, // Solo cargar cuando el popover está abierto
+  });
+
+  // Marcar todas las notificaciones como leídas cuando se abre el popover
+  useEffect(() => {
+    if (isOpen && unreadCount > 0 && user) {
+      markAllAsRead();
+    }
+  }, [isOpen, unreadCount, user]);
+
+  // Marcar todas las notificaciones como leídas
+  const markAllAsRead = async () => {
+    if (!checkAuth()) return;
+
+    try {
+      await apiRequest('/api/notifications/read/all', {
+        method: 'PUT'
+      });
+      
+      // Invalidar consultas para actualizar la UI
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/unread/count'] });
+    } catch (error) {
+      console.error('Error marking notifications as read:', error);
+    }
+  };
+
+  // Eliminar una notificación
+  const deleteNotification = async (notificationId: number) => {
+    if (!checkAuth()) return;
+
+    try {
+      await apiRequest(`/api/notifications/${notificationId}`, {
+        method: 'DELETE'
+      });
+      
+      // Invalidar consultas para actualizar la UI
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications/unread/count'] });
+      
+      toast({
+        title: "Notificación eliminada",
+        description: "La notificación ha sido eliminada exitosamente",
+      });
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      toast({
+        title: "Error al eliminar",
+        description: "No se pudo eliminar la notificación",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Si el usuario no está autenticado, no mostrar el componente
+  if (!user) return null;
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell size={20} />
+          {unreadCount > 0 && (
+            <Badge 
+              variant="destructive" 
+              className="absolute -top-1 -right-1 px-1.5 py-0.5 min-w-[18px] h-[18px] text-xs flex items-center justify-center"
+            >
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </Badge>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[320px] p-0">
+        <div className="p-4 border-b flex items-center justify-between">
+          <div className="font-medium">Notificaciones</div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => markAllAsRead()}
+            disabled={unreadCount === 0}
+          >
+            Marcar todas como leídas
+          </Button>
+        </div>
+        <ScrollArea className="h-[300px] p-0">
+          {notificationsLoading ? (
+            <div className="p-4 text-center text-muted-foreground">Cargando notificaciones...</div>
+          ) : notifications.length > 0 ? (
+            <div className="divide-y">
+              {notifications.map((notification) => (
+                <div key={notification.id} className={`p-3 ${!notification.isRead ? 'bg-accent/50' : ''}`}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{notification.message}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(notification.createdAt).toLocaleDateString('es-ES', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          day: '2-digit',
+                          month: 'short'
+                        })}
+                      </p>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-6 w-6 p-0" 
+                      onClick={() => deleteNotification(notification.id)}
+                    >
+                      &times;
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 text-center text-muted-foreground">No tienes notificaciones</div>
+          )}
+        </ScrollArea>
+      </PopoverContent>
+    </Popover>
+  );
+}
