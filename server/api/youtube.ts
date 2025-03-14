@@ -100,17 +100,37 @@ export async function searchYouTubeVideos(query: string, maxResults = 10, pageTo
 
 /**
  * Get video details from YouTube
+ * Divide los IDs en grupos de 50 (límite de la API de YouTube) para manejar solicitudes grandes
  */
 export async function getYouTubeVideoDetails(videoIds: string[]): Promise<YouTubeVideoResult> {
   try {
-    const response = await axios.get(`${YOUTUBE_API_BASE_URL}/videos`, {
-      params: {
-        part: 'snippet,contentDetails,statistics',
-        id: videoIds.join(','),
-        key: YOUTUBE_API_KEY
+    // YouTube API limita a 50 IDs por solicitud, dividir en lotes si es necesario
+    const MAX_IDS_PER_REQUEST = 50;
+    let allItems: YouTubeVideoResult['items'] = [];
+    
+    // Procesar en lotes de 50 IDs
+    for (let i = 0; i < videoIds.length; i += MAX_IDS_PER_REQUEST) {
+      const batchIds = videoIds.slice(i, i + MAX_IDS_PER_REQUEST);
+      
+      const response = await axios.get(`${YOUTUBE_API_BASE_URL}/videos`, {
+        params: {
+          part: 'snippet,contentDetails,statistics',
+          id: batchIds.join(','),
+          key: YOUTUBE_API_KEY
+        }
+      });
+      
+      if (response.data.items && response.data.items.length > 0) {
+        allItems = [...allItems, ...response.data.items];
       }
-    });
-    return response.data;
+      
+      // Pequeña pausa entre solicitudes para evitar límites de tasa de la API
+      if (videoIds.length > MAX_IDS_PER_REQUEST && i + MAX_IDS_PER_REQUEST < videoIds.length) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+    
+    return { items: allItems };
   } catch (error) {
     console.error('YouTube API video details error:', error);
     return { items: [] };
@@ -119,17 +139,37 @@ export async function getYouTubeVideoDetails(videoIds: string[]): Promise<YouTub
 
 /**
  * Get channel details from YouTube
+ * Divide los IDs en grupos de 50 (límite de la API de YouTube) para manejar solicitudes grandes
  */
 export async function getYouTubeChannelDetails(channelIds: string[]): Promise<YouTubeChannelResult> {
   try {
-    const response = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, {
-      params: {
-        part: 'snippet,statistics,brandingSettings',
-        id: channelIds.join(','),
-        key: YOUTUBE_API_KEY
+    // YouTube API limita a 50 IDs por solicitud, dividir en lotes si es necesario
+    const MAX_IDS_PER_REQUEST = 50;
+    let allItems: YouTubeChannelResult['items'] = [];
+    
+    // Procesar en lotes de 50 IDs
+    for (let i = 0; i < channelIds.length; i += MAX_IDS_PER_REQUEST) {
+      const batchIds = channelIds.slice(i, i + MAX_IDS_PER_REQUEST);
+      
+      const response = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, {
+        params: {
+          part: 'snippet,statistics,brandingSettings',
+          id: batchIds.join(','),
+          key: YOUTUBE_API_KEY
+        }
+      });
+      
+      if (response.data.items && response.data.items.length > 0) {
+        allItems = [...allItems, ...response.data.items];
       }
-    });
-    return response.data;
+      
+      // Pequeña pausa entre solicitudes para evitar límites de tasa de la API
+      if (channelIds.length > MAX_IDS_PER_REQUEST && i + MAX_IDS_PER_REQUEST < channelIds.length) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+    
+    return { items: allItems };
   } catch (error) {
     console.error('YouTube API channel details error:', error);
     return { items: [] };
