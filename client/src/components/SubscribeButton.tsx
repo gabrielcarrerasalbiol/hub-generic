@@ -146,12 +146,12 @@ export default function SubscribeButton({
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 pr-4">
       <Button 
         onClick={handleSubscribe}
         disabled={isLoading}
         variant={isSubscribed ? "outline" : "default"}
-        className={isSubscribed ? "border-yellow-500 text-yellow-600" : "bg-gradient-to-r from-[#FDBE11] to-[#FFC72C] text-[#001C58] hover:from-[#FDC731] hover:to-[#FFD74C]"}
+        className={isSubscribed ? "border-yellow-500 text-yellow-600 px-5" : "bg-gradient-to-r from-[#FDBE11] to-[#FFC72C] text-[#001C58] hover:from-[#FDC731] hover:to-[#FFD74C] px-5"}
       >
         {isSubscribed ? "Quitar de favoritos" : "Agregar a favoritos"}
       </Button>

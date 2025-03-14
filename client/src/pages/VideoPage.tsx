@@ -217,13 +217,13 @@ export default function VideoPage() {
                 className="flex items-center hover:bg-white p-2 rounded-md cursor-pointer mb-4 md:mb-0"
               >
                 <img 
-                  src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=random&color=fff&size=128`} 
+                  src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`} 
                   alt={video.channelTitle} 
                   className="w-16 h-16 rounded-full object-cover border-2 border-[#FDBE11]" 
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.onerror = null;
-                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=random&color=fff&size=128`;
+                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`;
                   }}
                 />
                 <div className="ml-4">
