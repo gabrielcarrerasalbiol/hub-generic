@@ -1,0 +1,156 @@
+{
+  "app": {
+    "name": "Madridista Hub",
+    "slogan": "All Real Madrid content in one place"
+  },
+  "nav": {
+    "home": "Home",
+    "trending": "Trending",
+    "favorites": "Favorites",
+    "subscriptions": "Subscriptions",
+    "settings": "Settings",
+    "profile": "Profile",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "notifications": "Notifications",
+    "admin": "Admin",
+    "dashboard": "Dashboard"
+  },
+  "home": {
+    "featured": "Featured Video",
+    "trending": "Trending",
+    "latest": "Latest Videos",
+    "recommended": "Recommended Channels",
+    "viewAll": "View All",
+    "viewMore": "View More"
+  },
+  "video": {
+    "views": "views",
+    "relatedVideos": "Related Videos",
+    "publishedOn": "Published on",
+    "watchOn": "Watch on",
+    "noVideos": "No videos available",
+    "loadMore": "Load more"
+  },
+  "channel": {
+    "subscribe": "Subscribe",
+    "subscribed": "Subscribed",
+    "videos": "Videos",
+    "subscribers": "Subscribers",
+    "noChannels": "No channels available"
+  },
+  "categories": {
+    "all": "All",
+    "matches": "Matches",
+    "highlights": "Highlights",
+    "interviews": "Interviews",
+    "training": "Training",
+    "news": "News",
+    "fans": "Fans",
+    "analysis": "Analysis",
+    "history": "History",
+    "youth": "Youth",
+    "transfer": "Transfers"
+  },
+  "platforms": {
+    "all": "All",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "twitter": "Twitter",
+    "instagram": "Instagram"
+  },
+  "auth": {
+    "username": "Username",
+    "password": "Password",
+    "email": "Email",
+    "name": "Full Name",
+    "login": "Login",
+    "register": "Register",
+    "forgotPassword": "Forgot your password?",
+    "resetPassword": "Reset Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "currentPassword": "Current Password"
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme and Appearance",
+    "darkMode": "Dark mode",
+    "notifications": "Notifications",
+    "appNotifications": "App notifications",
+    "emailNotifications": "Email notifications",
+    "language": "Language and Region",
+    "playback": "Playback",
+    "autoplay": "Autoplay",
+    "soundEffects": "Sound effects",
+    "privacy": "Privacy",
+    "privacyMode": "Privacy mode",
+    "clearHistory": "Clear viewing history",
+    "content": "Content",
+    "showTrending": "Show trending",
+    "saveSettings": "Save all settings"
+  },
+  "profile": {
+    "title": "User Profile",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "save": "Save Changes"
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "noFavorites": "You have no favorite videos",
+    "addSome": "Add some by browsing the web!"
+  },
+  "subscriptions": {
+    "title": "My Subscriptions",
+    "noSubscriptions": "You have no subscriptions",
+    "discoverChannels": "Discover new channels"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "You have no notifications",
+    "newVideo": "New video",
+    "newSubscription": "New subscription",
+    "videoFavorited": "Video added to favorites"
+  },
+  "errors": {
+    "notFound": "Page not found",
+    "goBack": "Go back to home",
+    "somethingWrong": "Something went wrong",
+    "tryAgain": "Try again"
+  },
+  "toast": {
+    "success": "Success",
+    "error": "Error",
+    "info": "Information",
+    "warning": "Warning",
+    "settingsUpdated": "Settings updated",
+    "settingsSaved": "Your preferences have been saved successfully",
+    "languageUpdated": "Language updated",
+    "languageChanged": "Language has been changed to Spanish",
+    "languageChangedEn": "Language has been changed to English",
+    "historyCleared": "History cleared",
+    "historyDeleted": "Your viewing history has been deleted"
+  },
+  "footer": {
+    "terms": "Terms and Conditions",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "contact": "Contact",
+    "rights": "© 2025 Madridista Hub. All rights reserved."
+  },
+  "general": {
+    "loading": "Loading...",
+    "search": "Search...",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "remove": "Remove",
+    "close": "Close"
+  }
+}

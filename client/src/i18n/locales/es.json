@@ -1,0 +1,156 @@
+{
+  "app": {
+    "name": "Hub Madridista",
+    "slogan": "Todo el contenido del Real Madrid en un solo lugar"
+  },
+  "nav": {
+    "home": "Inicio",
+    "trending": "Tendencias",
+    "favorites": "Favoritos",
+    "subscriptions": "Suscripciones",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "register": "Registrarse",
+    "notifications": "Notificaciones",
+    "admin": "Administración",
+    "dashboard": "Panel de Control"
+  },
+  "home": {
+    "featured": "Video Destacado",
+    "trending": "Tendencias",
+    "latest": "Últimos Videos",
+    "recommended": "Canales Recomendados",
+    "viewAll": "Ver Todo",
+    "viewMore": "Ver Más"
+  },
+  "video": {
+    "views": "visualizaciones",
+    "relatedVideos": "Videos Relacionados",
+    "publishedOn": "Publicado el",
+    "watchOn": "Ver en",
+    "noVideos": "No hay videos disponibles",
+    "loadMore": "Cargar más"
+  },
+  "channel": {
+    "subscribe": "Suscribirse",
+    "subscribed": "Suscrito",
+    "videos": "Videos",
+    "subscribers": "Suscriptores",
+    "noChannels": "No hay canales disponibles"
+  },
+  "categories": {
+    "all": "Todos",
+    "matches": "Partidos",
+    "highlights": "Resúmenes",
+    "interviews": "Entrevistas",
+    "training": "Entrenamientos",
+    "news": "Noticias",
+    "fans": "Afición",
+    "analysis": "Análisis",
+    "history": "Historia",
+    "youth": "Cantera",
+    "transfer": "Fichajes"
+  },
+  "platforms": {
+    "all": "Todas",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "twitter": "Twitter",
+    "instagram": "Instagram"
+  },
+  "auth": {
+    "username": "Nombre de Usuario",
+    "password": "Contraseña",
+    "email": "Correo Electrónico",
+    "name": "Nombre Completo",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetPassword": "Restablecer Contraseña",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "currentPassword": "Contraseña Actual"
+  },
+  "settings": {
+    "title": "Configuración",
+    "theme": "Tema y Apariencia",
+    "darkMode": "Modo oscuro",
+    "notifications": "Notificaciones",
+    "appNotifications": "Notificaciones en la aplicación",
+    "emailNotifications": "Notificaciones por email",
+    "language": "Idioma y Región",
+    "playback": "Reproducción",
+    "autoplay": "Reproducción automática",
+    "soundEffects": "Efectos de sonido",
+    "privacy": "Privacidad",
+    "privacyMode": "Modo privado",
+    "clearHistory": "Eliminar historial de visualización",
+    "content": "Contenido",
+    "showTrending": "Mostrar tendencias",
+    "saveSettings": "Guardar toda la configuración"
+  },
+  "profile": {
+    "title": "Perfil de Usuario",
+    "editProfile": "Editar Perfil",
+    "changePassword": "Cambiar Contraseña",
+    "save": "Guardar Cambios"
+  },
+  "favorites": {
+    "title": "Mis Favoritos",
+    "noFavorites": "No tienes videos favoritos",
+    "addSome": "¡Añade algunos navegando por la web!"
+  },
+  "subscriptions": {
+    "title": "Mis Suscripciones",
+    "noSubscriptions": "No tienes suscripciones",
+    "discoverChannels": "Descubre nuevos canales"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "markAllRead": "Marcar todas como leídas",
+    "noNotifications": "No tienes notificaciones",
+    "newVideo": "Nuevo video",
+    "newSubscription": "Nueva suscripción",
+    "videoFavorited": "Video añadido a favoritos"
+  },
+  "errors": {
+    "notFound": "Página no encontrada",
+    "goBack": "Volver al inicio",
+    "somethingWrong": "Algo salió mal",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "toast": {
+    "success": "Éxito",
+    "error": "Error",
+    "info": "Información",
+    "warning": "Advertencia",
+    "settingsUpdated": "Configuración actualizada",
+    "settingsSaved": "La configuración ha sido guardada correctamente",
+    "languageUpdated": "Idioma actualizado",
+    "languageChanged": "El idioma se ha cambiado a Español",
+    "languageChangedEn": "El idioma se ha cambiado a Inglés",
+    "historyCleared": "Historial eliminado",
+    "historyDeleted": "Tu historial de visualización ha sido eliminado"
+  },
+  "footer": {
+    "terms": "Términos y Condiciones",
+    "privacy": "Política de Privacidad",
+    "cookies": "Política de Cookies",
+    "contact": "Contacto",
+    "rights": "© 2025 Hub Madridista. Todos los derechos reservados."
+  },
+  "general": {
+    "loading": "Cargando...",
+    "search": "Buscar...",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "add": "Añadir",
+    "remove": "Eliminar",
+    "close": "Cerrar"
+  }
+}
