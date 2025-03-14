@@ -67,6 +67,7 @@ export default function VideoManagement() {
   const [isDeletingVideo, setIsDeletingVideo] = useState(false);
   const [selectedVideos, setSelectedVideos] = useState<number[]>([]);
   const [isDeletingMultiple, setIsDeletingMultiple] = useState(false);
+  const [isGeneratingSummaries, setIsGeneratingSummaries] = useState(false);
   
   // Estado para paginación
   const [visibleVideos, setVisibleVideos] = useState(20);
@@ -307,6 +308,33 @@ export default function VideoManagement() {
         variant: "destructive",
       });
       setIsDeletingMultiple(false);
+    }
+  });
+
+  // Mutación para generar resúmenes para todos los videos
+  const generateSummariesMutation = useMutation({
+    mutationFn: () => {
+      setIsGeneratingSummaries(true);
+      return apiRequest('/api/videos/generate-summaries/all', {
+        method: 'POST'
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
+      toast({
+        title: "Generación de resúmenes completada",
+        description: `${data.success} de ${data.total} videos procesados correctamente`,
+      });
+      setIsGeneratingSummaries(false);
+    },
+    onError: (error) => {
+      console.error("Error generating summaries:", error);
+      toast({
+        title: "Error",
+        description: "No se pudieron generar los resúmenes de los videos. Verifica las claves de API de IA.",
+        variant: "destructive",
+      });
+      setIsGeneratingSummaries(false);
     }
   });
 
@@ -594,6 +622,47 @@ export default function VideoManagement() {
                   className="btn-madrid-gold"
                 >
                   Buscar Videos
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="outline"
+                className="bg-green-600 hover:bg-green-700 text-white"
+                disabled={isGeneratingSummaries}
+              >
+                {isGeneratingSummaries ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generando resúmenes...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Generar Resúmenes
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Generar resúmenes de videos</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción utilizará IA para generar resúmenes concisos para todos los videos que no tengan uno.
+                  Los resúmenes ayudan a los usuarios a entender rápidamente el contenido de cada video.
+                  Este proceso puede tardar varios minutos dependiendo de la cantidad de videos sin resumen.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={() => generateSummariesMutation.mutate()}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  Generar Resúmenes
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
