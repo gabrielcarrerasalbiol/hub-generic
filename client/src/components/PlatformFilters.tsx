@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { PlatformType } from "@shared/schema";
+import { Youtube, Twitter, Instagram, Layers } from 'lucide-react';
+import { TikTokIcon } from './icons/TikTokIcon';
 
 interface PlatformFiltersProps {
   selectedPlatform: PlatformType;

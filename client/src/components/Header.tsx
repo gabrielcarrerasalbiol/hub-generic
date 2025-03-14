@@ -17,7 +17,12 @@ import {
   Search, 
   User, 
   ChevronDown, 
-  Shield 
+  Shield,
+  Heart,
+  LogOut,
+  Settings,
+  Bell,
+  Rss
 } from 'lucide-react';
 
 type HeaderProps = {
@@ -124,13 +129,44 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuItem asChild>
-                      <Link href="/profile" className="w-full cursor-pointer">Mi perfil</Link>
+                      <Link href="/profile" className="w-full cursor-pointer">
+                        <span className="flex items-center">
+                          <User className="h-4 w-4 mr-2" />
+                          Mi perfil
+                        </span>
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/favorites" className="w-full cursor-pointer">Mis favoritos</Link>
+                      <Link href="/favorites" className="w-full cursor-pointer">
+                        <span className="flex items-center">
+                          <Heart className="h-4 w-4 mr-2 text-red-500" />
+                          Mis favoritos
+                        </span>
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/subscriptions" className="w-full cursor-pointer">Mis suscripciones</Link>
+                      <Link href="/subscriptions" className="w-full cursor-pointer">
+                        <span className="flex items-center">
+                          <Rss className="h-4 w-4 mr-2 text-orange-500" />
+                          Mis suscripciones
+                        </span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/notifications" className="w-full cursor-pointer">
+                        <span className="flex items-center">
+                          <Bell className="h-4 w-4 mr-2 text-blue-500" />
+                          Notificaciones
+                        </span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/settings" className="w-full cursor-pointer">
+                        <span className="flex items-center">
+                          <Settings className="h-4 w-4 mr-2 text-gray-500" />
+                          Ajustes
+                        </span>
+                      </Link>
                     </DropdownMenuItem>
                     {userIsAdmin && (
                       <>
@@ -147,7 +183,10 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-                      Cerrar sesión
+                      <span className="flex items-center">
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Cerrar sesión
+                      </span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
