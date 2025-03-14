@@ -134,7 +134,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
       >
           <div className="relative w-1/3">
             <img 
-              src={video.thumbnailUrl || 'https://via.placeholder.com/480x360?text=Sin+Miniatura'} 
+              src={video.thumbnailUrl || `https://via.placeholder.com/480x360/1E3A8A/FFFFFF/?text=${encodeURIComponent(video.title || 'Sin miniatura')}`} 
               alt={video.title} 
               className="w-full h-full object-cover aspect-video"
             />
@@ -181,7 +181,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
     >
       <div className="relative">
         <img 
-          src={video.thumbnailUrl || 'https://via.placeholder.com/480x360?text=Sin+Miniatura'} 
+          src={video.thumbnailUrl || `https://via.placeholder.com/480x360/1E3A8A/FFFFFF/?text=${encodeURIComponent(video.title || 'Sin miniatura')}`} 
           alt={video.title} 
           className="w-full aspect-video object-cover"
         />
@@ -199,7 +199,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
         <div className="flex justify-between items-center mt-2">
           <div className="flex items-center">
             <img 
-              src={video.channelThumbnail || 'https://via.placeholder.com/36?text=C'} 
+              src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle || 'C')}&background=random&color=fff&size=36`} 
               alt={video.channelTitle} 
               className="w-6 h-6 rounded-full"
             />
