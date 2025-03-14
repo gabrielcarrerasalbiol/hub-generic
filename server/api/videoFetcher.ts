@@ -141,12 +141,16 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
           }
         }
         
-        // Generar un resumen del video con Gemini
+        // Generar un resumen del video con Gemini y detectar idioma
         let summary = "";
+        let language = "en"; // Idioma por defecto
         try {
           console.log("Generando resumen para el video:", videoData.title);
-          summary = await generateVideoSummary(videoData.title, videoData.description || "");
-          console.log("Resumen generado:", summary);
+          const summaryResult = await generateVideoSummary(videoData.title, videoData.description || "");
+          summary = summaryResult.summary;
+          language = summaryResult.language;
+          console.log(`Resumen generado: ${summary}`);
+          console.log(`Idioma detectado: ${language}`);
           
           // Recategorizar utilizando también el resumen generado
           if (summary) {
@@ -177,6 +181,7 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
         const newVideo: InsertVideo = {
           ...videoData,
           summary,
+          language,
           categoryIds: categories.map(id => id.toString()),
           featured: false
         };
@@ -457,50 +462,54 @@ export async function importChannelVideos(
               categories = result.categories;
             } catch (geminiError) {
               console.error("Error con Gemini, usando categorización básica:", geminiError);
-              // Fallback a categorización básica
-              categories = [1]; // Asignar a categoría general por defecto
+              // Fallback
+              categories = [1]; // Categoría general
             }
           }
         }
         
-        // Generar un resumen del video con Gemini
+        // Generar un resumen del video con Gemini y detectar idioma
         let summary = "";
+        let language = "en"; // Idioma por defecto
         try {
           console.log("Generando resumen para el video:", videoData.title);
-          summary = await generateVideoSummary(videoData.title, videoData.description || "");
-          console.log("Resumen generado:", summary);
+          const summaryResult = await generateVideoSummary(videoData.title, videoData.description || "");
+          summary = summaryResult.summary;
+          language = summaryResult.language;
+          console.log(`Resumen generado: ${summary}`);
+          console.log(`Idioma detectado: ${language}`);
           
-          // Recategorizar utilizando también el resumen generado
+          // Si el resumen se generó correctamente, intentar mejorar la categorización
           if (summary) {
-            console.log("Mejorando categorización con el resumen generado");
             try {
+              console.log("Mejorando categorización con el resumen generado");
               const enhancedClassification = await classifyContent(
                 videoData.title,
-                videoData.description + "\n\n" + summary, // Combinar descripción y resumen para mejor categorización
+                videoData.description + "\n\n" + summary,
                 availableCategories
               );
               
-              // Si la categorización mejorada es relevante, usarla
               if (enhancedClassification.relevance >= 0.7) {
                 categories = enhancedClassification.categories;
-                console.log("Categorías mejoradas usando resumen:", categories);
+                console.log("Categorización mejorada:", categories);
               }
-            } catch (classifyError) {
-              console.error("Error en la recategorización con resumen:", classifyError);
-              // Mantener las categorías originales
+            } catch (error) {
+              console.error("Error al mejorar categorización con resumen:", error);
+              // Mantener categorías originales
             }
           }
         } catch (summaryError) {
           console.error("Error generando resumen con Gemini:", summaryError);
           summary = `Contenido sobre Real Madrid: ${videoData.title}`;
         }
-
-        // Crear el video en la base de datos con las categorías asignadas y el resumen
+        
+        // Crear el video en la base de datos con todos los datos
         const newVideo: InsertVideo = {
           ...videoData,
           summary,
+          language,
           categoryIds: categories.map(id => id.toString()),
-          featured: false
+          featured: false // Los videos importados no son featured por defecto
         };
         
         await storage.createVideo(newVideo);
