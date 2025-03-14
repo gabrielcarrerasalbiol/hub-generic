@@ -1,11 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import VideoCard from "@/components/VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Video } from "@shared/schema";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function FavoritesPage() {
-  // Fetch user's favorite videos
+  const [, setLocation] = useLocation();
+  const { user, isLoading: authLoading } = useAuth();
+  const { toast } = useToast();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      toast({
+        title: "Acceso restringido",
+        description: "Inicia sesión para ver tus favoritos",
+        variant: "destructive",
+      });
+      setLocation("/login?redirect=/favoritos");
+    }
+  }, [user, authLoading, setLocation, toast]);
+
+  // Fetch user's favorite videos only if authenticated
   const { 
     data: favorites = [], // Proporcionar un valor predeterminado de array vacío
     isLoading, 
@@ -13,7 +32,34 @@ export default function FavoritesPage() {
     isError
   } = useQuery<Video[]>({
     queryKey: ['/api/favorites'],
+    enabled: !!user, // Solo ejecutar si hay un usuario autenticado
   });
+
+  // Si el usuario no está autenticado o la autenticación está cargando, no mostrar nada
+  if (authLoading || !user) {
+    return (
+      <main className="flex-1 bg-gray-100 dark:bg-[#2C2152] p-4 md:p-6 overflow-y-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <Skeleton className="w-full aspect-video" />
+              <div className="p-3">
+                <Skeleton className="h-5 w-full mb-3" />
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <Skeleton className="w-6 h-6 rounded-full" />
+                    <Skeleton className="h-4 w-24 ml-2" />
+                  </div>
+                  <Skeleton className="h-4 w-4" />
+                </div>
+                <Skeleton className="h-3 w-40 mt-2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex-1 bg-gray-100 dark:bg-[#2C2152] p-4 md:p-6 overflow-y-auto">
