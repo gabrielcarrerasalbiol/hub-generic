@@ -186,6 +186,7 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
   processedChannels: number;
   totalVideos: number;
   addedVideos: number;
+  skippedVideos: number;
   errors: string[];
 }> {
   const result = {
@@ -193,6 +194,7 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
     processedChannels: 0,
     totalVideos: 0,
     addedVideos: 0,
+    skippedVideos: 0,
     errors: [] as string[]
   };
 
@@ -231,11 +233,16 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
         result.processedChannels++;
         result.totalVideos += importResult.total;
         result.addedVideos += importResult.added;
+        result.skippedVideos += importResult.skipped || 0;
         
         // Registrar errores si los hay
         if (importResult.error) {
           result.errors.push(`Error en canal ${channel.title}: ${importResult.error}`);
         }
+        
+        // Registrar información detallada en consola
+        console.log(`Canal ${channel.title}: Total ${importResult.total}, Agregados ${importResult.added}, Omitidos ${importResult.skipped || 0}`);
+        
         
         // Actualizar tiempo de última sincronización
         await storage.updatePremiumChannelSyncTime(premiumChannel.id);
@@ -255,11 +262,11 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
 export async function importChannelVideos(
   channelId: string,
   maxResults = 50
-): Promise<{total: number, added: number, channelInfo?: any, error?: string}> {
+): Promise<{total: number, added: number, skipped?: number, channelInfo?: any, error?: string}> {
   try {
     // Validar entrada
     if (!channelId) {
-      return { total: 0, added: 0, error: "Se requiere el ID o URL del canal" };
+      return { total: 0, added: 0, skipped: 0, error: "Se requiere el ID o URL del canal" };
     }
     
     // Obtener información del canal primero para agregar a nuestra base de datos
@@ -281,6 +288,7 @@ export async function importChannelVideos(
       return { 
         total: 0, 
         added: 0, 
+        skipped: 0,
         error: "No se encontró el canal especificado. Verifica el ID o URL del canal." 
       };
     }
@@ -304,6 +312,7 @@ export async function importChannelVideos(
       return { 
         total: 0, 
         added: 0, 
+        skipped: 0,
         channelInfo: channelInDb,
         error: "No se encontraron videos en este canal" 
       };
@@ -318,6 +327,7 @@ export async function importChannelVideos(
       return { 
         total: 0, 
         added: 0, 
+        skipped: 0,
         channelInfo: channelInDb,
         error: "No se encontraron IDs de videos válidos" 
       };
@@ -329,6 +339,7 @@ export async function importChannelVideos(
       return { 
         total: videoIds.length, 
         added: 0,
+        skipped: 0,
         channelInfo: channelInDb,
         error: "No se pudieron obtener detalles de los videos" 
       };
@@ -437,6 +448,7 @@ export async function importChannelVideos(
     return {
       total: videoDetails.items.length,
       added: addedCount,
+      skipped: skippedCount,
       channelInfo: channelInDb
     };
     
@@ -445,6 +457,7 @@ export async function importChannelVideos(
     return {
       total: 0,
       added: 0,
+      skipped: 0,
       error: error.message || "Error desconocido al importar videos del canal"
     };
   }
