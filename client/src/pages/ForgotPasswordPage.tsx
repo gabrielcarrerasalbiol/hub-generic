@@ -68,49 +68,71 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-background">
-      <Card className="w-full max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle>Recuperar contraseña</CardTitle>
-          <CardDescription>
-            Introduce tu correo electrónico para recibir un enlace de recuperación
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {!isSuccess ? (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Correo electrónico</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  {...register('email')}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
-                )}
-              </div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? 'Enviando...' : 'Enviar instrucciones'}
-              </Button>
-            </form>
-          ) : (
-            <div className="space-y-4 text-center">
-              <p className="text-green-600">
-                ¡Solicitud enviada! Revisa tu correo electrónico para las instrucciones.
-              </p>
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <div className="text-sm text-center">
-            <Link href="/login" className="text-primary hover:underline">
-              Volver al inicio de sesión
-            </Link>
+    <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="w-1/4 bg-blue-900 text-white p-8 hidden lg:flex lg:flex-col">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Hub Madridista</h2>
+          <p className="text-gray-200">La plataforma definitiva para los fans del Real Madrid</p>
+        </div>
+        <div className="flex-grow flex flex-col justify-center">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Seguridad primero</h3>
+            <p className="text-gray-200">Recupera el acceso a tu cuenta de forma segura</p>
           </div>
-        </CardFooter>
-      </Card>
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Proceso sencillo</h3>
+            <p className="text-gray-200">Sigue los pasos para recuperar tu contraseña</p>
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold mb-2">Soporte disponible</h3>
+            <p className="text-gray-200">Estamos aquí para ayudarte si tienes problemas</p>
+          </div>
+        </div>
+      </div>
+      <div className="w-full lg:w-3/4 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">Recuperar contraseña</CardTitle>
+            <CardDescription className="text-center">
+              Introduce tu correo electrónico para recibir un enlace de recuperación
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!isSuccess ? (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Correo electrónico</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="tu@email.com"
+                    {...register('email')}
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">{errors.email.message}</p>
+                  )}
+                </div>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? 'Enviando...' : 'Enviar instrucciones'}
+                </Button>
+              </form>
+            ) : (
+              <div className="space-y-4 text-center">
+                <p className="text-green-600">
+                  ¡Solicitud enviada! Revisa tu correo electrónico para las instrucciones.
+                </p>
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <div className="text-sm text-center">
+              <Link href="/login" className="text-primary hover:underline">
+                Volver al inicio de sesión
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }

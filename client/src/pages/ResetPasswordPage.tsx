@@ -117,8 +117,14 @@ export default function ResetPasswordPage() {
   // Mostrar pantalla de carga mientras se valida el token
   if (isTokenValidating) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Verificando token...</p>
+      <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="w-full flex items-center justify-center">
+          <Card className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+            <CardContent className="flex justify-center items-center py-12">
+              <p className="text-gray-600">Verificando token...</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -126,86 +132,133 @@ export default function ResetPasswordPage() {
   // Si el token no es válido
   if (!token || !isValidToken) {
     return (
-      <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-background">
-        <Card className="w-full max-w-md mx-auto">
-          <CardHeader>
-            <CardTitle>Enlace inválido</CardTitle>
-            <CardDescription>
-              El enlace de recuperación de contraseña es inválido o ha expirado.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>
-              Por favor, solicita un nuevo enlace de recuperación para continuar.
-            </p>
-          </CardContent>
-          <CardFooter className="flex justify-center">
-            <Button asChild>
-              <Link href="/forgot-password">
-                Solicitar nuevo enlace
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
+      <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="w-1/4 bg-blue-900 text-white p-8 hidden lg:flex lg:flex-col">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">Hub Madridista</h2>
+            <p className="text-gray-200">La plataforma definitiva para los fans del Real Madrid</p>
+          </div>
+          <div className="flex-grow flex flex-col justify-center">
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold mb-2">Seguridad primero</h3>
+              <p className="text-gray-200">Recupera el acceso a tu cuenta de forma segura</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">Soporte disponible</h3>
+              <p className="text-gray-200">Estamos aquí para ayudarte si tienes problemas</p>
+            </div>
+          </div>
+        </div>
+        <div className="w-full lg:w-3/4 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-center">Enlace inválido</CardTitle>
+              <CardDescription className="text-center">
+                El enlace de recuperación de contraseña es inválido o ha expirado.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="py-4">
+              <p className="text-center mb-6">
+                Por favor, solicita un nuevo enlace de recuperación para continuar.
+              </p>
+              <div className="flex justify-center">
+                <Button asChild>
+                  <Link href="/forgot-password">
+                    Solicitar nuevo enlace
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-center">
+              <div className="text-sm text-center">
+                <Link href="/login" className="text-primary hover:underline">
+                  Volver al inicio de sesión
+                </Link>
+              </div>
+            </CardFooter>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-background">
-      <Card className="w-full max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle>Reestablece tu contraseña</CardTitle>
-          <CardDescription>
-            Introduce tu nueva contraseña
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {!isSuccess ? (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">Nueva contraseña</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  {...register('newPassword')}
-                />
-                {errors.newPassword && (
-                  <p className="text-sm text-red-500">{errors.newPassword.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirma tu contraseña</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  {...register('confirmPassword')}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-                )}
-              </div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? 'Actualizando...' : 'Actualizar contraseña'}
-              </Button>
-            </form>
-          ) : (
-            <div className="space-y-4 text-center">
-              <p className="text-green-600">
-                ¡Tu contraseña ha sido actualizada con éxito!
-              </p>
-              <p>Serás redirigido a la página de inicio de sesión en unos segundos...</p>
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <div className="text-sm text-center">
-            <Link href="/login" className="text-primary hover:underline">
-              Volver al inicio de sesión
-            </Link>
+    <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="w-1/4 bg-blue-900 text-white p-8 hidden lg:flex lg:flex-col">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Hub Madridista</h2>
+          <p className="text-gray-200">La plataforma definitiva para los fans del Real Madrid</p>
+        </div>
+        <div className="flex-grow flex flex-col justify-center">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Seguridad primero</h3>
+            <p className="text-gray-200">Recupera el acceso a tu cuenta de forma segura</p>
           </div>
-        </CardFooter>
-      </Card>
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Cambia tu contraseña</h3>
+            <p className="text-gray-200">Establece una contraseña segura para tu cuenta</p>
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold mb-2">Soporte disponible</h3>
+            <p className="text-gray-200">Estamos aquí para ayudarte si tienes problemas</p>
+          </div>
+        </div>
+      </div>
+      <div className="w-full lg:w-3/4 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">Reestablece tu contraseña</CardTitle>
+            <CardDescription className="text-center">
+              Introduce tu nueva contraseña
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!isSuccess ? (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">Nueva contraseña</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    {...register('newPassword')}
+                  />
+                  {errors.newPassword && (
+                    <p className="text-sm text-red-500">{errors.newPassword.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirma tu contraseña</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    {...register('confirmPassword')}
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+                  )}
+                </div>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? 'Actualizando...' : 'Actualizar contraseña'}
+                </Button>
+              </form>
+            ) : (
+              <div className="space-y-4 text-center py-4">
+                <p className="text-green-600 font-semibold text-lg">
+                  ¡Tu contraseña ha sido actualizada con éxito!
+                </p>
+                <p>Serás redirigido a la página de inicio de sesión en unos segundos...</p>
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <div className="text-sm text-center">
+              <Link href="/login" className="text-primary hover:underline">
+                Volver al inicio de sesión
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }
