@@ -7,12 +7,7 @@ import PlatformFilters from "@/components/PlatformFilters";
 import CategoryFilters from "@/components/CategoryFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Video as BaseVideo, Channel, PlatformType, CategoryType } from "@shared/schema";
-
-// Extendemos el tipo Video para incluir isFavorite
-interface Video extends BaseVideo {
-  isFavorite?: boolean;
-}
+import { Video, Channel, PlatformType, CategoryType } from "@shared/schema";
 import {
   Carousel,
   CarouselContent,

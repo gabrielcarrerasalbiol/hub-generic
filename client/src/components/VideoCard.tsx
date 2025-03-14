@@ -6,7 +6,7 @@ import { Video } from '@shared/schema';
 import { cn } from '@/lib/utils';
 
 interface VideoCardProps {
-  video: Video & { isFavorite?: boolean };
+  video: Video;
   compact?: boolean;
 }
 

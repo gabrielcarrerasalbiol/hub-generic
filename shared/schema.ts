@@ -178,7 +178,12 @@ export type InsertOAuthToken = z.infer<typeof insertOAuthTokenSchema>;
 export type OAuthToken = typeof oauthTokens.$inferSelect;
 
 export type InsertVideo = z.infer<typeof insertVideoSchema>;
-export type Video = typeof videos.$inferSelect;
+// El tipo base de Video desde la base de datos
+export type VideoBase = typeof videos.$inferSelect;
+// Video extendido con propiedades adicionales que se añaden en las respuestas de la API
+export type Video = VideoBase & {
+  isFavorite?: boolean;
+};
 
 export type InsertChannel = z.infer<typeof insertChannelSchema>;
 export type Channel = typeof channels.$inferSelect;

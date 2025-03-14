@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Video } from '@shared/schema';
 
 interface FeaturedVideoProps {
-  video: Video & { isFavorite?: boolean };
+  video: Video;
 }
 
 export default function FeaturedVideo({ video }: FeaturedVideoProps) {

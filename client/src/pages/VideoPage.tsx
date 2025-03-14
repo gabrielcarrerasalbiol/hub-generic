@@ -8,12 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
-import { Video as BaseVideo } from "@shared/schema";
-
-// Extendemos el tipo Video para incluir isFavorite
-interface Video extends BaseVideo {
-  isFavorite?: boolean;
-}
+import { Video } from "@shared/schema";
 
 interface SubscriptionStatusResponse {
   isSubscribed: boolean;
