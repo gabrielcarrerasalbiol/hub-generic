@@ -53,6 +53,9 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
     let addedCount = 0;
     const existingIds = [];
     
+    // Obtener categorías una sola vez para todas las clasificaciones
+    const availableCategories = await storage.getCategories();
+    
     // Procesar cada video
     for (const video of videoDetails.items) {
       try {
@@ -68,36 +71,38 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
         
         // Clasificar el contenido utilizando IA
         let categories: number[] = [];
-        let result;
         
         // Intentar con diferentes servicios de IA en caso de fallo
         try {
           // Intentar con OpenAI
-          result = await classifyContent(
+          const result = await classifyContent(
             videoData.title,
             videoData.description || "",
-            videoData.channelTitle
+            availableCategories
           );
           categories = result.categories;
         } catch (openaiError) {
+          console.error("Error con OpenAI, intentando con Claude:", openaiError);
           try {
             // Intentar con Anthropic Claude
-            result = await classifyContentWithAnthropicClaude(
+            const result = await classifyContentWithAnthropicClaude(
               videoData.title,
               videoData.description || "",
-              videoData.channelTitle
+              availableCategories
             );
             categories = result.categories;
           } catch (claudeError) {
+            console.error("Error con Claude, intentando con Gemini:", claudeError);
             try {
               // Intentar con Google Gemini
-              result = await classifyContentWithGemini(
+              const result = await classifyContentWithGemini(
                 videoData.title,
                 videoData.description || "",
-                videoData.channelTitle
+                availableCategories
               );
               categories = result.categories;
             } catch (geminiError) {
+              console.error("Error con Gemini, usando categorización básica:", geminiError);
               // Fallback a categorización básica
               categories = [1]; // Asignar a categoría general por defecto
             }

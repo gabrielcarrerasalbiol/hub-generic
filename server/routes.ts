@@ -856,6 +856,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint para buscar y añadir nuevos videos automáticamente
+  app.post("/api/videos/fetch-new", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { maxResults = 10 } = req.body;
+      const limit = Math.min(Math.max(parseInt(String(maxResults), 10) || 10, 5), 30); // Limitar entre 5 y 30
+      
+      const { fetchAndProcessNewVideos } = await import("./api/videoFetcher");
+      const result = await fetchAndProcessNewVideos(limit);
+      
+      res.json({
+        message: `Búsqueda completada: ${result.added} de ${result.total} videos añadidos`,
+        ...result
+      });
+    } catch (error: any) {
+      console.error("Error fetching new videos:", error);
+      res.status(500).json({ 
+        error: "Error al buscar nuevos videos",
+        details: error.message
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
