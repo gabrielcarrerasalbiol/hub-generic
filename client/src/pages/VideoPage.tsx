@@ -3,13 +3,21 @@ import { useRoute, Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import VideoPlayer from "@/components/VideoPlayer";
 import VideoCard from "@/components/VideoCard";
+import SubscribeButton from "@/components/SubscribeButton";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
 import { Video } from "@shared/schema";
+
+interface SubscriptionStatusResponse {
+  isSubscribed: boolean;
+  notificationsEnabled: boolean;
+}
 
 export default function VideoPage() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [, params] = useRoute("/video/:id");
   const videoId = params?.id ? parseInt(params.id) : 0;
 
@@ -20,15 +28,25 @@ export default function VideoPage() {
     error: videoError
   } = useQuery({
     queryKey: [`/api/videos/${videoId}`],
+    queryFn: getQueryFn<Video>({ on401: 'returnNull' }),
     enabled: !!videoId
+  });
+  
+  // Obtener el estado de suscripción para este canal (si el video se cargó y el usuario está autenticado)
+  const { data: subscriptionStatus } = useQuery({
+    queryKey: [`/api/channels/${video?.channelId}/subscription`],
+    queryFn: getQueryFn<SubscriptionStatusResponse>({ on401: 'returnNull' }),
+    enabled: !!user && !!video?.channelId,
+    refetchOnWindowFocus: true,
   });
 
   // Fetch related videos
   const { 
-    data: relatedVideos, 
+    data: relatedVideos = [], 
     isLoading: isRelatedLoading 
   } = useQuery({
     queryKey: ['/api/videos/trending', { limit: 4 }],
+    queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
     enabled: !!videoId
   });
 
@@ -203,20 +221,31 @@ export default function VideoPage() {
               </button>
             </div>
             
-            {/* Channel Link */}
-            <Link href={`/channel/${video.channelId}`}>
-              <a className="flex items-center mt-4 mb-3 hover:bg-gray-50 p-2 rounded-md">
-                <img 
-                  src={video.channelThumbnail || 'https://via.placeholder.com/40'} 
-                  alt={video.channelTitle} 
-                  className="w-10 h-10 rounded-full object-cover" 
+            {/* Channel Link and Subscribe Button */}
+            <div className="flex items-center justify-between mt-4 mb-3 bg-gray-50 p-3 rounded-md">
+              <Link href={`/channel/${video.channelId}`}>
+                <a className="flex items-center hover:opacity-90">
+                  <img 
+                    src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=random&color=fff&size=128`} 
+                    alt={video.channelTitle} 
+                    className="w-10 h-10 rounded-full object-cover" 
+                  />
+                  <div className="ml-3">
+                    <p className="font-medium">{video.channelTitle}</p>
+                    <p className="text-xs text-gray-500">Ver canal</p>
+                  </div>
+                </a>
+              </Link>
+              
+              {/* Subscribe Button */}
+              {user && video.channelId && (
+                <SubscribeButton 
+                  channelId={parseInt(video.channelId)}
+                  initialSubscribed={subscriptionStatus?.isSubscribed}
+                  initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
                 />
-                <div className="ml-3">
-                  <p className="font-medium">{video.channelTitle}</p>
-                  <p className="text-xs text-gray-500">Ver canal</p>
-                </div>
-              </a>
-            </Link>
+              )}
+            </div>
             
             {/* Video Description */}
             {video.description && (
