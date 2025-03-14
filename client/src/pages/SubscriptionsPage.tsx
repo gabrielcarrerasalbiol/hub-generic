@@ -116,7 +116,7 @@ export default function SubscriptionsPage() {
 
   return (
     <div className="container py-6">
-      <h1 className="text-3xl font-bold mb-6">Mis suscripciones</h1>
+      <h1 className="text-3xl font-bold mb-6">Mis canales</h1>
       
       <div className="mb-6">
         <Input
@@ -128,7 +128,7 @@ export default function SubscriptionsPage() {
       </div>
       
       {isLoading ? (
-        <div className="text-center py-10">Cargando suscripciones...</div>
+        <div className="text-center py-10">Cargando tus canales...</div>
       ) : filteredChannels.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredChannels.map((channel) => (
@@ -192,10 +192,10 @@ export default function SubscriptionsPage() {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>¿Cancelar suscripción?</AlertDialogTitle>
+                      <AlertDialogTitle>¿Eliminar canal?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        ¿Estás seguro que deseas cancelar tu suscripción a{' '}
-                        <strong>{channelToUnsubscribe?.title}</strong>? 
+                        ¿Estás seguro que deseas eliminar{' '}
+                        <strong>{channelToUnsubscribe?.title}</strong> de tus canales? 
                         Ya no recibirás notificaciones de nuevos videos de este canal.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
@@ -225,7 +225,7 @@ export default function SubscriptionsPage() {
           <p className="text-muted-foreground mb-4">
             {searchQuery 
               ? "No se encontraron canales que coincidan con tu búsqueda." 
-              : "No estás suscrito a ningún canal."}
+              : "No tienes canales guardados en tu lista."}
           </p>
           {searchQuery && (
             <Button onClick={() => setSearchQuery('')}>Limpiar búsqueda</Button>

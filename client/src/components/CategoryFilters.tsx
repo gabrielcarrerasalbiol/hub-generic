@@ -44,7 +44,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "press" ? "default" : "outline"}
           className={selectedCategory === "press" 
-            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
             : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("press")}
         >
@@ -54,7 +54,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "interviews" ? "default" : "outline"}
           className={selectedCategory === "interviews" 
-            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
             : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("interviews")}
         >
@@ -64,7 +64,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "players" ? "default" : "outline"}
           className={selectedCategory === "players" 
-            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
             : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("players")}
         >
@@ -74,7 +74,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "analysis" ? "default" : "outline"}
           className={selectedCategory === "analysis" 
-            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
             : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("analysis")}
         >

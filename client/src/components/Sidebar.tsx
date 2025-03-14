@@ -82,7 +82,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     "fas fa-rss mr-3",
                     isLinkActive("/subscriptions") ? "text-[#FDBE11]" : "text-gray-500"
                   )}></i>
-                  Mis Suscripciones
+                  Mis canales
               </Link>
             </li>
             <li>
