@@ -11,7 +11,7 @@ import {
 } from './youtube';
 import { classifyContent } from './openai';
 import { classifyContentWithAnthropicClaude } from './anthropic';
-import { classifyContentWithGemini } from './gemini';
+import { classifyContentWithGemini, generateVideoSummary } from './gemini';
 
 /**
  * Busca nuevos videos en YouTube relacionados con el Real Madrid 

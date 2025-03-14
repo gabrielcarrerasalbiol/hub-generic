@@ -52,6 +52,50 @@ The SVG dimensions should be 200x60 pixels and the code should start with <svg> 
   }
 }
 
+/**
+ * Generates a concise summary for a video based on its title and description
+ * Uses Gemini Pro model for natural language generation
+ * @param videoTitle Title of the video
+ * @param videoDescription Description of the video
+ * @returns Promise with the generated summary or error message
+ */
+export async function generateVideoSummary(
+  videoTitle: string,
+  videoDescription: string
+): Promise<string> {
+  try {
+    const model = gemini.getGenerativeModel({ model: "gemini-pro" });
+
+    const prompt = `
+Generate a concise summary for this Real Madrid related video content.
+The summary should:
+1. Be approximately 2-3 sentences
+2. Capture the main topic of the video
+3. Mention key Real Madrid players, matches, or events discussed
+4. Maintain a neutral, informative tone
+5. Be in the same language as the original content (Spanish or English)
+
+Video Title: ${videoTitle}
+Video Description: ${videoDescription}
+
+Your response should contain ONLY the summary text, nothing else.
+`;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    return response.text().trim();
+  } catch (error) {
+    console.error("Error generating video summary with Gemini:", error);
+    
+    // In case of failure, return a basic summary based on the title
+    if (videoTitle) {
+      return `Contenido sobre Real Madrid: ${videoTitle}`;
+    } else {
+      return "Contenido relacionado con Real Madrid.";
+    }
+  }
+}
+
 export async function classifyContentWithGemini(
   videoTitle: string,
   videoDescription: string,
