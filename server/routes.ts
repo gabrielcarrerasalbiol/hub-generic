@@ -413,7 +413,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Video not found" });
       }
       
-      const isFavorite = await storage.isFavorite(DEMO_USER_ID, id);
+      // Verificar si es favorito solo si hay un usuario autenticado
+      let isFavorite = false;
+      if (req.user && req.user.id) {
+        isFavorite = await storage.isFavorite(req.user.id, id);
+      }
       
       res.json({ ...video, isFavorite });
     } catch (error) {
@@ -486,13 +490,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const videos = await storage.getVideosByChannel(channel.externalId, limit);
       
-      // Check if any videos are favorites
-      const videosWithFavorite = await Promise.all(
-        videos.map(async (video) => {
-          const isFavorite = await storage.isFavorite(DEMO_USER_ID, video.id);
-          return { ...video, isFavorite };
-        })
-      );
+      // Check if any videos are favorites (solo si hay usuario autenticado)
+      let videosWithFavorite = videos;
+      if (req.user && req.user.id) {
+        videosWithFavorite = await Promise.all(
+          videos.map(async (video) => {
+            const isFavorite = await storage.isFavorite(req.user!.id, video.id);
+            return { ...video, isFavorite };
+          })
+        );
+      } else {
+        // Si no hay usuario, ningún video es favorito
+        videosWithFavorite = videos.map(video => ({
+          ...video,
+          isFavorite: false
+        }));
+      }
       
       res.json(videosWithFavorite);
     } catch (error) {
@@ -515,9 +528,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/favorites", async (req: Request, res: Response) => {
+  app.get("/api/favorites", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const videos = await storage.getFavoriteVideosByUserId(DEMO_USER_ID);
+      const userId = req.user!.id;
+      const videos = await storage.getFavoriteVideosByUserId(userId);
       
       // Add isFavorite flag (will always be true for this endpoint)
       const videosWithFavorite = videos.map(video => ({
@@ -532,12 +546,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/favorites", async (req: Request, res: Response) => {
+  app.post("/api/favorites", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const favorite = req.body;
-      
-      // Set the default user ID
-      favorite.userId = DEMO_USER_ID;
+      const userId = req.user!.id;
+      const favorite = {
+        ...req.body,
+        userId
+      };
       
       // Validate the input
       const result = insertFavoriteSchema.safeParse(favorite);
@@ -552,7 +567,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if already a favorite
-      const isAlreadyFavorite = await storage.isFavorite(DEMO_USER_ID, favorite.videoId);
+      const isAlreadyFavorite = await storage.isFavorite(userId, favorite.videoId);
       if (isAlreadyFavorite) {
         return res.status(400).json({ message: "Video is already a favorite" });
       }
@@ -565,15 +580,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/favorites/:videoId", async (req: Request, res: Response) => {
+  app.delete("/api/favorites/:videoId", isAuthenticated, async (req: Request, res: Response) => {
     try {
+      const userId = req.user!.id;
       const videoId = parseInt(req.params.videoId);
       
       if (isNaN(videoId)) {
         return res.status(400).json({ message: "Invalid video ID" });
       }
       
-      const success = await storage.deleteFavorite(DEMO_USER_ID, videoId);
+      const success = await storage.deleteFavorite(userId, videoId);
       if (!success) {
         return res.status(404).json({ message: "Favorite not found" });
       }
