@@ -12,7 +12,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   const [location] = useLocation();
 
   // Fetch recommended channels for sidebar
-  const { data: featuredChannels, isLoading } = useQuery({
+  const { data: featuredChannels = [], isLoading } = useQuery<Channel[]>({
     queryKey: ['/api/channels/recommended', { limit: 3 }],
   });
 
@@ -38,8 +38,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           <h3 className="font-semibold text-gray-600 uppercase text-xs tracking-wide">Explorar</h3>
           <ul className="mt-2 space-y-1">
             <li>
-              <Link href="/">
-                <a className={cn(
+              <Link href="/" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/") 
                     ? "bg-gray-100 text-[#1E3A8A]" 
@@ -50,7 +49,6 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     isLinkActive("/") ? "text-[#1E3A8A]" : "text-gray-500"
                   )}></i>
                   Inicio
-                </a>
               </Link>
             </li>
             <li>
@@ -60,8 +58,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               </a>
             </li>
             <li>
-              <Link href="/favorites">
-                <a className={cn(
+              <Link href="/favorites" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/favorites") 
                     ? "bg-gray-100 text-[#1E3A8A]" 
@@ -72,7 +69,6 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     isLinkActive("/favorites") ? "text-[#1E3A8A]" : "text-gray-500"
                   )}></i>
                   Mis Favoritos
-                </a>
               </Link>
             </li>
             <li>
@@ -172,23 +168,25 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           ) : featuredChannels && featuredChannels.length > 0 ? (
             // Render actual featured channels
             featuredChannels.map((channel: Channel) => (
-              <Link key={channel.id} href={`/channel/${channel.id}`}>
-                <a className="flex items-center mt-3 hover:bg-gray-100 rounded-md p-2 cursor-pointer">
-                  <img 
-                    src={channel.thumbnailUrl || 'https://via.placeholder.com/32'} 
-                    alt={channel.title} 
-                    className="w-8 h-8 rounded-full" 
-                  />
-                  <div className="ml-2">
-                    <p className="text-sm font-medium">{channel.title}</p>
-                    <p className="text-xs text-gray-500">
-                      {channel.platform === 'YouTube' && 'Canal de YouTube'}
-                      {channel.platform === 'TikTok' && 'Canal de TikTok'}
-                      {channel.platform === 'Twitter' && 'Cuenta de Twitter'}
-                      {channel.platform === 'Instagram' && 'Cuenta de Instagram'}
-                    </p>
-                  </div>
-                </a>
+              <Link 
+                key={channel.id} 
+                href={`/channel/${channel.id}`}
+                className="flex items-center mt-3 hover:bg-gray-100 rounded-md p-2 cursor-pointer"
+              >
+                <img 
+                  src={channel.thumbnailUrl || 'https://via.placeholder.com/32'} 
+                  alt={channel.title} 
+                  className="w-8 h-8 rounded-full" 
+                />
+                <div className="ml-2">
+                  <p className="text-sm font-medium">{channel.title}</p>
+                  <p className="text-xs text-gray-500">
+                    {channel.platform === 'YouTube' && 'Canal de YouTube'}
+                    {channel.platform === 'TikTok' && 'Canal de TikTok'}
+                    {channel.platform === 'Twitter' && 'Cuenta de Twitter'}
+                    {channel.platform === 'Instagram' && 'Cuenta de Instagram'}
+                  </p>
+                </div>
               </Link>
             ))
           ) : (
