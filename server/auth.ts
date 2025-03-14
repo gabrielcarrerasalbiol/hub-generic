@@ -10,7 +10,12 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 // JWT Secret for signing tokens
-const JWT_SECRET = process.env.JWT_SECRET || 'temporarysecretkeyforhubmadridista';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('¡ADVERTENCIA! JWT_SECRET no está configurado. Utilizando un secreto temporal. NO USAR EN PRODUCCIÓN.');
+  // En producción, deberíamos detener la aplicación aquí
+  // process.exit(1);
+}
 
 // Google OAuth credentials
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
@@ -222,23 +227,35 @@ export function setupPassport() {
 
 // Generate a JWT token for the user
 export function generateToken(user: User): string {
+  // Obtener tiempo de expiración de variable de entorno o usar valor predeterminado
+  const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
+  
   return jwt.sign(
     { 
       id: user.id,
       username: user.username,
-      role: user.role 
+      role: user.role,
+      // No incluir información sensible en el token
     },
     JWT_SECRET,
-    { expiresIn: '7d' }
+    { 
+      expiresIn: expiresIn,
+      algorithm: 'HS256', // Algoritmo explícito
+      issuer: 'hub-madridista', // Emisor del token
+      audience: 'hub-madridista-users', // Audiencia del token
+      notBefore: 0, // Token válido inmediatamente
+    }
   );
 }
 
 // Authentication middleware for protected routes
 export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+  // Si el usuario ya está autenticado a través de sesión
   if (req.isAuthenticated()) {
     return next();
   }
   
+  // Extraer token de los headers o cookies
   const token = extractToken(req);
   
   if (!token) {
@@ -246,26 +263,54 @@ export function isAuthenticated(req: Request, res: Response, next: NextFunction)
   }
   
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number };
+    // Verificar el token con opciones específicas para mayor seguridad
+    const jwtSecret = JWT_SECRET || 'fallback_jwt_secret_for_development_only'; // Fallback solo para desarrollo
     
-    // Get the user from storage
+    const decoded = jwt.verify(token, jwtSecret, {
+      issuer: 'hub-madridista',
+      audience: 'hub-madridista-users',
+      algorithms: ['HS256'] // Restringe a un solo algoritmo
+    }) as any;
+    
+    // Verificar que el token contiene la información esperada
+    if (!decoded || !decoded.id || typeof decoded.id !== 'number') {
+      return res.status(401).json({ error: 'Token inválido (formato incorrecto)' });
+    }
+    
+    // Obtener el usuario de la base de datos
     storage.getUser(decoded.id)
       .then(user => {
         if (!user) {
           return res.status(401).json({ error: 'Usuario no encontrado' });
         }
         
-        // Attach user to request
+        // Verificar si el usuario ha sido desactivado o su rol ha cambiado
+        if (user.role !== decoded.role) {
+          return res.status(403).json({ 
+            error: 'La información de tu cuenta ha cambiado. Por favor, inicia sesión nuevamente.' 
+          });
+        }
+        
+        // Adjuntar usuario a la solicitud
         req.user = user;
         next();
       })
       .catch(error => {
-        console.error('Error verifying token:', error);
-        res.status(401).json({ error: 'Error de autenticación' });
+        console.error('Error al obtener usuario durante verificación de token:', error);
+        return res.status(500).json({ error: 'Error de autenticación. Inténtalo de nuevo más tarde.' });
       });
-  } catch (error) {
-    console.error('Error verifying token:', error);
-    res.status(401).json({ error: 'Token inválido o expirado' });
+  } catch (error: any) {
+    // Manejar errores específicos de JWT para proporcionar información útil
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.' });
+    } else if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ error: 'Token inválido. Por favor, inicia sesión nuevamente.' });
+    } else if (error.name === 'NotBeforeError') {
+      return res.status(401).json({ error: 'Token aún no válido. Por favor, intenta más tarde.' });
+    }
+    
+    console.error('Error verificando token JWT:', error);
+    return res.status(401).json({ error: 'Error de autenticación. Por favor, inicia sesión nuevamente.' });
   }
 }
 

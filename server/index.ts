@@ -3,6 +3,8 @@ import session from "express-session";
 import MemoryStore from "memorystore";
 import passport from "passport";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { registerAuthRoutes } from "./authRoutes";
 import { setupPassport } from "./auth";
@@ -11,9 +13,35 @@ import { initDb } from "./db";
 import { pgStorage } from "./pgStorage";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+// Aplicar Helmet para mejorar la seguridad con encabezados HTTP
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://ui-avatars.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'", "https://api.openai.com", "https://claude-api.anthropic.com"],
+      frameSrc: ["'self'", "https://www.youtube.com", "https://player.vimeo.com", "https://www.tiktok.com"]
+    }
+  },
+  crossOriginEmbedderPolicy: false, // Necesario para cargar recursos de terceros
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // Permite el uso de recursos cross-origin
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" }
+}));
+
+// Limitar tamaño de payloads JSON para prevenir ataques DoS
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 app.use(cookieParser());
+
+// Añadir identificadores de respuesta
+app.use((req, res, next) => {
+  res.setHeader('X-Hub-Madridista', 'v1.0');
+  next();
+});
 
 // Session configuration
 const MemoryStoreSession = MemoryStore(session);
