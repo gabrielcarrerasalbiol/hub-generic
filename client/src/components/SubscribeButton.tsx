@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Bell, BellOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -15,14 +15,21 @@ interface SubscribeButtonProps {
 export default function SubscribeButton({
   channelId,
   initialSubscribed = false,
-  initialNotificationsEnabled = true,
+  initialNotificationsEnabled = false,
 }: SubscribeButtonProps) {
   const { toast } = useToast();
-  const { checkAuth } = useAuth();
+  const { checkAuth, user } = useAuth();
   const queryClient = useQueryClient();
   const [isSubscribed, setIsSubscribed] = useState(initialSubscribed);
   const [notificationsEnabled, setNotificationsEnabled] = useState(initialNotificationsEnabled);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Cargar el estado inicial de suscripción cuando se monta el componente
+  useEffect(() => {
+    if (user) {
+      checkSubscriptionStatus();
+    }
+  }, [channelId, user]);
 
   // Verificar el estado actual de suscripción al canal
   const checkSubscriptionStatus = async () => {
@@ -30,10 +37,13 @@ export default function SubscribeButton({
     
     try {
       setIsLoading(true);
-      const response = await apiRequest<{ isSubscribed: boolean }>(
+      const response = await apiRequest<{ isSubscribed: boolean; notificationsEnabled: boolean }>(
         `/api/channels/${channelId}/subscription`
       );
       setIsSubscribed(response.isSubscribed);
+      if (response.notificationsEnabled !== undefined) {
+        setNotificationsEnabled(response.notificationsEnabled);
+      }
       setIsLoading(false);
     } catch (error) {
       console.error("Error checking subscription status:", error);
