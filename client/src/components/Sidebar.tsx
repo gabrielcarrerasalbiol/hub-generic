@@ -91,16 +91,16 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}>
-                  <i className={cn(
-                    "fas fa-rss mr-3",
+                  <Rss className={cn(
+                    "mr-3 h-4 w-4",
                     isLinkActive("/subscriptions") ? "text-[#FDBE11]" : "text-gray-500"
-                  )}></i>
+                  )} />
                   Mis canales
               </Link>
             </li>
             <li>
               <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
-                <i className="fas fa-history mr-3 text-gray-500"></i>
+                <History className="mr-3 h-4 w-4 text-gray-500" />
                 Historial
               </a>
             </li>
@@ -121,7 +121,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className="fab fa-youtube mr-3 text-red-500"></i>
+                <Youtube className="mr-3 h-4 w-4 text-red-500" />
                 YouTube
               </Link>
             </li>
@@ -135,7 +135,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className="fab fa-tiktok mr-3 text-black"></i>
+                <Clock className="mr-3 h-4 w-4 text-black" />
                 TikTok
                 <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 text-amber-600 rounded border border-amber-200">Próximamente</span>
               </Link>
@@ -150,7 +150,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className="fab fa-twitter mr-3 text-blue-400"></i>
+                <Twitter className="mr-3 h-4 w-4 text-blue-400" />
                 Twitter
                 <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 text-amber-600 rounded border border-amber-200">Próximamente</span>
               </Link>
@@ -165,7 +165,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className="fab fa-instagram mr-3 text-pink-500"></i>
+                <Instagram className="mr-3 h-4 w-4 text-pink-500" />
                 Instagram
                 <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 text-amber-600 rounded border border-amber-200">Próximamente</span>
               </Link>
@@ -187,10 +187,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className={cn(
-                  "fas fa-futbol mr-3",
+                <Radio className={cn(
+                  "mr-3 h-4 w-4",
                   isLinkActive("/category/matches") ? "text-[#FDBE11]" : "text-[#FDBE11]"
-                )}></i>
+                )} />
                 Partidos
               </Link>
             </li>
@@ -204,10 +204,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className={cn(
-                  "fas fa-comments mr-3",
+                <MessageSquare className={cn(
+                  "mr-3 h-4 w-4",
                   isLinkActive("/category/analysis") ? "text-[#FDBE11]" : "text-gray-500"
-                )}></i>
+                )} />
                 Análisis
               </Link>
             </li>
@@ -221,10 +221,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className={cn(
-                  "fas fa-trophy mr-3",
+                <Trophy className={cn(
+                  "mr-3 h-4 w-4",
                   isLinkActive("/category/historic") ? "text-[#FDBE11]" : "text-[#FDBE11]"
-                )}></i>
+                )} />
                 Momentos Históricos
               </Link>
             </li>
@@ -238,10 +238,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className={cn(
-                  "fas fa-user mr-3",
+                <User className={cn(
+                  "mr-3 h-4 w-4",
                   isLinkActive("/category/players") ? "text-[#FDBE11]" : "text-gray-500"
-                )}></i>
+                )} />
                 Jugadores
               </Link>
             </li>
