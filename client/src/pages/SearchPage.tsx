@@ -46,6 +46,13 @@ export default function SearchPage() {
     refetch
   } = useQuery<Video[]>({
     queryKey: ['/api/videos/search', searchQuery],
+    queryFn: async () => {
+      const response = await fetch(`/api/videos/search?query=${encodeURIComponent(searchQuery)}`);
+      if (!response.ok) {
+        throw new Error('Error al buscar videos');
+      }
+      return response.json();
+    },
     enabled: !!searchQuery,
   });
 
@@ -73,6 +80,7 @@ export default function SearchPage() {
     if (selectedCategory !== 'all') params.set('category', selectedCategory);
     
     setLocation(`/search?${params.toString()}`);
+    // No es necesario volver a buscar, solo filtrar los resultados existentes
   };
 
   // Handle category change
@@ -85,6 +93,7 @@ export default function SearchPage() {
     params.set('category', category);
     
     setLocation(`/search?${params.toString()}`);
+    // No es necesario volver a buscar, solo filtrar los resultados existentes
   };
 
   // Función para convertir categorías a ID numéricos
