@@ -130,33 +130,7 @@ export default function LoginForm() {
         </form>
       </Form>
       
-      <div className="my-6 relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">O continúa con</span>
-        </div>
-      </div>
-      
-      <div className="flex gap-4 mb-6">
-        <Button 
-          variant="outline" 
-          type="button" 
-          className="flex-1 py-5" 
-          onClick={() => window.location.href = "/api/auth/google"}
-        >
-          Google
-        </Button>
-        <Button 
-          variant="outline" 
-          type="button" 
-          className="flex-1 py-5" 
-          onClick={() => window.location.href = "/api/auth/apple"}
-        >
-          Apple
-        </Button>
-      </div>
+      {/* SSO buttons temporarily hidden */}
       
       <div className="text-center">
         <p className="text-gray-600">

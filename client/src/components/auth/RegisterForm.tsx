@@ -174,17 +174,7 @@ export default function RegisterForm() {
         </Form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <div className="text-center w-full">
-          <span className="text-sm text-gray-500">O inicia sesión con</span>
-          <div className="flex justify-center gap-4 mt-2">
-            <Button variant="outline" type="button" onClick={() => window.location.href = "/api/auth/google"}>
-              Google
-            </Button>
-            <Button variant="outline" type="button" onClick={() => window.location.href = "/api/auth/apple"}>
-              Apple
-            </Button>
-          </div>
-        </div>
+        {/* SSO buttons temporarily hidden */}
         <div className="text-center w-full">
           <p className="text-sm">
             ¿Ya tienes cuenta?{' '}
