@@ -102,30 +102,16 @@ export const useAuth = create<AuthState>((set, get) => ({
     } catch (error: any) {
       console.error('Error en el inicio de sesión:', error);
       
-      // Comprobar si el error tiene un mensaje específico del servidor
-      let errorMessage = 'Error en el inicio de sesión';
+      // Obtener un mensaje de error claro para mostrar al usuario
+      let errorMessage = error.message || 'Usuario o contraseña incorrectos';
       
-      try {
-        // Intentar parsear el mensaje de error para obtener detalles específicos
-        if (error.message && error.message.includes(':')) {
-          const parts = error.message.split(':');
-          if (parts.length > 1) {
-            const errorBody = JSON.parse(parts[1].trim());
-            errorMessage = errorBody.error || errorMessage;
-          }
-        }
-      } catch (e) {
-        // Si hay algún error al parsear, usamos el mensaje original
-        errorMessage = error.message || errorMessage;
-      }
-      
+      // Establecer el error en el estado para que esté disponible en cualquier lugar
       set({ 
         error: errorMessage, 
         isLoading: false 
       });
       
-      // Lanzar el error para que pueda ser capturado por el componente
-      throw new Error(errorMessage);
+      return false;
     }
   },
   

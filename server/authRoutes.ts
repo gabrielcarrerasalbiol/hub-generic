@@ -1,6 +1,7 @@
 import { Express, Request, Response } from 'express';
 import passport from 'passport';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { storage } from './storage';
 import { generateToken, isAuthenticated, isAdmin } from './auth';
 import { insertUserSchema, UserRole } from '../shared/schema';
@@ -22,6 +23,14 @@ const registerSchema = insertUserSchema.extend({
 });
 
 // Export function to register all auth routes
+// Generar un token único para el reseteo de contraseña
+function generateResetToken(): string {
+  return crypto.randomUUID().replace(/-/g, '');
+}
+
+// Almacenamiento temporal de tokens de reseteo (en producción debería guardarse en la base de datos)
+const passwordResetTokens: Record<string, {userId: number, expiresAt: Date}> = {};
+
 export function registerAuthRoutes(app: Express) {
   // Register a new user
   app.post('/api/auth/register', async (req: Request, res: Response) => {
@@ -321,6 +330,121 @@ export function registerAuthRoutes(app: Express) {
     } catch (error) {
       console.error('Error updating user role:', error);
       res.status(500).json({ error: 'Error al actualizar el rol del usuario' });
+    }
+  });
+
+  // Solicitar reseteo de contraseña
+  app.post('/api/auth/forgot-password', async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ error: 'Se requiere un correo electrónico' });
+      }
+      
+      // Buscar usuario por email
+      const user = await storage.getUserByEmail(email);
+      
+      if (!user) {
+        // Por seguridad, no revelar si el correo existe o no
+        return res.status(200).json({ 
+          message: 'Si el correo existe en nuestra base de datos, recibirás instrucciones para restablecer tu contraseña.' 
+        });
+      }
+      
+      // Generar token de reseteo
+      const resetToken = generateResetToken();
+      
+      // Almacenar token con expiración (24 horas)
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+      
+      passwordResetTokens[resetToken] = {
+        userId: user.id,
+        expiresAt
+      };
+      
+      // En producción, aquí enviaríamos un correo con el link de reseteo
+      // Por ahora, solo devolvemos el token para testing
+      console.log(`Token de reseteo para ${email}: ${resetToken}`);
+      console.log(`Link de reseteo: http://localhost:5000/reset-password?token=${resetToken}`);
+      
+      res.status(200).json({ 
+        message: 'Si el correo existe en nuestra base de datos, recibirás instrucciones para restablecer tu contraseña.',
+        // Solo en desarrollo:
+        resetToken,
+        resetLink: `http://localhost:5000/reset-password?token=${resetToken}`
+      });
+    } catch (error) {
+      console.error('Error requesting password reset:', error);
+      res.status(500).json({ error: 'Error al solicitar reseteo de contraseña' });
+    }
+  });
+  
+  // Validar token de reseteo
+  app.get('/api/auth/reset-password/:token', async (req: Request, res: Response) => {
+    try {
+      const { token } = req.params;
+      
+      // Verificar si el token existe y no ha expirado
+      const resetData = passwordResetTokens[token];
+      
+      if (!resetData || new Date() > resetData.expiresAt) {
+        return res.status(400).json({ error: 'Token inválido o expirado' });
+      }
+      
+      res.status(200).json({ valid: true });
+    } catch (error) {
+      console.error('Error validating reset token:', error);
+      res.status(500).json({ error: 'Error al validar token de reseteo' });
+    }
+  });
+  
+  // Resetear contraseña con token
+  app.post('/api/auth/reset-password', async (req: Request, res: Response) => {
+    try {
+      const { token, newPassword, confirmPassword } = req.body;
+      
+      // Validar datos
+      if (!token || !newPassword || !confirmPassword) {
+        return res.status(400).json({ error: 'Faltan datos requeridos' });
+      }
+      
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({ error: 'Las contraseñas no coinciden' });
+      }
+      
+      if (newPassword.length < 6) {
+        return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 6 caracteres' });
+      }
+      
+      // Verificar si el token existe y no ha expirado
+      const resetData = passwordResetTokens[token];
+      
+      if (!resetData || new Date() > resetData.expiresAt) {
+        return res.status(400).json({ error: 'Token inválido o expirado' });
+      }
+      
+      // Buscar usuario
+      const user = await storage.getUser(resetData.userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
+      }
+      
+      // Hash nueva contraseña
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      
+      // Actualizar contraseña
+      await storage.updateUser(user.id, { password: hashedPassword });
+      
+      // Eliminar token usado
+      delete passwordResetTokens[token];
+      
+      res.status(200).json({ message: 'Contraseña actualizada con éxito' });
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      res.status(500).json({ error: 'Error al resetear contraseña' });
     }
   });
 }
