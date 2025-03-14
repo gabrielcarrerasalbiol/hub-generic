@@ -11,20 +11,39 @@ import jwt from 'jsonwebtoken';
 
 // Importar crypto para generar una clave segura temporal si no existe JWT_SECRET
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 // JWT Secret for signing tokens
-// Asegurarse de que JWT_SECRET sea siempre un string
+// Implementación mejorada para mantener un secreto consistente entre reinicios
+const JWT_SECRET_FILE = path.join(process.cwd(), '.jwt_secret');
+
+// Función para generar un secreto seguro
 const generateSecureSecret = (): string => {
   return crypto.randomBytes(64).toString('hex');
 };
 
-const JWT_SECRET: string = process.env.JWT_SECRET || generateSecureSecret();
+// Función para obtener o crear un secreto persistente
+const getPersistentSecret = (): string => {
+  try {
+    if (fs.existsSync(JWT_SECRET_FILE)) {
+      return fs.readFileSync(JWT_SECRET_FILE, 'utf8');
+    } else {
+      const newSecret = generateSecureSecret();
+      fs.writeFileSync(JWT_SECRET_FILE, newSecret, 'utf8');
+      return newSecret;
+    }
+  } catch (error) {
+    console.error('Error accediendo al archivo de secreto JWT:', error);
+    return generateSecureSecret(); // Fallback a secreto temporal en memoria
+  }
+};
+
+const JWT_SECRET: string = process.env.JWT_SECRET || getPersistentSecret();
 
 if (!process.env.JWT_SECRET) {
-  console.error('¡ADVERTENCIA! JWT_SECRET no está configurado. Utilizando un secreto temporal. NO USAR EN PRODUCCIÓN.');
-  console.error('En producción, establezca JWT_SECRET como variable de entorno.');
-  // En producción, deberíamos detener la aplicación aquí
-  // process.exit(1);
+  console.error('¡ADVERTENCIA! JWT_SECRET no está configurado en variables de entorno. Utilizando un secreto persistente en archivo.');
+  console.error('En producción, establezca JWT_SECRET como variable de entorno para mayor seguridad.');
 }
 
 // Google OAuth credentials
