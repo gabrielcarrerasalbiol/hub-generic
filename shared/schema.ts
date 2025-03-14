@@ -229,10 +229,11 @@ export type PlatformType = z.infer<typeof PlatformType>;
 export const CategoryType = z.enum([
   "all", 
   "matches", 
-  "training", 
-  "press", 
+  "transfers", 
+  "tactics", 
   "interviews", 
-  "players", 
-  "analysis"
+  "history", 
+  "fan_content",
+  "news"
 ]);
 export type CategoryType = z.infer<typeof CategoryType>;

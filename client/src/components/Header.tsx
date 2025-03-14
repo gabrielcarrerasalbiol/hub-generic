@@ -58,8 +58,8 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
       return;
     }
     
-    // Navigate to search results
-    navigate(`/?search=${encodeURIComponent(searchQuery)}`);
+    // Navigate to search results page
+    navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
   // Handle logout

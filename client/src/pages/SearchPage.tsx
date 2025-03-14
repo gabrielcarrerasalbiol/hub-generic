@@ -87,21 +87,27 @@ export default function SearchPage() {
     setLocation(`/search?${params.toString()}`);
   };
 
+  // Función para convertir categorías a ID numéricos
+  const getCategoryId = (category: CategoryType): number => {
+    switch(category) {
+      case 'matches': return 1;
+      case 'transfers': return 2;
+      case 'tactics': return 3;
+      case 'interviews': return 4;
+      case 'history': return 5;
+      case 'fan_content': return 6;
+      case 'news': return 7;
+      default: return 0;
+    }
+  }
+
   // Filter videos by platform and category
   const filteredVideos = videos.filter(video => {
     const matchesPlatform = selectedPlatform === 'all' || video.platform === selectedPlatform;
     
-    const matchesCategory = selectedCategory === 'all' || (
-      video.categoryIds && video.categoryIds.includes(
-        selectedCategory === 'matches' ? 1 : 
-        selectedCategory === 'transfers' ? 2 :
-        selectedCategory === 'tactics' ? 3 :
-        selectedCategory === 'interviews' ? 4 :
-        selectedCategory === 'history' ? 5 :
-        selectedCategory === 'fan_content' ? 6 :
-        selectedCategory === 'news' ? 7 : 0
-      )
-    );
+    const categoryId = getCategoryId(selectedCategory);
+    const matchesCategory = selectedCategory === 'all' || 
+      (video.categoryIds && categoryId > 0 && video.categoryIds.includes(String(categoryId)));
     
     return matchesPlatform && matchesCategory;
   });
