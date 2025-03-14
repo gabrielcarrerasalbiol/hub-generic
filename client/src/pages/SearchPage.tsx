@@ -38,21 +38,33 @@ export default function SearchPage() {
     }
   }, [location]);
 
+  // Estado para rastrear cuándo se inicia una búsqueda
+  const [isSearching, setIsSearching] = useState(false);
+
   // Fetch search results
   const { 
     data: videos = [], 
     isLoading, 
+    isFetching, 
     error,
     refetch
   } = useQuery<Video[]>({
     queryKey: ['/api/videos/search', searchQuery],
     queryFn: async () => {
-      // Ahora utilizamos 'q' para que coincida con lo que espera el backend
-      const response = await fetch(`/api/videos/search?q=${encodeURIComponent(searchQuery)}`);
-      if (!response.ok) {
-        throw new Error('Error al buscar videos');
+      // Indicamos que estamos buscando
+      setIsSearching(true);
+      try {
+        // Ahora utilizamos 'q' para que coincida con lo que espera el backend
+        const response = await fetch(`/api/videos/search?q=${encodeURIComponent(searchQuery)}`);
+        if (!response.ok) {
+          throw new Error('Error al buscar videos');
+        }
+        const data = await response.json();
+        return data;
+      } finally {
+        // Después de completar la búsqueda (éxito o error)
+        setTimeout(() => setIsSearching(false), 500); // Pequeño retraso para evitar parpadeos
       }
-      return response.json();
     },
     enabled: !!searchQuery,
   });
@@ -148,35 +160,61 @@ export default function SearchPage() {
               className="w-full"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              disabled={isLoading || isFetching || isSearching}
             />
           </div>
-          <Button type="submit" className="bg-[#001C58] hover:bg-[#001C58]/90">
-            Buscar
+          <Button 
+            type="submit" 
+            className="bg-[#001C58] hover:bg-[#001C58]/90 min-w-[100px]"
+            disabled={isLoading || isFetching || isSearching || !searchQuery.trim()}
+          >
+            {(isLoading || isFetching || isSearching) ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Buscando...</span>
+              </div>
+            ) : (
+              'Buscar'
+            )}
           </Button>
         </form>
 
         <div className="mt-4 flex flex-col md:flex-row gap-4">
           <div className="md:w-1/2">
-            <p className="text-sm font-medium mb-2 dark:text-white">Filtrar por plataforma:</p>
-            <PlatformFilters 
-              selectedPlatform={selectedPlatform} 
-              onSelectPlatform={handlePlatformChange} 
-            />
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium mb-2 dark:text-white">Filtrar por plataforma:</p>
+              {(isLoading || isFetching || isSearching) && (
+                <div className="w-3 h-3 border-2 border-[#FDBE11] border-t-transparent rounded-full animate-spin mb-2"></div>
+              )}
+            </div>
+            <div className={`${(isLoading || isFetching || isSearching) ? 'opacity-50 pointer-events-none' : ''}`}>
+              <PlatformFilters 
+                selectedPlatform={selectedPlatform} 
+                onSelectPlatform={handlePlatformChange} 
+              />
+            </div>
           </div>
           <div className="md:w-1/2">
-            <p className="text-sm font-medium mb-2 dark:text-white">Filtrar por categoría:</p>
-            <CategoryFilters 
-              selectedCategory={selectedCategory} 
-              onSelectCategory={handleCategoryChange} 
-            />
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium mb-2 dark:text-white">Filtrar por categoría:</p>
+              {(isLoading || isFetching || isSearching) && (
+                <div className="w-3 h-3 border-2 border-[#FDBE11] border-t-transparent rounded-full animate-spin mb-2"></div>
+              )}
+            </div>
+            <div className={`${(isLoading || isFetching || isSearching) ? 'opacity-50 pointer-events-none' : ''}`}>
+              <CategoryFilters 
+                selectedCategory={selectedCategory} 
+                onSelectCategory={handleCategoryChange} 
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Display loading state */}
-      {isLoading && (
+      {/* Display loading state - mostrar tanto cuando está cargando inicialmente como cuando está haciendo una nueva búsqueda */}
+      {(isLoading || isFetching || isSearching) && (
         <>
-          {/* Spinner principal */}
+          {/* Spinner principal - se muestra incluso durante las búsquedas posteriores */}
           <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center mb-6">
             <div className="flex flex-col items-center justify-center">
               <div className="w-12 h-12 border-4 border-[#FDBE11] border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -187,10 +225,10 @@ export default function SearchPage() {
             </div>
           </div>
           
-          {/* Skeletons de tarjetas */}
+          {/* Skeletons de tarjetas con efecto de pulsación */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {[...Array(8)].map((_, index) => (
-              <div key={index} className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden">
+              <div key={index} className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden animate-pulse">
                 <Skeleton className="w-full aspect-video" />
                 <div className="p-3">
                   <Skeleton className="h-5 w-full mb-3" />
@@ -212,40 +250,78 @@ export default function SearchPage() {
       {/* Display error state */}
       {error && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-6 text-center">
-          <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">Error</h2>
-          <p className="dark:text-gray-300">No se pudieron cargar los resultados de búsqueda. Por favor, intenta de nuevo con otros términos.</p>
+          <div className="flex flex-col items-center justify-center">
+            <svg className="w-12 h-12 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">Error en la búsqueda</h2>
+            <p className="dark:text-gray-300 mb-4">No se pudieron cargar los resultados de búsqueda. Por favor, intenta de nuevo con otros términos o comprueba tu conexión a internet.</p>
+            <div className="flex gap-4">
+              <Button onClick={() => refetch()} className="bg-[#001C58] hover:bg-[#001C58]/90">
+                Intentar nuevamente
+              </Button>
+              <Button onClick={() => {
+                setSearchQuery('');
+                setLocation('/search');
+              }} variant="outline">
+                Reiniciar búsqueda
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Display empty state */}
-      {!isLoading && !error && searchQuery && filteredVideos.length === 0 && (
+      {!isLoading && !isFetching && !isSearching && !error && searchQuery && filteredVideos.length === 0 && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center">
           <h2 className="text-xl font-semibold mb-2 dark:text-white">No se encontraron resultados</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             No hemos encontrado videos que coincidan con tu búsqueda. Prueba con otros términos o filtros diferentes.
           </p>
-          <Button onClick={() => {
-            setSelectedPlatform('all');
-            setSelectedCategory('all');
-            setLocation(`/search?q=${searchQuery}`);
-          }} variant="outline">
-            Limpiar filtros
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button onClick={() => {
+              setSelectedPlatform('all');
+              setSelectedCategory('all');
+              setLocation(`/search?q=${searchQuery}`);
+            }} variant="outline">
+              Limpiar filtros
+            </Button>
+            <Button onClick={() => refetch()} className="bg-[#001C58] hover:bg-[#001C58]/90">
+              Intentar nuevamente
+            </Button>
+          </div>
         </div>
       )}
 
       {/* Display empty state before search */}
-      {!isLoading && !searchQuery && (
+      {!isLoading && !isFetching && !isSearching && !searchQuery && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center">
           <h2 className="text-xl font-semibold mb-2 dark:text-white">Busca contenido del Real Madrid</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             Ingresa términos de búsqueda para encontrar videos, noticias y contenido relacionado con el Real Madrid.
           </p>
+          <div className="flex flex-wrap gap-2 justify-center">
+            {['Benzema', 'Vinicius Jr', 'Bellingham', 'Ancelotti', 'Champions'].map(term => (
+              <Button 
+                key={term}
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  setSearchQuery(term);
+                  setLocation(`/search?q=${term}`);
+                  refetch();
+                }}
+                className="border-[#FDBE11] text-[#FDBE11] hover:bg-[#FDBE11]/10"
+              >
+                {term}
+              </Button>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Display search results */}
-      {!isLoading && !error && filteredVideos.length > 0 && (
+      {!isLoading && !isFetching && !isSearching && !error && filteredVideos.length > 0 && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredVideos.slice(0, visibleVideos).map((video) => (

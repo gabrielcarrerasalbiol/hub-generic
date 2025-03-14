@@ -6,6 +6,7 @@ import { classifyContent, enhanceSearch } from "./api/openai";
 import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
 import { recategorizeVideo, recategorizeAllVideos } from "./api/categoryUpdater";
+import { generateSummaryForVideo, generateSummariesForAllVideos } from "./api/summaryUpdater";
 import { cleanupUnavailableVideos } from "./api/videoValidator";
 import { 
   getStatisticsOverview, 
