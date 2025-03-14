@@ -47,7 +47,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Star, Plus, Search, RefreshCw, Trash2, Edit, Eye, ArrowUpDown } from 'lucide-react';
+import { Loader2, Star, Plus, Search, RefreshCcw, Trash2, Edit, Eye, ArrowUpDown } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 
 export default function VideoManagement() {
@@ -477,7 +477,7 @@ export default function VideoManagement() {
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="outline" className="btn-madrid-outline">
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCcw className="mr-2 h-4 w-4" />
                 Verificar Disponibilidad
               </Button>
             </AlertDialogTrigger>
