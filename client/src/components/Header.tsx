@@ -92,6 +92,9 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                 alt="Hub Madridista Logo" 
                 className="h-14" 
               />
+              <span className="font-bold text-lg hidden md:inline">
+                <span className="text-[#362C5A] dark:text-[#9D8FDD]">Hub</span><span className="text-[#FFD700] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Madridista</span>
+              </span>
           </Link>
           
           {/* Search Bar - Desktop */}

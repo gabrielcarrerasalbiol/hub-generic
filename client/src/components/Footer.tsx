@@ -14,8 +14,9 @@ export default function Footer() {
               alt="Hub Madridista Logo" 
               className="h-10 mr-2" 
             />
-            <span className="text-gray-700 dark:text-gray-200 font-bold text-lg">
-              &copy; {new Date().getFullYear()}
+            <span className="font-bold text-lg">
+              <span className="text-[#362C5A] dark:text-[#9D8FDD]">Hub</span><span className="text-[#FFD700] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Madridista</span>
+              <span className="text-gray-700 dark:text-gray-200 ml-2">&copy; {new Date().getFullYear()}</span>
             </span>
           </div>
           
