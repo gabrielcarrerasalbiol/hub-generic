@@ -107,6 +107,7 @@ export function setupPassport() {
                   name: profile.displayName,
                   profilePicture: profile.photos && profile.photos[0] ? profile.photos[0].value : null,
                   googleId: profile.id,
+                  role: 'free', // Asignamos por defecto el rol free
                 };
                 
                 user = await storage.createUser(newUser);
@@ -190,6 +191,7 @@ export function setupPassport() {
                 name: name || `Usuario de Apple ${Date.now().toString().substring(9)}`,
                 profilePicture: null,
                 appleId: profile.id,
+                role: 'free', // Asignamos por defecto el rol free
               };
               
               user = await storage.createUser(newUser);
@@ -265,6 +267,61 @@ export function isAuthenticated(req: Request, res: Response, next: NextFunction)
     console.error('Error verifying token:', error);
     res.status(401).json({ error: 'Token inválido o expirado' });
   }
+}
+
+// Middleware para verificar roles de usuario
+export function hasRole(roles: string[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'No estás autenticado' });
+    }
+
+    const user = req.user as User;
+    
+    if (!roles.includes(user.role)) {
+      return res.status(403).json({
+        error: 'No tienes permiso para acceder a este recurso',
+        requiredRoles: roles,
+        currentRole: user.role
+      });
+    }
+
+    next();
+  };
+}
+
+// Middleware para verificar si el usuario es administrador
+export function isAdmin(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }
+
+  const user = req.user as User;
+  
+  if (user.role !== 'admin') {
+    return res.status(403).json({
+      error: 'Necesitas ser administrador para acceder a este recurso'
+    });
+  }
+
+  next();
+}
+
+// Middleware para verificar si el usuario es premium
+export function isPremium(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }
+
+  const user = req.user as User;
+  
+  if (user.role !== 'premium' && user.role !== 'admin') {
+    return res.status(403).json({
+      error: 'Necesitas ser usuario premium para acceder a este recurso'
+    });
+  }
+
+  next();
 }
 
 // Function to extract JWT token from request

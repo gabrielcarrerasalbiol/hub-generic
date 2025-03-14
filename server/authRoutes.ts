@@ -2,8 +2,8 @@ import { Express, Request, Response } from 'express';
 import passport from 'passport';
 import bcrypt from 'bcryptjs';
 import { storage } from './storage';
-import { generateToken, isAuthenticated } from './auth';
-import { insertUserSchema } from '../shared/schema';
+import { generateToken, isAuthenticated, isAdmin } from './auth';
+import { insertUserSchema, UserRole } from '../shared/schema';
 import { z } from 'zod';
 
 // Schema for login validation
@@ -61,7 +61,8 @@ export function registerAuthRoutes(app: Express) {
         password: hashedPassword,
         email: email || null,
         name: name || null,
-        profilePicture: profilePicture || null
+        profilePicture: profilePicture || null,
+        role: 'free' // Usuario gratuito por defecto
       });
       
       // Generate auth token
@@ -74,7 +75,8 @@ export function registerAuthRoutes(app: Express) {
           username: user.username,
           email: user.email,
           name: user.name,
-          profilePicture: user.profilePicture
+          profilePicture: user.profilePicture,
+          role: user.role
         },
         token
       });
@@ -117,7 +119,8 @@ export function registerAuthRoutes(app: Express) {
             username: user.username,
             email: user.email,
             name: user.name,
-            profilePicture: user.profilePicture
+            profilePicture: user.profilePicture,
+            role: user.role
           },
           token
         });
@@ -181,7 +184,8 @@ export function registerAuthRoutes(app: Express) {
       username: user.username,
       email: user.email,
       name: user.name,
-      profilePicture: user.profilePicture
+      profilePicture: user.profilePicture,
+      role: user.role // Incluimos el rol del usuario en la respuesta
     });
   });
   
@@ -275,6 +279,48 @@ export function registerAuthRoutes(app: Express) {
     } catch (error) {
       console.error('Error changing password:', error);
       res.status(500).json({ error: 'Error al cambiar contraseña' });
+    }
+  });
+  
+  // Cambiar el rol de un usuario (solo para administradores)
+  app.put('/api/auth/role/:userId', isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const { role } = req.body;
+      
+      // Validar el rol
+      if (!role || !['free', 'premium', 'admin'].includes(role)) {
+        return res.status(400).json({
+          error: 'Rol inválido',
+          validRoles: ['free', 'premium', 'admin']
+        });
+      }
+      
+      // Comprobar que el usuario existe
+      const userToUpdate = await storage.getUser(parseInt(userId));
+      if (!userToUpdate) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
+      }
+      
+      // Actualizar el rol del usuario
+      const updatedUser = await storage.updateUser(parseInt(userId), { role });
+      
+      if (!updatedUser) {
+        return res.status(500).json({ error: 'Error al actualizar el rol del usuario' });
+      }
+      
+      res.json({
+        message: 'Rol actualizado con éxito',
+        user: {
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          role: updatedUser.role
+        }
+      });
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      res.status(500).json({ error: 'Error al actualizar el rol del usuario' });
     }
   });
 }
