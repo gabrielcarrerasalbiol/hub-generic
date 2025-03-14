@@ -126,6 +126,9 @@ export async function apiRequest<T = any>(
       ...requestOptions.headers,
       'Authorization': `Bearer ${token}`
     };
+    console.log('Token añadido a la solicitud:', `Bearer ${token.substring(0, 10)}...`);
+  } else {
+    console.log('No se encontró token de autenticación');
   }
 
   const res = await fetch(url, requestOptions);
@@ -152,6 +155,9 @@ export const getQueryFn: <T>(options: {
     const headers: HeadersInit = {};
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
+      console.log('Token añadido a la consulta:', `Bearer ${token.substring(0, 10)}...`);
+    } else {
+      console.log('No se encontró token de autenticación para la consulta');
     }
 
     const res = await fetch(url, {

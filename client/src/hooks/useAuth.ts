@@ -169,7 +169,12 @@ export const useAuth = create<AuthState>((set, get) => {
         });
         
         // Guardar el nuevo token
-        localStorage.setItem('hubmadridista_token', result.token);
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem('hubmadridista_token', result.token);
+          console.log('Token guardado en localStorage', result.token.substring(0, 10) + '...');
+        } else {
+          console.error('No se pudo guardar el token: localStorage no disponible');
+        }
         
         // Actualizar el estado sin redireccionamiento forzado
         set({ user: result.user, token: result.token, isLoading: false });
@@ -404,7 +409,12 @@ export const useAuth = create<AuthState>((set, get) => {
     },
     
     processToken: async (token: string) => {
-      localStorage.setItem('hubmadridista_token', token);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('hubmadridista_token', token);
+        console.log('Token procesado y guardado en localStorage', token.substring(0, 10) + '...');
+      } else {
+        console.error('No se pudo procesar token: localStorage no disponible');
+      }
       set({ token });
       await get().fetchUser();
     },
