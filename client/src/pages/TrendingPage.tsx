@@ -802,11 +802,27 @@ export default function TrendingPage() {
           ))}
         </div>
       ) : sortedVideos.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {sortedVideos.map((video: Video) => (
-            <VideoCard key={video.id} video={video} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {sortedVideos.slice(0, visibleVideos).map((video: Video) => (
+              <VideoCard key={video.id} video={video} />
+            ))}
+          </div>
+          
+          {/* Botón para cargar más videos */}
+          {visibleVideos < sortedVideos.length && (
+            <div className="flex justify-center mt-8">
+              <Button 
+                onClick={loadMoreVideos}
+                variant="outline" 
+                className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+              >
+                <ChevronDown className="mr-2 h-4 w-4" />
+                Cargar más videos ({sortedVideos.length - visibleVideos} restantes)
+              </Button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="bg-white rounded-lg shadow-md p-8 text-center border border-[#FDBE11]/30">
           <div className="flex flex-col items-center max-w-md mx-auto">

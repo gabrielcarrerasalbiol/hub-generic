@@ -211,7 +211,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/videos/trending", async (req: Request, res: Response) => {
     try {
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       const videos = await storage.getTrendingVideos(limit);
       
       // Check if any videos are favorites
@@ -231,7 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/videos/latest", async (req: Request, res: Response) => {
     try {
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       const videos = await storage.getLatestVideos(limit);
       
       // Check if any videos are favorites
@@ -252,7 +252,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/videos/search", async (req: Request, res: Response) => {
     try {
       const query = req.query.q as string || "";
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       
       if (!query) {
         return res.status(400).json({ message: "Query parameter is required" });
@@ -363,7 +363,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/videos/category/:categoryId", async (req: Request, res: Response) => {
     try {
       const categoryId = parseInt(req.params.categoryId);
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       
       if (isNaN(categoryId)) {
         return res.status(400).json({ message: "Invalid category ID" });
@@ -416,7 +416,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/channels", async (req: Request, res: Response) => {
     try {
       const platform = req.query.platform || "all";
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       
       if (!PlatformType.safeParse(platform).success) {
         return res.status(400).json({ message: "Invalid platform" });
@@ -464,7 +464,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/channels/:id/videos", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       
       if (isNaN(id)) {
         return res.status(400).json({ message: "Invalid channel ID" });
