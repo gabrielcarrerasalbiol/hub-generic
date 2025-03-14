@@ -72,7 +72,7 @@ export default function VideoManagement() {
   const [visibleVideos, setVisibleVideos] = useState(20);
   const VIDEOS_PER_PAGE = 20;
   
-  // Obtener todos los videos
+  // Obtener todos los videos con Header para indicar que es una solicitud admin
   const {
     data: videos = [],
     isLoading: isLoadingVideos,
@@ -80,6 +80,13 @@ export default function VideoManagement() {
   } = useQuery({
     queryKey: ['/api/videos'],
     staleTime: 1000 * 60 * 5, // 5 minutos
+    queryFn: async () => {
+      return await apiRequest('/api/videos', {
+        headers: {
+          'X-Admin-Request': 'true'
+        }
+      });
+    }
   });
 
   // Obtener todas las categorías
