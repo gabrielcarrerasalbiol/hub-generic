@@ -213,12 +213,33 @@ export class PgStorage implements IStorage {
   }
 
   async searchVideos(query: string, limit = 50): Promise<Video[]> {
-    const searchPattern = `%${query}%`;
+    // Limpiamos la consulta y la preparamos para la búsqueda
+    const cleanQuery = query.trim().toLowerCase();
+    
+    // Dividimos la consulta en palabras individuales para buscar coincidencias parciales
+    const searchTerms = cleanQuery.split(/\s+/).filter(term => term.length > 2);
+    
+    // Si no hay términos válidos, devolvemos un array vacío
+    if (searchTerms.length === 0) {
+      return [];
+    }
+    
+    // Creamos patrones de búsqueda para cada término
+    const searchPatterns = searchTerms.map(term => `%${term}%`);
+    
+    // Construimos la consulta SQL con condiciones OR para cada término y cada campo
+    const conditions = searchPatterns.map(pattern => {
+      return sql`${videos.title} ILIKE ${pattern} OR ${videos.description} ILIKE ${pattern} OR ${videos.summary} ILIKE ${pattern} OR ${videos.channelTitle} ILIKE ${pattern}`;
+    });
+    
+    // Combinamos las condiciones con OR
+    const whereClause = sql.join(conditions, sql` OR `);
+    
+    // Ejecutamos la consulta con orden por relevancia (más recientes primero)
     return db.select()
       .from(videos)
-      .where(
-        sql`${videos.title} ILIKE ${searchPattern} OR ${videos.description} ILIKE ${searchPattern} OR ${videos.summary} ILIKE ${searchPattern}`
-      )
+      .where(whereClause)
+      .orderBy(desc(videos.publishedAt))
       .limit(limit);
   }
 

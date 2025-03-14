@@ -44,14 +44,28 @@ export default function SearchPage() {
   // Estado para controlar manualmente cuándo realizar la búsqueda
   const [shouldSearch, setShouldSearch] = useState(false);
   
-  // Efectuar búsqueda solo cuando searchQuery cambia desde la URL o por botón explícito
+  // Detectar si venimos del header y ejecutar la búsqueda en ese caso
   useEffect(() => {
-    // Si el searchQuery viene de la URL y tiene más de 1 carácter, permitir búsqueda
-    const searchParams = new URLSearchParams(location.split('?')[1]);
-    const query = searchParams.get('q');
+    // Comprobar el sessionStorage para ver si venimos del header
+    const performSearch = sessionStorage.getItem('performSearch');
+    const storedQuery = sessionStorage.getItem('searchQuery');
     
-    if (query && query.length > 1 && query === searchQuery) {
+    if (performSearch === 'true' && storedQuery) {
+      // Establecer el query y activar la búsqueda
+      setSearchQuery(storedQuery);
       setShouldSearch(true);
+      
+      // Limpiar el storage para evitar búsquedas accidentales
+      sessionStorage.removeItem('performSearch');
+      sessionStorage.removeItem('searchQuery');
+    } else {
+      // Si no venimos del header, verificar la URL
+      const searchParams = new URLSearchParams(location.split('?')[1]);
+      const query = searchParams.get('q');
+      
+      if (query && query.length > 1 && query === searchQuery) {
+        setShouldSearch(true);
+      }
     }
   }, [location]);
   

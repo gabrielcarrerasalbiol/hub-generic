@@ -63,7 +63,10 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
     // Mostrar indicador de búsqueda
     setIsSearching(true);
     
-    // Navigate to search results page
+    // Navegar a la página de búsqueda con el término de búsqueda como parámetro
+    // Usamos sessionStorage para asegurar que la página de búsqueda ejecute la búsqueda
+    sessionStorage.setItem('performSearch', 'true');
+    sessionStorage.setItem('searchQuery', searchQuery);
     navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     
     // Resetear el estado después de navegar
