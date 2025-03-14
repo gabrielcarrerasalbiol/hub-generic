@@ -1,6 +1,7 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 // Variable global para control de solicitudes bloqueadas
+// Se reduce significativamente el uso del rate limiting en el lado del cliente
 const RATE_LIMIT_FLAG = 'hubmadridista_rate_limited';
 let apiRateLimited = false;
 
@@ -9,17 +10,18 @@ if (typeof window !== 'undefined') {
   const rateLimitFlag = window.localStorage.getItem(RATE_LIMIT_FLAG);
   if (rateLimitFlag) {
     console.log('API actualmente rate-limited, bloqueando solicitudes');
-    apiRateLimited = true;
     
     // Programar una limpieza del bloqueo después de 5 minutos
     const blockTime = parseInt(rateLimitFlag, 10);
     const now = Date.now();
     
-    // Si el bloqueo tiene más de 5 minutos, limpiarlo
-    if ((now - blockTime) > 5 * 60 * 1000) {
+    // Si el bloqueo tiene más de 2 segundos, limpiarlo (reducido drásticamente)
+    if ((now - blockTime) > 2 * 1000) {
       console.log('Limpiando bloqueo de API que expiró');
       window.localStorage.removeItem(RATE_LIMIT_FLAG);
       apiRateLimited = false;
+    } else {
+      apiRateLimited = true;
     }
   }
 }
@@ -171,11 +173,13 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      staleTime: 60000, // 1 minuto (reducido de Infinity para pruebas)
+      retry: 1, // Intentar una vez más (para manejar posibles errores temporales)
+      retryDelay: 1000, // Esperar 1 segundo entre reintentos
     },
     mutations: {
-      retry: false,
+      retry: 1, // Intentar una vez más
+      retryDelay: 1000, // Esperar 1 segundo entre reintentos
     },
   },
 });

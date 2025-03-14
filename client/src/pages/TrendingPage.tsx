@@ -41,8 +41,12 @@ export default function TrendingPage() {
     switch (sortBy) {
       case "views":
         return (b.viewCount || 0) - (a.viewCount || 0);
-      case "date":
-        return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+      case "date": {
+        // Manejar cuidadosamente los valores nulos o inválidos
+        const dateA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+        const dateB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+        return dateB - dateA;
+      }
       case "title_asc":
         return a.title.localeCompare(b.title);
       case "title_desc":

@@ -195,9 +195,10 @@ export function registerAuthRoutes(app: Express) {
   let GLOBAL_BLOCK_UNTIL = 0; // Desactivado por defecto
   let GLOBAL_REQUEST_COUNT = 0;
   
-  // Si hay más de 500 solicitudes en 10 segundos, bloquear por 30 segundos
+  // Si hay más de 5000 solicitudes en 10 segundos, bloquear por 30 segundos
+  // El umbral de emergencia se ha incrementado considerablemente para evitar bloqueos innecesarios
   setInterval(() => {
-    if (GLOBAL_REQUEST_COUNT > 500) {
+    if (GLOBAL_REQUEST_COUNT > 5000) {
       console.log(`ACTIVANDO BLOQUEO DE EMERGENCIA - ${GLOBAL_REQUEST_COUNT} solicitudes detectadas`);
       GLOBAL_BLOCK_UNTIL = Date.now() + 30000; // 30 segundos de bloqueo
     }
@@ -212,12 +213,12 @@ export function registerAuthRoutes(app: Express) {
     authRequestCache.clear();
   }, 300000); // 5 minutos
   
-  // Tiempo mínimo entre solicitudes (1000ms = 1 segundo)
-  const THROTTLE_TIME_MS = 1000;
+  // Tiempo mínimo entre solicitudes (250ms = 0.25 segundos) - Reducido para permitir más solicitudes rápidas
+  const THROTTLE_TIME_MS = 250;
   
   // Contador para limitar número total de solicitudes por sesión
   const requestCounters: Map<string, number> = new Map();
-  const MAX_REQUESTS_PER_MINUTE = 120; // 2 solicitudes por segundo
+  const MAX_REQUESTS_PER_MINUTE = 1800; // 30 solicitudes por segundo (aumentado significativamente)
   
   // Resetear contadores cada 2 minutos
   setInterval(() => {

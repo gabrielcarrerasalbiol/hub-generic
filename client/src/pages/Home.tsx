@@ -15,33 +15,33 @@ export default function Home() {
 
   // Fetch trending videos
   const { 
-    data: trendingVideos, 
+    data: trendingVideos = [], 
     isLoading: isTrendingLoading 
-  } = useQuery({
+  } = useQuery<Video[]>({
     queryKey: ["/api/videos/trending"],
   });
 
   // Fetch latest videos
   const { 
-    data: latestVideos, 
+    data: latestVideos = [], 
     isLoading: isLatestLoading 
-  } = useQuery({
+  } = useQuery<Video[]>({
     queryKey: ["/api/videos/latest"],
   });
 
   // Fetch recommended channels
   const { 
-    data: recommendedChannels, 
+    data: recommendedChannels = [], 
     isLoading: isChannelsLoading 
-  } = useQuery({
+  } = useQuery<Channel[]>({
     queryKey: ["/api/channels/recommended"],
   });
 
   // Fetch videos filtered by platform and category
   const { 
-    data: filteredVideos, 
+    data: filteredVideos = [], 
     isLoading: isFilteredLoading 
-  } = useQuery({
+  } = useQuery<Video[]>({
     queryKey: ["/api/videos", { platform, category }],
     enabled: platform !== "all" || category !== "all",
   });
@@ -50,10 +50,10 @@ export default function Home() {
   const isPlatformAvailable = platform === "all" || platform === "youtube";
 
   // Get featured video from the top trending video
-  const featuredVideo = trendingVideos && trendingVideos.length > 0 ? trendingVideos[0] : null;
+  const featuredVideo = trendingVideos.length > 0 ? trendingVideos[0] : null;
   
   // Get trending videos excluding the featured one
-  const trendingVideosWithoutFeatured = trendingVideos && trendingVideos.length > 1 
+  const trendingVideosWithoutFeatured = trendingVideos.length > 1 
     ? trendingVideos.slice(1)
     : [];
 
@@ -153,7 +153,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          ) : filteredVideos && filteredVideos.length > 0 ? (
+          ) : filteredVideos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredVideos.map((video: Video) => (
                 <VideoCard key={video.id} video={video} />
@@ -233,7 +233,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-        ) : recommendedChannels && recommendedChannels.length > 0 ? (
+        ) : recommendedChannels.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {recommendedChannels.map((channel: Channel) => (
               <ChannelCard key={channel.id} channel={channel} />
@@ -269,7 +269,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-        ) : latestVideos && latestVideos.length > 0 ? (
+        ) : latestVideos.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {latestVideos.map((video: Video) => (
               <VideoCard key={video.id} video={video} />
