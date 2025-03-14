@@ -295,9 +295,14 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className="flex items-center mt-3 hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20 rounded-md p-2 cursor-pointer"
               >
                 <img 
-                  src={channel.thumbnailUrl || 'https://via.placeholder.com/32'} 
+                  src={channel.thumbnailUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=32`} 
                   alt={channel.title} 
-                  className="w-8 h-8 rounded-full border border-[#FDBE11]" 
+                  className="w-8 h-8 rounded-full border border-[#FDBE11]"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=32`;
+                  }}
                 />
                 <div className="ml-2">
                   <p className="text-sm font-medium text-[#001C58] dark:text-white">{channel.title}</p>

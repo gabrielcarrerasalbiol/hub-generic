@@ -37,14 +37,14 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
       {/* Channel Banner */}
       <div 
         className={`h-24 ${getChannelBgColor(channel.platform)}`}
-        style={channel.banner_url ? { backgroundImage: `url(${channel.banner_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+        style={channel.bannerUrl ? { backgroundImage: `url(${channel.bannerUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
       ></div>
       
       {/* Channel Info */}
       <div className="px-4 pt-0 pb-4 relative">
         <div className="flex flex-col items-center">
           <img 
-            src={channel.thumbnail_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`} 
+            src={channel.thumbnailUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`} 
             alt={channel.title} 
             className="w-16 h-16 rounded-full border-4 border-white -mt-8 object-cover"
             onError={(e) => {
