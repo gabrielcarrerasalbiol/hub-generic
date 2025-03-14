@@ -28,18 +28,23 @@ export interface UserAuth {
   profilePicture: string | null;
 }
 
+interface AuthResponse {
+  user: UserAuth;
+  token: string;
+}
+
 export const useAuth = create<AuthState>((set, get) => ({
   user: null,
   token: localStorage.getItem('hubmadridista_token'),
   isLoading: false,
   error: null,
   
-  register: async (username, password, email, name) => {
+  register: async (username: string, password: string, email?: string, name?: string) => {
     set({ isLoading: true, error: null });
     
     try {
       const confirmPassword = password;
-      const result = await apiRequest<{user: UserAuth, token: string}>('/api/auth/register', {
+      const result = await apiRequest<AuthResponse>('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify({ username, password, confirmPassword, email, name }),
       });
@@ -56,11 +61,11 @@ export const useAuth = create<AuthState>((set, get) => ({
     }
   },
   
-  login: async (username, password) => {
+  login: async (username: string, password: string) => {
     set({ isLoading: true, error: null });
     
     try {
-      const result = await apiRequest<{user: UserAuth, token: string}>('/api/auth/login', {
+      const result = await apiRequest<AuthResponse>('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
       });
@@ -83,7 +88,7 @@ export const useAuth = create<AuthState>((set, get) => ({
     try {
       await apiRequest('/api/auth/logout', {
         method: 'POST',
-      });
+      } as RequestInit);
     } catch (error) {
       console.error('Error durante el cierre de sesión:', error);
     } finally {
@@ -108,14 +113,14 @@ export const useAuth = create<AuthState>((set, get) => ({
     }
   },
   
-  updateProfile: async (data) => {
+  updateProfile: async (data: Partial<{name: string, email: string, profilePicture: string}>) => {
     set({ isLoading: true, error: null });
     
     try {
       const user = await apiRequest<UserAuth>('/api/auth/profile', {
         method: 'PUT',
         body: JSON.stringify(data),
-      });
+      } as RequestInit);
       
       set({ user, isLoading: false });
       return true;
@@ -128,14 +133,14 @@ export const useAuth = create<AuthState>((set, get) => ({
     }
   },
   
-  changePassword: async (currentPassword, newPassword) => {
+  changePassword: async (currentPassword: string, newPassword: string) => {
     set({ isLoading: true, error: null });
     
     try {
       await apiRequest('/api/auth/password', {
         method: 'PUT',
         body: JSON.stringify({ currentPassword, newPassword }),
-      });
+      } as RequestInit);
       
       set({ isLoading: false });
       return true;
@@ -153,14 +158,14 @@ export const useAuth = create<AuthState>((set, get) => ({
     return !!token;
   },
   
-  processToken: async (token) => {
+  processToken: async (token: string) => {
     localStorage.setItem('hubmadridista_token', token);
     set({ token });
     await get().fetchUser();
   },
   
-  setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
+  setLoading: (isLoading: boolean) => set({ isLoading }),
+  setError: (error: string | null) => set({ error }),
 }));
 
 // Hook para manejar la redirección automática del token de URL
