@@ -126,6 +126,9 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                     <DropdownMenuItem asChild>
                       <Link href="/favorites" className="w-full cursor-pointer">Mis favoritos</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/subscriptions" className="w-full cursor-pointer">Mis suscripciones</Link>
+                    </DropdownMenuItem>
                     {userIsAdmin && (
                       <>
                         <DropdownMenuSeparator />

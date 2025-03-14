@@ -4,7 +4,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import VideoCard from "@/components/VideoCard";
 import SubscribeButton from "@/components/SubscribeButton";
+import { getQueryFn } from "@/lib/queryClient";
 import { Video, Channel } from "@shared/schema";
+
+// Extendemos el tipo Channel para incluir información de suscripción
+interface ChannelWithSubscription extends Channel {
+  isSubscribed?: boolean;
+  notificationsEnabled?: boolean;
+}
+
+interface SubscriptionStatusResponse {
+  isSubscribed: boolean;
+  notificationsEnabled: boolean;
+}
 import { useAuth } from "@/hooks/useAuth";
 
 export default function ChannelPage() {
@@ -16,16 +28,18 @@ export default function ChannelPage() {
   // Check subscription status
   const { data: subscriptionStatus } = useQuery({
     queryKey: [`/api/channels/${channelId}/subscription`],
+    queryFn: getQueryFn<SubscriptionStatusResponse>({ on401: 'returnNull' }),
     enabled: !!channelId && !!user,
   });
 
   // Fetch channel details
   const { 
-    data: channel, 
+    data: channel = {} as Channel, 
     isLoading: isChannelLoading, 
     error: channelError 
   } = useQuery({
     queryKey: [`/api/channels/${channelId}`],
+    queryFn: getQueryFn<Channel>({ on401: 'returnNull' }),
     enabled: !!channelId,
   });
 

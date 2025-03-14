@@ -4,7 +4,13 @@ import { getQueryFn, apiRequest } from '@/lib/queryClient';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Bell, BellOff, Trash2 } from 'lucide-react';
+// Importamos el tipo básico y luego extendemos para incluir propiedades de suscripción
 import { Channel } from '@shared/schema';
+
+// Extendemos el tipo Channel para incluir información de suscripción
+interface SubscribedChannel extends Channel {
+  notificationsEnabled: boolean;
+}
 
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -27,12 +33,12 @@ export default function SubscriptionsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
-  const [channelToUnsubscribe, setChannelToUnsubscribe] = useState<Channel | null>(null);
+  const [channelToUnsubscribe, setChannelToUnsubscribe] = useState<SubscribedChannel | null>(null);
 
   // Consultar canales suscritos
   const { data: subscribedChannels = [], isLoading } = useQuery({
     queryKey: ['/api/subscriptions/channels'],
-    queryFn: getQueryFn<Channel[]>({ on401: 'throw' }),
+    queryFn: getQueryFn<SubscribedChannel[]>({ on401: 'throw' }),
   });
 
   // Filtrar canales según la búsqueda

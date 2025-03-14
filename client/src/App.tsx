@@ -30,6 +30,7 @@ const Routes = () => (
     <Route path="/register" component={RegisterPage} />
     <Route path="/profile" component={ProfilePage} />
     <Route path="/admin" component={AdminPage} />
+    <Route path="/subscriptions" component={SubscriptionsPage} />
     <Route path="/forgot-password" component={ForgotPasswordPage} />
     <Route path="/reset-password" component={ResetPasswordPage} />
     <Route component={NotFound} />

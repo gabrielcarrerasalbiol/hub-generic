@@ -34,12 +34,15 @@ export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
 
   // Consultar el número de notificaciones no leídas
-  const { data: unreadCount = 0, isLoading: countLoading } = useQuery({
+  const { data: notificationCountData, isLoading: countLoading } = useQuery({
     queryKey: ['/api/notifications/unread/count'],
-    queryFn: getQueryFn({ on401: 'returnNull' }),
+    queryFn: getQueryFn<{ count: number }>({ on401: 'returnNull' }),
     enabled: !!user,
     refetchInterval: 30000, // Refrescar cada 30 segundos
   });
+  
+  // Extrae el número de la respuesta
+  const unreadCount = notificationCountData?.count || 0;
 
   // Consultar las notificaciones
   const { data: notifications = [], isLoading: notificationsLoading } = useQuery({
