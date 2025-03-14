@@ -21,8 +21,9 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
-  const { user, logout, checkAuth } = useAuth();
+  const { user, logout, checkAuth, isAdmin } = useAuth();
   const isAuthenticated = checkAuth();
+  const userIsAdmin = isAdmin();
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
@@ -120,6 +121,19 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                     <DropdownMenuItem asChild>
                       <Link href="/favorites" className="w-full cursor-pointer">Mis favoritos</Link>
                     </DropdownMenuItem>
+                    {userIsAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin" className="w-full cursor-pointer">
+                            <span className="flex items-center text-red-600">
+                              <i className="fas fa-shield-alt mr-2"></i>
+                              Panel de Admin
+                            </span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       Cerrar sesión
