@@ -45,6 +45,9 @@ export default function Home() {
     queryKey: ["/api/videos", { platform, category }],
     enabled: platform !== "all" || category !== "all",
   });
+  
+  // Verificar si la plataforma seleccionada está disponible
+  const isPlatformAvailable = platform === "all" || platform === "youtube";
 
   // Get featured video from the top trending video
   const featuredVideo = trendingVideos && trendingVideos.length > 0 ? trendingVideos[0] : null;
@@ -105,7 +108,33 @@ export default function Home() {
         <section className="mb-10">
           <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Videos Filtrados</h2>
           
-          {isFilteredLoading ? (
+          {!isPlatformAvailable ? (
+            <div className="bg-white rounded-lg shadow-md p-8 text-center border border-amber-200">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
+                  <i className={`fab fa-${platform} text-3xl ${
+                    platform === 'tiktok' ? 'text-black' : 
+                    platform === 'twitter' ? 'text-blue-400' : 
+                    platform === 'instagram' ? 'text-pink-500' : ''
+                  }`}></i>
+                </div>
+                <h3 className="text-xl font-semibold text-[#001C58] mb-2">Plataforma en desarrollo</h3>
+                <p className="text-gray-600 mb-4">
+                  Estamos trabajando para incorporar contenido de <span className="font-semibold capitalize">{platform}</span> a nuestro Hub Madridista.
+                </p>
+                <p className="text-sm text-gray-500 mb-6">
+                  Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                  onClick={() => setPlatform("all")}
+                >
+                  Volver a todos los videos
+                </Button>
+              </div>
+            </div>
+          ) : isFilteredLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {[...Array(4)].map((_, index) => (
                 <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">

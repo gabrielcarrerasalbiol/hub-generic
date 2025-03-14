@@ -52,10 +52,18 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
-                <i className="fas fa-fire mr-3 text-gray-500"></i>
+              <Link href="/trending" className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/trending") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}>
+                <i className={cn(
+                  "fas fa-fire mr-3",
+                  isLinkActive("/trending") ? "text-[#FDBE11]" : "text-gray-500"
+                )}></i>
                 Tendencias
-              </a>
+              </Link>
             </li>
             <li>
               <Link href="/favorites" className={cn(
@@ -99,28 +107,63 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Plataformas</h3>
           <ul className="mt-2 space-y-1">
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
+              <Link 
+                href="/?platform=youtube" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  location === "/?platform=youtube" 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
                 <i className="fab fa-youtube mr-3 text-red-500"></i>
                 YouTube
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
+              <Link 
+                href="/?platform=tiktok" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  location === "/?platform=tiktok" 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
                 <i className="fab fa-tiktok mr-3 text-black"></i>
                 TikTok
-              </a>
+                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 text-amber-600 rounded border border-amber-200">Próximamente</span>
+              </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
+              <Link 
+                href="/?platform=twitter" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  location === "/?platform=twitter" 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
                 <i className="fab fa-twitter mr-3 text-blue-400"></i>
                 Twitter
-              </a>
+                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 text-amber-600 rounded border border-amber-200">Próximamente</span>
+              </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
+              <Link 
+                href="/?platform=instagram" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  location === "/?platform=instagram" 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
                 <i className="fab fa-instagram mr-3 text-pink-500"></i>
                 Instagram
-              </a>
+                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 text-amber-600 rounded border border-amber-200">Próximamente</span>
+              </Link>
             </li>
           </ul>
         </div>
