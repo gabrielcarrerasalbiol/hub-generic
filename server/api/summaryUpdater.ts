@@ -119,10 +119,10 @@ function arraysAreEqual(arr1: string[], arr2: string[] | undefined): boolean {
 
 /**
  * Genera resúmenes para todos los videos que no tengan uno
- * @param limit Límite de videos a procesar en una sola ejecución (por defecto 50)
+ * @param limit Límite de videos a procesar en una sola ejecución (por defecto 100)
  * @returns Estadísticas de la actualización
  */
-export async function generateSummariesForAllVideos(limit = 50): Promise<{
+export async function generateSummariesForAllVideos(limit = 100): Promise<{
   total: number;
   processed: number;
   success: number;

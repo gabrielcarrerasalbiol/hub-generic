@@ -260,6 +260,20 @@ export default function VideoPage() {
               {/* Video Player */}
               <VideoPlayer embedUrl={video.embedUrl} title={video.title} videoId={video.id} />
               
+              {/* Video Summary - Solo visible para usuarios registrados */}
+              {user && video.summary && video.summary.length > 0 && (
+                <div className="bg-[#F8F8FA] border-2 border-[#FDBE11] rounded-lg shadow-md p-4 mt-4">
+                  <div className="flex items-center mb-2">
+                    <i className="fas fa-lightbulb text-[#FDBE11] mr-2"></i>
+                    <h3 className="font-bold text-lg text-[#001C58]">Resumen AI</h3>
+                    <span className="ml-2 px-2 py-1 text-xs bg-[#001C58] text-white rounded-full">Premium</span>
+                  </div>
+                  <div className="text-gray-800 whitespace-pre-line text-sm">
+                    {video.summary}
+                  </div>
+                </div>
+              )}
+
               {/* Video Description con mejor formato - Colores Real Madrid */}
               <div className="bg-white rounded-lg shadow-md p-4 mt-4">
                 <h3 className="font-medium text-lg mb-2 text-[#001C58]">Descripción</h3>
