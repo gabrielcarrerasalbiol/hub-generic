@@ -42,18 +42,40 @@ function AppContent() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    // Estamos utilizando una variable de limpieza para asegurarnos de que
+    // no se ejecuten actualizaciones de estado después de desmontar el componente
+    let isMounted = true;
+    
     const initializeAuth = async () => {
-      // Comprobar si hay un token en la URL (después de OAuth)
-      await handleTokenFromUrl();
-      
-      // Cargar usuario si hay un token almacenado
-      await fetchUser();
-      
-      setIsInitialized(true);
+      try {
+        // Comprobar si hay un token en la URL (después de OAuth)
+        await handleTokenFromUrl();
+        
+        // Cargar usuario si hay un token almacenado, pero solo si el componente sigue montado
+        if (isMounted) {
+          await fetchUser();
+          
+          // Solo actualizamos el estado si el componente sigue montado
+          if (isMounted) {
+            setIsInitialized(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error inicializando autenticación:", error);
+        // Asegurarse de que la inicialización se complete incluso en caso de error
+        if (isMounted) {
+          setIsInitialized(true);
+        }
+      }
     };
     
     initializeAuth();
-  }, [fetchUser, handleTokenFromUrl]);
+    
+    // Función de limpieza que evita actualizaciones de estado después de desmontar
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   if (!isInitialized) {
     // Mostrar un estado de carga mientras se inicializa la autenticación

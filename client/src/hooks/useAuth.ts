@@ -149,18 +149,34 @@ export const useAuth = create<AuthState>((set, get) => ({
   },
   
   fetchUser: async () => {
-    const { token } = get();
-    if (!token) return;
+    const { token, user } = get();
     
+    // Si ya tenemos un usuario, no necesitamos volver a cargarlo
+    if (!token || user) {
+      set({ isLoading: false });
+      return;
+    }
+    
+    // Usamos una variable para evitar actualizaciones de estado después de desmontar
+    let isCancelled = false;
     set({ isLoading: true });
     
     try {
-      const user = await apiRequest<UserAuth>('/api/auth/me');
-      set({ user, isLoading: false });
+      const fetchedUser = await apiRequest<UserAuth>('/api/auth/me');
+      
+      // Solo actualizamos el estado si la operación no fue cancelada
+      if (!isCancelled) {
+        set({ user: fetchedUser, isLoading: false });
+        // Establecemos la marca de cancelación para evitar actualizaciones adicionales
+        isCancelled = true;
+      }
     } catch (error) {
       console.error('Error fetching user:', error);
-      localStorage.removeItem('hubmadridista_token');
-      set({ user: null, token: null, isLoading: false });
+      if (!isCancelled) {
+        localStorage.removeItem('hubmadridista_token');
+        set({ user: null, token: null, isLoading: false });
+        isCancelled = true;
+      }
     }
   },
   
