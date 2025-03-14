@@ -18,7 +18,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex bg-white">
-      <div className="w-1/4 bg-gradient-to-br from-[#FDBE11] to-[#FDDE81] text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
+      <div className="w-1/4 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
         <div className="mb-8">
           <img src="/images/hub-madridista-logo.jpg" alt="Hub Madridista" className="h-24 mb-4" />
           <p className="text-[#001C58] font-medium">La plataforma definitiva para los fans del Real Madrid</p>
