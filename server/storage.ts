@@ -3,7 +3,8 @@ import {
   InsertChannel, Category, InsertCategory, Favorite, 
   InsertFavorite, Session, OAuthToken, InsertOAuthToken,
   ChannelSubscription, InsertChannelSubscription,
-  Notification, InsertNotification
+  Notification, InsertNotification, PremiumChannel,
+  InsertPremiumChannel, ViewHistory, InsertViewHistory
 } from "../shared/schema";
 
 // Storage interface defining all operations
@@ -85,6 +86,17 @@ export interface IStorage {
   updatePremiumChannel(id: number, data: Partial<InsertPremiumChannel>): Promise<PremiumChannel | undefined>;
   removePremiumChannel(id: number): Promise<boolean>;
   updatePremiumChannelSyncTime(id: number): Promise<boolean>;
+  
+  // View History operations
+  getViewHistory(userId: number, limit?: number): Promise<ViewHistory[]>;
+  addViewHistory(viewHistory: InsertViewHistory): Promise<ViewHistory>;
+  
+  // Dashboard Statistics operations
+  getVideosAddedInTimeRange(days: number): Promise<Video[]>;
+  getVideosByPlatformCounts(): Promise<{platform: string, count: number}[]>;
+  getVideosByCategoryCounts(): Promise<{categoryId: number, count: number}[]>;
+  getVideosByDateCounts(days: number): Promise<{date: string, count: number}[]>;
+  getTopChannelsByVideos(limit?: number): Promise<{channelId: string, channelTitle: string, count: number}[]>;
   
   // Initialize default data (for testing)
   initializeDefaultData?(): Promise<void>;

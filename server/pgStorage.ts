@@ -1,4 +1,4 @@
-import { eq, and, desc, like, sql, asc, inArray, count, not } from 'drizzle-orm';
+import { eq, and, desc, like, sql, asc, inArray, count, not, gte } from 'drizzle-orm';
 import { db } from './db';
 import { IStorage } from './storage';
 import {
@@ -8,8 +8,10 @@ import {
   ChannelSubscription, InsertChannelSubscription,
   Notification, InsertNotification,
   PremiumChannel, InsertPremiumChannel,
+  ViewHistory, InsertViewHistory,
   users, videos, channels, categories, favorites, oauthTokens,
-  channelSubscriptions, notifications, premiumChannels
+  channelSubscriptions, notifications, premiumChannels,
+  viewHistory
 } from '@shared/schema';
 
 // PostgreSQL implementation of the storage interface
@@ -603,6 +605,125 @@ export class PgStorage implements IStorage {
       .where(eq(premiumChannels.id, id))
       .returning();
     return result.length > 0;
+  }
+
+  // View History operations
+  async getViewHistory(userId: number, limit = 50): Promise<ViewHistory[]> {
+    return db.query.viewHistory.findMany({
+      where: eq(viewHistory.userId, userId),
+      orderBy: [desc(viewHistory.watchedAt)],
+      limit
+    });
+  }
+
+  async addViewHistory(viewHistoryData: InsertViewHistory): Promise<ViewHistory> {
+    const existingRecord = await db.query.viewHistory.findFirst({
+      where: and(
+        eq(viewHistory.userId, viewHistoryData.userId),
+        eq(viewHistory.videoId, viewHistoryData.videoId)
+      )
+    });
+
+    if (existingRecord) {
+      // Actualizar el registro existente
+      const result = await db.update(viewHistory)
+        .set({
+          watchedAt: new Date(),
+          watchDuration: viewHistoryData.watchDuration,
+          completionPercentage: viewHistoryData.completionPercentage
+        })
+        .where(and(
+          eq(viewHistory.userId, viewHistoryData.userId),
+          eq(viewHistory.videoId, viewHistoryData.videoId)
+        ))
+        .returning();
+      return result[0];
+    } else {
+      // Crear un nuevo registro
+      const result = await db.insert(viewHistory)
+        .values(viewHistoryData)
+        .returning();
+      return result[0];
+    }
+  }
+
+  // Dashboard Statistics operations
+  async getVideosAddedInTimeRange(days: number): Promise<Video[]> {
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+    const dateISOString = date.toISOString();
+
+    // Como usamos el campo publishedAt que es texto, convertimos la fecha a texto en formato ISO
+    return db.select()
+      .from(videos)
+      .where(sql`${videos.publishedAt} >= ${dateISOString}`)
+      .orderBy(desc(videos.publishedAt));
+  }
+
+  async getVideosByPlatformCounts(): Promise<{platform: string, count: number}[]> {
+    const result = await db.execute(
+      sql`SELECT platform, COUNT(*) as count 
+          FROM ${videos} 
+          GROUP BY platform 
+          ORDER BY count DESC`
+    );
+    return result.rows.map(row => ({
+      platform: row.platform as string,
+      count: Number(row.count)
+    }));
+  }
+
+  async getVideosByCategoryCounts(): Promise<{categoryId: number, count: number}[]> {
+    // Como los categoryIds se almacenan como un array en la tabla videos, 
+    // usamos unnest para contar ocurrencias de cada categoría
+    const result = await db.execute(
+      sql`WITH unnested_categories AS (
+            SELECT unnest(category_ids::text[])::integer as category_id
+            FROM ${videos}
+          )
+          SELECT category_id as "categoryId", COUNT(*) as count 
+          FROM unnested_categories
+          GROUP BY category_id 
+          ORDER BY count DESC`
+    );
+    return result.rows.map(row => ({
+      categoryId: Number(row.categoryId),
+      count: Number(row.count)
+    }));
+  }
+
+  async getVideosByDateCounts(days: number): Promise<{date: string, count: number}[]> {
+    const result = await db.execute(
+      sql`SELECT 
+            TO_DATE(SUBSTRING(published_at, 1, 10), 'YYYY-MM-DD') as date, 
+            COUNT(*) as count 
+          FROM ${videos} 
+          WHERE published_at >= (NOW() - INTERVAL '${days} days')::text 
+          GROUP BY TO_DATE(SUBSTRING(published_at, 1, 10), 'YYYY-MM-DD')
+          ORDER BY date`
+    );
+    return result.rows.map(row => ({
+      date: (row.date as Date).toISOString().split('T')[0],
+      count: Number(row.count)
+    }));
+  }
+
+  async getTopChannelsByVideos(limit = 10): Promise<{channelId: string, channelTitle: string, count: number}[]> {
+    const result = await db.execute(
+      sql`SELECT 
+            channel_id as "channelId", 
+            channel_title as "channelTitle",
+            COUNT(*) as count 
+          FROM ${videos} 
+          GROUP BY channel_id, channel_title 
+          ORDER BY count DESC 
+          LIMIT ${limit}`
+    );
+    return result.rows.map(row => ({
+      channelId: row.channelId as string,
+      channelTitle: row.channelTitle as string,
+      count: Number(row.count)
+    }));
   }
 
   // Método para inicializar la base de datos con datos predeterminados
