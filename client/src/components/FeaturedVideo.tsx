@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -12,6 +12,11 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
   const { toast } = useToast();
   const [isFavorite, setIsFavorite] = useState(video.isFavorite || false);
   const [isToggling, setIsToggling] = useState(false);
+  
+  // Actualizar el estado si la prop video.isFavorite cambia
+  useEffect(() => {
+    setIsFavorite(video.isFavorite || false);
+  }, [video.isFavorite]);
 
   // Format view count
   const formatViewCount = (count: number | null): string => {

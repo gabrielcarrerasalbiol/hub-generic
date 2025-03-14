@@ -57,14 +57,19 @@ export default function VideoPage() {
     try {
       if (video.isFavorite) {
         // Remove from favorites
-        await apiRequest('DELETE', `/api/favorites/${video.id}`);
+        await apiRequest<any>(`/api/favorites/${video.id}`, {
+          method: 'DELETE'
+        });
         toast({
           title: "Video eliminado de favoritos",
           description: "El video ha sido eliminado de tu lista de favoritos."
         });
       } else {
         // Add to favorites
-        await apiRequest('POST', '/api/favorites', { videoId: video.id });
+        await apiRequest<any>('/api/favorites', {
+          method: 'POST',
+          body: JSON.stringify({ videoId: video.id })
+        });
         toast({
           title: "Video añadido a favoritos",
           description: "El video ha sido añadido a tu lista de favoritos."

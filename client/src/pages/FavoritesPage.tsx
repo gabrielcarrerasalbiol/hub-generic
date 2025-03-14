@@ -6,6 +6,7 @@ import { Video } from "@shared/schema";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { getQueryFn } from "@/lib/queryClient";
 
 export default function FavoritesPage() {
   const [, setLocation] = useLocation();
@@ -30,8 +31,9 @@ export default function FavoritesPage() {
     isLoading, 
     error,
     isError
-  } = useQuery<Video[]>({
+  } = useQuery({
     queryKey: ['/api/favorites'],
+    queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
     enabled: !!user, // Solo ejecutar si hay un usuario autenticado
   });
 
