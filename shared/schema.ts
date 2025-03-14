@@ -23,6 +23,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
   name: true,
   profilePicture: true,
+  googleId: true,
+  appleId: true,
 });
 
 // Session schema for storing auth sessions

@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+// @ts-ignore - No hay tipos disponibles para passport-apple
 import { Strategy as AppleStrategy } from 'passport-apple';
 import { Request, Response, NextFunction } from 'express';
 import { storage } from './storage';
@@ -27,7 +28,8 @@ const CALLBACK_URL = process.env.CALLBACK_URL || 'http://localhost:5000';
 // Set up passport
 export function setupPassport() {
   // Serialize user to session
-  passport.serializeUser((user: User, done) => {
+  passport.serializeUser((user: Express.User, done) => {
+    // @ts-ignore - Passport typings are problematic
     done(null, user.id);
   });
 
@@ -78,7 +80,8 @@ export function setupPassport() {
           callbackURL: `${CALLBACK_URL}/auth/google/callback`,
           passReqToCallback: true,
         },
-        async (req, accessToken, refreshToken, profile, done) => {
+        // @ts-ignore - Type definitions for passport strategies aren't perfect
+        async (req: any, accessToken: string, refreshToken: string, profile: any, done: any) => {
           try {
             // Check if user already exists with this Google ID
             let user = await storage.getUserByGoogleId(profile.id);
@@ -112,16 +115,20 @@ export function setupPassport() {
               }
             }
             
-            // Save the token
-            await storage.createOAuthToken({
-              userId: user.id,
-              provider: 'google',
-              accessToken,
-              refreshToken: refreshToken || null,
-              expiresAt: null
-            });
-            
-            done(null, user);
+            // Save the token if user exists
+            if (user) {
+              await storage.createOAuthToken({
+                userId: user.id,
+                provider: 'google',
+                accessToken,
+                refreshToken: refreshToken || null,
+                expiresAt: null
+              });
+              
+              done(null, user);
+            } else {
+              done(new Error('Failed to create or retrieve user'), null);
+            }
           } catch (error) {
             done(error, null);
           }
@@ -142,7 +149,8 @@ export function setupPassport() {
           callbackURL: `${CALLBACK_URL}/auth/apple/callback`,
           passReqToCallback: true,
         },
-        async (req, accessToken, refreshToken, idToken, profile, done) => {
+        // @ts-ignore - Type definitions for passport-apple aren't perfect
+        async (req: any, accessToken: string, refreshToken: string, idToken: string, profile: any, done: any) => {
           try {
             // Parse the idToken to get user information
             let email = null;
