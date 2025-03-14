@@ -62,9 +62,25 @@ export default function Layout({ children }: LayoutProps) {
             <Alert variant="destructive" className="mb-4">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Servicio temporalmente no disponible</AlertTitle>
-              <AlertDescription>
-                El servicio de autenticación está temporalmente limitado debido a actividad inusual.
-                Por favor, intente nuevamente en unos minutos o contacte al soporte.
+              <AlertDescription className="flex flex-col gap-2">
+                <p>
+                  El servicio de autenticación está temporalmente limitado debido a actividad inusual.
+                  Por favor, intente nuevamente en unos minutos o contacte al soporte.
+                </p>
+                <button 
+                  onClick={() => {
+                    // Limpiar flags de bloqueo
+                    if (typeof window !== 'undefined') {
+                      window.localStorage.removeItem('auth_service_blocked');
+                      window.localStorage.removeItem('hubmadridista_rate_limited');
+                      // Recargar la página para aplicar cambios
+                      window.location.reload();
+                    }
+                  }}
+                  className="bg-primary hover:bg-primary/90 text-white py-1 px-3 rounded text-sm w-fit"
+                >
+                  Intentar desbloquear
+                </button>
               </AlertDescription>
             </Alert>
           )}
