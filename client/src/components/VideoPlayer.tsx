@@ -65,9 +65,14 @@ export default function VideoPlayer({ embedUrl, title, videoId }: VideoPlayerPro
     
     try {
       await apiRequest('POST', '/api/history', {
-        videoId,
-        watchDuration: duration,
-        completionPercentage: completion
+        body: JSON.stringify({
+          videoId,
+          watchDuration: duration,
+          completionPercentage: completion
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       
       console.log(`Visualización registrada: ${duration}s, ${completion}%`);
