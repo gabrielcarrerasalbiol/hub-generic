@@ -68,6 +68,10 @@ export default function VideoManagement() {
   const [selectedVideos, setSelectedVideos] = useState<number[]>([]);
   const [isDeletingMultiple, setIsDeletingMultiple] = useState(false);
   
+  // Estado para paginación
+  const [visibleVideos, setVisibleVideos] = useState(20);
+  const VIDEOS_PER_PAGE = 20;
+  
   // Obtener todos los videos
   const {
     data: videos = [],
