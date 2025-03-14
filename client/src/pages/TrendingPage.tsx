@@ -107,18 +107,18 @@ export default function TrendingPage() {
   }, [searchQuery, minViews, sortBy]);
 
   return (
-    <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
+    <main className="flex-1 bg-gray-100 dark:bg-[#2A2040] p-4 md:p-6 overflow-y-auto">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-[#001C58]">Videos en Tendencia</h1>
-          <p className="text-gray-600 mt-1">Descubre los videos más populares de Real Madrid</p>
+          <h1 className="text-3xl font-bold text-[#001C58] dark:text-white">Videos en Tendencia</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">Descubre los videos más populares de Real Madrid</p>
         </div>
         <div className="mt-4 md:mt-0">
           <Dialog>
             <DialogTrigger asChild>
               <Button 
                 variant="outline" 
-                className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                className="border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
               >
                 <TrendingUp className="mr-2 h-4 w-4" />
                 Ver análisis de tendencias
@@ -815,7 +815,7 @@ export default function TrendingPage() {
               <Button 
                 onClick={loadMoreVideos}
                 variant="outline" 
-                className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                className="border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
               >
                 <ChevronDown className="mr-2 h-4 w-4" />
                 Cargar más videos ({sortedVideos.length - visibleVideos} restantes)
