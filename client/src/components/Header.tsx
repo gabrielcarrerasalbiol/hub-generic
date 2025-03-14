@@ -138,7 +138,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                         <DropdownMenuItem asChild>
                           <Link href="/admin" className="w-full cursor-pointer">
                             <span className="flex items-center text-red-600">
-                              <i className="fas fa-shield-alt mr-2"></i>
+                              <Shield className="h-4 w-4 mr-2" />
                               Panel de Admin
                             </span>
                           </Link>
@@ -181,7 +181,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               variant="ghost" 
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#001C58]"
             >
-              <i className="fas fa-search"></i>
+              <Search className="h-4 w-4" />
             </Button>
           </form>
         </div>

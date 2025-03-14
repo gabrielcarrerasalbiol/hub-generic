@@ -5,9 +5,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Channel } from "@shared/schema";
 import { 
   Home, TrendingUp, Star, Rss, History, 
-  Youtube, Clock, Twitter, Instagram, 
+  Youtube, Twitter, Instagram, 
   Radio, MessageSquare, Trophy, User, Newspaper
 } from "lucide-react";
+import { TikTokIcon } from "./icons/TikTokIcon";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -135,7 +136,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <Clock className="mr-3 h-4 w-4 text-black" />
+                <TikTokIcon className="mr-3 h-4 w-4 text-black" />
                 TikTok
                 <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 text-amber-600 rounded border border-amber-200">Próximamente</span>
               </Link>
