@@ -45,11 +45,12 @@ export default function ChannelPage() {
 
   // Fetch channel videos
   const { 
-    data: videos, 
+    data: videos = [], 
     isLoading: isVideosLoading, 
     error: videosError 
   } = useQuery({
     queryKey: [`/api/channels/${channelId}/videos`],
+    queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
     enabled: !!channelId,
   });
 
@@ -106,7 +107,9 @@ export default function ChannelPage() {
   }
 
   // Format subscriber and video counts
-  const formatCount = (count: number): string => {
+  const formatCount = (count: number | null): string => {
+    if (count === null) return '0';
+    
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M`;
     } else if (count >= 1000) {
@@ -174,8 +177,14 @@ export default function ChannelPage() {
               </div>
               
               <div className="flex items-center mt-2 space-x-4 justify-center md:justify-start">
-                <span className="text-sm text-gray-600"><i className="fas fa-users mr-1"></i> {formatCount(channel.subscriberCount)} suscriptores</span>
-                <span className="text-sm text-gray-600"><i className="fas fa-video mr-1"></i> {formatCount(channel.videoCount)} videos</span>
+                <span className="text-sm text-gray-600">
+                  <i className="fas fa-users mr-1"></i> 
+                  {formatCount(channel.subscriberCount)} suscriptores
+                </span>
+                <span className="text-sm text-gray-600">
+                  <i className="fas fa-video mr-1"></i> 
+                  {formatCount(channel.videoCount)} videos
+                </span>
               </div>
               
               <div className="mt-4">
