@@ -27,6 +27,7 @@ import SettingsPage from "@/pages/SettingsPage";
 import Layout from "@/components/Layout";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
+import { ThemeProvider } from '@/hooks/use-theme';
 
 // Definición de rutas en un único lugar para evitar re-renders innecesarios
 const Routes = () => (
@@ -149,8 +150,10 @@ function AppContent() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppContent />
-      <Toaster />
+      <ThemeProvider>
+        <AppContent />
+        <Toaster />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
