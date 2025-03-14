@@ -213,17 +213,19 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               </div>
             )}
             
-            {/* Botón de reinicio de autenticación siempre visible */}
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="ml-2 text-yellow-600 border-yellow-600 hover:bg-yellow-50"
-              onClick={handleResetAuth}
-              title="Reiniciar autenticación si hay problemas con la sesión"
-            >
-              <RefreshCw className="h-4 w-4 mr-1" />
-              <span className="hidden md:inline">Reiniciar sesión</span>
-            </Button>
+            {/* Botón de reinicio solo para usuarios administradores */}
+            {userIsAdmin && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="ml-2 text-yellow-600 border-yellow-600 hover:bg-yellow-50"
+                onClick={handleResetAuth}
+                title="Reiniciar autenticación si hay problemas con la sesión"
+              >
+                <RefreshCw className="h-4 w-4 mr-1" />
+                <span className="hidden md:inline">Reiniciar sesión</span>
+              </Button>
+            )}
           </div>
         </div>
         
