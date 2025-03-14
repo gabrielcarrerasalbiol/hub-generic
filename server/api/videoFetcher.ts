@@ -141,9 +141,42 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
           }
         }
         
-        // Crear el video en la base de datos con las categorías asignadas
+        // Generar un resumen del video con Gemini
+        let summary = "";
+        try {
+          console.log("Generando resumen para el video:", videoData.title);
+          summary = await generateVideoSummary(videoData.title, videoData.description || "");
+          console.log("Resumen generado:", summary);
+          
+          // Recategorizar utilizando también el resumen generado
+          if (summary) {
+            console.log("Mejorando categorización con el resumen generado");
+            try {
+              const enhancedClassification = await classifyContent(
+                videoData.title,
+                videoData.description + "\n\n" + summary, // Combinar descripción y resumen para mejor categorización
+                availableCategories
+              );
+              
+              // Si la categorización mejorada es relevante, usarla
+              if (enhancedClassification.relevance >= 0.7) {
+                categories = enhancedClassification.categories;
+                console.log("Categorías mejoradas usando resumen:", categories);
+              }
+            } catch (classifyError) {
+              console.error("Error en la recategorización con resumen:", classifyError);
+              // Mantener las categorías originales
+            }
+          }
+        } catch (summaryError) {
+          console.error("Error generando resumen con Gemini:", summaryError);
+          summary = `Contenido sobre Real Madrid: ${videoData.title}`;
+        }
+
+        // Crear el video en la base de datos con las categorías asignadas y el resumen
         const newVideo: InsertVideo = {
           ...videoData,
+          summary,
           categoryIds: categories.map(id => id.toString()),
           featured: false
         };
@@ -430,9 +463,42 @@ export async function importChannelVideos(
           }
         }
         
-        // Crear el video en la base de datos con las categorías asignadas
+        // Generar un resumen del video con Gemini
+        let summary = "";
+        try {
+          console.log("Generando resumen para el video:", videoData.title);
+          summary = await generateVideoSummary(videoData.title, videoData.description || "");
+          console.log("Resumen generado:", summary);
+          
+          // Recategorizar utilizando también el resumen generado
+          if (summary) {
+            console.log("Mejorando categorización con el resumen generado");
+            try {
+              const enhancedClassification = await classifyContent(
+                videoData.title,
+                videoData.description + "\n\n" + summary, // Combinar descripción y resumen para mejor categorización
+                availableCategories
+              );
+              
+              // Si la categorización mejorada es relevante, usarla
+              if (enhancedClassification.relevance >= 0.7) {
+                categories = enhancedClassification.categories;
+                console.log("Categorías mejoradas usando resumen:", categories);
+              }
+            } catch (classifyError) {
+              console.error("Error en la recategorización con resumen:", classifyError);
+              // Mantener las categorías originales
+            }
+          }
+        } catch (summaryError) {
+          console.error("Error generando resumen con Gemini:", summaryError);
+          summary = `Contenido sobre Real Madrid: ${videoData.title}`;
+        }
+
+        // Crear el video en la base de datos con las categorías asignadas y el resumen
         const newVideo: InsertVideo = {
           ...videoData,
+          summary,
           categoryIds: categories.map(id => id.toString()),
           featured: false
         };
