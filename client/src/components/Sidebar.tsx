@@ -205,7 +205,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/category/analysis") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <MessageSquare className={cn(
@@ -222,7 +222,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/category/historic") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Trophy className={cn(
@@ -239,12 +239,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/category/players") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <User className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/category/players") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
+                  isLinkActive("/category/players") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
                 Jugadores
               </Link>
@@ -256,12 +256,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/category/press") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Newspaper className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/category/press") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
+                  isLinkActive("/category/press") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
                 Noticias
               </Link>

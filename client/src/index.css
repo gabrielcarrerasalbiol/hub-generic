@@ -12,8 +12,8 @@
   }
   
   .dark {
-    --background: 270 30% 26%; /* Color lila oscuro para el fondo */
-    --sidebar-background: 270 30% 30%; /* Color lila más claro para el sidebar */
+    --background: 253 32% 26%; /* #362C5A - Color lila oscuro para el fondo */
+    --sidebar-background: 253 32% 29%; /* Un tono más claro para el sidebar */
     --foreground: 0 0% 98%;
   }
   
