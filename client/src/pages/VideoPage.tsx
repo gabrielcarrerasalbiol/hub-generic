@@ -196,13 +196,13 @@ export default function VideoPage() {
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-6 px-2">
-          {/* CONTROLES PRINCIPALES - MUY GRANDES Y VISIBLES */}
-          <div className="w-full bg-blue-100 border-2 border-blue-500 rounded-lg p-6 shadow-xl">
+          {/* CONTROLES PRINCIPALES - MUY GRANDES Y VISIBLES - Con colores del Real Madrid */}
+          <div className="w-full bg-white border-2 border-[#FDBE11] rounded-lg p-6 shadow-xl">
             {/* Título grande y acción de favorito */}
             <div className="flex justify-between items-start mb-4">
-              <h1 className="text-2xl font-bold text-blue-900 pr-4">{video.title}</h1>
+              <h1 className="text-2xl font-bold text-[#001C58] pr-4">{video.title}</h1>
               <button 
-                className={`text-3xl p-2 rounded-full ${video.isFavorite ? 'bg-yellow-100 text-yellow-500' : 'bg-gray-100 text-gray-400 hover:bg-yellow-100 hover:text-yellow-500'}`}
+                className={`text-3xl p-2 rounded-full ${video.isFavorite ? 'bg-[#FDBE11] text-[#001C58]' : 'bg-gray-100 text-gray-400 hover:bg-[#FDBE11] hover:text-[#001C58]'}`}
                 onClick={handleToggleFavorite}
                 aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
               >
@@ -211,19 +211,19 @@ export default function VideoPage() {
             </div>
           
             {/* Información del canal y suscripción con un fondo diferente */}
-            <div className="bg-white rounded-lg p-4 mb-6 shadow-md border border-blue-200 flex flex-wrap md:flex-nowrap justify-between items-center">
+            <div className="bg-[#F8F8FA] rounded-lg p-4 mb-6 shadow-md border border-[#FDBE11] flex flex-wrap md:flex-nowrap justify-between items-center">
               <div 
                 onClick={() => window.location.href = `/channel/${video.channelId}`}
-                className="flex items-center hover:bg-gray-50 p-2 rounded-md cursor-pointer mb-4 md:mb-0"
+                className="flex items-center hover:bg-white p-2 rounded-md cursor-pointer mb-4 md:mb-0"
               >
                 <img 
                   src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=random&color=fff&size=128`} 
                   alt={video.channelTitle} 
-                  className="w-16 h-16 rounded-full object-cover border-2 border-blue-300" 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-[#FDBE11]" 
                 />
                 <div className="ml-4">
-                  <p className="font-bold text-lg text-blue-800">{video.channelTitle}</p>
-                  <p className="text-sm text-blue-600">
+                  <p className="font-bold text-lg text-[#001C58]">{video.channelTitle}</p>
+                  <p className="text-sm text-[#001C58]">
                     <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium text-white ${getPlatformColor(video.platform)}`}>
                       <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
                       {video.platform}
@@ -243,8 +243,8 @@ export default function VideoPage() {
                   />
                 </div>
               ) : (
-                <div className="bg-gray-100 rounded p-3 text-center">
-                  <p className="text-gray-600">Inicia sesión para suscribirte</p>
+                <div className="bg-gray-100 rounded p-3 text-center border border-[#FDBE11]">
+                  <p className="text-[#001C58]">Inicia sesión para agregar a favoritos</p>
                 </div>
               )}
             </div>
@@ -255,11 +255,11 @@ export default function VideoPage() {
               {/* Video Player */}
               <VideoPlayer embedUrl={video.embedUrl} title={video.title} />
               
-              {/* Video Description con mejor formato */}
+              {/* Video Description con mejor formato - Colores Real Madrid */}
               <div className="bg-white rounded-lg shadow-md p-4 mt-4">
-                <h3 className="font-medium text-lg mb-2 text-blue-800">Descripción</h3>
+                <h3 className="font-medium text-lg mb-2 text-[#001C58]">Descripción</h3>
                 {video.description ? (
-                  <div className="text-gray-700 whitespace-pre-line text-sm border-l-4 border-blue-200 pl-3">
+                  <div className="text-gray-700 whitespace-pre-line text-sm border-l-4 border-[#FDBE11] pl-3">
                     {video.description.length > 300 
                       ? `${video.description.substring(0, 300)}...` 
                       : video.description
@@ -274,7 +274,7 @@ export default function VideoPage() {
             
             {/* Related Videos */}
             <div className="lg:col-span-1">
-              <h2 className="font-bold text-xl mb-4 text-blue-800">Videos relacionados</h2>
+              <h2 className="font-bold text-xl mb-4 text-[#001C58]">Videos relacionados</h2>
               
               {isRelatedLoading ? (
                 <div className="space-y-4">

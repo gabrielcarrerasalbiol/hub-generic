@@ -151,8 +151,9 @@ export default function SubscribeButton({
         onClick={handleSubscribe}
         disabled={isLoading}
         variant={isSubscribed ? "outline" : "default"}
+        className={isSubscribed ? "border-yellow-500 text-yellow-600" : "bg-gradient-to-r from-[#FDBE11] to-[#FFC72C] text-[#001C58] hover:from-[#FDC731] hover:to-[#FFD74C]"}
       >
-        {isSubscribed ? "Cancelar suscripción" : "Suscribirse"}
+        {isSubscribed ? "Quitar de favoritos" : "Agregar a favoritos"}
       </Button>
       
       {isSubscribed && (
