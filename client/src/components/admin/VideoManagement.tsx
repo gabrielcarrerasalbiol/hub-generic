@@ -515,7 +515,7 @@ export default function VideoManagement() {
                   </>
                 ) : (
                   <>
-                    <RefreshCw className="mr-2 h-4 w-4" />
+                    <RefreshCcw className="mr-2 h-4 w-4" />
                     Recategorizar Todo
                   </>
                 )}
@@ -852,7 +852,7 @@ export default function VideoManagement() {
                                           </>
                                         ) : (
                                           <>
-                                            <RefreshCw className="mr-2 h-4 w-4" />
+                                            <RefreshCcw className="mr-2 h-4 w-4" />
                                             Recategorizar con IA
                                           </>
                                         )}
