@@ -191,33 +191,33 @@ export function registerAuthRoutes(app: Express) {
     etagCache: string
   }> = new Map();
   
-  // Sistema de emergencia para bloqueo total de solicitudes
-  let GLOBAL_BLOCK_UNTIL = Date.now() + 30000; // Bloquear por 30 segundos al inicio
+  // Sistema de emergencia para bloqueo total de solicitudes - desactivado inicialmente
+  let GLOBAL_BLOCK_UNTIL = 0; // Desactivado por defecto
   let GLOBAL_REQUEST_COUNT = 0;
   
-  // Si hay más de 100 solicitudes en 10 segundos, bloquear por 60 segundos
+  // Si hay más de 500 solicitudes en 10 segundos, bloquear por 30 segundos
   setInterval(() => {
-    if (GLOBAL_REQUEST_COUNT > 100) {
+    if (GLOBAL_REQUEST_COUNT > 500) {
       console.log(`ACTIVANDO BLOQUEO DE EMERGENCIA - ${GLOBAL_REQUEST_COUNT} solicitudes detectadas`);
-      GLOBAL_BLOCK_UNTIL = Date.now() + 60000;
+      GLOBAL_BLOCK_UNTIL = Date.now() + 30000; // 30 segundos de bloqueo
     }
     GLOBAL_REQUEST_COUNT = 0;
   }, 10000);
   
-  // Programa limpieza del bloqueo
-  setTimeout(() => {
-    console.log('DESACTIVANDO BLOQUEO DE EMERGENCIA - Sistema listo para solicitudes normales');
+  // Programa limpieza del bloqueo cada 5 minutos
+  setInterval(() => {
+    console.log('LIMPIEZA PROGRAMADA - Reseteando contadores y caché');
     GLOBAL_BLOCK_UNTIL = 0;
     requestCounters.clear();
     authRequestCache.clear();
-  }, 120000); // 2 minutos total de bloqueo
+  }, 300000); // 5 minutos
   
-  // Tiempo mínimo entre solicitudes (5000ms = 5 segundos)
-  const THROTTLE_TIME_MS = 5000;
+  // Tiempo mínimo entre solicitudes (1000ms = 1 segundo)
+  const THROTTLE_TIME_MS = 1000;
   
   // Contador para limitar número total de solicitudes por sesión
   const requestCounters: Map<string, number> = new Map();
-  const MAX_REQUESTS_PER_MINUTE = 20; // Mucho más restrictivo
+  const MAX_REQUESTS_PER_MINUTE = 120; // 2 solicitudes por segundo
   
   // Resetear contadores cada 2 minutos
   setInterval(() => {
