@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Video } from "@shared/schema";
 import VideoCard from "@/components/VideoCard";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowDownAZ, ArrowUpAZ, TrendingUp, Trophy, Calendar, Eye, PieChart, BarChart, AreaChart, LineChart } from "lucide-react";
+import { ArrowDownAZ, ArrowUpAZ, TrendingUp, Trophy, Calendar, Eye, PieChart, BarChart, AreaChart, LineChart, ChevronDown } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -24,6 +24,8 @@ export default function TrendingPage() {
   const [sortBy, setSortBy] = useState<string>("views");
   const [minViews, setMinViews] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [visibleVideos, setVisibleVideos] = useState<number>(12);
+  const VIDEOS_PER_PAGE = 12;
   
   // Función para obtener el nombre de la categoría según su ID
   const getCategoryName = (categoryId: number): string => {
@@ -93,6 +95,16 @@ export default function TrendingPage() {
   const maxViews = Array.isArray(trendingVideos) && trendingVideos.length > 0
     ? Math.max(...trendingVideos.map((video: Video) => video.viewCount || 0))
     : 1000000;
+    
+  // Función para cargar más videos
+  const loadMoreVideos = () => {
+    setVisibleVideos(prev => prev + VIDEOS_PER_PAGE);
+  };
+
+  // Resetear la paginación cuando cambian los filtros
+  useEffect(() => {
+    setVisibleVideos(VIDEOS_PER_PAGE);
+  }, [searchQuery, minViews, sortBy]);
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
