@@ -64,13 +64,10 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
               <img 
-                src="/logo.svg" 
+                src="/images/hub-madridista-logo.jpg" 
                 alt="Hub Madridista Logo" 
-                className="h-12" 
+                className="h-14" 
               />
-              <h1 className="text-xl font-bold text-[#001C58]">
-                Hub<span className="text-[#FDBE11] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Madridista</span>
-              </h1>
           </Link>
           
           {/* Search Bar - Desktop */}
