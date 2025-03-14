@@ -122,13 +122,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/videos", async (req: Request, res: Response) => {
     try {
       const platform = req.query.platform || "all";
+      const category = req.query.category || "all";
       const limit = parseInt(req.query.limit as string) || 20;
       
       if (!PlatformType.safeParse(platform).success) {
         return res.status(400).json({ message: "Invalid platform" });
       }
       
-      const videos = await storage.getVideosByPlatform(platform.toString(), limit);
+      if (!CategoryType.safeParse(category).success) {
+        return res.status(400).json({ message: "Invalid category" });
+      }
+      
+      let videos: Video[] = [];
+      
+      // Si no hay filtros específicos, obtener todos los videos
+      if (platform === "all" && category === "all") {
+        videos = await storage.getVideos(limit);
+      } 
+      // Si solo hay filtro de plataforma
+      else if (platform !== "all" && category === "all") {
+        videos = await storage.getVideosByPlatform(platform.toString(), limit);
+      }
+      // Si solo hay filtro de categoría
+      else if (platform === "all" && category !== "all") {
+        // Mapear nombres de categorías a IDs
+        const categories = await storage.getCategories();
+        const categoryId = categories.find(cat => 
+          cat.name.toLowerCase() === getCategoryNameFromType(category.toString()))?.id;
+        
+        if (categoryId) {
+          videos = await storage.getVideosByCategory(categoryId, limit);
+        }
+      }
+      // Si hay ambos filtros
+      else {
+        // Mapear nombres de categorías a IDs
+        const categories = await storage.getCategories();
+        const categoryId = categories.find(cat => 
+          cat.name.toLowerCase() === getCategoryNameFromType(category.toString()))?.id;
+          
+        // Primero filtramos por plataforma
+        const platformVideos = await storage.getVideosByPlatform(platform.toString(), limit * 2);
+        
+        // Luego filtramos manualmente por categoría dentro de los resultados
+        if (categoryId) {
+          videos = platformVideos.filter(video => 
+            video.categoryIds && video.categoryIds.includes(categoryId.toString())
+          ).slice(0, limit);
+        } else {
+          videos = platformVideos.slice(0, limit);
+        }
+      }
       
       // Check if any videos are favorites
       const videosWithFavorite = await Promise.all(
@@ -144,6 +188,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch videos" });
     }
   });
+  
+  // Función auxiliar para mapear tipos de categoría a nombres
+  function getCategoryNameFromType(categoryType: string): string {
+    switch(categoryType) {
+      case "matches": return "partidos";
+      case "training": return "entrenamientos";
+      case "press": return "ruedas de prensa";
+      case "interviews": return "entrevistas";
+      case "players": return "jugadores";
+      case "analysis": return "análisis";
+      default: return "";
+    }
+  }
 
   app.get("/api/videos/trending", async (req: Request, res: Response) => {
     try {
