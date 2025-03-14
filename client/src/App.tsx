@@ -18,6 +18,10 @@ import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import CategoryPage from "@/pages/CategoryPage";
 import TrendingPage from "@/pages/TrendingPage";
 import DashboardPage from "@/pages/DashboardPage";
+import TermsPage from "@/pages/TermsPage";
+import PrivacyPage from "@/pages/PrivacyPage";
+import CookiesPage from "@/pages/CookiesPage";
+import ContactPage from "@/pages/ContactPage";
 import Layout from "@/components/Layout";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
@@ -40,6 +44,10 @@ const Routes = () => (
       <Route path="/reset-password" component={ResetPasswordPage} />
       <Route path="/category/:categorySlug" component={CategoryPage} />
       <Route path="/trending" component={TrendingPage} />
+      <Route path="/terminos" component={TermsPage} />
+      <Route path="/privacidad" component={PrivacyPage} />
+      <Route path="/cookies" component={CookiesPage} />
+      <Route path="/contacto" component={ContactPage} />
       <Route component={NotFound} />
     </Switch>
   </Layout>
