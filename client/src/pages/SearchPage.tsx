@@ -47,7 +47,8 @@ export default function SearchPage() {
   } = useQuery<Video[]>({
     queryKey: ['/api/videos/search', searchQuery],
     queryFn: async () => {
-      const response = await fetch(`/api/videos/search?query=${encodeURIComponent(searchQuery)}`);
+      // Ahora utilizamos 'q' para que coincida con lo que espera el backend
+      const response = await fetch(`/api/videos/search?q=${encodeURIComponent(searchQuery)}`);
       if (!response.ok) {
         throw new Error('Error al buscar videos');
       }
