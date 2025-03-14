@@ -1,6 +1,18 @@
-// Cargar variables de entorno desde el archivo .env
+// Nota: Mover la carga de dotenv al principio para que esté disponible para todos los módulos
+// Esto debe ejecutarse antes de importar otros módulos
 import dotenv from 'dotenv';
-dotenv.config();
+try {
+  const dotenvResult = dotenv.config();
+  if (dotenvResult.parsed) {
+    console.log('Variables de entorno cargadas correctamente desde .env');
+    console.log('Variables cargadas:', Object.keys(dotenvResult.parsed).join(', '));
+    console.log('JWT_SECRET está definido:', dotenvResult.parsed.JWT_SECRET ? 'Sí (valor oculto)' : 'No');
+  } else {
+    console.error('Error al cargar las variables de entorno: No se encontró el archivo .env o está vacío');
+  }
+} catch (error) {
+  console.error('Error al cargar dotenv:', error);
+}
 
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";

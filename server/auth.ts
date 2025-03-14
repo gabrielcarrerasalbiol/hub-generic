@@ -1,3 +1,6 @@
+// Asegurar que las variables de entorno estén cargadas
+import 'dotenv/config';
+
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
@@ -40,14 +43,19 @@ const getPersistentSecret = (): string => {
 };
 
 // Verificar y mostrar información sobre la configuración de JWT_SECRET
+// Usamos el vaor directo para depuración
+console.log('Valor de la variable JWT_SECRET en process.env:', process.env.JWT_SECRET ? 'Definido (valor oculto)' : 'No definido');
+
+// Establecer el JWT_SECRET con prioridad al valor de la variable de entorno
+const JWT_SECRET: string = process.env.JWT_SECRET || getPersistentSecret();
+
+// Registrar la fuente del secreto
 if (process.env.JWT_SECRET) {
   console.log('JWT_SECRET configurado correctamente desde variables de entorno.');
 } else {
   console.error('¡ADVERTENCIA! JWT_SECRET no está configurado en variables de entorno. Utilizando un secreto persistente en archivo.');
   console.error('En producción, establezca JWT_SECRET como variable de entorno para mayor seguridad.');
 }
-
-const JWT_SECRET: string = process.env.JWT_SECRET || getPersistentSecret();
 
 // Google OAuth credentials
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
