@@ -1,0 +1,336 @@
+import { eq, and, desc, like, sql, asc } from 'drizzle-orm';
+import { db } from './db';
+import { IStorage } from './storage';
+import {
+  User, InsertUser, Video, InsertVideo, Channel,
+  InsertChannel, Category, InsertCategory, Favorite,
+  InsertFavorite, OAuthToken, InsertOAuthToken,
+  users, videos, channels, categories, favorites, oauthTokens
+} from '@shared/schema';
+
+// PostgreSQL implementation of the storage interface
+export class PgStorage implements IStorage {
+  
+  // User operations
+  async getUser(id: number): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.id, id));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.username, username));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    if (!email) return undefined;
+    const result = await db.select().from(users).where(eq(users.email, email));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getUserByGoogleId(googleId: string): Promise<User | undefined> {
+    if (!googleId) return undefined;
+    const result = await db.select().from(users).where(eq(users.googleId, googleId));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getUserByAppleId(appleId: string): Promise<User | undefined> {
+    if (!appleId) return undefined;
+    const result = await db.select().from(users).where(eq(users.appleId, appleId));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const result = await db.insert(users).values(user).returning();
+    return result[0];
+  }
+
+  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
+    const result = await db.update(users)
+      .set({
+        ...userData,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, id))
+      .returning();
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  // OAuth operations
+  async getOAuthToken(userId: number, provider: string): Promise<OAuthToken | undefined> {
+    const result = await db.select()
+      .from(oauthTokens)
+      .where(and(
+        eq(oauthTokens.userId, userId),
+        eq(oauthTokens.provider, provider)
+      ));
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async createOAuthToken(token: InsertOAuthToken): Promise<OAuthToken> {
+    const result = await db.insert(oauthTokens).values(token).returning();
+    return result[0];
+  }
+
+  async updateOAuthToken(id: number, tokenData: Partial<InsertOAuthToken>): Promise<OAuthToken | undefined> {
+    const result = await db.update(oauthTokens)
+      .set({
+        ...tokenData,
+        updatedAt: new Date()
+      })
+      .where(eq(oauthTokens.id, id))
+      .returning();
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async deleteOAuthToken(id: number): Promise<boolean> {
+    const result = await db.delete(oauthTokens)
+      .where(eq(oauthTokens.id, id))
+      .returning();
+    
+    return result.length > 0;
+  }
+
+  // Video operations
+  async getVideos(limit = 100, offset = 0): Promise<Video[]> {
+    return db.select()
+      .from(videos)
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(videos.publishedAt));
+  }
+
+  async getVideoById(id: number): Promise<Video | undefined> {
+    const result = await db.select().from(videos).where(eq(videos.id, id));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getVideoByExternalId(externalId: string): Promise<Video | undefined> {
+    const result = await db.select().from(videos).where(eq(videos.externalId, externalId));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getVideosByPlatform(platform: string, limit = 20): Promise<Video[]> {
+    return db.select()
+      .from(videos)
+      .where(eq(videos.platform, platform))
+      .limit(limit)
+      .orderBy(desc(videos.publishedAt));
+  }
+
+  async getVideosByCategory(categoryId: number, limit = 20): Promise<Video[]> {
+    // Para buscar en un array, usamos sql.raw en PostgreSQL
+    return db.select()
+      .from(videos)
+      .where(sql`${videos.categoryIds} @> ARRAY[${categoryId.toString()}]::text[]`)
+      .limit(limit)
+      .orderBy(desc(videos.publishedAt));
+  }
+
+  async getVideosByChannel(channelId: string, limit = 20): Promise<Video[]> {
+    return db.select()
+      .from(videos)
+      .where(eq(videos.channelId, channelId))
+      .limit(limit)
+      .orderBy(desc(videos.publishedAt));
+  }
+
+  async getTrendingVideos(limit = 20): Promise<Video[]> {
+    return db.select()
+      .from(videos)
+      .orderBy(desc(videos.viewCount))
+      .limit(limit);
+  }
+
+  async getLatestVideos(limit = 20): Promise<Video[]> {
+    return db.select()
+      .from(videos)
+      .orderBy(desc(videos.publishedAt))
+      .limit(limit);
+  }
+
+  async searchVideos(query: string, limit = 20): Promise<Video[]> {
+    const searchPattern = `%${query}%`;
+    return db.select()
+      .from(videos)
+      .where(
+        sql`${videos.title} ILIKE ${searchPattern} OR ${videos.description} ILIKE ${searchPattern}`
+      )
+      .limit(limit);
+  }
+
+  async createVideo(video: InsertVideo): Promise<Video> {
+    const result = await db.insert(videos).values(video).returning();
+    return result[0];
+  }
+
+  async updateVideo(id: number, videoUpdate: Partial<InsertVideo>): Promise<Video | undefined> {
+    const result = await db.update(videos)
+      .set(videoUpdate)
+      .where(eq(videos.id, id))
+      .returning();
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  // Channel operations
+  async getChannels(limit = 100, offset = 0): Promise<Channel[]> {
+    return db.select()
+      .from(channels)
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getChannelById(id: number): Promise<Channel | undefined> {
+    const result = await db.select().from(channels).where(eq(channels.id, id));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getChannelByExternalId(externalId: string): Promise<Channel | undefined> {
+    const result = await db.select().from(channels).where(eq(channels.externalId, externalId));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getChannelsByPlatform(platform: string, limit = 20): Promise<Channel[]> {
+    return db.select()
+      .from(channels)
+      .where(eq(channels.platform, platform))
+      .limit(limit);
+  }
+
+  async getRecommendedChannels(limit = 4): Promise<Channel[]> {
+    return db.select()
+      .from(channels)
+      .orderBy(desc(channels.subscriberCount))
+      .limit(limit);
+  }
+
+  async searchChannels(query: string, limit = 20): Promise<Channel[]> {
+    const searchPattern = `%${query}%`;
+    return db.select()
+      .from(channels)
+      .where(
+        sql`${channels.title} ILIKE ${searchPattern} OR ${channels.description} ILIKE ${searchPattern}`
+      )
+      .limit(limit);
+  }
+
+  async createChannel(channel: InsertChannel): Promise<Channel> {
+    const result = await db.insert(channels).values(channel).returning();
+    return result[0];
+  }
+
+  async updateChannel(id: number, channelUpdate: Partial<InsertChannel>): Promise<Channel | undefined> {
+    const result = await db.update(channels)
+      .set(channelUpdate)
+      .where(eq(channels.id, id))
+      .returning();
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  // Category operations
+  async getCategories(): Promise<Category[]> {
+    return db.select().from(categories).orderBy(asc(categories.id));
+  }
+
+  async getCategoryById(id: number): Promise<Category | undefined> {
+    const result = await db.select().from(categories).where(eq(categories.id, id));
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async createCategory(category: InsertCategory): Promise<Category> {
+    const result = await db.insert(categories).values(category).returning();
+    return result[0];
+  }
+
+  // Favorite operations
+  async getFavoritesByUserId(userId: number): Promise<Favorite[]> {
+    return db.select()
+      .from(favorites)
+      .where(eq(favorites.userId, userId))
+      .orderBy(desc(favorites.createdAt));
+  }
+
+  async getFavoriteVideosByUserId(userId: number): Promise<Video[]> {
+    // Realizamos un join entre favoritos y videos
+    return db.select({
+      id: videos.id,
+      title: videos.title,
+      description: videos.description,
+      thumbnailUrl: videos.thumbnailUrl,
+      videoUrl: videos.videoUrl,
+      embedUrl: videos.embedUrl,
+      platform: videos.platform,
+      channelId: videos.channelId,
+      channelTitle: videos.channelTitle,
+      channelThumbnail: videos.channelThumbnail,
+      viewCount: videos.viewCount,
+      duration: videos.duration,
+      publishedAt: videos.publishedAt,
+      categoryIds: videos.categoryIds,
+      externalId: videos.externalId
+    })
+    .from(favorites)
+    .innerJoin(videos, eq(favorites.videoId, videos.id))
+    .where(eq(favorites.userId, userId))
+    .orderBy(desc(favorites.createdAt));
+  }
+
+  async createFavorite(favorite: InsertFavorite): Promise<Favorite> {
+    const result = await db.insert(favorites).values(favorite).returning();
+    return result[0];
+  }
+
+  async deleteFavorite(userId: number, videoId: number): Promise<boolean> {
+    const result = await db.delete(favorites)
+      .where(and(
+        eq(favorites.userId, userId),
+        eq(favorites.videoId, videoId)
+      ))
+      .returning();
+    
+    return result.length > 0;
+  }
+
+  async isFavorite(userId: number, videoId: number): Promise<boolean> {
+    const result = await db.select()
+      .from(favorites)
+      .where(and(
+        eq(favorites.userId, userId),
+        eq(favorites.videoId, videoId)
+      ));
+    
+    return result.length > 0;
+  }
+
+  // Método para inicializar la base de datos con datos predeterminados
+  async initializeDefaultData(): Promise<void> {
+    // Verificar si ya existen categorías
+    const existingCategories = await this.getCategories();
+    
+    if (existingCategories.length === 0) {
+      console.log('Inicializando categorías predeterminadas...');
+      const defaultCategories = [
+        { name: "Partidos", description: "Videos de partidos del Real Madrid" },
+        { name: "Entrenamientos", description: "Videos de entrenamientos del equipo" },
+        { name: "Ruedas de prensa", description: "Conferencias de prensa del club" },
+        { name: "Entrevistas", description: "Entrevistas con jugadores y personal del club" },
+        { name: "Jugadores", description: "Videos centrados en jugadores específicos" },
+        { name: "Análisis", description: "Análisis tácticos y técnicos" },
+        { name: "Momentos Históricos", description: "Momentos importantes en la historia del club" }
+      ];
+      
+      for (const category of defaultCategories) {
+        await this.createCategory(category);
+      }
+      console.log('Categorías predeterminadas creadas exitosamente');
+    }
+  }
+}
+
+// Exportar una instancia para su uso en la aplicación
+export const pgStorage = new PgStorage();

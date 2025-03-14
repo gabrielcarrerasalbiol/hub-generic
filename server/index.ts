@@ -7,6 +7,8 @@ import { registerRoutes } from "./routes";
 import { registerAuthRoutes } from "./authRoutes";
 import { setupPassport } from "./auth";
 import { setupVite, serveStatic, log } from "./vite";
+import { initDb } from "./db";
+import { pgStorage } from "./pgStorage";
 
 const app = express();
 app.use(express.json());
@@ -64,34 +66,46 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Register authentication routes
-  registerAuthRoutes(app);
-  
-  // Register regular API routes
-  const server = await registerRoutes(app);
+  try {
+    // Inicializar la conexión a la base de datos
+    await initDb();
+    console.log('Conexión a la base de datos PostgreSQL establecida');
+    
+    // Inicializar datos predeterminados en la base de datos
+    await pgStorage.initializeDefaultData();
+    
+    // Register authentication routes
+    registerAuthRoutes(app);
+    
+    // Register regular API routes
+    const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-    console.error('Server error:', err);
-    res.status(status).json({ message });
-  });
+      console.error('Server error:', err);
+      res.status(status).json({ message });
+    });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+    // importantly only setup vite in development and after
+    // setting up all the other routes so the catch-all route
+    // doesn't interfere with the other routes
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    // ALWAYS serve the app on port 5000
+    // this serves both the API and the client.
+    // It is the only port that is not firewalled.
+    const port = 5000;
+    server.listen(port, "0.0.0.0", () => {
+      log(`serving on port ${port}`);
+    });
+  } catch (error: any) {
+    console.error('Error al inicializar la aplicación:', error.message);
+    process.exit(1);
   }
-
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen(port, "0.0.0.0", () => {
-    log(`serving on port ${port}`);
-  });
 })();
