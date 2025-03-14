@@ -88,7 +88,7 @@ export const useAuth = create<AuthState>((set, get) => ({
     try {
       await apiRequest('/api/auth/logout', {
         method: 'POST',
-      } as RequestInit);
+      });
     } catch (error) {
       console.error('Error durante el cierre de sesión:', error);
     } finally {
@@ -120,7 +120,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       const user = await apiRequest<UserAuth>('/api/auth/profile', {
         method: 'PUT',
         body: JSON.stringify(data),
-      } as RequestInit);
+      });
       
       set({ user, isLoading: false });
       return true;
@@ -140,7 +140,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       await apiRequest('/api/auth/password', {
         method: 'PUT',
         body: JSON.stringify({ currentPassword, newPassword }),
-      } as RequestInit);
+      });
       
       set({ isLoading: false });
       return true;

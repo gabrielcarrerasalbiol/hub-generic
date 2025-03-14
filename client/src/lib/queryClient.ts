@@ -7,20 +7,52 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  const res = await fetch(url, {
-    method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
-  });
+export async function apiRequest<T = any>(
+  urlOrOptions: string | RequestInit,
+  options?: RequestInit
+): Promise<T> {
+  let url: string;
+  let requestOptions: RequestInit;
 
+  if (typeof urlOrOptions === 'string') {
+    url = urlOrOptions;
+    requestOptions = options || { method: 'GET' };
+  } else {
+    // En este caso, el primer argumento es las opciones de la solicitud
+    // y debe contener un campo url
+    url = '/api'; // Valor por defecto, se debería sobrescribir
+    requestOptions = urlOrOptions;
+  }
+
+  // Asegurarse de que las cabeceras se envíen correctamente
+  if (!requestOptions.headers && requestOptions.body) {
+    requestOptions.headers = {
+      'Content-Type': 'application/json'
+    };
+  }
+
+  // Siempre incluir credenciales
+  requestOptions.credentials = 'include';
+
+  // Añadir token de autenticación de localStorage si existe
+  const token = localStorage.getItem('hubmadridista_token');
+  if (token) {
+    requestOptions.headers = {
+      ...requestOptions.headers,
+      'Authorization': `Bearer ${token}`
+    };
+  }
+
+  const res = await fetch(url, requestOptions);
   await throwIfResNotOk(res);
-  return res;
+  
+  // Para peticiones HEAD o si la respuesta está vacía
+  if (res.status === 204 || requestOptions.method === 'HEAD') {
+    return {} as T;
+  }
+  
+  // Intentar parsear como JSON
+  return await res.json() as T;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
@@ -29,8 +61,17 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    const url = queryKey[0] as string;
+    const token = localStorage.getItem('hubmadridista_token');
+    
+    const headers: HeadersInit = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(url, {
       credentials: "include",
+      headers
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

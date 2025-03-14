@@ -54,7 +54,10 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
     try {
       if (isFavorite) {
         // Remove from favorites
-        await apiRequest('DELETE', `/api/favorites/${video.id}`);
+        const url = `/api/favorites/${video.id}`;
+        await apiRequest(url, {
+          method: 'DELETE'
+        });
         setIsFavorite(false);
         toast({
           title: "Éxito",
@@ -62,7 +65,10 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
         });
       } else {
         // Add to favorites
-        await apiRequest('POST', '/api/favorites', { videoId: video.id });
+        await apiRequest<any>('/api/favorites', {
+          method: 'POST',
+          body: JSON.stringify({ videoId: video.id })
+        });
         setIsFavorite(true);
         toast({
           title: "Éxito",
