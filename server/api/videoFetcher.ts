@@ -219,8 +219,8 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
         }
 
         // Solo procesamos canales de YouTube por ahora
-        if (channel.platform !== 'youtube') {
-          result.errors.push(`Canal ${channel.title} no es de YouTube (plataforma: ${channel.platform})`);
+        if (!channel.platform || !channel.platform.toLowerCase().includes('youtube')) {
+          result.errors.push(`Canal ${channel.title} no es de YouTube (plataforma: ${channel.platform || 'desconocida'})`);
           continue;
         }
 
