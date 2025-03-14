@@ -172,7 +172,7 @@ export default function Home() {
                   index === currentFeaturedIndex ? 'opacity-100' : 'opacity-0 absolute inset-0'
                 }`}
               >
-                <FeaturedVideo video={video as Video} />
+                <FeaturedVideo video={video} />
               </div>
             ))}
           </div>
@@ -251,7 +251,7 @@ export default function Home() {
             </div>
           ) : filteredVideos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredVideos.map((video: Video) => (
+              {filteredVideos.map((video) => (
                 <VideoCard key={video.id} video={video} />
               ))}
             </div>
@@ -289,7 +289,7 @@ export default function Home() {
         ) : trendingVideosWithoutFeatured.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Mostramos solo los primeros 9 videos (3 filas de 3) */}
-            {trendingVideosWithoutFeatured.slice(0, 9).map((video: Video) => (
+            {trendingVideosWithoutFeatured.slice(0, 9).map((video) => (
               <VideoCard key={video.id} video={video} />
             ))}
           </div>
@@ -300,13 +300,14 @@ export default function Home() {
         )}
         
         <div className="mt-4 text-center">
-          <Button 
-            variant="outline" 
-            className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
-            onClick={() => window.location.href = '/trending'}
-          >
-            Ver más videos
-          </Button>
+          <Link href="/trending">
+            <Button 
+              variant="outline" 
+              className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+            >
+              Ver más videos
+            </Button>
+          </Link>
         </div>
       </section>
       
@@ -337,7 +338,7 @@ export default function Home() {
         ) : recommendedChannels.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Mostramos solo hasta 9 canales (3 filas de 3) */}
-            {recommendedChannels.slice(0, 9).map((channel: Channel) => (
+            {recommendedChannels.slice(0, 9).map((channel) => (
               <ChannelCard key={channel.id} channel={channel} />
             ))}
           </div>
@@ -374,7 +375,7 @@ export default function Home() {
         ) : latestVideos.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Mostramos solo los primeros 9 videos (3 filas de 3) */}
-            {latestVideos.slice(0, 9).map((video: Video) => (
+            {latestVideos.slice(0, 9).map((video) => (
               <VideoCard key={video.id} video={video} />
             ))}
           </div>
@@ -385,13 +386,14 @@ export default function Home() {
         )}
         
         <div className="mt-4 text-center">
-          <Button 
-            variant="outline" 
-            className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
-            onClick={() => window.location.href = '/category/latest'}
-          >
-            Ver más videos
-          </Button>
+          <Link href="/category/latest">
+            <Button 
+              variant="outline" 
+              className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+            >
+              Ver más videos
+            </Button>
+          </Link>
         </div>
       </section>
     </main>
