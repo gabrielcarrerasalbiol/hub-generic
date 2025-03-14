@@ -1,7 +1,9 @@
 import { 
   User, InsertUser, Video, InsertVideo, Channel, 
   InsertChannel, Category, InsertCategory, Favorite, 
-  InsertFavorite, Session, OAuthToken, InsertOAuthToken
+  InsertFavorite, Session, OAuthToken, InsertOAuthToken,
+  ChannelSubscription, InsertChannelSubscription,
+  Notification, InsertNotification
 } from "../shared/schema";
 
 // Storage interface defining all operations

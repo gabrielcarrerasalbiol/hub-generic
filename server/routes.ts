@@ -5,7 +5,11 @@ import { z } from "zod";
 import { classifyContent, enhanceSearch } from "./api/openai";
 import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
-import { CategoryType, PlatformType, insertFavoriteSchema, Video, User } from "../shared/schema";
+import { 
+  CategoryType, PlatformType, insertFavoriteSchema, Video, User, 
+  insertChannelSubscriptionSchema, insertNotificationSchema, 
+  ChannelSubscription, Notification
+} from "../shared/schema";
 import { isAuthenticated, isAdmin } from "./auth";
 
 // Demo user ID - in a real app, this would come from authentication
@@ -567,6 +571,202 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error removing favorite:", error);
       res.status(500).json({ message: "Failed to remove favorite" });
+    }
+  });
+
+  // Rutas para suscripciones a canales
+  app.get("/api/subscriptions", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      const subscriptions = await storage.getSubscriptionsByUserId(userId);
+      res.json(subscriptions);
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+      res.status(500).json({ message: "Failed to fetch subscriptions" });
+    }
+  });
+
+  app.get("/api/subscriptions/channels", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      const channels = await storage.getSubscribedChannelsByUserId(userId);
+      res.json(channels);
+    } catch (error) {
+      console.error("Error fetching subscribed channels:", error);
+      res.status(500).json({ message: "Failed to fetch subscribed channels" });
+    }
+  });
+
+  app.get("/api/channels/:channelId/subscription", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      const channelId = parseInt(req.params.channelId);
+      
+      if (isNaN(channelId)) {
+        return res.status(400).json({ message: "Invalid channel ID" });
+      }
+      
+      const isSubscribed = await storage.isSubscribed(userId, channelId);
+      res.json({ isSubscribed });
+    } catch (error) {
+      console.error("Error checking subscription:", error);
+      res.status(500).json({ message: "Failed to check subscription status" });
+    }
+  });
+
+  app.post("/api/subscriptions", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      const { channelId, notificationsEnabled = true } = req.body;
+      
+      if (!channelId || isNaN(parseInt(channelId))) {
+        return res.status(400).json({ message: "Valid channel ID is required" });
+      }
+      
+      const channelIdNum = parseInt(channelId);
+      
+      // Verificar si el canal existe
+      const channel = await storage.getChannelById(channelIdNum);
+      if (!channel) {
+        return res.status(404).json({ message: "Channel not found" });
+      }
+      
+      // Verificar si ya está suscrito
+      const alreadySubscribed = await storage.isSubscribed(userId, channelIdNum);
+      if (alreadySubscribed) {
+        return res.status(400).json({ message: "Already subscribed to this channel" });
+      }
+      
+      const subscription = await storage.createSubscription({
+        userId,
+        channelId: channelIdNum,
+        notificationsEnabled
+      });
+      
+      res.status(201).json(subscription);
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      res.status(500).json({ message: "Failed to subscribe to channel" });
+    }
+  });
+
+  app.put("/api/subscriptions/:channelId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      const channelId = parseInt(req.params.channelId);
+      const { notificationsEnabled } = req.body;
+      
+      if (isNaN(channelId)) {
+        return res.status(400).json({ message: "Invalid channel ID" });
+      }
+      
+      if (typeof notificationsEnabled !== 'boolean') {
+        return res.status(400).json({ message: "notificationsEnabled must be a boolean value" });
+      }
+      
+      // Verificar si está suscrito
+      const isSubscribed = await storage.isSubscribed(userId, channelId);
+      if (!isSubscribed) {
+        return res.status(404).json({ message: "Subscription not found" });
+      }
+      
+      const updatedSubscription = await storage.updateSubscription(userId, channelId, notificationsEnabled);
+      res.json(updatedSubscription);
+    } catch (error) {
+      console.error("Error updating subscription:", error);
+      res.status(500).json({ message: "Failed to update subscription" });
+    }
+  });
+
+  app.delete("/api/subscriptions/:channelId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      const channelId = parseInt(req.params.channelId);
+      
+      if (isNaN(channelId)) {
+        return res.status(400).json({ message: "Invalid channel ID" });
+      }
+      
+      // Verificar si está suscrito
+      const isSubscribed = await storage.isSubscribed(userId, channelId);
+      if (!isSubscribed) {
+        return res.status(404).json({ message: "Subscription not found" });
+      }
+      
+      await storage.deleteSubscription(userId, channelId);
+      res.status(204).end();
+    } catch (error) {
+      console.error("Error deleting subscription:", error);
+      res.status(500).json({ message: "Failed to unsubscribe from channel" });
+    }
+  });
+
+  // Rutas para notificaciones
+  app.get("/api/notifications", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const notifications = await storage.getNotificationsByUserId(userId, limit, offset);
+      res.json(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
+  app.get("/api/notifications/unread/count", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      const count = await storage.getUnreadNotificationCount(userId);
+      res.json({ count });
+    } catch (error) {
+      console.error("Error fetching unread notification count:", error);
+      res.status(500).json({ message: "Failed to fetch unread notification count" });
+    }
+  });
+
+  app.put("/api/notifications/:notificationId/read", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const notificationId = parseInt(req.params.notificationId);
+      
+      if (isNaN(notificationId)) {
+        return res.status(400).json({ message: "Invalid notification ID" });
+      }
+      
+      await storage.markNotificationAsRead(notificationId);
+      res.status(204).end();
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      res.status(500).json({ message: "Failed to mark notification as read" });
+    }
+  });
+
+  app.put("/api/notifications/read/all", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as User).id;
+      await storage.markAllNotificationsAsRead(userId);
+      res.status(204).end();
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      res.status(500).json({ message: "Failed to mark all notifications as read" });
+    }
+  });
+
+  app.delete("/api/notifications/:notificationId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const notificationId = parseInt(req.params.notificationId);
+      
+      if (isNaN(notificationId)) {
+        return res.status(400).json({ message: "Invalid notification ID" });
+      }
+      
+      await storage.deleteNotification(notificationId);
+      res.status(204).end();
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+      res.status(500).json({ message: "Failed to delete notification" });
     }
   });
 
