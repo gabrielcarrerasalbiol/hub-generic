@@ -91,13 +91,23 @@ export const useAuth = create<AuthState>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
+      // Primero, asegurarse de que no hay tokens antiguos que puedan causar problemas
+      localStorage.removeItem('hubmadridista_token');
+      
       const result = await apiRequest<AuthResponse>('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
       });
       
+      // Guardar el nuevo token
       localStorage.setItem('hubmadridista_token', result.token);
+      
+      // Actualizar el estado
       set({ user: result.user, token: result.token, isLoading: false });
+      
+      // Forzar recarga de la página para asegurar un estado limpio
+      window.location.href = '/';
+      
       return true;
     } catch (error: any) {
       console.error('Error en el inicio de sesión:', error);
