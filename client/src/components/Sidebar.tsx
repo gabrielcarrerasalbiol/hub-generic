@@ -72,6 +72,20 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               </Link>
             </li>
             <li>
+              <Link href="/subscriptions" className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/subscriptions") 
+                    ? "bg-gray-100 text-[#1E3A8A]" 
+                    : "text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]"
+                )}>
+                  <i className={cn(
+                    "fas fa-rss mr-3",
+                    isLinkActive("/subscriptions") ? "text-[#1E3A8A]" : "text-gray-500"
+                  )}></i>
+                  Mis Suscripciones
+              </Link>
+            </li>
+            <li>
               <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
                 <i className="fas fa-history mr-3 text-gray-500"></i>
                 Historial
