@@ -419,7 +419,7 @@ export default function VideoManagement() {
                     <Slider
                       id="videoCount"
                       min={5}
-                      max={30}
+                      max={100}
                       step={5}
                       value={[fetchVideoCount]}
                       onValueChange={(values: number[]) => setFetchVideoCount(values[0])}

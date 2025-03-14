@@ -860,7 +860,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/videos/fetch-new", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
       const { maxResults = 10 } = req.body;
-      const limit = Math.min(Math.max(parseInt(String(maxResults), 10) || 10, 5), 30); // Limitar entre 5 y 30
+      const limit = Math.min(Math.max(parseInt(String(maxResults), 10) || 10, 5), 100); // Limitar entre 5 y 100
       
       const { fetchAndProcessNewVideos } = await import("./api/videoFetcher");
       const result = await fetchAndProcessNewVideos(limit);
