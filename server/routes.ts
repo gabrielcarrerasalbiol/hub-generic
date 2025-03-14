@@ -223,13 +223,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = parseInt(req.query.limit as string) || 50;
       const videos = await storage.getTrendingVideos(limit);
       
-      // Check if any videos are favorites
-      const videosWithFavorite = await Promise.all(
-        videos.map(async (video) => {
-          const isFavorite = await storage.isFavorite(DEMO_USER_ID, video.id);
-          return { ...video, isFavorite };
-        })
-      );
+      // Check if any videos are favorites (solo si hay usuario autenticado)
+      let videosWithFavorite = videos;
+      if (req.user && req.user.id) {
+        videosWithFavorite = await Promise.all(
+          videos.map(async (video) => {
+            const isFavorite = await storage.isFavorite(req.user!.id, video.id);
+            return { ...video, isFavorite };
+          })
+        );
+      } else {
+        // Si no hay usuario, ningún video es favorito
+        videosWithFavorite = videos.map(video => ({
+          ...video,
+          isFavorite: false
+        }));
+      }
       
       res.json(videosWithFavorite);
     } catch (error) {
@@ -243,13 +252,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = parseInt(req.query.limit as string) || 50;
       const videos = await storage.getLatestVideos(limit);
       
-      // Check if any videos are favorites
-      const videosWithFavorite = await Promise.all(
-        videos.map(async (video) => {
-          const isFavorite = await storage.isFavorite(DEMO_USER_ID, video.id);
-          return { ...video, isFavorite };
-        })
-      );
+      // Check if any videos are favorites (solo si hay usuario autenticado)
+      let videosWithFavorite = videos;
+      if (req.user && req.user.id) {
+        videosWithFavorite = await Promise.all(
+          videos.map(async (video) => {
+            const isFavorite = await storage.isFavorite(req.user!.id, video.id);
+            return { ...video, isFavorite };
+          })
+        );
+      } else {
+        // Si no hay usuario, ningún video es favorito
+        videosWithFavorite = videos.map(video => ({
+          ...video,
+          isFavorite: false
+        }));
+      }
       
       res.json(videosWithFavorite);
     } catch (error) {
@@ -339,13 +357,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Re-query to get the new videos
             const updatedVideos = await storage.searchVideos(enhancedQuery, limit);
             
-            // Check if any videos are favorites
-            const videosWithFavorite = await Promise.all(
-              updatedVideos.map(async (video) => {
-                const isFavorite = await storage.isFavorite(DEMO_USER_ID, video.id);
-                return { ...video, isFavorite };
-              })
-            );
+            // Check if any videos are favorites (solo si hay usuario autenticado)
+            let videosWithFavorite = updatedVideos;
+            if (req.user && req.user.id) {
+              videosWithFavorite = await Promise.all(
+                updatedVideos.map(async (video) => {
+                  const isFavorite = await storage.isFavorite(req.user!.id, video.id);
+                  return { ...video, isFavorite };
+                })
+              );
+            } else {
+              // Si no hay usuario, ningún video es favorito
+              videosWithFavorite = updatedVideos.map(video => ({
+                ...video,
+                isFavorite: false
+              }));
+            }
             
             return res.json(videosWithFavorite);
           }
@@ -354,13 +381,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Check if any videos are favorites
-      const videosWithFavorite = await Promise.all(
-        videos.map(async (video) => {
-          const isFavorite = await storage.isFavorite(DEMO_USER_ID, video.id);
-          return { ...video, isFavorite };
-        })
-      );
+      // Check if any videos are favorites (solo si hay usuario autenticado)
+      let videosWithFavorite = videos;
+      if (req.user && req.user.id) {
+        videosWithFavorite = await Promise.all(
+          videos.map(async (video) => {
+            const isFavorite = await storage.isFavorite(req.user!.id, video.id);
+            return { ...video, isFavorite };
+          })
+        );
+      } else {
+        // Si no hay usuario, ningún video es favorito
+        videosWithFavorite = videos.map(video => ({
+          ...video,
+          isFavorite: false
+        }));
+      }
       
       res.json(videosWithFavorite);
     } catch (error) {
@@ -385,13 +421,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const videos = await storage.getVideosByCategory(categoryId, limit);
       
-      // Check if any videos are favorites
-      const videosWithFavorite = await Promise.all(
-        videos.map(async (video) => {
-          const isFavorite = await storage.isFavorite(DEMO_USER_ID, video.id);
-          return { ...video, isFavorite };
-        })
-      );
+      // Check if any videos are favorites (solo si hay usuario autenticado)
+      let videosWithFavorite = videos;
+      if (req.user && req.user.id) {
+        videosWithFavorite = await Promise.all(
+          videos.map(async (video) => {
+            const isFavorite = await storage.isFavorite(req.user!.id, video.id);
+            return { ...video, isFavorite };
+          })
+        );
+      } else {
+        // Si no hay usuario, ningún video es favorito
+        videosWithFavorite = videos.map(video => ({
+          ...video,
+          isFavorite: false
+        }));
+      }
       
       res.json(videosWithFavorite);
     } catch (error) {
