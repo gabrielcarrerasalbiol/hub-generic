@@ -911,6 +911,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Endpoint para generar resumen para un video específico
+  app.post("/api/videos/:id/generate-summary", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      
+      if (isNaN(videoId)) {
+        return res.status(400).json({ message: "ID de video inválido" });
+      }
+      
+      const video = await storage.getVideoById(videoId);
+      if (!video) {
+        return res.status(404).json({ message: "Video no encontrado" });
+      }
+      
+      const { generateSummaryForVideo } = await import("./api/summaryUpdater");
+      const success = await generateSummaryForVideo(videoId);
+      
+      if (success) {
+        const updatedVideo = await storage.getVideoById(videoId);
+        res.json({
+          message: "Resumen generado correctamente",
+          video: updatedVideo
+        });
+      } else {
+        res.status(500).json({ message: "No se pudo generar el resumen del video" });
+      }
+    } catch (error) {
+      console.error("Error generando resumen de video:", error);
+      res.status(500).json({ message: "Error al generar resumen del video" });
+    }
+  });
+  
+  // Endpoint para generar resúmenes para todos los videos
+  app.post("/api/videos/generate-summaries/all", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { limit = 50 } = req.body;
+      const processLimit = Math.min(Math.max(parseInt(String(limit), 10) || 50, 5), 200); // Limitar entre 5 y 200
+      
+      const { generateSummariesForAllVideos } = await import("./api/summaryUpdater");
+      const result = await generateSummariesForAllVideos(processLimit);
+      
+      res.json({
+        message: `Generación de resúmenes completada: ${result.updated} de ${result.total} videos actualizados, ${result.skipped} omitidos, ${result.failed} fallidos`,
+        ...result
+      });
+    } catch (error) {
+      console.error("Error generando resúmenes para videos:", error);
+      res.status(500).json({ message: "Error al generar resúmenes para videos" });
+    }
+  });
+  
   // Endpoint para verificar disponibilidad de videos (eliminar los no disponibles)
   app.post("/api/videos/verify", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
