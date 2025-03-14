@@ -175,24 +175,38 @@ export default function SearchPage() {
 
       {/* Display loading state */}
       {isLoading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {[...Array(8)].map((_, index) => (
-            <div key={index} className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden">
-              <Skeleton className="w-full aspect-video" />
-              <div className="p-3">
-                <Skeleton className="h-5 w-full mb-3" />
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <Skeleton className="w-6 h-6 rounded-full" />
-                    <Skeleton className="h-4 w-24 ml-2" />
-                  </div>
-                  <Skeleton className="h-4 w-4" />
-                </div>
-                <Skeleton className="h-3 w-40 mt-2" />
-              </div>
+        <>
+          {/* Spinner principal */}
+          <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center mb-6">
+            <div className="flex flex-col items-center justify-center">
+              <div className="w-12 h-12 border-4 border-[#FDBE11] border-t-transparent rounded-full animate-spin mb-4"></div>
+              <h2 className="text-xl font-semibold mb-2 dark:text-white">Buscando contenido...</h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Estamos buscando los mejores resultados para "{searchQuery}". Esto puede tomar unos segundos.
+              </p>
             </div>
-          ))}
-        </div>
+          </div>
+          
+          {/* Skeletons de tarjetas */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, index) => (
+              <div key={index} className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden">
+                <Skeleton className="w-full aspect-video" />
+                <div className="p-3">
+                  <Skeleton className="h-5 w-full mb-3" />
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
+                      <Skeleton className="w-6 h-6 rounded-full" />
+                      <Skeleton className="h-4 w-24 ml-2" />
+                    </div>
+                    <Skeleton className="h-4 w-4" />
+                  </div>
+                  <Skeleton className="h-3 w-40 mt-2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Display error state */}
