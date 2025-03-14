@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Channel } from "@shared/schema";
+import { useLanguage } from '@/hooks/use-language';
 import { 
   Home, TrendingUp, Star, Rss, History, 
   Youtube, Twitter, Instagram, 
@@ -16,6 +17,7 @@ type SidebarProps = {
 
 export default function Sidebar({ isOpen }: SidebarProps) {
   const [location] = useLocation();
+  const { t } = useLanguage();
 
   // Fetch recommended channels for sidebar
   const { data: featuredChannels = [], isLoading } = useQuery<Channel[]>({
@@ -29,7 +31,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
 
   // Sidebar base classes
   const sidebarClasses = cn(
-    "bg-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-[#FDBE11]",
+    "bg-white dark:bg-[#18181B] dark:text-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-[#FDBE11]",
     "md:block", // Always show on desktop
     isOpen 
       ? "fixed inset-0 w-full md:w-64 z-50 h-full" // Open state on mobile
@@ -41,21 +43,21 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     <aside className={sidebarClasses}>
       <nav className="py-4">
         {/* Explore Section */}
-        <div className="px-4 pb-4 border-b border-[#FDBE11]/50">
-          <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Explorar</h3>
+        <div className="px-4 pb-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
+          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.explore')}</h3>
           <ul className="mt-2 space-y-1">
             <li>
               <Link href="/" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}>
                   <Home className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/") ? "text-[#FDBE11]" : "text-gray-500"
+                    isLinkActive("/") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
                   )} />
-                  Inicio
+                  {t('nav.home')}
               </Link>
             </li>
             <li>
@@ -110,8 +112,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Platforms Section */}
-        <div className="px-4 py-4 border-b border-[#FDBE11]/50">
-          <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Plataformas</h3>
+        <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
+          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.platforms')}</h3>
           <ul className="mt-2 space-y-1">
             <li>
               <Link 
@@ -176,8 +178,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Categories Section */}
-        <div className="px-4 py-4 border-b border-[#FDBE11]/50">
-          <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Categorías</h3>
+        <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
+          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.categories')}</h3>
           <ul className="mt-2 space-y-1">
             <li>
               <Link 
@@ -269,7 +271,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         
         {/* Featured Channels Section */}
         <div className="px-4 py-4">
-          <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Canales Destacados</h3>
+          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.featured')}</h3>
           
           {isLoading ? (
             // Loading skeleton for featured channels
@@ -290,7 +292,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link 
                 key={channel.id} 
                 href={`/channel/${channel.id}`}
-                className="flex items-center mt-3 hover:bg-[#FDBE11]/10 rounded-md p-2 cursor-pointer"
+                className="flex items-center mt-3 hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20 rounded-md p-2 cursor-pointer"
               >
                 <img 
                   src={channel.thumbnailUrl || 'https://via.placeholder.com/32'} 
@@ -298,20 +300,20 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   className="w-8 h-8 rounded-full border border-[#FDBE11]" 
                 />
                 <div className="ml-2">
-                  <p className="text-sm font-medium text-[#001C58]">{channel.title}</p>
-                  <p className="text-xs text-gray-500">
-                    {channel.platform === 'YouTube' && 'Canal de YouTube'}
-                    {channel.platform === 'TikTok' && 'Canal de TikTok'}
-                    {channel.platform === 'Twitter' && 'Cuenta de Twitter'}
-                    {channel.platform === 'Instagram' && 'Cuenta de Instagram'}
+                  <p className="text-sm font-medium text-[#001C58] dark:text-white">{channel.title}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {channel.platform === 'YouTube' && t('sidebar.youtube_channel')}
+                    {channel.platform === 'TikTok' && t('sidebar.tiktok_channel')}
+                    {channel.platform === 'Twitter' && t('sidebar.twitter_account')}
+                    {channel.platform === 'Instagram' && t('sidebar.instagram_account')}
                   </p>
                 </div>
               </Link>
             ))
           ) : (
             // No channels available
-            <p className="text-sm text-[#001C58]/70 mt-3 text-center">
-              No hay canales destacados disponibles
+            <p className="text-sm text-[#001C58]/70 dark:text-gray-400 mt-3 text-center">
+              {t('sidebar.no_featured')}
             </p>
           )}
         </div>
