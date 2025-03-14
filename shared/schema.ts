@@ -119,6 +119,42 @@ export const insertFavoriteSchema = createInsertSchema(favorites).omit({
   createdAt: true,
 });
 
+// Tabla para suscripciones a canales
+export const channelSubscriptions = pgTable("channel_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  channelId: integer("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
+  notificationsEnabled: boolean("notifications_enabled").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    userChannelIdx: primaryKey({ columns: [table.userId, table.channelId] }),
+  };
+});
+
+export const insertChannelSubscriptionSchema = createInsertSchema(channelSubscriptions).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Tabla para notificaciones de nuevos videos
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  channelId: integer("channel_id").references(() => channels.id, { onDelete: "set null" }),
+  videoId: integer("video_id").references(() => videos.id, { onDelete: "set null" }),
+  type: text("type").notNull(), // 'new_video', 'channel_update', etc.
+  message: text("message").notNull(),
+  isRead: boolean("is_read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true, 
+  createdAt: true,
+  isRead: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -139,6 +175,12 @@ export type Category = typeof categories.$inferSelect;
 
 export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
 export type Favorite = typeof favorites.$inferSelect;
+
+export type InsertChannelSubscription = z.infer<typeof insertChannelSubscriptionSchema>;
+export type ChannelSubscription = typeof channelSubscriptions.$inferSelect;
+
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type Notification = typeof notifications.$inferSelect;
 
 // Tipos de roles de usuario
 export const UserRole = z.enum(["free", "premium", "admin"]);

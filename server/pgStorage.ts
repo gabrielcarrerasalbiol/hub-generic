@@ -1,11 +1,14 @@
-import { eq, and, desc, like, sql, asc } from 'drizzle-orm';
+import { eq, and, desc, like, sql, asc, inArray, count } from 'drizzle-orm';
 import { db } from './db';
 import { IStorage } from './storage';
 import {
   User, InsertUser, Video, InsertVideo, Channel,
   InsertChannel, Category, InsertCategory, Favorite,
   InsertFavorite, OAuthToken, InsertOAuthToken,
-  users, videos, channels, categories, favorites, oauthTokens
+  ChannelSubscription, InsertChannelSubscription,
+  Notification, InsertNotification,
+  users, videos, channels, categories, favorites, oauthTokens,
+  channelSubscriptions, notifications
 } from '@shared/schema';
 
 // PostgreSQL implementation of the storage interface
@@ -313,6 +316,137 @@ export class PgStorage implements IStorage {
       ));
     
     return result.length > 0;
+  }
+  
+  // Channel subscription operations
+  async getSubscriptionsByUserId(userId: number): Promise<ChannelSubscription[]> {
+    return db
+      .select()
+      .from(channelSubscriptions)
+      .where(eq(channelSubscriptions.userId, userId));
+  }
+
+  async getSubscribedChannelsByUserId(userId: number): Promise<Channel[]> {
+    const subscriptions = await db
+      .select({
+        channelId: channelSubscriptions.channelId
+      })
+      .from(channelSubscriptions)
+      .where(eq(channelSubscriptions.userId, userId));
+    
+    if (subscriptions.length === 0) {
+      return [];
+    }
+    
+    const channelIds = subscriptions.map(sub => sub.channelId);
+    
+    return db
+      .select()
+      .from(channels)
+      .where(inArray(channels.id, channelIds));
+  }
+
+  async isSubscribed(userId: number, channelId: number): Promise<boolean> {
+    const result = await db
+      .select()
+      .from(channelSubscriptions)
+      .where(
+        and(
+          eq(channelSubscriptions.userId, userId),
+          eq(channelSubscriptions.channelId, channelId)
+        )
+      );
+    
+    return result.length > 0;
+  }
+
+  async createSubscription(subscription: InsertChannelSubscription): Promise<ChannelSubscription> {
+    const result = await db.insert(channelSubscriptions).values(subscription).returning();
+    return result[0];
+  }
+
+  async updateSubscription(userId: number, channelId: number, notificationsEnabled: boolean): Promise<ChannelSubscription> {
+    const result = await db
+      .update(channelSubscriptions)
+      .set({ notificationsEnabled })
+      .where(
+        and(
+          eq(channelSubscriptions.userId, userId),
+          eq(channelSubscriptions.channelId, channelId)
+        )
+      )
+      .returning();
+    
+    return result[0];
+  }
+
+  async deleteSubscription(userId: number, channelId: number): Promise<boolean> {
+    const result = await db
+      .delete(channelSubscriptions)
+      .where(
+        and(
+          eq(channelSubscriptions.userId, userId),
+          eq(channelSubscriptions.channelId, channelId)
+        )
+      );
+    
+    return true;
+  }
+  
+  // Notification operations
+  async getNotificationsByUserId(userId: number, limit = 20, offset = 0): Promise<Notification[]> {
+    return db
+      .select()
+      .from(notifications)
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getUnreadNotificationCount(userId: number): Promise<number> {
+    const result = await db
+      .select({ count: count() })
+      .from(notifications)
+      .where(
+        and(
+          eq(notifications.userId, userId),
+          eq(notifications.isRead, false)
+        )
+      );
+    
+    return result[0]?.count || 0;
+  }
+
+  async markNotificationAsRead(notificationId: number): Promise<boolean> {
+    await db
+      .update(notifications)
+      .set({ isRead: true })
+      .where(eq(notifications.id, notificationId));
+    
+    return true;
+  }
+
+  async markAllNotificationsAsRead(userId: number): Promise<boolean> {
+    await db
+      .update(notifications)
+      .set({ isRead: true })
+      .where(eq(notifications.userId, userId));
+    
+    return true;
+  }
+
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const result = await db.insert(notifications).values(notification).returning();
+    return result[0];
+  }
+
+  async deleteNotification(notificationId: number): Promise<boolean> {
+    await db
+      .delete(notifications)
+      .where(eq(notifications.id, notificationId));
+    
+    return true;
   }
 
   // Método para inicializar la base de datos con datos predeterminados

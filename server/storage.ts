@@ -57,6 +57,22 @@ export interface IStorage {
   deleteFavorite(userId: number, videoId: number): Promise<boolean>;
   isFavorite(userId: number, videoId: number): Promise<boolean>;
   
+  // Channel subscription operations
+  getSubscriptionsByUserId(userId: number): Promise<ChannelSubscription[]>;
+  getSubscribedChannelsByUserId(userId: number): Promise<Channel[]>;
+  isSubscribed(userId: number, channelId: number): Promise<boolean>;
+  createSubscription(subscription: InsertChannelSubscription): Promise<ChannelSubscription>;
+  updateSubscription(userId: number, channelId: number, notificationsEnabled: boolean): Promise<ChannelSubscription>;
+  deleteSubscription(userId: number, channelId: number): Promise<boolean>;
+  
+  // Notification operations
+  getNotificationsByUserId(userId: number, limit?: number, offset?: number): Promise<Notification[]>;
+  getUnreadNotificationCount(userId: number): Promise<number>;
+  markNotificationAsRead(notificationId: number): Promise<boolean>;
+  markAllNotificationsAsRead(userId: number): Promise<boolean>;
+  createNotification(notification: InsertNotification): Promise<Notification>;
+  deleteNotification(notificationId: number): Promise<boolean>;
+  
   // Initialize default data (for testing)
   initializeDefaultData?(): Promise<void>;
 }
