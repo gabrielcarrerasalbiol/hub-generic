@@ -1308,6 +1308,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Historial de visualización
+  app.get("/api/history", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const limit = parseInt(req.query.limit as string) || 50;
+      
+      const viewedVideos = await storage.getViewHistory(userId, limit);
+      
+      // Obtener los detalles completos de los videos
+      const videoIds = viewedVideos.map(entry => entry.videoId);
+      const videosWithDetails = [];
+      
+      for (const entry of viewedVideos) {
+        const video = await storage.getVideoById(entry.videoId);
+        if (video) {
+          videosWithDetails.push({
+            ...video,
+            watchedAt: entry.watchedAt,
+            watchDuration: entry.watchDuration || 0,
+            completionPercentage: entry.completionPercentage || 0
+          });
+        }
+      }
+      
+      res.json(videosWithDetails);
+    } catch (error) {
+      console.error("Error fetching view history:", error);
+      res.status(500).json({ message: "Error al obtener el historial de visualizaciones" });
+    }
+  });
+  
+  // Registrar una visualización
+  app.post("/api/history", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const { videoId, watchDuration, completionPercentage } = req.body;
+      
+      if (!videoId) {
+        return res.status(400).json({ message: "ID de video requerido" });
+      }
+      
+      const viewHistoryEntry = await storage.addViewHistory({
+        userId,
+        videoId,
+        watchDuration,
+        completionPercentage
+      });
+      
+      res.status(201).json(viewHistoryEntry);
+    } catch (error) {
+      console.error("Error adding to view history:", error);
+      res.status(500).json({ message: "Error al registrar la visualización" });
+    }
+  });
+  
+  // Dashboard general para usuarios (con estadísticas personalizadas)
+  app.get("/api/dashboard", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      
+      // Obtener los videos vistos recientemente
+      const recentlyViewed = await storage.getViewHistory(userId, 5);
+      
+      // Obtener los videos favoritos
+      const favoriteVideos = await storage.getFavoriteVideosByUserId(userId);
+      
+      // Obtener canales suscritos
+      const subscribedChannels = await storage.getSubscribedChannelsByUserId(userId);
+      
+      // Obtener estadísticas generales
+      const videosLastWeek = await storage.getVideosAddedInTimeRange(7);
+      const platformStats = await storage.getVideosByPlatformCounts();
+      const categoryStats = await storage.getVideosByCategoryCounts();
+      
+      res.json({
+        recentlyViewed,
+        favoriteVideos: favoriteVideos.slice(0, 5),
+        subscribedChannels: subscribedChannels.slice(0, 5),
+        stats: {
+          newVideosCount: videosLastWeek.length,
+          platforms: platformStats,
+          categories: categoryStats
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      res.status(500).json({ message: "Error al obtener los datos del dashboard" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
