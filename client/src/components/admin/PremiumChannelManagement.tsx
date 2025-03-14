@@ -36,6 +36,8 @@ export default function PremiumChannelManagement() {
   const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
   const [isImporting, setIsImporting] = useState(false);
   const [maxVideosPerChannel, setMaxVideosPerChannel] = useState<string>("20");
+  const [youtubeUrl, setYoutubeUrl] = useState<string>("");
+  const [isAddingByUrl, setIsAddingByUrl] = useState(false);
 
   // Fetch all channels for the dropdown
   const { data: channels } = useQuery({
@@ -60,6 +62,39 @@ export default function PremiumChannelManagement() {
         method: "GET",
       });
       return response;
+    },
+  });
+
+  // Add channel directly from YouTube URL
+  const addChannelFromUrlMutation = useMutation({
+    mutationFn: async (data: { youtubeUrl: string; priority: number; notes: string | null }) => {
+      return apiRequest("/api/premium-channels/add-by-url", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Canal premium añadido",
+        description: "El canal ha sido agregado a la lista de canales premium",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/premium-channels"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/channels"] });
+      // Reset form
+      setYoutubeUrl("");
+      setPriority("5");
+      setNotes("");
+      setIsAddingByUrl(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo agregar el canal premium",
+        variant: "destructive",
+      });
     },
   });
 
@@ -186,6 +221,23 @@ export default function PremiumChannelManagement() {
 
     addPremiumChannelMutation.mutate({
       channelId: selectedChannelId,
+      priority: parseInt(priority),
+      notes: notes || null,
+    });
+  };
+
+  const handleAddChannelFromUrl = () => {
+    if (!youtubeUrl) {
+      toast({
+        title: "Error",
+        description: "Introduce la URL del canal de YouTube",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    addChannelFromUrlMutation.mutate({
+      youtubeUrl,
       priority: parseInt(priority),
       notes: notes || null,
     });
