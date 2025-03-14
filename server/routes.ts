@@ -954,7 +954,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await generateSummariesForAllVideos(processLimit);
       
       res.json({
-        message: `Generación de resúmenes completada: ${result.updated} de ${result.total} videos actualizados, ${result.skipped} omitidos, ${result.failed} fallidos`,
+        message: `Generación de resúmenes completada: ${result.success} de ${result.total} videos actualizados, ${result.total - result.processed} omitidos, ${result.failed} fallidos`,
         ...result
       });
     } catch (error) {
