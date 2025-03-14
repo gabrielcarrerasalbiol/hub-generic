@@ -1,3 +1,7 @@
+// Cargar variables de entorno desde el archivo .env
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import MemoryStore from "memorystore";

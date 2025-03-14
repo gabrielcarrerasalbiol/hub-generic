@@ -39,12 +39,15 @@ const getPersistentSecret = (): string => {
   }
 };
 
-const JWT_SECRET: string = process.env.JWT_SECRET || getPersistentSecret();
-
-if (!process.env.JWT_SECRET) {
+// Verificar y mostrar información sobre la configuración de JWT_SECRET
+if (process.env.JWT_SECRET) {
+  console.log('JWT_SECRET configurado correctamente desde variables de entorno.');
+} else {
   console.error('¡ADVERTENCIA! JWT_SECRET no está configurado en variables de entorno. Utilizando un secreto persistente en archivo.');
   console.error('En producción, establezca JWT_SECRET como variable de entorno para mayor seguridad.');
 }
+
+const JWT_SECRET: string = process.env.JWT_SECRET || getPersistentSecret();
 
 // Google OAuth credentials
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
