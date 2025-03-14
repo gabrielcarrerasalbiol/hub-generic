@@ -184,18 +184,50 @@ export function registerAuthRoutes(app: Express) {
     }
   );
   
-  // Get current user
+  // Cache para limitar peticiones excesivas de /api/auth/me
+  const authRequestCache: Map<string, {
+    timestamp: number, 
+    response: any
+  }> = new Map();
+  
+  // Tiempo mínimo entre solicitudes (500ms)
+  const THROTTLE_TIME_MS = 500;
+
+  // Get current user with rate limiting
   app.get('/api/auth/me', isAuthenticated, (req: Request, res: Response) => {
     const user = req.user as any;
     
-    res.json({
+    // Generar una clave única para cada usuario
+    const cacheKey = `user_${user.id}`;
+    const now = Date.now();
+    
+    // Verificar si hay una respuesta en caché reciente
+    const cachedResponse = authRequestCache.get(cacheKey);
+    if (cachedResponse && (now - cachedResponse.timestamp) < THROTTLE_TIME_MS) {
+      // Log para depuración
+      console.log(`Using cached response for user ${user.id}`);
+      
+      // Usar la respuesta en caché si la solicitud es demasiado frecuente
+      return res.json(cachedResponse.response);
+    }
+    
+    // Preparar respuesta
+    const response = {
       id: user.id,
       username: user.username,
       email: user.email,
       name: user.name,
       profilePicture: user.profilePicture,
-      role: user.role // Incluimos el rol del usuario en la respuesta
+      role: user.role
+    };
+    
+    // Actualizar la caché con esta respuesta
+    authRequestCache.set(cacheKey, {
+      timestamp: now,
+      response
     });
+    
+    res.json(response);
   });
   
   // Logout

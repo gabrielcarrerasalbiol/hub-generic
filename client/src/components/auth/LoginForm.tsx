@@ -28,7 +28,8 @@ const loginSchema = z.object({
 });
 
 export default function LoginForm() {
-  const { login, error } = useAuth();
+  const login = useAuth((state) => state.login);
+  const error = useAuth((state) => state.error);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

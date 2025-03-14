@@ -21,9 +21,15 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
-  const { user, logout, checkAuth, isAdmin } = useAuth();
-  const isAuthenticated = checkAuth();
-  const userIsAdmin = isAdmin();
+  
+  // Optimización: usar selectores específicos para evitar re-renders innecesarios
+  const user = useAuth((state) => state.user);
+  const logout = useAuth((state) => state.logout);
+  const token = useAuth((state) => state.token);
+  
+  // Calcular estos valores a partir del estado actual
+  const isAuthenticated = !!token;
+  const userIsAdmin = user?.role === 'admin';
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {

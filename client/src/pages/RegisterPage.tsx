@@ -5,14 +5,16 @@ import { useAuth } from '@/hooks/useAuth';
 
 export default function RegisterPage() {
   const [, setLocation] = useLocation();
-  const { user, checkAuth } = useAuth();
+  // Usar selectores específicos para mejorar el rendimiento
+  const user = useAuth((state) => state.user);
+  const token = useAuth((state) => state.token);
   
   // Redirigir si el usuario ya está autenticado
   useEffect(() => {
-    if (user || checkAuth()) {
+    if (user || token) {
       setLocation('/');
     }
-  }, [user, checkAuth, setLocation]);
+  }, [user, token, setLocation]);
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-50">

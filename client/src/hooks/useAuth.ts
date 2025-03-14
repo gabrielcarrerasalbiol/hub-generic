@@ -38,227 +38,280 @@ interface AuthResponse {
   token: string;
 }
 
-export const useAuth = create<AuthState>((set, get) => ({
-  user: null,
-  token: localStorage.getItem('hubmadridista_token'),
-  isLoading: false,
-  error: null,
-  
-  register: async (username: string, password: string, email?: string, name?: string) => {
-    set({ isLoading: true, error: null });
+// Variables globales para controlar las solicitudes
+let isUserFetching = false;
+let lastFetchTime = 0;
+const FETCH_COOLDOWN_MS = 2000; // 2 segundos entre solicitudes
+
+export const useAuth = create<AuthState>((set, get) => {
+  // Obtenemos token de localStorage, pero con seguridad para SSR
+  const safeGetToken = () => {
+    if (typeof window !== 'undefined') {
+      return window.localStorage.getItem('hubmadridista_token');
+    }
+    return null;
+  };
+
+  // Intentar recuperar el usuario del sessionStorage (caché)
+  const getUserFromCache = () => {
+    if (typeof window !== 'undefined') {
+      const cachedUser = window.sessionStorage.getItem('hubmadridista_user');
+      if (cachedUser) {
+        try {
+          return JSON.parse(cachedUser);
+        } catch (e) {
+          console.error('Error parsing cached user:', e);
+        }
+      }
+    }
+    return null;
+  };
+
+  return {
+    // Estado inicial con caché de usuario
+    user: getUserFromCache(),
+    token: safeGetToken(),
+    isLoading: false,
+    error: null,
     
-    try {
-      const confirmPassword = password;
-      const result = await apiRequest<AuthResponse>('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({ username, password, confirmPassword, email, name }),
-      });
-      
-      localStorage.setItem('hubmadridista_token', result.token);
-      set({ user: result.user, token: result.token, isLoading: false });
-      return true;
-    } catch (error: any) {
-      console.error('Error en el registro:', error);
-      
-      // Comprobar si el error tiene un mensaje específico del servidor
-      let errorMessage = 'Error en el registro';
+    register: async (username: string, password: string, email?: string, name?: string) => {
+      set({ isLoading: true, error: null });
       
       try {
-        // Intentar parsear el mensaje de error para obtener detalles específicos
-        if (error.message && error.message.includes(':')) {
-          const parts = error.message.split(':');
-          if (parts.length > 1) {
-            const errorBody = JSON.parse(parts[1].trim());
-            errorMessage = errorBody.error || errorMessage;
+        const confirmPassword = password;
+        const result = await apiRequest<AuthResponse>('/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ username, password, confirmPassword, email, name }),
+        });
+        
+        localStorage.setItem('hubmadridista_token', result.token);
+        set({ user: result.user, token: result.token, isLoading: false });
+        return true;
+      } catch (error: any) {
+        console.error('Error en el registro:', error);
+        
+        // Comprobar si el error tiene un mensaje específico del servidor
+        let errorMessage = 'Error en el registro';
+        
+        try {
+          // Intentar parsear el mensaje de error para obtener detalles específicos
+          if (error.message && error.message.includes(':')) {
+            const parts = error.message.split(':');
+            if (parts.length > 1) {
+              const errorBody = JSON.parse(parts[1].trim());
+              errorMessage = errorBody.error || errorMessage;
+            }
           }
+        } catch (e) {
+          // Si hay algún error al parsear, usamos el mensaje original
+          errorMessage = error.message || errorMessage;
         }
-      } catch (e) {
-        // Si hay algún error al parsear, usamos el mensaje original
-        errorMessage = error.message || errorMessage;
+        
+        set({ 
+          error: errorMessage, 
+          isLoading: false 
+        });
+        
+        // Lanzar el error para que pueda ser capturado por el componente
+        throw new Error(errorMessage);
       }
-      
-      set({ 
-        error: errorMessage, 
-        isLoading: false 
-      });
-      
-      // Lanzar el error para que pueda ser capturado por el componente
-      throw new Error(errorMessage);
-    }
-  },
-  
-  login: async (username: string, password: string) => {
-    set({ isLoading: true, error: null });
+    },
     
-    try {
-      // Primero, asegurarse de que no hay tokens antiguos que puedan causar problemas
-      localStorage.removeItem('hubmadridista_token');
+    login: async (username: string, password: string) => {
+      set({ isLoading: true, error: null });
       
-      const result = await apiRequest<AuthResponse>('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ username, password }),
-      });
-      
-      // Guardar el nuevo token
-      localStorage.setItem('hubmadridista_token', result.token);
-      
-      // Actualizar el estado
-      set({ user: result.user, token: result.token, isLoading: false });
-      
-      // Usar setTimeout para asegurar que el estado se actualice antes de redireccionar
-      setTimeout(() => {
-        // Usar window.location.replace en lugar de window.location.href
-        window.location.replace('/');
-      }, 500);
-      
-      return true;
-    } catch (error: any) {
-      console.error('Error en el inicio de sesión:', error);
-      
-      // Obtener un mensaje de error claro para mostrar al usuario
-      let errorMessage = error.message || 'Usuario o contraseña incorrectos';
-      
-      // Establecer el error en el estado para que esté disponible en cualquier lugar
-      set({ 
-        error: errorMessage, 
-        isLoading: false 
-      });
-      
-      return false;
-    }
-  },
-  
-  logout: async () => {
-    set({ isLoading: true });
-    
-    try {
-      await apiRequest('/api/auth/logout', {
-        method: 'POST',
-      });
-    } catch (error) {
-      console.error('Error durante el cierre de sesión:', error);
-    } finally {
-      localStorage.removeItem('hubmadridista_token');
-      set({ user: null, token: null, isLoading: false });
-      
-      // Usar setTimeout para asegurar que el estado se actualice antes de redireccionar
-      setTimeout(() => {
-        window.location.replace('/login');
-      }, 300);
-    }
-  },
-  
-  fetchUser: async () => {
-    const { token, user } = get();
-    
-    // Si ya tenemos un usuario, no necesitamos volver a cargarlo
-    if (!token || user) {
-      set({ isLoading: false });
-      return;
-    }
-    
-    // Usamos una variable para evitar actualizaciones de estado después de desmontar
-    let isCancelled = false;
-    set({ isLoading: true });
-    
-    try {
-      const fetchedUser = await apiRequest<UserAuth>('/api/auth/me');
-      
-      // Solo actualizamos el estado si la operación no fue cancelada
-      if (!isCancelled) {
-        set({ user: fetchedUser, isLoading: false });
-        // Establecemos la marca de cancelación para evitar actualizaciones adicionales
-        isCancelled = true;
+      try {
+        // Primero, asegurarse de que no hay tokens antiguos que puedan causar problemas
+        localStorage.removeItem('hubmadridista_token');
+        
+        const result = await apiRequest<AuthResponse>('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ username, password }),
+        });
+        
+        // Guardar el nuevo token
+        localStorage.setItem('hubmadridista_token', result.token);
+        
+        // Actualizar el estado
+        set({ user: result.user, token: result.token, isLoading: false });
+        
+        // Usar setTimeout para asegurar que el estado se actualice antes de redireccionar
+        setTimeout(() => {
+          window.location.replace('/');
+        }, 500);
+        
+        return true;
+      } catch (error: any) {
+        console.error('Error en el inicio de sesión:', error);
+        
+        // Obtener un mensaje de error claro para mostrar al usuario
+        let errorMessage = error.message || 'Usuario o contraseña incorrectos';
+        
+        // Establecer el error en el estado para que esté disponible en cualquier lugar
+        set({ 
+          error: errorMessage, 
+          isLoading: false 
+        });
+        
+        return false;
       }
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      if (!isCancelled) {
+    },
+    
+    logout: async () => {
+      set({ isLoading: true });
+      
+      try {
+        await apiRequest('/api/auth/logout', {
+          method: 'POST',
+        });
+      } catch (error) {
+        console.error('Error durante el cierre de sesión:', error);
+      } finally {
         localStorage.removeItem('hubmadridista_token');
         set({ user: null, token: null, isLoading: false });
-        isCancelled = true;
+        
+        // Usar setTimeout para asegurar que el estado se actualice antes de redireccionar
+        setTimeout(() => {
+          window.location.replace('/login');
+        }, 300);
       }
-    }
-  },
-  
-  updateProfile: async (data: Partial<{name: string, email: string, profilePicture: string}>) => {
-    set({ isLoading: true, error: null });
+    },
     
-    try {
-      const user = await apiRequest<UserAuth>('/api/auth/profile', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
+    fetchUser: async () => {
+      const { token, user } = get();
+      const now = Date.now();
       
-      set({ user, isLoading: false });
-      return true;
-    } catch (error: any) {
-      set({ 
-        error: error.message || 'Error al actualizar perfil', 
-        isLoading: false 
-      });
-      return false;
-    }
-  },
-  
-  changePassword: async (currentPassword: string, newPassword: string) => {
-    set({ isLoading: true, error: null });
+      // 1. Verificar si hay un token y no hay solicitud en progreso
+      if (isUserFetching || !token) {
+        return;
+      }
+      
+      // 2. Si el usuario ya está en el estado, no hacer la solicitud
+      if (user) {
+        // Guardar en caché de sesión para futuras cargas
+        if (typeof window !== 'undefined') {
+          try {
+            window.sessionStorage.setItem('hubmadridista_user', JSON.stringify(user));
+          } catch (e) {
+            console.error('Error caching user:', e);
+          }
+        }
+        return;
+      }
+      
+      // 3. Verificar si ha pasado tiempo suficiente desde la última solicitud
+      if ((now - lastFetchTime) < FETCH_COOLDOWN_MS) {
+        console.log('Solicitud bloqueada por enfriamiento:', now - lastFetchTime, 'ms desde la última solicitud');
+        return;
+      }
+      
+      // Actualizar tiempos y flags
+      isUserFetching = true;
+      lastFetchTime = now;
+      set({ isLoading: true });
+      
+      try {
+        const fetchedUser = await apiRequest<UserAuth>('/api/auth/me');
+        set({ user: fetchedUser, isLoading: false });
+        
+        // Guardar en caché de sesión
+        if (typeof window !== 'undefined' && fetchedUser) {
+          try {
+            window.sessionStorage.setItem('hubmadridista_user', JSON.stringify(fetchedUser));
+          } catch (e) {
+            console.error('Error caching user:', e);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        localStorage.removeItem('hubmadridista_token');
+        sessionStorage.removeItem('hubmadridista_user');
+        set({ user: null, token: null, isLoading: false });
+      } finally {
+        isUserFetching = false;
+      }
+    },
     
-    try {
-      await apiRequest('/api/auth/password', {
-        method: 'PUT',
-        body: JSON.stringify({ currentPassword, newPassword }),
-      });
+    updateProfile: async (data: Partial<{name: string, email: string, profilePicture: string}>) => {
+      set({ isLoading: true, error: null });
       
-      set({ isLoading: false });
-      return true;
-    } catch (error: any) {
-      set({ 
-        error: error.message || 'Error al cambiar contraseña', 
-        isLoading: false 
-      });
-      return false;
-    }
-  },
+      try {
+        const user = await apiRequest<UserAuth>('/api/auth/profile', {
+          method: 'PUT',
+          body: JSON.stringify(data),
+        });
+        
+        set({ user, isLoading: false });
+        return true;
+      } catch (error: any) {
+        set({ 
+          error: error.message || 'Error al actualizar perfil', 
+          isLoading: false 
+        });
+        return false;
+      }
+    },
+    
+    changePassword: async (currentPassword: string, newPassword: string) => {
+      set({ isLoading: true, error: null });
+      
+      try {
+        await apiRequest('/api/auth/password', {
+          method: 'PUT',
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
+        
+        set({ isLoading: false });
+        return true;
+      } catch (error: any) {
+        set({ 
+          error: error.message || 'Error al cambiar contraseña', 
+          isLoading: false 
+        });
+        return false;
+      }
+    },
+    
+    checkAuth: () => {
+      const { token } = get();
+      return !!token;
+    },
   
-  checkAuth: () => {
-    const { token } = get();
-    return !!token;
-  },
-
-  isAdmin: () => {
-    const { user } = get();
-    return user?.role === 'admin';
-  },
-
-  isPremium: () => {
-    const { user } = get();
-    return user?.role === 'premium' || user?.role === 'admin';
-  },
-
-  isFree: () => {
-    const { user } = get();
-    return user?.role === 'free';
-  },
-
-  getUserRole: () => {
-    const { user } = get();
-    return user?.role || null;
-  },
+    isAdmin: () => {
+      const { user } = get();
+      return user?.role === 'admin';
+    },
   
-  processToken: async (token: string) => {
-    localStorage.setItem('hubmadridista_token', token);
-    set({ token });
-    await get().fetchUser();
-  },
+    isPremium: () => {
+      const { user } = get();
+      return user?.role === 'premium' || user?.role === 'admin';
+    },
   
-  setLoading: (isLoading: boolean) => set({ isLoading }),
-  setError: (error: string | null) => set({ error }),
-}));
+    isFree: () => {
+      const { user } = get();
+      return user?.role === 'free';
+    },
+  
+    getUserRole: () => {
+      const { user } = get();
+      return user?.role || null;
+    },
+    
+    processToken: async (token: string) => {
+      localStorage.setItem('hubmadridista_token', token);
+      set({ token });
+      await get().fetchUser();
+    },
+    
+    setLoading: (isLoading: boolean) => set({ isLoading }),
+    setError: (error: string | null) => set({ error }),
+  };
+});
 
 // Hook para manejar la redirección automática del token de URL
 export function useTokenHandler() {
   const { toast } = useToast();
-  const { processToken } = useAuth();
+  const processToken = useAuth((state) => state.processToken);
 
   const handleTokenFromUrl = async () => {
     const urlParams = new URLSearchParams(window.location.search);

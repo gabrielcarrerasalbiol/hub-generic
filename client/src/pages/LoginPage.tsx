@@ -6,20 +6,23 @@ import { useTokenHandler } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const [, setLocation] = useLocation();
-  const { user, checkAuth } = useAuth();
+  // Usar selectores específicos para optimizar
+  const user = useAuth((state) => state.user);
+  const token = useAuth((state) => state.token);
   const { handleTokenFromUrl } = useTokenHandler();
   
   // Verificar si hay un token en la URL (por ejemplo, después de login con Google/Apple)
+  // Este useEffect solo se ejecuta una vez
   useEffect(() => {
     handleTokenFromUrl();
-  }, [handleTokenFromUrl]);
+  }, []);
   
   // Redirigir si el usuario ya está autenticado
   useEffect(() => {
-    if (user || checkAuth()) {
+    if (user || token) {
       setLocation('/');
     }
-  }, [user, checkAuth, setLocation]);
+  }, [user, token, setLocation]);
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-50">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -18,67 +18,65 @@ import Layout from "@/components/Layout";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
 
-function Router() {
-  return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/channel/:id" component={ChannelPage} />
-      <Route path="/video/:id" component={VideoPage} />
-      <Route path="/favorites" component={FavoritesPage} />
-      <Route path="/login" component={LoginPage} />
-      <Route path="/register" component={RegisterPage} />
-      <Route path="/profile" component={ProfilePage} />
-      <Route path="/admin" component={AdminPage} />
-      <Route path="/forgot-password" component={ForgotPasswordPage} />
-      <Route path="/reset-password" component={ResetPasswordPage} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+// Definición de rutas en un único lugar para evitar re-renders innecesarios
+const Routes = () => (
+  <Switch>
+    <Route path="/" component={Home} />
+    <Route path="/channel/:id" component={ChannelPage} />
+    <Route path="/video/:id" component={VideoPage} />
+    <Route path="/favorites" component={FavoritesPage} />
+    <Route path="/login" component={LoginPage} />
+    <Route path="/register" component={RegisterPage} />
+    <Route path="/profile" component={ProfilePage} />
+    <Route path="/admin" component={AdminPage} />
+    <Route path="/forgot-password" component={ForgotPasswordPage} />
+    <Route path="/reset-password" component={ResetPasswordPage} />
+    <Route component={NotFound} />
+  </Switch>
+);
 
 function AppContent() {
-  const { fetchUser } = useAuth();
-  const { handleTokenFromUrl } = useTokenHandler();
   const [isInitialized, setIsInitialized] = useState(false);
-
+  const fetchUser = useAuth((state) => state.fetchUser);
+  const { handleTokenFromUrl } = useTokenHandler();
+  
+  // Este efecto solo se ejecuta una vez al montar el componente
   useEffect(() => {
-    // Estamos utilizando una variable de limpieza para asegurarnos de que
-    // no se ejecuten actualizaciones de estado después de desmontar el componente
     let isMounted = true;
     
-    const initializeAuth = async () => {
+    // Inicializar la aplicación solo una vez
+    const runInitialization = async () => {
       try {
-        // Comprobar si hay un token en la URL (después de OAuth)
-        await handleTokenFromUrl();
-        
-        // Cargar usuario si hay un token almacenado, pero solo si el componente sigue montado
-        if (isMounted) {
-          await fetchUser();
+        if (typeof window !== 'undefined') {
+          // Verificar si hay un token en la URL (caso de OAuth)
+          await handleTokenFromUrl();
           
-          // Solo actualizamos el estado si el componente sigue montado
-          if (isMounted) {
-            setIsInitialized(true);
+          // Obtener token directamente de localStorage
+          const token = localStorage.getItem('hubmadridista_token');
+          
+          if (token) {
+            // Solo hacemos fetchUser una vez al inicio si hay token
+            await fetchUser();
           }
         }
       } catch (error) {
-        console.error("Error inicializando autenticación:", error);
-        // Asegurarse de que la inicialización se complete incluso en caso de error
+        console.error("Error inicializando la aplicación:", error);
+      } finally {
         if (isMounted) {
           setIsInitialized(true);
         }
       }
     };
     
-    initializeAuth();
+    runInitialization();
     
-    // Función de limpieza que evita actualizaciones de estado después de desmontar
     return () => {
       isMounted = false;
     };
   }, []);
 
+  // Estado de carga inicial
   if (!isInitialized) {
-    // Mostrar un estado de carga mientras se inicializa la autenticación
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="animate-pulse text-2xl font-semibold">Cargando Hub Madridista...</div>
@@ -88,7 +86,7 @@ function AppContent() {
 
   return (
     <Layout>
-      <Router />
+      <Routes />
     </Layout>
   );
 }
