@@ -57,7 +57,7 @@ export default function Layout({ children }: LayoutProps) {
         <Sidebar isOpen={sidebarOpen} />
         
         {/* Main Content */}
-        <div className="flex-1 px-4 py-4 md:px-6">
+        <main className="flex-1 px-4 py-4 md:px-6 overflow-x-hidden">
           {isServiceBlocked && (
             <Alert variant="destructive" className="mb-4">
               <AlertTriangle className="h-4 w-4" />
@@ -94,7 +94,7 @@ export default function Layout({ children }: LayoutProps) {
           )}
           
           {children}
-        </div>
+        </main>
       </div>
       
       <Footer />

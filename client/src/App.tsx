@@ -22,21 +22,23 @@ import { useTokenHandler } from '@/hooks/useAuth';
 
 // Definición de rutas en un único lugar para evitar re-renders innecesarios
 const Routes = () => (
-  <Switch>
-    <Route path="/" component={Home} />
-    <Route path="/channel/:id" component={ChannelPage} />
-    <Route path="/video/:id" component={VideoPage} />
-    <Route path="/favorites" component={FavoritesPage} />
-    <Route path="/login" component={LoginPage} />
-    <Route path="/register" component={RegisterPage} />
-    <Route path="/profile" component={ProfilePage} />
-    <Route path="/admin" component={AdminPage} />
-    <Route path="/subscriptions" component={SubscriptionsPage} />
-    <Route path="/forgot-password" component={ForgotPasswordPage} />
-    <Route path="/reset-password" component={ResetPasswordPage} />
-    <Route path="/category/:categorySlug" component={CategoryPage} />
-    <Route component={NotFound} />
-  </Switch>
+  <Layout>
+    <Switch>
+      <Route path="/" component={Home} />
+      <Route path="/channel/:id" component={ChannelPage} />
+      <Route path="/video/:id" component={VideoPage} />
+      <Route path="/favorites" component={FavoritesPage} />
+      <Route path="/login" component={LoginPage} />
+      <Route path="/register" component={RegisterPage} />
+      <Route path="/profile" component={ProfilePage} />
+      <Route path="/admin" component={AdminPage} />
+      <Route path="/subscriptions" component={SubscriptionsPage} />
+      <Route path="/forgot-password" component={ForgotPasswordPage} />
+      <Route path="/reset-password" component={ResetPasswordPage} />
+      <Route path="/category/:categorySlug" component={CategoryPage} />
+      <Route component={NotFound} />
+    </Switch>
+  </Layout>
 );
 
 // Variable global para evitar inicializaciones múltiples
