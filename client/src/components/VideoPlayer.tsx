@@ -16,14 +16,15 @@ export default function VideoPlayer({ embedUrl, title }: VideoPlayerProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="aspect-w-16 aspect-h-9">
+      <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
         <iframe
           src={formatEmbedUrl(embedUrl)}
           title={title}
           frameBorder="0"
           allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          className="absolute inset-0 w-full h-full"
+          className="absolute top-0 left-0 w-full h-full"
+          style={{ maxHeight: '500px' }}
         ></iframe>
       </div>
     </div>
