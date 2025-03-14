@@ -4,6 +4,7 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Video } from '@shared/schema';
 import { cn } from '@/lib/utils';
+import { Heart } from 'lucide-react';
 
 interface VideoCardProps {
   video: Video;
@@ -156,7 +157,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
                   "text-sm",
                   isFavorite ? "text-red-500" : "text-gray-400 hover:text-red-500"
                 )}
-                aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+                aria-label={isFavorite ? "Quitar canal" : "Agregar canal"}
               >
                 <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
               </button>
@@ -211,7 +212,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
               "text-sm",
               isFavorite ? "text-red-500" : "text-gray-400 hover:text-red-500"
             )}
-            aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+            aria-label={isFavorite ? "Quitar canal" : "Agregar canal"}
           >
             <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
           </button>

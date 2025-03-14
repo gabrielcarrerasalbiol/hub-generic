@@ -233,34 +233,53 @@ export default function VideoPage() {
                 </div>
               </div>
               
-              {/* Botones de acciones (Suscribir y Favorito) */}
-              <div className="mt-2 flex flex-wrap gap-2">
+              {/* Botón de suscripción al canal */}
+              <div className="mt-2">
                 {user && video.channelId ? (
-                  <>
+                  <div className="flex flex-wrap gap-2">
                     <SubscribeButton 
                       channelId={video.channelId}
                       initialSubscribed={subscriptionStatus?.isSubscribed}
                       initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
                     />
-                    
-                    <button 
-                      className={`flex items-center px-3 py-1 rounded text-sm 
-                      ${video.isFavorite 
-                        ? 'bg-red-50 text-red-500 border border-red-200' 
-                        : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 border border-gray-200'}`}
-                      onClick={handleToggleFavorite}
-                      aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-                    >
-                      <i className={`${video.isFavorite ? 'fas fa-heart' : 'far fa-heart'} mr-1`}></i>
-                      {video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-                    </button>
-                  </>
+                  </div>
                 ) : (
                   <div className="bg-gray-100 rounded p-3 text-center border border-[#FDBE11]">
                     <p className="text-[#001C58]">Inicia sesión para interactuar</p>
                   </div>
                 )}
               </div>
+              
+              {/* Botón de favoritos - separado del botón de suscripción */}
+              {user && (
+                <div className="mt-2 border-t pt-2 border-gray-200">
+                  <p className="text-sm text-gray-500 mb-1">¿Te gusta este video?</p>
+                  <button 
+                    className={`flex items-center px-3 py-1 rounded text-sm 
+                    ${video.isFavorite 
+                      ? 'bg-red-50 text-red-500 border border-red-200' 
+                      : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 border border-gray-200'}`}
+                    onClick={handleToggleFavorite}
+                    aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 24 24" 
+                      fill={video.isFavorite ? "currentColor" : "none"}
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      className="mr-1"
+                    >
+                      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                    </svg>
+                    {video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           
