@@ -69,6 +69,8 @@ export const videos = pgTable("videos", {
   publishedAt: text("published_at"),
   categoryIds: text("category_ids").array(),
   externalId: text("external_id").notNull(),
+  featured: boolean("featured").default(false), // Indica si el video está destacado
+  featuredOrder: integer("featured_order").default(0), // Orden de aparición si está destacado
 });
 
 export const insertVideoSchema = createInsertSchema(videos).omit({
