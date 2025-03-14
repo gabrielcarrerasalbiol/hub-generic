@@ -170,7 +170,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
   return (
     <Link 
       href={`/video/${video.id}`}
-      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200"
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 border border-[#FDBE11]/20 hover:border-[#FDBE11]/60"
       onClick={(e) => {
         // Prevent click if star button was clicked
         if ((e.target as HTMLElement).tagName === 'I' || 

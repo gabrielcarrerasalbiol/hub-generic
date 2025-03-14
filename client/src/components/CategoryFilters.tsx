@@ -14,8 +14,8 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "all" ? "default" : "outline"}
           className={selectedCategory === "all" 
-            ? "bg-[#1E3A8A] text-white" 
-            : "bg-white hover:bg-gray-100 text-gray-800"}
+            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("all")}
         >
           Todas las categorías
@@ -24,8 +24,8 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "matches" ? "default" : "outline"}
           className={selectedCategory === "matches" 
-            ? "bg-[#1E3A8A] text-white" 
-            : "bg-white hover:bg-gray-100 text-gray-800"}
+            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("matches")}
         >
           Partidos Recientes
@@ -34,8 +34,8 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "training" ? "default" : "outline"}
           className={selectedCategory === "training" 
-            ? "bg-[#1E3A8A] text-white" 
-            : "bg-white hover:bg-gray-100 text-gray-800"}
+            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("training")}
         >
           Entrenamientos
@@ -44,8 +44,8 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "press" ? "default" : "outline"}
           className={selectedCategory === "press" 
-            ? "bg-[#1E3A8A] text-white" 
-            : "bg-white hover:bg-gray-100 text-gray-800"}
+            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("press")}
         >
           Ruedas de prensa
@@ -54,8 +54,8 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "interviews" ? "default" : "outline"}
           className={selectedCategory === "interviews" 
-            ? "bg-[#1E3A8A] text-white" 
-            : "bg-white hover:bg-gray-100 text-gray-800"}
+            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("interviews")}
         >
           Entrevistas
@@ -64,8 +64,8 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "players" ? "default" : "outline"}
           className={selectedCategory === "players" 
-            ? "bg-[#1E3A8A] text-white" 
-            : "bg-white hover:bg-gray-100 text-gray-800"}
+            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("players")}
         >
           Historias de jugadores
@@ -74,8 +74,8 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "analysis" ? "default" : "outline"}
           className={selectedCategory === "analysis" 
-            ? "bg-[#1E3A8A] text-white" 
-            : "bg-white hover:bg-gray-100 text-gray-800"}
+            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("analysis")}
         >
           Análisis tácticos

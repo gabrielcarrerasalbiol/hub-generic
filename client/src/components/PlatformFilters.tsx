@@ -11,7 +11,9 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
     <div className="flex flex-wrap gap-2 mb-6">
       <Button
         variant={selectedPlatform === "all" ? "default" : "outline"}
-        className={selectedPlatform === "all" ? "bg-[#1E3A8A] text-white" : "bg-white text-gray-800"}
+        className={selectedPlatform === "all" 
+          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("all")}
       >
         Todos
@@ -20,8 +22,8 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "youtube" ? "default" : "outline"}
         className={selectedPlatform === "youtube" 
-          ? "bg-[#1E3A8A] text-white" 
-          : "bg-white hover:bg-gray-100 text-gray-800"}
+          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("youtube")}
       >
         <i className="fab fa-youtube mr-2 text-red-500"></i> YouTube
@@ -30,8 +32,8 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "tiktok" ? "default" : "outline"}
         className={selectedPlatform === "tiktok" 
-          ? "bg-[#1E3A8A] text-white" 
-          : "bg-white hover:bg-gray-100 text-gray-800"}
+          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("tiktok")}
       >
         <i className="fab fa-tiktok mr-2"></i> TikTok
@@ -40,8 +42,8 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "twitter" ? "default" : "outline"}
         className={selectedPlatform === "twitter" 
-          ? "bg-[#1E3A8A] text-white" 
-          : "bg-white hover:bg-gray-100 text-gray-800"}
+          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("twitter")}
       >
         <i className="fab fa-twitter mr-2 text-blue-400"></i> Twitter
@@ -50,8 +52,8 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "instagram" ? "default" : "outline"}
         className={selectedPlatform === "instagram" 
-          ? "bg-[#1E3A8A] text-white" 
-          : "bg-white hover:bg-gray-100 text-gray-800"}
+          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("instagram")}
       >
         <i className="fab fa-instagram mr-2 text-pink-500"></i> Instagram
