@@ -41,6 +41,20 @@ export default function SearchPage() {
   // Estado para rastrear cuándo se inicia una búsqueda
   const [isSearching, setIsSearching] = useState(false);
 
+  // Estado para controlar manualmente cuándo realizar la búsqueda
+  const [shouldSearch, setShouldSearch] = useState(false);
+  
+  // Efectuar búsqueda solo cuando searchQuery cambia desde la URL o por botón explícito
+  useEffect(() => {
+    // Si el searchQuery viene de la URL y tiene más de 1 carácter, permitir búsqueda
+    const searchParams = new URLSearchParams(location.split('?')[1]);
+    const query = searchParams.get('q');
+    
+    if (query && query.length > 1 && query === searchQuery) {
+      setShouldSearch(true);
+    }
+  }, [location]);
+  
   // Fetch search results
   const { 
     data: videos = [], 
@@ -64,9 +78,11 @@ export default function SearchPage() {
       } finally {
         // Después de completar la búsqueda (éxito o error)
         setTimeout(() => setIsSearching(false), 500); // Pequeño retraso para evitar parpadeos
+        // Resetear el estado de búsqueda después de completarla
+        setShouldSearch(false);
       }
     },
-    enabled: !!searchQuery,
+    enabled: !!searchQuery && shouldSearch, // Solo buscar cuando ambos son true
   });
 
   // Handle form submission for new search
@@ -80,7 +96,11 @@ export default function SearchPage() {
     if (selectedCategory !== 'all') params.set('category', selectedCategory);
     
     setLocation(`/search?${params.toString()}`);
-    refetch();
+    
+    // Solo ejecutar la búsqueda cuando se hace submit del formulario
+    if (searchQuery.trim().length > 1) {
+      setShouldSearch(true); // Activar la búsqueda solo al enviar el formulario
+    }
   };
 
   // Handle platform change
@@ -257,7 +277,9 @@ export default function SearchPage() {
             <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">Error en la búsqueda</h2>
             <p className="dark:text-gray-300 mb-4">No se pudieron cargar los resultados de búsqueda. Por favor, intenta de nuevo con otros términos o comprueba tu conexión a internet.</p>
             <div className="flex gap-4">
-              <Button onClick={() => refetch()} className="bg-[#001C58] hover:bg-[#001C58]/90">
+              <Button onClick={() => {
+                setShouldSearch(true); // Activar búsqueda al intentar nuevamente
+              }} className="bg-[#001C58] hover:bg-[#001C58]/90">
                 Intentar nuevamente
               </Button>
               <Button onClick={() => {
@@ -286,7 +308,9 @@ export default function SearchPage() {
             }} variant="outline">
               Limpiar filtros
             </Button>
-            <Button onClick={() => refetch()} className="bg-[#001C58] hover:bg-[#001C58]/90">
+            <Button onClick={() => {
+              setShouldSearch(true); // Activar búsqueda al intentar nuevamente
+            }} className="bg-[#001C58] hover:bg-[#001C58]/90">
               Intentar nuevamente
             </Button>
           </div>
@@ -309,7 +333,7 @@ export default function SearchPage() {
                 onClick={() => {
                   setSearchQuery(term);
                   setLocation(`/search?q=${term}`);
-                  refetch();
+                  setShouldSearch(true); // Activar búsqueda para términos predefinidos
                 }}
                 className="border-[#FDBE11] text-[#FDBE11] hover:bg-[#FDBE11]/10"
               >
