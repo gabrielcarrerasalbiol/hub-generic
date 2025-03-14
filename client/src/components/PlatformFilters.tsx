@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { PlatformType } from "@shared/schema";
-import { Youtube, Twitter, Instagram, Layers } from 'lucide-react';
+import { Layers, Youtube, Twitter, Instagram } from 'lucide-react';
 import { TikTokIcon } from './icons/TikTokIcon';
 
 interface PlatformFiltersProps {
@@ -14,51 +14,51 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "all" ? "default" : "outline"}
         className={selectedPlatform === "all" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("all")}
       >
-        Todos
+        <Layers className="h-4 w-4 mr-2 text-[#FDBE11]" /> Todas
       </Button>
       
       <Button
         variant={selectedPlatform === "youtube" ? "default" : "outline"}
         className={selectedPlatform === "youtube" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("youtube")}
       >
-        <i className="fab fa-youtube mr-2 text-red-500"></i> YouTube
+        <Youtube className="h-4 w-4 mr-2 text-red-500" /> YouTube
       </Button>
       
       <Button
         variant={selectedPlatform === "tiktok" ? "default" : "outline"}
         className={selectedPlatform === "tiktok" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("tiktok")}
       >
-        <i className="fab fa-tiktok mr-2"></i> TikTok
+        <TikTokIcon className="h-4 w-4 mr-2" /> TikTok
       </Button>
       
       <Button
         variant={selectedPlatform === "twitter" ? "default" : "outline"}
         className={selectedPlatform === "twitter" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("twitter")}
       >
-        <i className="fab fa-twitter mr-2 text-blue-400"></i> Twitter
+        <Twitter className="h-4 w-4 mr-2 text-blue-400" /> Twitter
       </Button>
       
       <Button
         variant={selectedPlatform === "instagram" ? "default" : "outline"}
         className={selectedPlatform === "instagram" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("instagram")}
       >
-        <i className="fab fa-instagram mr-2 text-pink-500"></i> Instagram
+        <Instagram className="h-4 w-4 mr-2 text-pink-500" /> Instagram
       </Button>
     </div>
   );
