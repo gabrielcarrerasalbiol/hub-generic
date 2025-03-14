@@ -47,7 +47,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Star, Plus, Search, RefreshCcw, Trash2, Edit, Eye, ArrowUpDown } from 'lucide-react';
+import { Loader2, Star, Plus, Search, RefreshCcw, Trash2, Edit, Eye, ArrowUpDown, FileText } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 
 export default function VideoManagement() {
