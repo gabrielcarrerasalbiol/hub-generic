@@ -7,6 +7,7 @@ import { storage } from './storage';
 import { generateToken, isAuthenticated, isAdmin } from './auth';
 import { insertUserSchema, UserRole } from '../shared/schema';
 import { z } from 'zod';
+import * as fs from 'fs';
 
 // Schema for login validation
 const loginSchema = z.object({
@@ -348,6 +349,60 @@ export function registerAuthRoutes(app: Express) {
       }
       res.json({ message: 'Sesión cerrada con éxito' });
     });
+  });
+  
+  // Ruta especial para regenerar tokens (uso temporal durante desarrollo)
+  // Esta ruta solo debe existir en ambiente de desarrollo
+  app.post('/api/auth/refresh-admin-token', async (req: Request, res: Response) => {
+    try {
+      // Buscar usuario admin (para pruebas/desarrollo)
+      const adminUser = await storage.getUserByUsername('testadmin');
+      
+      if (!adminUser) {
+        return res.status(404).json({ error: 'Usuario administrador no encontrado' });
+      }
+      
+      // Generar nuevo token
+      const token = generateToken(adminUser);
+      
+      // Guardar token en archivo para pruebas
+      const fs = require('fs');
+      fs.writeFileSync('./admin_token.txt', token);
+      
+      res.json({ 
+        message: 'Token de administrador regenerado correctamente',
+        token
+      });
+    } catch (error) {
+      console.error('Error al regenerar token admin:', error);
+      res.status(500).json({ error: 'Error al regenerar token' });
+    }
+  });
+  
+  app.post('/api/auth/refresh-user-token', async (req: Request, res: Response) => {
+    try {
+      // Buscar usuario regular (para pruebas/desarrollo)
+      const normalUser = await storage.getUserByUsername('normaluser');
+      
+      if (!normalUser) {
+        return res.status(404).json({ error: 'Usuario normal no encontrado' });
+      }
+      
+      // Generar nuevo token
+      const token = generateToken(normalUser);
+      
+      // Guardar token en archivo para pruebas
+      const fs = require('fs');
+      fs.writeFileSync('./normal_token.txt', token);
+      
+      res.json({ 
+        message: 'Token de usuario normal regenerado correctamente',
+        token
+      });
+    } catch (error) {
+      console.error('Error al regenerar token de usuario:', error);
+      res.status(500).json({ error: 'Error al regenerar token' });
+    }
   });
   
   // Update user profile
