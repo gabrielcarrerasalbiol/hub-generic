@@ -366,7 +366,6 @@ export function registerAuthRoutes(app: Express) {
       const token = generateToken(adminUser);
       
       // Guardar token en archivo para pruebas
-      const fs = require('fs');
       fs.writeFileSync('./admin_token.txt', token);
       
       res.json({ 
@@ -392,7 +391,6 @@ export function registerAuthRoutes(app: Express) {
       const token = generateToken(normalUser);
       
       // Guardar token en archivo para pruebas
-      const fs = require('fs');
       fs.writeFileSync('./normal_token.txt', token);
       
       res.json({ 
