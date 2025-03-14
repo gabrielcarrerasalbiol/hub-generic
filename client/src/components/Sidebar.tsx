@@ -3,6 +3,11 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Channel } from "@shared/schema";
+import { 
+  Home, TrendingUp, Star, Rss, History, 
+  Youtube, Clock, Twitter, Instagram, 
+  Radio, MessageSquare, Trophy, User, Newspaper
+} from "lucide-react";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -44,10 +49,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}>
-                  <i className={cn(
-                    "fas fa-home mr-3",
+                  <Home className={cn(
+                    "mr-3 h-4 w-4",
                     isLinkActive("/") ? "text-[#FDBE11]" : "text-gray-500"
-                  )}></i>
+                  )} />
                   Inicio
               </Link>
             </li>
@@ -58,10 +63,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}>
-                <i className={cn(
-                  "fas fa-fire mr-3",
+                <TrendingUp className={cn(
+                  "mr-3 h-4 w-4",
                   isLinkActive("/trending") ? "text-[#FDBE11]" : "text-gray-500"
-                )}></i>
+                )} />
                 Tendencias
               </Link>
             </li>
@@ -72,10 +77,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}>
-                  <i className={cn(
-                    "fas fa-star mr-3",
+                  <Star className={cn(
+                    "mr-3 h-4 w-4",
                     isLinkActive("/favorites") ? "text-[#FDBE11]" : "text-gray-500"
-                  )}></i>
+                  )} />
                   Mis Favoritos
               </Link>
             </li>

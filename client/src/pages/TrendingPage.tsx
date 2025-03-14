@@ -124,24 +124,24 @@ export default function TrendingPage() {
                 Ver análisis de tendencias
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[900px]">
-              <DialogHeader>
+            <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col">
+              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="text-2xl font-bold text-[#001C58]">Análisis de Tendencias</DialogTitle>
                 <DialogDescription>
                   Información detallada sobre los videos en tendencia del Real Madrid
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="mt-4">
-                <Tabs defaultValue="summary" className="w-full">
-                  <TabsList className="grid w-full grid-cols-4">
+              <div className="mt-4 flex-1 overflow-hidden flex flex-col">
+                <Tabs defaultValue="summary" className="w-full h-full flex flex-col overflow-hidden">
+                  <TabsList className="grid w-full grid-cols-4 flex-shrink-0 bg-white sticky top-0 z-10">
                     <TabsTrigger value="summary">Resumen</TabsTrigger>
                     <TabsTrigger value="platforms">Plataformas</TabsTrigger>
                     <TabsTrigger value="categories">Categorías</TabsTrigger>
                     <TabsTrigger value="top10">Top 10</TabsTrigger>
                   </TabsList>
                   
-                  <TabsContent value="summary" className="pt-4">
+                  <TabsContent value="summary" className="pt-4 flex-1 overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Card>
                         <CardHeader className="pb-2">
