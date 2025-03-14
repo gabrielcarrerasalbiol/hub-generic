@@ -194,101 +194,110 @@ export default function VideoPage() {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          {/* Video Player */}
-          <VideoPlayer embedUrl={video.embedUrl} title={video.title} />
+      <div className="max-w-7xl mx-auto">
+        {/* Título y acción de favorito en la parte superior */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl font-semibold">{video.title}</h1>
+            <button 
+              className={`text-2xl ${video.isFavorite ? 'text-yellow-400' : 'text-gray-400 hover:text-yellow-400'}`}
+              onClick={handleToggleFavorite}
+              aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+            >
+              <i className={video.isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+            </button>
+          </div>
           
-          {/* Video Info */}
-          <div className="bg-white rounded-lg shadow-md p-4 mt-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-xl font-semibold mb-1">{video.title}</h1>
-                <p className="text-sm text-gray-600">
-                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium text-white mr-2 ${getPlatformColor(video.platform)}`}>
-                    <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
-                    {video.platform}
-                  </span>
-                  {formatViewCount(video.viewCount)} visualizaciones • {formatPublishedDate(video.publishedAt)}
-                </p>
+          <p className="text-sm text-gray-600 mt-1">
+            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium text-white mr-2 ${getPlatformColor(video.platform)}`}>
+              <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
+              {video.platform}
+            </span>
+            {formatViewCount(video.viewCount)} visualizaciones • {formatPublishedDate(video.publishedAt)}
+          </p>
+        </div>
+        
+        {/* Canal e información de suscripción */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <div 
+              onClick={() => window.location.href = `/channel/${video.channelId}`}
+              className="flex items-center hover:opacity-90 cursor-pointer"
+            >
+              <img 
+                src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=random&color=fff&size=128`} 
+                alt={video.channelTitle} 
+                className="w-10 h-10 rounded-full object-cover" 
+              />
+              <div className="ml-3">
+                <p className="font-medium">{video.channelTitle}</p>
+                <p className="text-xs text-gray-500">Ver canal</p>
               </div>
-              <button 
-                className={`text-2xl ${video.isFavorite ? 'text-[#FEF08A]' : 'text-gray-400 hover:text-[#FEF08A]'}`}
-                onClick={handleToggleFavorite}
-                aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-              >
-                <i className={video.isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
-              </button>
             </div>
             
-            {/* Channel Link and Subscribe Button */}
-            <div className="flex items-center justify-between mt-4 mb-3 bg-gray-50 p-3 rounded-md">
-              <Link href={`/channel/${video.channelId}`}>
-                <a className="flex items-center hover:opacity-90">
-                  <img 
-                    src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=random&color=fff&size=128`} 
-                    alt={video.channelTitle} 
-                    className="w-10 h-10 rounded-full object-cover" 
-                  />
-                  <div className="ml-3">
-                    <p className="font-medium">{video.channelTitle}</p>
-                    <p className="text-xs text-gray-500">Ver canal</p>
-                  </div>
-                </a>
-              </Link>
-              
-              {/* Subscribe Button */}
-              {user && video.channelId && (
-                <SubscribeButton 
-                  channelId={parseInt(video.channelId)}
-                  initialSubscribed={subscriptionStatus?.isSubscribed}
-                  initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
-                />
-              )}
-            </div>
-            
-            {/* Video Description */}
-            {video.description && (
-              <div className="mt-3 text-gray-700 whitespace-pre-line text-sm">
-                {video.description.length > 300 
-                  ? `${video.description.substring(0, 300)}...` 
-                  : video.description
-                }
-              </div>
+            {/* Subscribe Button */}
+            {user && video.channelId && (
+              <SubscribeButton 
+                channelId={parseInt(video.channelId)}
+                initialSubscribed={subscriptionStatus?.isSubscribed}
+                initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
+              />
             )}
           </div>
         </div>
-        
-        {/* Related Videos */}
-        <div className="lg:col-span-1">
-          <h2 className="font-bold text-xl mb-4">Videos relacionados</h2>
-          
-          {isRelatedLoading ? (
-            <div className="space-y-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <Skeleton className="w-full aspect-video" />
-                  <div className="p-3">
-                    <Skeleton className="h-5 w-full mb-2" />
-                    <Skeleton className="h-4 w-3/4" />
-                  </div>
+      
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            {/* Video Player */}
+            <VideoPlayer embedUrl={video.embedUrl} title={video.title} />
+            
+            {/* Video Description */}
+            <div className="bg-white rounded-lg shadow-md p-4 mt-4">
+              <h3 className="font-medium mb-2">Descripción</h3>
+              {video.description ? (
+                <div className="text-gray-700 whitespace-pre-line text-sm">
+                  {video.description.length > 300 
+                    ? `${video.description.substring(0, 300)}...` 
+                    : video.description
+                  }
                 </div>
-              ))}
+              ) : (
+                <p className="text-gray-500 text-sm">Este video no tiene descripción.</p>
+              )}
             </div>
-          ) : relatedVideos && relatedVideos.length > 0 ? (
-            <div className="space-y-4">
-              {relatedVideos
-                .filter((v: Video) => v.id !== video.id)
-                .slice(0, 4)
-                .map((relatedVideo: Video) => (
-                  <VideoCard key={relatedVideo.id} video={relatedVideo} compact />
+          </div>
+          
+          {/* Related Videos */}
+          <div className="lg:col-span-1">
+            <h2 className="font-bold text-xl mb-4">Videos relacionados</h2>
+            
+            {isRelatedLoading ? (
+              <div className="space-y-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <Skeleton className="w-full aspect-video" />
+                    <div className="p-3">
+                      <Skeleton className="h-5 w-full mb-2" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                  </div>
                 ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow-md p-4 text-center">
-              <p>No hay videos relacionados disponibles.</p>
-            </div>
-          )}
+              </div>
+            ) : relatedVideos && relatedVideos.length > 0 ? (
+              <div className="space-y-4">
+                {relatedVideos
+                  .filter((v: Video) => v.id !== video.id)
+                  .slice(0, 4)
+                  .map((relatedVideo: Video) => (
+                    <VideoCard key={relatedVideo.id} video={relatedVideo} compact />
+                  ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-md p-4 text-center">
+                <p>No hay videos relacionados disponibles.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </main>
