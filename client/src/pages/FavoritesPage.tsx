@@ -2,10 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import VideoCard from "@/components/VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useLocation } from "wouter";
-import { Video } from "@shared/schema";
+import { Video as BaseVideo } from "@shared/schema";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+
+// Extendemos el tipo Video para incluir isFavorite
+interface Video extends BaseVideo {
+  isFavorite?: boolean;
+}
 
 export default function FavoritesPage() {
   const [, setLocation] = useLocation();
