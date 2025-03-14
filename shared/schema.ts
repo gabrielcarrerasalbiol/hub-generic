@@ -12,7 +12,7 @@ export const users = pgTable("users", {
   profilePicture: text("profile_picture"),
   googleId: text("google_id").unique(),
   appleId: text("apple_id").unique(),
-  role: text("role").default("user"),
+  role: text("role", { enum: ["free", "premium", "admin"] }).default("free").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -25,6 +25,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   profilePicture: true,
   googleId: true,
   appleId: true,
+  role: true,
 });
 
 // Session schema for storing auth sessions
@@ -138,6 +139,10 @@ export type Category = typeof categories.$inferSelect;
 
 export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
 export type Favorite = typeof favorites.$inferSelect;
+
+// Tipos de roles de usuario
+export const UserRole = z.enum(["free", "premium", "admin"]);
+export type UserRole = z.infer<typeof UserRole>;
 
 // Platform type for frontend filtering
 export const PlatformType = z.enum(["all", "youtube", "tiktok", "twitter", "instagram"]);
