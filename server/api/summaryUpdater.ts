@@ -26,16 +26,17 @@ export async function generateSummaryForVideo(videoId: number): Promise<boolean>
     
     // Generar resumen con Gemini
     console.log(`Generando resumen para el video ${videoId}: ${video.title}`);
-    const summary = await generateVideoSummary(video.title, video.description || "");
+    const result = await generateVideoSummary(video.title, video.description || "");
     
-    if (!summary) {
+    if (!result || !result.summary) {
       console.error(`No se pudo generar resumen para el video ${videoId}`);
       return false;
     }
     
-    // Actualizar el video con el nuevo resumen
+    // Actualizar el video con el nuevo resumen y el idioma detectado
     const updated = await storage.updateVideo(videoId, {
-      summary
+      summary: result.summary,
+      language: result.language
     });
     
     if (!updated) {
@@ -43,10 +44,11 @@ export async function generateSummaryForVideo(videoId: number): Promise<boolean>
       return false;
     }
     
-    console.log(`Resumen actualizado para video ${videoId}: ${summary.substring(0, 100)}...`);
+    console.log(`Resumen actualizado para video ${videoId}: ${result.summary.substring(0, 100)}...`);
+    console.log(`Idioma detectado: ${result.language}`);
     
     // Intentar recategorizar el video usando el resumen
-    await recategorizeVideoUsingNewSummary(video, summary);
+    await recategorizeVideoUsingNewSummary(video, result.summary);
     
     return true;
   } catch (error) {

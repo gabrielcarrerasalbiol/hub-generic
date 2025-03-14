@@ -54,46 +54,115 @@ The SVG dimensions should be 200x60 pixels and the code should start with <svg> 
 
 /**
  * Generates a concise summary for a video based on its title and description
+ * and detects the language of the content
  * Uses Gemini Pro model for natural language generation
  * @param videoTitle Title of the video
  * @param videoDescription Description of the video
- * @returns Promise with the generated summary or error message
+ * @returns Promise with an object containing the generated summary and detected language
  */
 export async function generateVideoSummary(
   videoTitle: string,
   videoDescription: string
-): Promise<string> {
+): Promise<{ summary: string; language: string }> {
   try {
     const model = gemini.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `
-Generate a concise summary for this Real Madrid related video content.
+First, determine the primary language of the following video content. Then, generate a concise summary.
+
+TASK 1: Identify the primary language of the content and provide ONLY the two-letter language code (en, es, fr, de, it, pt, etc.).
+TASK 2: Generate a concise summary for this Real Madrid related video content.
+
 The summary should:
 1. Be approximately 2-3 sentences
 2. Capture the main topic of the video
 3. Mention key Real Madrid players, matches, or events discussed
 4. Maintain a neutral, informative tone
-5. Be in the same language as the original content (Spanish or English)
+5. Be in the same language as the original content
 
 Video Title: ${videoTitle}
 Video Description: ${videoDescription}
 
-Your response should contain ONLY the summary text, nothing else.
+Format your response exactly as follows:
+LANGUAGE: [two-letter language code]
+SUMMARY: [your concise summary]
 `;
 
     const result = await model.generateContent(prompt);
     const response = result.response;
-    return response.text().trim();
+    const responseText = response.text().trim();
+    
+    // Parse the response to extract language and summary
+    let language = "en"; // Default language code
+    let summary = "";
+    
+    if (responseText.includes("LANGUAGE:") && responseText.includes("SUMMARY:")) {
+      const lines = responseText.split("\n");
+      
+      for (const line of lines) {
+        if (line.startsWith("LANGUAGE:")) {
+          language = line.replace("LANGUAGE:", "").trim().toLowerCase();
+        } else if (line.startsWith("SUMMARY:")) {
+          summary = line.replace("SUMMARY:", "").trim();
+        }
+      }
+    } else {
+      // If format is not followed, just use the whole response as summary
+      summary = responseText;
+    }
+    
+    return { 
+      summary, 
+      language: language.length === 2 ? language : "en" // Ensure we have a valid language code
+    };
   } catch (error) {
     console.error("Error generating video summary with Gemini:", error);
     
     // In case of failure, return a basic summary based on the title
-    if (videoTitle) {
-      return `Contenido sobre Real Madrid: ${videoTitle}`;
-    } else {
-      return "Contenido relacionado con Real Madrid.";
-    }
+    return {
+      summary: videoTitle ? `Contenido sobre Real Madrid: ${videoTitle}` : "Contenido relacionado con Real Madrid.",
+      language: detectBasicLanguage(videoTitle, videoDescription)
+    };
   }
+}
+
+/**
+ * Performs basic language detection based on text content
+ * @param title Video title
+ * @param description Video description
+ * @returns Two-letter language code (defaults to "en")
+ */
+function detectBasicLanguage(title: string, description: string): string {
+  const text = (title + " " + (description || "")).toLowerCase();
+  
+  // Spanish common words and patterns
+  const spanishPatterns = ["la", "el", "los", "las", "de", "con", "por", "para", "en", "y", "que", "del", "al", "es"];
+  // English common words and patterns
+  const englishPatterns = ["the", "and", "of", "to", "in", "is", "on", "at", "for", "with", "by", "about"];
+  
+  let spanishScore = 0;
+  let englishScore = 0;
+  
+  // Check for Spanish patterns
+  spanishPatterns.forEach(pattern => {
+    const regex = new RegExp(`\\b${pattern}\\b`, 'g');
+    const matches = text.match(regex);
+    if (matches) spanishScore += matches.length;
+  });
+  
+  // Check for English patterns
+  englishPatterns.forEach(pattern => {
+    const regex = new RegExp(`\\b${pattern}\\b`, 'g');
+    const matches = text.match(regex);
+    if (matches) englishScore += matches.length;
+  });
+  
+  // Spanish accent patterns
+  if (text.match(/[áéíóúüñ]/g)) {
+    spanishScore += 5;
+  }
+  
+  return spanishScore > englishScore ? "es" : "en";
 }
 
 export async function classifyContentWithGemini(

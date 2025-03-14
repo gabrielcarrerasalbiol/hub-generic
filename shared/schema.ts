@@ -59,6 +59,7 @@ export const videos = pgTable("videos", {
   title: text("title").notNull(),
   description: text("description"),
   summary: text("summary"), // Resumen del contenido generado por IA
+  language: text("language"), // Idioma del video (es, en, fr, etc.)
   thumbnailUrl: text("thumbnail_url"),
   videoUrl: text("video_url").notNull(),
   embedUrl: text("embed_url").notNull(),
