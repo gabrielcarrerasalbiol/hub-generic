@@ -16,7 +16,9 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
   const [isToggling, setIsToggling] = useState(false);
 
   // Helper functions for formatting
-  const formatViewCount = (count: number): string => {
+  const formatViewCount = (count: number | null): string => {
+    if (!count) return '0';
+    
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M`;
     } else if (count >= 1000) {
@@ -25,7 +27,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
     return count.toString();
   };
 
-  const formatPublishedDate = (dateString?: string): string => {
+  const formatPublishedDate = (dateString?: string | null): string => {
     if (!dateString) return 'Fecha desconocida';
     
     const date = new Date(dateString);
@@ -113,8 +115,17 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
   if (compact) {
     // Compact layout for related videos
     return (
-      <Link href={`/video/${video.id}`}>
-        <a className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 flex">
+      <Link 
+        href={`/video/${video.id}`}
+        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 flex"
+        onClick={(e) => {
+          // Prevent click if star button was clicked
+          if ((e.target as HTMLElement).tagName === 'I' || 
+              (e.target as HTMLElement).tagName === 'BUTTON') {
+            e.preventDefault();
+          }
+        }}
+      >
           <div className="relative w-1/3">
             <img 
               src={video.thumbnailUrl || 'https://via.placeholder.com/480x360?text=Sin+Miniatura'} 
@@ -145,57 +156,64 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
               </button>
             </div>
           </div>
-        </a>
       </Link>
     );
   }
 
   // Default card layout
   return (
-    <Link href={`/video/${video.id}`}>
-      <a className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200">
-        <div className="relative">
-          <img 
-            src={video.thumbnailUrl || 'https://via.placeholder.com/480x360?text=Sin+Miniatura'} 
-            alt={video.title} 
-            className="w-full aspect-video object-cover"
-          />
-          <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded">
-            {video.duration || '0:00'}
-          </div>
-          <div className={`absolute top-2 left-2 text-white text-xs px-1.5 py-0.5 rounded flex items-center ${getPlatformColor(video.platform)}`}>
-            <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> {video.platform}
-          </div>
+    <Link 
+      href={`/video/${video.id}`}
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200"
+      onClick={(e) => {
+        // Prevent click if star button was clicked
+        if ((e.target as HTMLElement).tagName === 'I' || 
+            (e.target as HTMLElement).tagName === 'BUTTON') {
+          e.preventDefault();
+        }
+      }}
+    >
+      <div className="relative">
+        <img 
+          src={video.thumbnailUrl || 'https://via.placeholder.com/480x360?text=Sin+Miniatura'} 
+          alt={video.title} 
+          className="w-full aspect-video object-cover"
+        />
+        <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded">
+          {video.duration || '0:00'}
         </div>
-        <div className="p-3">
-          <h3 className="font-medium text-sm line-clamp-2 h-10">
-            {video.title}
-          </h3>
-          <div className="flex justify-between items-center mt-2">
-            <div className="flex items-center">
-              <img 
-                src={video.channelThumbnail || 'https://via.placeholder.com/36?text=C'} 
-                alt={video.channelTitle} 
-                className="w-6 h-6 rounded-full"
-              />
-              <span className="ml-2 text-xs text-gray-600">{video.channelTitle}</span>
-            </div>
-            <button 
-              onClick={handleToggleFavorite}
-              className={cn(
-                "text-sm",
-                isFavorite ? "text-[#FEF08A]" : "text-gray-400 hover:text-[#FEF08A]"
-              )}
-              aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-            >
-              <i className={isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
-            </button>
-          </div>
-          <div className="mt-2 text-xs text-gray-500">
-            {formatViewCount(video.viewCount)} visualizaciones • {formatPublishedDate(video.publishedAt)}
-          </div>
+        <div className={`absolute top-2 left-2 text-white text-xs px-1.5 py-0.5 rounded flex items-center ${getPlatformColor(video.platform)}`}>
+          <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> {video.platform}
         </div>
-      </a>
+      </div>
+      <div className="p-3">
+        <h3 className="font-medium text-sm line-clamp-2 h-10">
+          {video.title}
+        </h3>
+        <div className="flex justify-between items-center mt-2">
+          <div className="flex items-center">
+            <img 
+              src={video.channelThumbnail || 'https://via.placeholder.com/36?text=C'} 
+              alt={video.channelTitle} 
+              className="w-6 h-6 rounded-full"
+            />
+            <span className="ml-2 text-xs text-gray-600">{video.channelTitle}</span>
+          </div>
+          <button 
+            onClick={handleToggleFavorite}
+            className={cn(
+              "text-sm",
+              isFavorite ? "text-[#FEF08A]" : "text-gray-400 hover:text-[#FEF08A]"
+            )}
+            aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+          >
+            <i className={isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+          </button>
+        </div>
+        <div className="mt-2 text-xs text-gray-500">
+          {formatViewCount(video.viewCount)} visualizaciones • {formatPublishedDate(video.publishedAt)}
+        </div>
+      </div>
     </Link>
   );
 }
