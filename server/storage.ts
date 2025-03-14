@@ -1,7 +1,8 @@
 import { 
   User, InsertUser, Video, InsertVideo, Channel, 
   InsertChannel, Category, InsertCategory, Favorite, 
-  InsertFavorite, videos, categories, channels, favorites 
+  InsertFavorite, Session, OAuthToken, InsertOAuthToken,
+  videos, categories, channels, favorites, oauthTokens, users
 } from "../shared/schema";
 
 // Storage interface defining all operations
@@ -9,7 +10,17 @@ export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByGoogleId(googleId: string): Promise<User | undefined>;
+  getUserByAppleId(appleId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined>;
+  
+  // OAuth operations
+  getOAuthToken(userId: number, provider: string): Promise<OAuthToken | undefined>;
+  createOAuthToken(token: InsertOAuthToken): Promise<OAuthToken>;
+  updateOAuthToken(id: number, tokenData: Partial<InsertOAuthToken>): Promise<OAuthToken | undefined>;
+  deleteOAuthToken(id: number): Promise<boolean>;
 
   // Video operations
   getVideos(limit?: number, offset?: number): Promise<Video[]>;
@@ -54,6 +65,7 @@ export class MemStorage implements IStorage {
   private channels: Map<number, Channel>;
   private categoryMap: Map<number, Category>;
   private favoriteMap: Map<number, Favorite>;
+  private oauthTokenMap: Map<number, OAuthToken>;
   
   // ID counters for auto-increment
   private userIdCounter: number;
@@ -61,6 +73,7 @@ export class MemStorage implements IStorage {
   private channelIdCounter: number;
   private categoryIdCounter: number;
   private favoriteIdCounter: number;
+  private oauthTokenIdCounter: number;
 
   constructor() {
     this.users = new Map();
@@ -68,12 +81,14 @@ export class MemStorage implements IStorage {
     this.channels = new Map();
     this.categoryMap = new Map();
     this.favoriteMap = new Map();
+    this.oauthTokenMap = new Map();
 
     this.userIdCounter = 1;
     this.videoIdCounter = 1;
     this.channelIdCounter = 1;
     this.categoryIdCounter = 1;
     this.favoriteIdCounter = 1;
+    this.oauthTokenIdCounter = 1;
 
     // Initialize with default categories
     this.initializeCategories();
