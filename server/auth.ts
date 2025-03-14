@@ -1,0 +1,273 @@
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as AppleStrategy } from 'passport-apple';
+import { Request, Response, NextFunction } from 'express';
+import { storage } from './storage';
+import { User, InsertUser } from '../shared/schema';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+// JWT Secret for signing tokens
+const JWT_SECRET = process.env.JWT_SECRET || 'temporarysecretkeyforhubmadridista';
+
+// Google OAuth credentials
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+
+// Apple Sign In credentials
+const APPLE_CLIENT_ID = process.env.APPLE_CLIENT_ID || '';
+const APPLE_TEAM_ID = process.env.APPLE_TEAM_ID || '';
+const APPLE_KEY_ID = process.env.APPLE_KEY_ID || '';
+const APPLE_PRIVATE_KEY = process.env.APPLE_PRIVATE_KEY || '';
+
+// Callback URLs
+const CALLBACK_URL = process.env.CALLBACK_URL || 'http://localhost:5000';
+
+// Set up passport
+export function setupPassport() {
+  // Serialize user to session
+  passport.serializeUser((user: User, done) => {
+    done(null, user.id);
+  });
+
+  // Deserialize user from session
+  passport.deserializeUser(async (id: number, done) => {
+    try {
+      const user = await storage.getUser(id);
+      done(null, user);
+    } catch (error) {
+      done(error, null);
+    }
+  });
+
+  // Local strategy (username/password)
+  passport.use(
+    new LocalStrategy(async (username, password, done) => {
+      try {
+        const user = await storage.getUserByUsername(username);
+        
+        if (!user) {
+          return done(null, false, { message: 'Nombre de usuario incorrecto.' });
+        }
+        
+        if (!user.password) {
+          return done(null, false, { message: 'Esta cuenta está configurada para inicio de sesión social.' });
+        }
+        
+        const isValid = await bcrypt.compare(password, user.password);
+        
+        if (!isValid) {
+          return done(null, false, { message: 'Contraseña incorrecta.' });
+        }
+        
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    })
+  );
+
+  // Google Strategy
+  if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: GOOGLE_CLIENT_ID,
+          clientSecret: GOOGLE_CLIENT_SECRET,
+          callbackURL: `${CALLBACK_URL}/auth/google/callback`,
+          passReqToCallback: true,
+        },
+        async (req, accessToken, refreshToken, profile, done) => {
+          try {
+            // Check if user already exists with this Google ID
+            let user = await storage.getUserByGoogleId(profile.id);
+            
+            if (!user) {
+              // Check if user exists with this email
+              const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+              
+              if (email) {
+                user = await storage.getUserByEmail(email);
+                
+                if (user) {
+                  // Update existing user with Google ID
+                  user = await storage.updateUser(user.id, { googleId: profile.id });
+                }
+              }
+              
+              // Create a new user if no matching user found
+              if (!user) {
+                const newUser: InsertUser = {
+                  username: profile.displayName.replace(/\s+/g, '') + Date.now().toString().substring(9),
+                  email: email || null,
+                  name: profile.displayName,
+                  profilePicture: profile.photos && profile.photos[0] ? profile.photos[0].value : null,
+                };
+                
+                user = await storage.createUser(newUser);
+                
+                // Update with Google ID
+                user = await storage.updateUser(user.id, { googleId: profile.id });
+              }
+            }
+            
+            // Save the token
+            await storage.createOAuthToken({
+              userId: user.id,
+              provider: 'google',
+              accessToken,
+              refreshToken: refreshToken || null,
+              expiresAt: null
+            });
+            
+            done(null, user);
+          } catch (error) {
+            done(error, null);
+          }
+        }
+      )
+    );
+  }
+
+  // Apple Strategy
+  if (APPLE_CLIENT_ID && APPLE_TEAM_ID && APPLE_KEY_ID && APPLE_PRIVATE_KEY) {
+    passport.use(
+      new AppleStrategy(
+        {
+          clientID: APPLE_CLIENT_ID,
+          teamID: APPLE_TEAM_ID,
+          keyID: APPLE_KEY_ID,
+          privateKeyLocation: APPLE_PRIVATE_KEY,
+          callbackURL: `${CALLBACK_URL}/auth/apple/callback`,
+          passReqToCallback: true,
+        },
+        async (req, accessToken, refreshToken, idToken, profile, done) => {
+          try {
+            // Parse the idToken to get user information
+            let email = null;
+            let name = null;
+            
+            if (idToken) {
+              try {
+                const decodedToken: any = jwt.decode(idToken);
+                email = decodedToken.email;
+                
+                // Apple doesn't always provide the name
+                if (req.body && req.body.user) {
+                  const userJson = JSON.parse(req.body.user);
+                  name = userJson.name ? `${userJson.name.firstName} ${userJson.name.lastName}` : null;
+                }
+              } catch (e) {
+                console.error('Error decoding Apple ID token:', e);
+              }
+            }
+            
+            // Check if user already exists with this Apple ID
+            let user = await storage.getUserByAppleId(profile.id);
+            
+            if (!user && email) {
+              // Check if user exists with this email
+              user = await storage.getUserByEmail(email);
+              
+              if (user) {
+                // Update existing user with Apple ID
+                user = await storage.updateUser(user.id, { appleId: profile.id });
+              }
+            }
+            
+            // Create a new user if no matching user found
+            if (!user) {
+              const newUser: InsertUser = {
+                username: `apple_user_${Date.now().toString().substring(9)}`,
+                email: email || null,
+                name: name || `Usuario de Apple ${Date.now().toString().substring(9)}`,
+                profilePicture: null,
+              };
+              
+              user = await storage.createUser(newUser);
+              
+              // Update with Apple ID
+              user = await storage.updateUser(user.id, { appleId: profile.id });
+            }
+            
+            // Save the token
+            await storage.createOAuthToken({
+              userId: user.id,
+              provider: 'apple',
+              accessToken,
+              refreshToken: refreshToken || null,
+              expiresAt: null
+            });
+            
+            done(null, user);
+          } catch (error) {
+            done(error, null);
+          }
+        }
+      )
+    );
+  }
+}
+
+// Generate a JWT token for the user
+export function generateToken(user: User): string {
+  return jwt.sign(
+    { 
+      id: user.id,
+      username: user.username,
+      role: user.role 
+    },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+}
+
+// Authentication middleware for protected routes
+export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  
+  const token = extractToken(req);
+  
+  if (!token) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }
+  
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: number };
+    
+    // Get the user from storage
+    storage.getUser(decoded.id)
+      .then(user => {
+        if (!user) {
+          return res.status(401).json({ error: 'Usuario no encontrado' });
+        }
+        
+        // Attach user to request
+        req.user = user;
+        next();
+      })
+      .catch(error => {
+        console.error('Error verifying token:', error);
+        res.status(401).json({ error: 'Error de autenticación' });
+      });
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(401).json({ error: 'Token inválido o expirado' });
+  }
+}
+
+// Function to extract JWT token from request
+function extractToken(req: Request): string | null {
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    return req.headers.authorization.substring(7);
+  }
+  
+  if (req.cookies && req.cookies.token) {
+    return req.cookies.token;
+  }
+  
+  return null;
+}

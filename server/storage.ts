@@ -125,11 +125,95 @@ export class MemStorage implements IStorage {
     );
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.email === email,
+    );
+  }
+  
+  async getUserByGoogleId(googleId: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.googleId === googleId,
+    );
+  }
+  
+  async getUserByAppleId(appleId: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.appleId === appleId,
+    );
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
-    const user = { ...insertUser, id };
+    const user: User = {
+      id,
+      username: insertUser.username,
+      password: insertUser.password || null,
+      email: insertUser.email || null,
+      name: insertUser.name || null,
+      profilePicture: insertUser.profilePicture || null,
+      googleId: null,
+      appleId: null,
+      role: "user",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
     this.users.set(id, user);
     return user;
+  }
+  
+  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
+    const existingUser = this.users.get(id);
+    if (!existingUser) return undefined;
+    
+    const updatedUser = { 
+      ...existingUser, 
+      ...userData,
+      updatedAt: new Date()
+    };
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  // OAuth Token operations
+  async getOAuthToken(userId: number, provider: string): Promise<OAuthToken | undefined> {
+    return Array.from(this.oauthTokenMap.values()).find(
+      (token) => token.userId === userId && token.provider === provider,
+    );
+  }
+  
+  async createOAuthToken(token: InsertOAuthToken): Promise<OAuthToken> {
+    const id = this.oauthTokenIdCounter++;
+    const newToken: OAuthToken = {
+      id,
+      userId: token.userId,
+      provider: token.provider,
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken || null,
+      expiresAt: token.expiresAt || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.oauthTokenMap.set(id, newToken);
+    return newToken;
+  }
+  
+  async updateOAuthToken(id: number, tokenData: Partial<InsertOAuthToken>): Promise<OAuthToken | undefined> {
+    const existingToken = this.oauthTokenMap.get(id);
+    if (!existingToken) return undefined;
+    
+    const updatedToken = {
+      ...existingToken,
+      ...tokenData,
+      updatedAt: new Date()
+    };
+    this.oauthTokenMap.set(id, updatedToken);
+    return updatedToken;
+  }
+  
+  async deleteOAuthToken(id: number): Promise<boolean> {
+    if (!this.oauthTokenMap.has(id)) return false;
+    return this.oauthTokenMap.delete(id);
   }
 
   // Video operations
