@@ -278,7 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/videos/search", async (req: Request, res: Response) => {
     try {
-      const query = req.query.q as string || "";
+      const query = (req.query.query as string) || (req.query.q as string) || "";
       const limit = parseInt(req.query.limit as string) || 50;
       
       if (!query) {
