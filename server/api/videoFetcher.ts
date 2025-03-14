@@ -9,28 +9,43 @@ import { classifyContentWithGemini } from './gemini';
 /**
  * Busca nuevos videos en YouTube relacionados con el Real Madrid 
  * y los categoriza automáticamente usando IA
+ * Prioriza contenido en español y de canales con alto índice de visualizaciones
  */
 export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total: number, added: number, error?: string}> {
   try {
-    // Términos de búsqueda para encontrar videos de Real Madrid
+    // Términos de búsqueda en español para encontrar videos de Real Madrid
     const searchTerms = [
       "Real Madrid highlights",
-      "Real Madrid goals",
-      "Real Madrid analysis",
-      "Real Madrid news",
-      "Real Madrid players",
+      "Real Madrid mejores momentos",
+      "Real Madrid goles",
+      "Real Madrid análisis",
+      "Real Madrid noticias",
+      "Real Madrid jugadores",
       "Real Madrid Vinicius",
       "Real Madrid Bellingham",
       "Real Madrid Ancelotti",
-      "Real Madrid history"
+      "Real Madrid historia",
+      "Real Madrid fichajes",
+      "Real Madrid la liga",
+      "Real Madrid Champions",
+      "Real Madrid resumen partido",
+      "Real Madrid entrevistas",
+      "Real Madrid rueda de prensa"
     ];
     
     // Seleccionar un término de búsqueda aleatorio para diversificar resultados
     const randomIndex = Math.floor(Math.random() * searchTerms.length);
     const searchQuery = searchTerms[randomIndex];
     
-    // Buscar videos en YouTube
-    const searchResults = await searchYouTubeVideos(searchQuery, maxResults);
+    // Orden aleatorio para variar entre relevancia y visualizaciones
+    // viewCount: prioriza videos con más visualizaciones
+    // relevance: prioriza videos más relevantes a la búsqueda
+    const searchOrders = ['viewCount', 'relevance'];
+    const orderIndex = Math.floor(Math.random() * searchOrders.length);
+    const selectedOrder = searchOrders[orderIndex];
+    
+    // Buscar videos en YouTube (con preferencia para español y el orden seleccionado)
+    const searchResults = await searchYouTubeVideos(searchQuery, maxResults, '', 'es', selectedOrder);
     if (!searchResults.items || searchResults.items.length === 0) {
       return { total: 0, added: 0, error: "No se encontraron videos" };
     }
@@ -56,6 +71,9 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
     // Obtener categorías una sola vez para todas las clasificaciones
     const availableCategories = await storage.getCategories();
     
+    // Definir umbral mínimo de visualizaciones para considerar un video de calidad
+    const MIN_VIEW_COUNT = 1000; // Videos con menos de 1000 visualizaciones serán ignorados
+    
     // Procesar cada video
     for (const video of videoDetails.items) {
       try {
@@ -63,6 +81,13 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
         const existingVideo = await storage.getVideoByExternalId(video.id);
         if (existingVideo) {
           existingIds.push(video.id);
+          continue;
+        }
+        
+        // Filtrar videos con pocas visualizaciones
+        const viewCount = parseInt(video.statistics.viewCount, 10) || 0;
+        if (viewCount < MIN_VIEW_COUNT) {
+          console.log(`Ignorando video ${video.id} con solo ${viewCount} visualizaciones`);
           continue;
         }
         

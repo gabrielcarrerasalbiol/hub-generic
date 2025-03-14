@@ -78,8 +78,15 @@ interface YouTubeChannelResult {
 
 /**
  * Search YouTube for Real Madrid related content
+ * Con preferencia por contenido en español y de canales populares
  */
-export async function searchYouTubeVideos(query: string, maxResults = 10, pageToken = ''): Promise<YouTubeSearchResult> {
+export async function searchYouTubeVideos(
+  query: string, 
+  maxResults = 10, 
+  pageToken = '', 
+  relevanceLanguage = 'es',
+  order = 'relevance'
+): Promise<YouTubeSearchResult> {
   try {
     const response = await axios.get(`${YOUTUBE_API_BASE_URL}/search`, {
       params: {
@@ -88,9 +95,19 @@ export async function searchYouTubeVideos(query: string, maxResults = 10, pageTo
         maxResults,
         pageToken,
         type: 'video',
+        relevanceLanguage, // Priorizar videos en español
+        order, // Opciones: 'date', 'rating', 'relevance', 'title', 'videoCount', 'viewCount'
+        videoDefinition: 'high', // Solo videos de alta definición
         key: YOUTUBE_API_KEY
       }
     });
+    
+    // Si estamos buscando canales populares (viewCount), el resultado ya viene ordenado
+    if (order === 'viewCount') {
+      return response.data;
+    }
+    
+    // Para otros tipos de búsqueda, hacemos un procesamiento adicional
     return response.data;
   } catch (error) {
     console.error('YouTube API search error:', error);
