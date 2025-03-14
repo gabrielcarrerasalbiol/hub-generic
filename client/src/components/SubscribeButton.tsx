@@ -57,12 +57,9 @@ export default function SubscribeButton({
     if (!isSubscribed) {
       try {
         // Suscribirse al canal
-        await apiRequest('/api/subscriptions', {
-          method: 'POST',
-          body: JSON.stringify({
-            channelId,
-            notificationsEnabled: true
-          })
+        await apiRequest('POST', '/api/subscriptions', {
+          channelId,
+          notificationsEnabled: true
         });
         
         setIsSubscribed(true);
@@ -86,9 +83,7 @@ export default function SubscribeButton({
     } else {
       try {
         // Cancelar suscripción
-        await apiRequest(`/api/subscriptions/${channelId}`, {
-          method: 'DELETE'
-        });
+        await apiRequest('DELETE', `/api/subscriptions/${channelId}`);
         
         setIsSubscribed(false);
         toast({
@@ -119,11 +114,8 @@ export default function SubscribeButton({
     setIsLoading(true);
     
     try {
-      await apiRequest(`/api/subscriptions/${channelId}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          notificationsEnabled: !notificationsEnabled
-        })
+      await apiRequest('PUT', `/api/subscriptions/${channelId}`, {
+        notificationsEnabled: !notificationsEnabled
       });
       
       setNotificationsEnabled(!notificationsEnabled);

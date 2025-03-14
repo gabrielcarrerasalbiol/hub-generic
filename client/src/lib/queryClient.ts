@@ -93,20 +93,39 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest<T = any>(
-  urlOrOptions: string | RequestInit,
-  options?: RequestInit
+  methodOrUrlOrOptions: string | RequestInit,
+  urlOrOptions?: string | Record<string, any>,
+  data?: Record<string, any>
 ): Promise<T> {
+  let method: string = 'GET';
   let url: string;
-  let requestOptions: RequestInit;
+  let requestOptions: RequestInit = {};
 
-  if (typeof urlOrOptions === 'string') {
+  // Primer patrón: apiRequest(url, options)
+  if (typeof methodOrUrlOrOptions === 'string' && 
+      (methodOrUrlOrOptions.startsWith('/') || methodOrUrlOrOptions.startsWith('http'))) {
+    url = methodOrUrlOrOptions;
+    if (urlOrOptions && typeof urlOrOptions !== 'string') {
+      requestOptions = urlOrOptions as RequestInit;
+    }
+  } 
+  // Segundo patrón: apiRequest(method, url, data)
+  else if (typeof methodOrUrlOrOptions === 'string' && typeof urlOrOptions === 'string') {
+    method = methodOrUrlOrOptions.toUpperCase();
     url = urlOrOptions;
-    requestOptions = options || { method: 'GET' };
-  } else {
-    // En este caso, el primer argumento es las opciones de la solicitud
-    // y debe contener un campo url
-    url = '/api'; // Valor por defecto, se debería sobrescribir
-    requestOptions = urlOrOptions;
+    if (data) {
+      requestOptions.body = JSON.stringify(data);
+    }
+  }
+  // Tercer patrón: apiRequest(options)
+  else {
+    requestOptions = methodOrUrlOrOptions as RequestInit;
+    url = '/api'; // Valor por defecto, debería sobrescribirse
+  }
+
+  // Asignar método si no está en las opciones
+  if (!requestOptions.method) {
+    requestOptions.method = method;
   }
 
   // Asegurarse de que las cabeceras se envíen correctamente
