@@ -9,10 +9,16 @@ import { User, InsertUser } from '../shared/schema';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+// Importar crypto para generar una clave segura temporal si no existe JWT_SECRET
+import crypto from 'crypto';
+
 // JWT Secret for signing tokens
-const JWT_SECRET = process.env.JWT_SECRET;
+let JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
+  // Generar un secreto aleatorio seguro para uso temporal en desarrollo
+  JWT_SECRET = crypto.randomBytes(64).toString('hex');
   console.error('¡ADVERTENCIA! JWT_SECRET no está configurado. Utilizando un secreto temporal. NO USAR EN PRODUCCIÓN.');
+  console.error('En producción, establezca JWT_SECRET como variable de entorno.');
   // En producción, deberíamos detener la aplicación aquí
   // process.exit(1);
 }
@@ -230,6 +236,8 @@ export function generateToken(user: User): string {
   // Obtener tiempo de expiración de variable de entorno o usar valor predeterminado
   const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
   
+  // JWT_SECRET está definido al principio del archivo y siempre tendrá un valor
+  // ya sea el de la variable de entorno o uno generado aleatoriamente
   return jwt.sign(
     { 
       id: user.id,
@@ -237,7 +245,7 @@ export function generateToken(user: User): string {
       role: user.role,
       // No incluir información sensible en el token
     },
-    JWT_SECRET,
+    JWT_SECRET as string, // Asegurarnos que TypeScript entiende que siempre hay un valor
     { 
       expiresIn: expiresIn,
       algorithm: 'HS256', // Algoritmo explícito
@@ -263,10 +271,8 @@ export function isAuthenticated(req: Request, res: Response, next: NextFunction)
   }
   
   try {
-    // Verificar el token con opciones específicas para mayor seguridad
-    const jwtSecret = JWT_SECRET || 'fallback_jwt_secret_for_development_only'; // Fallback solo para desarrollo
-    
-    const decoded = jwt.verify(token, jwtSecret, {
+    // Verificar el token con opciones específicas para mayor seguridad    
+    const decoded = jwt.verify(token, JWT_SECRET as string, {
       issuer: 'hub-madridista',
       audience: 'hub-madridista-users',
       algorithms: ['HS256'] // Restringe a un solo algoritmo

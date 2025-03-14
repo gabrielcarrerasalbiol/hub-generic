@@ -14,6 +14,10 @@ import { pgStorage } from "./pgStorage";
 
 const app = express();
 
+// Configurar Express para confiar en el proxy de Replit
+// Esto es necesario para que express-rate-limit funcione correctamente con X-Forwarded-For
+app.set('trust proxy', 1);
+
 // Aplicar Helmet para mejorar la seguridad con encabezados HTTP
 app.use(helmet({
   contentSecurityPolicy: {
@@ -46,8 +50,8 @@ app.use((req, res, next) => {
 // Configurar limitadores de tasa (rate limiting)
 // Limitador general para todas las solicitudes API
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 200, // límite de 200 solicitudes por ventana por IP
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutos por defecto
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '200'), // límite de 200 solicitudes por ventana por IP por defecto
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Demasiadas solicitudes, por favor intente más tarde' }
