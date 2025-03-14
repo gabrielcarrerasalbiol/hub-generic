@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useRef, useEffect } from "react";
+import { Link } from "wouter";
 import FeaturedVideo from "@/components/FeaturedVideo";
 import VideoCard from "@/components/VideoCard";
 import ChannelCard from "@/components/ChannelCard";
@@ -8,6 +9,7 @@ import CategoryFilters from "@/components/CategoryFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Video, Channel, PlatformType, CategoryType } from "@shared/schema";
+import { getQueryFn } from "@/lib/queryClient";
 import {
   Carousel,
   CarouselContent,
@@ -27,32 +29,36 @@ export default function Home() {
   const { 
     data: trendingVideos = [], 
     isLoading: isTrendingLoading 
-  } = useQuery<Video[]>({
+  } = useQuery({
     queryKey: ["/api/videos/trending", { limit: 20 }],
+    queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
   });
 
   // Fetch latest videos (limitado a 20)
   const { 
     data: latestVideos = [], 
     isLoading: isLatestLoading 
-  } = useQuery<Video[]>({
+  } = useQuery({
     queryKey: ["/api/videos/latest", { limit: 20 }],
+    queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
   });
 
   // Fetch recommended channels (limitado a 8)
   const { 
     data: recommendedChannels = [], 
     isLoading: isChannelsLoading 
-  } = useQuery<Channel[]>({
+  } = useQuery({
     queryKey: ["/api/channels/recommended", { limit: 8 }],
+    queryFn: getQueryFn<Channel[]>({ on401: 'returnNull' }),
   });
 
   // Fetch videos filtered by platform and category (limitado a 20)
   const { 
     data: filteredVideos = [], 
     isLoading: isFilteredLoading 
-  } = useQuery<Video[]>({
+  } = useQuery({
     queryKey: ["/api/videos", { platform, category, limit: 20 }],
+    queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
     enabled: platform !== "all" || category !== "all",
   });
   
