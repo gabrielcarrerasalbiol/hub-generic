@@ -1,0 +1,1 @@
+ALTER TABLE "channel_subscriptions" DROP COLUMN "id";

@@ -121,7 +121,6 @@ export const insertFavoriteSchema = createInsertSchema(favorites).omit({
 
 // Tabla para suscripciones a canales
 export const channelSubscriptions = pgTable("channel_subscriptions", {
-  id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   channelId: integer("channel_id").notNull().references(() => channels.id, { onDelete: "cascade" }),
   notificationsEnabled: boolean("notifications_enabled").default(true).notNull(),
@@ -132,10 +131,7 @@ export const channelSubscriptions = pgTable("channel_subscriptions", {
   };
 });
 
-export const insertChannelSubscriptionSchema = createInsertSchema(channelSubscriptions).omit({
-  id: true,
-  createdAt: true,
-});
+export const insertChannelSubscriptionSchema = createInsertSchema(channelSubscriptions);
 
 // Tabla para notificaciones de nuevos videos
 export const notifications = pgTable("notifications", {

@@ -8,6 +8,13 @@
       "when": 1741956611434,
       "tag": "0000_greedy_grim_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1741956711733,
+      "tag": "0001_sturdy_hulk",
+      "breakpoints": true
     }
   ]
 }
