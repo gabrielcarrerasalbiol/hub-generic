@@ -3,8 +3,9 @@ import { useLocation } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import UserManagement from '@/components/admin/UserManagement';
 import VideoManagement from '@/components/admin/VideoManagement';
+import PremiumChannelManagement from '@/components/admin/PremiumChannelManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, Video, Activity } from 'lucide-react';
+import { Users, Video, Activity, Star } from 'lucide-react';
 
 export default function AdminPage() {
   const { isAdmin, checkAuth } = useAuth();
@@ -25,7 +26,7 @@ export default function AdminPage() {
       <h1 className="text-3xl font-bold mb-6">Panel de Administración</h1>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-3">
+        <TabsList className="mb-6 grid w-full grid-cols-4">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span>Usuarios</span>
@@ -33,6 +34,10 @@ export default function AdminPage() {
           <TabsTrigger value="videos" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
             <span>Vídeos</span>
+          </TabsTrigger>
+          <TabsTrigger value="premium" className="flex items-center gap-2">
+            <Star className="h-4 w-4" />
+            <span>Canales Premium</span>
           </TabsTrigger>
           <TabsTrigger value="processes" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />

@@ -177,6 +177,81 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
  * @param maxResults Número máximo de videos a importar (entre 1 y 50)
  * @returns Objeto con estadísticas de la importación
  */
+/**
+ * Importa videos de todos los canales premium
+ * @returns Estadísticas de la importación
+ */
+export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
+  totalChannels: number;
+  processedChannels: number;
+  totalVideos: number;
+  addedVideos: number;
+  errors: string[];
+}> {
+  const result = {
+    totalChannels: 0,
+    processedChannels: 0,
+    totalVideos: 0,
+    addedVideos: 0,
+    errors: [] as string[]
+  };
+
+  try {
+    // Obtener todos los canales premium
+    const premiumChannels = await storage.getPremiumChannels();
+    result.totalChannels = premiumChannels.length;
+
+    if (premiumChannels.length === 0) {
+      result.errors.push("No hay canales premium configurados");
+      return result;
+    }
+
+    // Procesar cada canal premium
+    for (const premiumChannel of premiumChannels) {
+      try {
+        // Obtener información del canal
+        const channel = await storage.getChannelById(premiumChannel.channelId);
+        if (!channel) {
+          result.errors.push(`Canal con ID ${premiumChannel.channelId} no encontrado`);
+          continue;
+        }
+
+        // Solo procesamos canales de YouTube por ahora
+        if (channel.platform !== 'youtube') {
+          result.errors.push(`Canal ${channel.title} no es de YouTube (plataforma: ${channel.platform})`);
+          continue;
+        }
+
+        console.log(`Importando videos del canal premium: ${channel.title}`);
+        
+        // Importar videos del canal
+        const importResult = await importChannelVideos(channel.externalId, maxPerChannel);
+        
+        // Actualizar estadísticas
+        result.processedChannels++;
+        result.totalVideos += importResult.total;
+        result.addedVideos += importResult.added;
+        
+        // Registrar errores si los hay
+        if (importResult.error) {
+          result.errors.push(`Error en canal ${channel.title}: ${importResult.error}`);
+        }
+        
+        // Actualizar tiempo de última sincronización
+        await storage.updatePremiumChannelSyncTime(premiumChannel.id);
+        
+      } catch (error: any) {
+        result.errors.push(`Error procesando canal ${premiumChannel.channelId}: ${error.message}`);
+      }
+    }
+
+    return result;
+  } catch (error: any) {
+    result.errors.push(`Error general: ${error.message}`);
+    return result;
+  }
+}
+
 export async function importChannelVideos(
   channelId: string,
   maxResults = 50
@@ -345,8 +420,7 @@ export async function importChannelVideos(
     return {
       total: videoDetails.items.length,
       added: addedCount,
-      channelInfo: channelInDb,
-      existingVideos: existingIds.length
+      channelInfo: channelInDb
     };
     
   } catch (error: any) {

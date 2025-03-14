@@ -878,6 +878,199 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === PREMIUM CHANNELS ENDPOINTS ===
+
+  // Obtener todos los canales premium
+  app.get("/api/premium-channels", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const premiumChannels = await storage.getPremiumChannels();
+      
+      // Enriquecer con información adicional del canal
+      const enrichedChannels = await Promise.all(
+        premiumChannels.map(async (premiumChannel) => {
+          const channel = await storage.getChannelById(premiumChannel.channelId);
+          return {
+            ...premiumChannel,
+            channelDetails: channel
+          };
+        })
+      );
+      
+      res.json(enrichedChannels);
+    } catch (error: any) {
+      console.error("Error fetching premium channels:", error);
+      res.status(500).json({ 
+        error: "Error al obtener canales premium",
+        details: error.message
+      });
+    }
+  });
+
+  // Agregar un canal premium
+  app.post("/api/premium-channels", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { channelId, priority, notes } = req.body;
+      
+      if (!channelId) {
+        return res.status(400).json({ error: "Se requiere el ID del canal" });
+      }
+      
+      // Verificar que el canal existe
+      const channel = await storage.getChannelById(parseInt(channelId));
+      if (!channel) {
+        return res.status(404).json({ error: "Canal no encontrado" });
+      }
+      
+      // Verificar que no sea ya un canal premium
+      const isPremium = await storage.isPremiumChannel(parseInt(channelId));
+      if (isPremium) {
+        return res.status(400).json({ error: "Este canal ya es premium" });
+      }
+      
+      const premiumChannel = await storage.addPremiumChannel({
+        channelId: parseInt(channelId),
+        priority: priority || 5, // Prioridad por defecto (1-10)
+        notes: notes || null,
+        lastSyncAt: null
+      });
+      
+      res.status(201).json({
+        message: "Canal premium añadido correctamente",
+        channel: {
+          ...premiumChannel,
+          channelDetails: channel
+        }
+      });
+    } catch (error: any) {
+      console.error("Error adding premium channel:", error);
+      res.status(500).json({ 
+        error: "Error al añadir canal premium",
+        details: error.message
+      });
+    }
+  });
+
+  // Actualizar un canal premium
+  app.put("/api/premium-channels/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { priority, notes } = req.body;
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID de canal premium inválido" });
+      }
+      
+      // Verificar que el canal premium existe
+      const premiumChannel = await storage.getPremiumChannelById(id);
+      if (!premiumChannel) {
+        return res.status(404).json({ error: "Canal premium no encontrado" });
+      }
+      
+      const updatedPremiumChannel = await storage.updatePremiumChannel(id, {
+        priority: priority !== undefined ? priority : premiumChannel.priority,
+        notes: notes !== undefined ? notes : premiumChannel.notes
+      });
+      
+      const channel = await storage.getChannelById(premiumChannel.channelId);
+      
+      res.json({
+        message: "Canal premium actualizado correctamente",
+        channel: {
+          ...updatedPremiumChannel,
+          channelDetails: channel
+        }
+      });
+    } catch (error: any) {
+      console.error("Error updating premium channel:", error);
+      res.status(500).json({ 
+        error: "Error al actualizar canal premium",
+        details: error.message
+      });
+    }
+  });
+
+  // Eliminar un canal premium
+  app.delete("/api/premium-channels/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID de canal premium inválido" });
+      }
+      
+      // Verificar que el canal premium existe
+      const premiumChannel = await storage.getPremiumChannelById(id);
+      if (!premiumChannel) {
+        return res.status(404).json({ error: "Canal premium no encontrado" });
+      }
+      
+      const success = await storage.removePremiumChannel(id);
+      
+      if (success) {
+        res.json({ message: "Canal premium eliminado correctamente" });
+      } else {
+        res.status(500).json({ error: "Error al eliminar canal premium" });
+      }
+    } catch (error: any) {
+      console.error("Error removing premium channel:", error);
+      res.status(500).json({ 
+        error: "Error al eliminar canal premium",
+        details: error.message
+      });
+    }
+  });
+
+  // Importar videos de todos los canales premium
+  app.post("/api/premium-channels/import-videos", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { maxPerChannel = 20 } = req.body;
+      const limit = Math.min(Math.max(parseInt(String(maxPerChannel)) || 20, 5), 50); // Limitar entre 5 y 50
+      
+      const { importPremiumChannelsVideos } = await import("./api/videoFetcher");
+      const result = await importPremiumChannelsVideos(limit);
+      
+      res.json({
+        message: `Importación de canales premium completada: ${result.addedVideos} videos añadidos de ${result.totalVideos} encontrados en ${result.processedChannels} de ${result.totalChannels} canales`,
+        ...result
+      });
+    } catch (error: any) {
+      console.error("Error importing premium channel videos:", error);
+      res.status(500).json({ 
+        error: "Error al importar videos de canales premium",
+        details: error.message
+      });
+    }
+  });
+
+  // Importar videos de un canal específico
+  app.post("/api/channels/:channelId/import-videos", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const channelId = req.params.channelId;
+      const { maxResults = 20 } = req.body;
+      const limit = Math.min(Math.max(parseInt(String(maxResults)) || 20, 5), 50); // Limitar entre 5 y 50
+      
+      // Obtener el canal
+      const channel = await storage.getChannelById(parseInt(channelId));
+      if (!channel) {
+        return res.status(404).json({ error: "Canal no encontrado" });
+      }
+      
+      const { importChannelVideos } = await import("./api/videoFetcher");
+      const result = await importChannelVideos(channel.externalId, limit);
+      
+      res.json({
+        message: `Importación completada: ${result.added} de ${result.total} videos añadidos del canal ${channel.title}`,
+        ...result
+      });
+    } catch (error: any) {
+      console.error("Error importing channel videos:", error);
+      res.status(500).json({ 
+        error: "Error al importar videos del canal",
+        details: error.message
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
