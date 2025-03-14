@@ -53,11 +53,15 @@ export default function AdminPage() {
           <VideoManagement />
         </TabsContent>
         
+        <TabsContent value="premium" className="space-y-6">
+          <PremiumChannelManagement />
+        </TabsContent>
+        
         <TabsContent value="processes" className="space-y-6">
           <div className="bg-white dark:bg-slate-800 rounded-md shadow-sm p-6">
             <h2 className="text-2xl font-bold mb-6">Procesos del Sistema</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">Verificación de Videos</h3>
@@ -91,6 +95,24 @@ export default function AdminPage() {
                   onClick={() => setActiveTab('videos')}
                 >
                   Ir a gestión de videos
+                </button>
+              </div>
+              
+              <div className="border rounded-lg p-4 bg-blue-50 dark:bg-blue-950">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Importación de Canales Premium</h3>
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 rounded-full text-xs font-medium">
+                    Nuevo
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Gestiona canales premium y automatiza la importación de videos de fuentes de confianza para mantener el contenido actualizado.
+                </p>
+                <button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
+                  onClick={() => setActiveTab('premium')}
+                >
+                  Ir a canales premium
                 </button>
               </div>
             </div>
