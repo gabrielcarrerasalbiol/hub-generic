@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -24,39 +24,46 @@ import CookiesPage from "@/pages/CookiesPage";
 import ContactPage from "@/pages/ContactPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import SettingsPage from "@/pages/SettingsPage";
+import AboutPage from "@/pages/AboutPage";
 import Layout from "@/components/Layout";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/hooks/use-theme';
 
 // Definición de rutas en un único lugar para evitar re-renders innecesarios
-const Routes = () => (
-  <Layout>
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/channel/:id" component={ChannelPage} />
-      <Route path="/video/:id" component={VideoPage} />
-      <Route path="/favorites" component={FavoritesPage} />
-      <Route path="/login" component={LoginPage} />
-      <Route path="/register" component={RegisterPage} />
-      <Route path="/profile" component={ProfilePage} />
-      <Route path="/admin" component={AdminPage} />
-      <Route path="/dashboard" component={DashboardPage} />
-      <Route path="/subscriptions" component={SubscriptionsPage} />
-      <Route path="/forgot-password" component={ForgotPasswordPage} />
-      <Route path="/reset-password" component={ResetPasswordPage} />
-      <Route path="/category/:categorySlug" component={CategoryPage} />
-      <Route path="/trending" component={TrendingPage} />
-      <Route path="/notifications" component={NotificationsPage} />
-      <Route path="/settings" component={SettingsPage} />
-      <Route path="/terminos" component={TermsPage} />
-      <Route path="/privacidad" component={PrivacyPage} />
-      <Route path="/cookies" component={CookiesPage} />
-      <Route path="/contacto" component={ContactPage} />
-      <Route component={NotFound} />
-    </Switch>
-  </Layout>
-);
+const Routes = () => {
+  const [location] = useLocation();
+  const isFullWidthPage = location === '/sobre-nosotros';
+  
+  return (
+    <Layout fullWidth={isFullWidthPage}>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/channel/:id" component={ChannelPage} />
+        <Route path="/video/:id" component={VideoPage} />
+        <Route path="/favorites" component={FavoritesPage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
+        <Route path="/profile" component={ProfilePage} />
+        <Route path="/admin" component={AdminPage} />
+        <Route path="/dashboard" component={DashboardPage} />
+        <Route path="/subscriptions" component={SubscriptionsPage} />
+        <Route path="/forgot-password" component={ForgotPasswordPage} />
+        <Route path="/reset-password" component={ResetPasswordPage} />
+        <Route path="/category/:categorySlug" component={CategoryPage} />
+        <Route path="/trending" component={TrendingPage} />
+        <Route path="/notifications" component={NotificationsPage} />
+        <Route path="/settings" component={SettingsPage} />
+        <Route path="/terminos" component={TermsPage} />
+        <Route path="/privacidad" component={PrivacyPage} />
+        <Route path="/cookies" component={CookiesPage} />
+        <Route path="/contacto" component={ContactPage} />
+        <Route path="/sobre-nosotros" component={AboutPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </Layout>
+  );
+};
 
 // Variable global para evitar inicializaciones múltiples
 let isAppInitialized = false;

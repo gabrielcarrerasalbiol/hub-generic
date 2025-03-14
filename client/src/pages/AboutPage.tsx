@@ -2,7 +2,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { api } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 import { useEffect, useState } from "react";
 
 export default function AboutPage() {
