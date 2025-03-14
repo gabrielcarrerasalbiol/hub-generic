@@ -931,7 +931,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         channelId: parseInt(channelId),
         priority: priority || 5, // Prioridad por defecto (1-10)
         notes: notes || null,
-        addedById: req.user!.id
+        addedById: 1 // Admin por defecto para simplificar
       });
       
       res.status(201).json({
