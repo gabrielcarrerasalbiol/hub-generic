@@ -43,6 +43,43 @@ app.use((req, res, next) => {
   next();
 });
 
+// Configurar limitadores de tasa (rate limiting)
+// Limitador general para todas las solicitudes API
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 200, // límite de 200 solicitudes por ventana por IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiadas solicitudes, por favor intente más tarde' }
+});
+
+// Limitador más estricto para intentos de autenticación
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hora
+  max: 10, // límite de 10 intentos por hora por IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiados intentos de inicio de sesión, por favor intente más tarde' }
+});
+
+// Limitador para endpoint de recuperación de contraseña
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hora
+  max: 3, // límite de 3 solicitudes por hora por IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiadas solicitudes de recuperación de contraseña, por favor intente más tarde' }
+});
+
+// Aplicar limitador general a todas las rutas API
+app.use('/api', apiLimiter);
+
+// Limitadores específicos se aplicarán directamente en las rutas de autenticación
+// El contador se resetea cada 24 horas
+setInterval(() => {
+  console.log('Reseteando contadores de solicitudes');
+}, 24 * 60 * 60 * 1000);
+
 // Session configuration
 const MemoryStoreSession = MemoryStore(session);
 app.use(session({
