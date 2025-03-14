@@ -38,13 +38,28 @@ interface AuthResponse {
   token: string;
 }
 
-// Variables globales para controlar las solicitudes
+// Variables globales para control estricto de solicitudes
 let isUserFetching = false;
 let lastFetchTime = 0;
 let requestFailCount = 0;
-const FETCH_COOLDOWN_MS = 3000; // 3 segundos entre solicitudes
-const MAX_FAILURES = 3; // Después de 3 fallos, detenemos los intentos
+let authServiceBlocked = false;
+const FETCH_COOLDOWN_MS = 10000; // 10 segundos entre solicitudes
+const MAX_FAILURES = 2; // Después de 2 fallos, detenemos por completo
 const GLOBAL_AUTH_FLAG = 'auth_fetch_in_progress';
+const AUTH_ERROR_FLAG = 'auth_service_blocked';
+
+// Verificar si el servicio ya fue bloqueado previamente
+if (typeof window !== 'undefined') {
+  const blockedFlag = window.localStorage.getItem(AUTH_ERROR_FLAG);
+  if (blockedFlag) {
+    console.log('Servicio de autenticación bloqueado permanentemente por errores previos');
+    authServiceBlocked = true;
+    
+    // Eliminar cualquier token para forzar el estado no autenticado
+    window.localStorage.removeItem('hubmadridista_token');
+    window.sessionStorage.removeItem('hubmadridista_user');
+  }
+}
 
 // Función para detectar y detener bucles de autenticación
 function setupAuthGuard() {
@@ -205,6 +220,13 @@ export const useAuth = create<AuthState>((set, get) => {
       const { token, user } = get();
       const now = Date.now();
       
+      // *** VERIFICACIÓN DE SERVICIO BLOQUEADO ***
+      if (authServiceBlocked) {
+        console.log('Servicio de autenticación bloqueado permanentemente - cancelando solicitud');
+        set({ user: null, token: null, isLoading: false });
+        return;
+      }
+      
       // 0. Protección contra bucles de autenticación
       if (!setupAuthGuard()) {
         console.log('Auth fetch bloqueado por guardia de bucle');
@@ -237,12 +259,24 @@ export const useAuth = create<AuthState>((set, get) => {
       
       // 4. Verificar si hemos tenido demasiados fallos consecutivos
       if (requestFailCount >= MAX_FAILURES) {
-        console.log('Solicitudes de autenticación detenidas después de múltiples fallos');
+        console.log('BLOQUEANDO PERMANENTEMENTE las solicitudes de autenticación después de múltiples fallos');
+        
+        // Marcar servicio como bloqueado permanentemente
+        authServiceBlocked = true;
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem(AUTH_ERROR_FLAG, 'true');
+        }
+        
         // Limpiar estado para un posible reinicio manual
         localStorage.removeItem('hubmadridista_token');
         sessionStorage.removeItem('hubmadridista_user');
         sessionStorage.removeItem(GLOBAL_AUTH_FLAG);
-        set({ user: null, token: null, isLoading: false });
+        set({ 
+          user: null, 
+          token: null, 
+          isLoading: false,
+          error: 'Servicio de autenticación temporalmente no disponible. Por favor, intente más tarde.'
+        });
         return;
       }
       
@@ -267,13 +301,29 @@ export const useAuth = create<AuthState>((set, get) => {
             console.error('Error caching user:', e);
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching user:', error);
         // Incrementar contador de fallos
         requestFailCount++;
         
+        // Detectar error 429 y marcar como bloqueo permanente
+        if (error.message && error.message.includes('429')) {
+          console.log('DETECTADO ERROR 429 - BLOQUEANDO SERVICIO');
+          authServiceBlocked = true;
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem(AUTH_ERROR_FLAG, 'true');
+          }
+          localStorage.removeItem('hubmadridista_token');
+          sessionStorage.removeItem('hubmadridista_user');
+          set({ 
+            user: null, 
+            token: null, 
+            isLoading: false,
+            error: 'Servicio temporalmente no disponible. Por favor, intente más tarde.'
+          });
+        } 
         // Solo limpiar tokens después de varios intentos fallidos
-        if (requestFailCount >= MAX_FAILURES) {
+        else if (requestFailCount >= MAX_FAILURES) {
           localStorage.removeItem('hubmadridista_token');
           sessionStorage.removeItem('hubmadridista_user');
           set({ user: null, token: null, isLoading: false });

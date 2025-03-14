@@ -1,6 +1,62 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+// Variable global para control de solicitudes bloqueadas
+const RATE_LIMIT_FLAG = 'hubmadridista_rate_limited';
+let apiRateLimited = false;
+
+// Verificar si el servicio ya fue bloqueado previamente
+if (typeof window !== 'undefined') {
+  const rateLimitFlag = window.localStorage.getItem(RATE_LIMIT_FLAG);
+  if (rateLimitFlag) {
+    console.log('API actualmente rate-limited, bloqueando solicitudes');
+    apiRateLimited = true;
+    
+    // Programar una limpieza del bloqueo después de 5 minutos
+    const blockTime = parseInt(rateLimitFlag, 10);
+    const now = Date.now();
+    
+    // Si el bloqueo tiene más de 5 minutos, limpiarlo
+    if ((now - blockTime) > 5 * 60 * 1000) {
+      console.log('Limpiando bloqueo de API que expiró');
+      window.localStorage.removeItem(RATE_LIMIT_FLAG);
+      apiRateLimited = false;
+    }
+  }
+}
+
+// Función para bloquear la API cuando se detecta un rate limit
+function blockApiRequests() {
+  apiRateLimited = true;
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(RATE_LIMIT_FLAG, Date.now().toString());
+  }
+}
+
 async function throwIfResNotOk(res: Response) {
+  // Verificar si estamos en estado de bloqueo primero
+  if (apiRateLimited) {
+    throw new Error('API actualmente limitada. Por favor, inténtelo más tarde.');
+  }
+  
+  // Verificar 429 específicamente
+  if (res.status === 429) {
+    // Marcar que todas las solicitudes deben ser bloqueadas durante un tiempo
+    blockApiRequests();
+    
+    let retryAfter = '60';
+    try {
+      const responseText = await res.text();
+      const errorData = JSON.parse(responseText);
+      if (errorData.retryAfter) {
+        retryAfter = errorData.retryAfter;
+      }
+    } catch (e) {
+      // Ignorar errores y usar valor por defecto
+    }
+    
+    throw new Error(`Rate limit excedido. Por favor, inténtelo después de ${retryAfter} segundos.`);
+  }
+  
   if (!res.ok) {
     let text = '';
     try {

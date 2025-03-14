@@ -4,6 +4,9 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
+import { useAuth } from "@/hooks/useAuth";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 type LayoutProps = {
   children: ReactNode;
@@ -12,6 +15,19 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [location] = useLocation();
+  const { error } = useAuth();
+  
+  // Verificar si hay bloqueo permanente activo
+  const [isServiceBlocked, setIsServiceBlocked] = useState(false);
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const authErrorFlag = window.localStorage.getItem('auth_service_blocked');
+      const apiRateLimitFlag = window.localStorage.getItem('hubmadridista_rate_limited');
+      
+      setIsServiceBlocked(!!authErrorFlag || !!apiRateLimitFlag);
+    }
+  }, []);
 
   // Close sidebar when route changes (for mobile)
   useEffect(() => {
@@ -41,7 +57,28 @@ export default function Layout({ children }: LayoutProps) {
         <Sidebar isOpen={sidebarOpen} />
         
         {/* Main Content */}
-        {children}
+        <div className="flex-1 px-4 py-4 md:px-6">
+          {isServiceBlocked && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Servicio temporalmente no disponible</AlertTitle>
+              <AlertDescription>
+                El servicio de autenticación está temporalmente limitado debido a actividad inusual.
+                Por favor, intente nuevamente en unos minutos o contacte al soporte.
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {error && !isServiceBlocked && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          
+          {children}
+        </div>
       </div>
       
       <Footer />

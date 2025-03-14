@@ -191,21 +191,53 @@ export function registerAuthRoutes(app: Express) {
     etagCache: string
   }> = new Map();
   
-  // Tiempo mínimo entre solicitudes (2000ms = 2 segundos)
-  const THROTTLE_TIME_MS = 2000;
+  // Sistema de emergencia para bloqueo total de solicitudes
+  let GLOBAL_BLOCK_UNTIL = Date.now() + 30000; // Bloquear por 30 segundos al inicio
+  let GLOBAL_REQUEST_COUNT = 0;
+  
+  // Si hay más de 100 solicitudes en 10 segundos, bloquear por 60 segundos
+  setInterval(() => {
+    if (GLOBAL_REQUEST_COUNT > 100) {
+      console.log(`ACTIVANDO BLOQUEO DE EMERGENCIA - ${GLOBAL_REQUEST_COUNT} solicitudes detectadas`);
+      GLOBAL_BLOCK_UNTIL = Date.now() + 60000;
+    }
+    GLOBAL_REQUEST_COUNT = 0;
+  }, 10000);
+  
+  // Programa limpieza del bloqueo
+  setTimeout(() => {
+    console.log('DESACTIVANDO BLOQUEO DE EMERGENCIA - Sistema listo para solicitudes normales');
+    GLOBAL_BLOCK_UNTIL = 0;
+    requestCounters.clear();
+    authRequestCache.clear();
+  }, 120000); // 2 minutos total de bloqueo
+  
+  // Tiempo mínimo entre solicitudes (5000ms = 5 segundos)
+  const THROTTLE_TIME_MS = 5000;
   
   // Contador para limitar número total de solicitudes por sesión
   const requestCounters: Map<string, number> = new Map();
-  const MAX_REQUESTS_PER_MINUTE = 120; // Muy permisivo al inicio
+  const MAX_REQUESTS_PER_MINUTE = 20; // Mucho más restrictivo
   
-  // Resetear contadores al iniciar
-  setTimeout(() => {
+  // Resetear contadores cada 2 minutos
+  setInterval(() => {
     console.log("Reseteando contadores de solicitudes");
     requestCounters.clear();
-  }, 1000);
-
+  }, 120000);
+  
   // Get current user with STRICT rate limiting
   app.get('/api/auth/me', isAuthenticated, (req: Request, res: Response) => {
+    // Incrementar contador global
+    GLOBAL_REQUEST_COUNT++;
+    
+    // Bloqueo global de emergencia
+    if (Date.now() < GLOBAL_BLOCK_UNTIL) {
+      console.log(`Bloqueo global activo: ${Math.floor((GLOBAL_BLOCK_UNTIL - Date.now()) / 1000)}s restantes`);
+      return res.status(429).json({
+        error: 'Sistema en mantenimiento, por favor intente más tarde',
+        retryAfter: 60
+      });
+    }
     const user = req.user as any;
     
     // Generar una clave única para cada usuario
