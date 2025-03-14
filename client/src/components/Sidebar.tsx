@@ -93,18 +93,18 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/subscriptions") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}>
                   <Rss className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/subscriptions") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
+                    isLinkActive("/subscriptions") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                   )} />
                   Mis canales
               </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]">
-                <History className="mr-3 h-4 w-4 text-gray-500 dark:text-gray-400" />
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]">
+                <History className="mr-3 h-4 w-4 text-gray-500 dark:text-[#FDBE11]/70" />
                 Historial
               </a>
             </li>
@@ -122,7 +122,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location === "/?platform=youtube" 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Youtube className="mr-3 h-4 w-4 text-red-500" />
@@ -136,7 +136,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location === "/?platform=tiktok" 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <TikTokIcon className="mr-3 h-4 w-4 text-black dark:text-white" />
@@ -151,7 +151,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location === "/?platform=twitter" 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Twitter className="mr-3 h-4 w-4 text-blue-400" />
@@ -166,7 +166,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location === "/?platform=instagram" 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Instagram className="mr-3 h-4 w-4 text-pink-500" />
@@ -188,7 +188,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/category/matches") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Radio className={cn(
@@ -210,7 +210,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               >
                 <MessageSquare className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/category/analysis") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
+                  isLinkActive("/category/analysis") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
                 Análisis
               </Link>
