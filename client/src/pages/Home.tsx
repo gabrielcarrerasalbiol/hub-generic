@@ -262,8 +262,8 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Videos Populares Esta Semana</h2>
         
         {isTrendingLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="w-full aspect-video" />
                 <div className="p-3">
@@ -281,19 +281,24 @@ export default function Home() {
             ))}
           </div>
         ) : trendingVideosWithoutFeatured.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {trendingVideosWithoutFeatured.map((video: Video) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Mostramos solo los primeros 9 videos (3 filas de 3) */}
+            {trendingVideosWithoutFeatured.slice(0, 9).map((video: Video) => (
               <VideoCard key={video.id} video={video} />
             ))}
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58]">No hay videos populares disponibles en este momento.</p>
+            <p className="text-[#001C58] dark:text-white">No hay videos populares disponibles en este momento.</p>
           </div>
         )}
         
         <div className="mt-4 text-center">
-          <Button variant="outline" className="px-6 py-2 border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10">
+          <Button 
+            variant="outline" 
+            className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+            onClick={() => window.location.href = '/trending'}
+          >
             Ver más videos
           </Button>
         </div>
@@ -304,8 +309,8 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Canales Recomendados</h2>
         
         {isChannelsLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="h-24 w-full" />
                 <div className="px-4 pt-0 pb-4 relative">
@@ -324,14 +329,15 @@ export default function Home() {
             ))}
           </div>
         ) : recommendedChannels.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {recommendedChannels.map((channel: Channel) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Mostramos solo hasta 9 canales (3 filas de 3) */}
+            {recommendedChannels.slice(0, 9).map((channel: Channel) => (
               <ChannelCard key={channel.id} channel={channel} />
             ))}
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58]">No hay canales recomendados disponibles en este momento.</p>
+            <p className="text-[#001C58] dark:text-white">No hay canales recomendados disponibles en este momento.</p>
           </div>
         )}
       </section>
@@ -341,8 +347,8 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Últimos Videos</h2>
         
         {isLatestLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="w-full aspect-video" />
                 <div className="p-3">
@@ -360,20 +366,25 @@ export default function Home() {
             ))}
           </div>
         ) : latestVideos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {latestVideos.map((video: Video) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Mostramos solo los primeros 9 videos (3 filas de 3) */}
+            {latestVideos.slice(0, 9).map((video: Video) => (
               <VideoCard key={video.id} video={video} />
             ))}
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58]">No hay videos recientes disponibles en este momento.</p>
+            <p className="text-[#001C58] dark:text-white">No hay videos recientes disponibles en este momento.</p>
           </div>
         )}
         
         <div className="mt-4 text-center">
-          <Button variant="outline" className="px-6 py-2 border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10">
-            Cargar más
+          <Button 
+            variant="outline" 
+            className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+            onClick={() => window.location.href = '/category/latest'}
+          >
+            Ver más videos
           </Button>
         </div>
       </section>
