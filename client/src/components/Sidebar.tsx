@@ -31,7 +31,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
 
   // Sidebar base classes
   const sidebarClasses = cn(
-    "bg-white dark:bg-[#2A2040] dark:text-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-[#FDBE11]",
+    "bg-white dark:bg-[#362C5A] dark:text-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-[#FDBE11]",
     "md:block", // Always show on desktop
     isOpen 
       ? "fixed inset-0 w-full md:w-64 z-50 h-full" // Open state on mobile
@@ -51,11 +51,11 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}>
                   <Home className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
+                    isLinkActive("/") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                   )} />
                   {t('nav.home')}
               </Link>
@@ -65,11 +65,11 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/trending") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}>
                 <TrendingUp className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/trending") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
+                  isLinkActive("/trending") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
                 {t('nav.trending')}
               </Link>
@@ -79,11 +79,11 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/favorites") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}>
                   <Star className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/favorites") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
+                    isLinkActive("/favorites") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                   )} />
                   {t('nav.favorites')}
               </Link>

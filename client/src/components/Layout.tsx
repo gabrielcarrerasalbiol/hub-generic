@@ -40,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-background">
       <Header onToggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 relative">
