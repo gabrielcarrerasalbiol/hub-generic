@@ -4,8 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Bell, Moon, Sun, Globe, Lock, Volume2 } from 'lucide-react';
-import Layout from '@/components/Layout';
+import { Bell, Moon, Sun, Globe, Lock, Volume2, Mail, Play, LayoutGrid, TrendingUp } from 'lucide-react';
 
 export default function SettingsPage() {
   const { toast } = useToast();
@@ -38,7 +37,6 @@ export default function SettingsPage() {
   };
 
   return (
-    <Layout>
       <div className="container mx-auto py-8">
         <h1 className="text-3xl font-bold mb-6">Configuración</h1>
         
@@ -247,8 +245,5 @@ export default function SettingsPage() {
           </Button>
         </div>
       </div>
-    </Layout>
   );
 }
-
-import { Mail, Play, LayoutGrid, TrendingUp } from 'lucide-react';
