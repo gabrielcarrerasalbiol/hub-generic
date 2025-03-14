@@ -5,7 +5,7 @@ import { z } from "zod";
 import { classifyContent, enhanceSearch } from "./api/openai";
 import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
-import { CategoryType, PlatformType, insertFavoriteSchema, Video } from "../shared/schema";
+import { CategoryType, PlatformType, insertFavoriteSchema, Video, User } from "../shared/schema";
 import { isAuthenticated, isAdmin } from "./auth";
 
 // Demo user ID - in a real app, this would come from authentication
