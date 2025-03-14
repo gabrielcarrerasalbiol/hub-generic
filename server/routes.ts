@@ -710,14 +710,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req.user as User).id;
       const { channelId, notificationsEnabled = true } = req.body;
       
-      if (!channelId || isNaN(parseInt(channelId))) {
-        return res.status(400).json({ message: "Valid channel ID is required" });
+      if (!channelId) {
+        return res.status(400).json({ message: "Channel ID is required" });
       }
       
-      const channelIdNum = parseInt(channelId);
+      let channelIdNum: number;
+      let channel;
       
-      // Verificar si el canal existe
-      const channel = await storage.getChannelById(channelIdNum);
+      // Verificar si es un ID numérico o un ID externo (string)
+      if (!isNaN(parseInt(channelId))) {
+        channelIdNum = parseInt(channelId);
+        channel = await storage.getChannelById(channelIdNum);
+      } else {
+        // Buscar el canal por ID externo
+        channel = await storage.getChannelByExternalId(channelId);
+        if (!channel) {
+          return res.status(404).json({ message: "Channel not found" });
+        }
+        channelIdNum = channel.id;
+      }
+      
       if (!channel) {
         return res.status(404).json({ message: "Channel not found" });
       }
@@ -744,15 +756,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/subscriptions/:channelId", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const userId = (req.user as User).id;
-      const channelId = parseInt(req.params.channelId);
+      const channelIdParam = req.params.channelId;
       const { notificationsEnabled } = req.body;
-      
-      if (isNaN(channelId)) {
-        return res.status(400).json({ message: "Invalid channel ID" });
-      }
       
       if (typeof notificationsEnabled !== 'boolean') {
         return res.status(400).json({ message: "notificationsEnabled must be a boolean value" });
+      }
+      
+      let channelId: number;
+      
+      // Verificar si es un ID numérico o un ID externo (string)
+      if (!isNaN(parseInt(channelIdParam))) {
+        channelId = parseInt(channelIdParam);
+      } else {
+        // Buscar el canal por ID externo
+        const channel = await storage.getChannelByExternalId(channelIdParam);
+        if (!channel) {
+          return res.status(404).json({ message: "Channel not found" });
+        }
+        channelId = channel.id;
       }
       
       // Verificar si está suscrito
@@ -772,10 +794,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/subscriptions/:channelId", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const userId = (req.user as User).id;
-      const channelId = parseInt(req.params.channelId);
+      const channelIdParam = req.params.channelId;
+      let channelId: number;
       
-      if (isNaN(channelId)) {
-        return res.status(400).json({ message: "Invalid channel ID" });
+      // Verificar si es un ID numérico o un ID externo (string)
+      if (!isNaN(parseInt(channelIdParam))) {
+        channelId = parseInt(channelIdParam);
+      } else {
+        // Buscar el canal por ID externo
+        const channel = await storage.getChannelByExternalId(channelIdParam);
+        if (!channel) {
+          return res.status(404).json({ message: "Channel not found" });
+        }
+        channelId = channel.id;
       }
       
       // Verificar si está suscrito

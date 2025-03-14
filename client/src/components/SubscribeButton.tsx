@@ -7,7 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface SubscribeButtonProps {
-  channelId: number;
+  channelId: number | string;
   initialSubscribed?: boolean;
   initialNotificationsEnabled?: boolean;
 }

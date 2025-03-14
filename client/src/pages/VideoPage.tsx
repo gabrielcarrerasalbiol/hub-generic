@@ -242,7 +242,7 @@ export default function VideoPage() {
               {user && video.channelId ? (
                 <div className="flex-shrink-0 scale-125 transform">
                   <SubscribeButton 
-                    channelId={parseInt(video.channelId)}
+                    channelId={video.channelId}
                     initialSubscribed={subscriptionStatus?.isSubscribed}
                     initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
                   />
