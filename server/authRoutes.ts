@@ -97,7 +97,7 @@ export function registerAuthRoutes(app: Express) {
         });
       }
       
-      passport.authenticate('local', { session: false }, (err, user, info) => {
+      passport.authenticate('local', { session: false }, (err: any, user: any, info: any) => {
         if (err) {
           console.error('Error during login:', err);
           return res.status(500).json({ error: 'Error interno, por favor intenta nuevamente' });

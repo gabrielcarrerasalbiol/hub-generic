@@ -106,12 +106,10 @@ export function setupPassport() {
                   email: email || null,
                   name: profile.displayName,
                   profilePicture: profile.photos && profile.photos[0] ? profile.photos[0].value : null,
+                  googleId: profile.id,
                 };
                 
                 user = await storage.createUser(newUser);
-                
-                // Update with Google ID
-                user = await storage.updateUser(user.id, { googleId: profile.id });
               }
             }
             
@@ -191,24 +189,26 @@ export function setupPassport() {
                 email: email || null,
                 name: name || `Usuario de Apple ${Date.now().toString().substring(9)}`,
                 profilePicture: null,
+                appleId: profile.id,
               };
               
               user = await storage.createUser(newUser);
-              
-              // Update with Apple ID
-              user = await storage.updateUser(user.id, { appleId: profile.id });
             }
             
-            // Save the token
-            await storage.createOAuthToken({
-              userId: user.id,
-              provider: 'apple',
-              accessToken,
-              refreshToken: refreshToken || null,
-              expiresAt: null
-            });
-            
-            done(null, user);
+            // Save the token if user exists
+            if (user) {
+              await storage.createOAuthToken({
+                userId: user.id,
+                provider: 'apple',
+                accessToken,
+                refreshToken: refreshToken || null,
+                expiresAt: null
+              });
+              
+              done(null, user);
+            } else {
+              done(new Error('Failed to create or retrieve user'), null);
+            }
           } catch (error) {
             done(error, null);
           }
