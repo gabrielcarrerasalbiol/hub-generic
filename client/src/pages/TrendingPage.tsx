@@ -160,7 +160,7 @@ export default function TrendingPage() {
                                   acc[platform] = (acc[platform] || 0) + 1;
                                   return acc;
                                 }, {} as Record<string, number>)
-                              ).map(([platform, count]) => (
+                              ).map(([platform, count]: [string, number]) => (
                                 <div key={platform} className="flex items-center">
                                   <div className="w-32 capitalize font-medium">{platform}</div>
                                   <div className="flex-1">
@@ -172,7 +172,7 @@ export default function TrendingPage() {
                                     </div>
                                   </div>
                                   <div className="w-16 text-right text-sm">
-                                    {count} videos
+                                    {count.toString()} videos
                                   </div>
                                   <div className="w-16 text-right text-sm font-medium">
                                     {Math.round((count / trendingVideos.length) * 100)}%
@@ -202,15 +202,15 @@ export default function TrendingPage() {
                               {Object.entries(
                                 trendingVideos.reduce((acc, video) => {
                                   if (video.categoryIds && video.categoryIds.length > 0) {
-                                    video.categoryIds.forEach(catId => {
-                                      acc[catId] = (acc[catId] || 0) + 1;
+                                    video.categoryIds.forEach((catId: number) => {
+                                      acc[catId.toString()] = (acc[catId.toString()] || 0) + 1;
                                     });
                                   } else {
                                     acc['sin-categoria'] = (acc['sin-categoria'] || 0) + 1;
                                   }
                                   return acc;
                                 }, {} as Record<string, number>)
-                              ).map(([catId, count]) => (
+                              ).map(([catId, count]: [string, number]) => (
                                 <div key={catId} className="flex items-center">
                                   <div className="w-32 capitalize font-medium">
                                     {catId === 'sin-categoria' ? 'Sin categoría' : getCategoryName(parseInt(catId))}
@@ -224,7 +224,7 @@ export default function TrendingPage() {
                                     </div>
                                   </div>
                                   <div className="w-16 text-right text-sm">
-                                    {count} videos
+                                    {count.toString()} videos
                                   </div>
                                   <div className="w-16 text-right text-sm font-medium">
                                     {Math.round((count / trendingVideos.length) * 100)}%
@@ -333,7 +333,7 @@ export default function TrendingPage() {
                                   acc[period] = (acc[period] || 0) + 1;
                                   return acc;
                                 }, {} as Record<string, number>)
-                              ).map(([period, count]) => {
+                              ).map(([period, count]: [string, number]) => {
                                 let label = '';
                                 switch(period) {
                                   case 'última-semana': label = 'Última semana'; break;
@@ -354,7 +354,7 @@ export default function TrendingPage() {
                                       </div>
                                     </div>
                                     <div className="w-16 text-right text-sm">
-                                      {count} videos
+                                      {count.toString()} videos
                                     </div>
                                     <div className="w-16 text-right text-sm font-medium">
                                       {Math.round((count / trendingVideos.length) * 100)}%
@@ -458,7 +458,7 @@ export default function TrendingPage() {
                           // Procesamos cada video y asignamos a sus categorías
                           trendingVideos.forEach(video => {
                             if (video.categoryIds && video.categoryIds.length > 0) {
-                              video.categoryIds.forEach(catId => {
+                              video.categoryIds.forEach((catId: number) => {
                                 const catIdStr = catId.toString();
                                 if (!categoryMap[catIdStr]) {
                                   categoryMap[catIdStr] = {
