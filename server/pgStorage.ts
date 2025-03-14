@@ -354,7 +354,9 @@ export class PgStorage implements IStorage {
       duration: videos.duration,
       publishedAt: videos.publishedAt,
       categoryIds: videos.categoryIds,
-      externalId: videos.externalId
+      externalId: videos.externalId,
+      featured: videos.featured,
+      featuredOrder: videos.featuredOrder
     })
     .from(favorites)
     .innerJoin(videos, eq(favorites.videoId, videos.id))

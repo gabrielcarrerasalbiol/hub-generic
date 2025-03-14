@@ -7,7 +7,8 @@ interface ChannelCardProps {
 
 export default function ChannelCard({ channel }: ChannelCardProps) {
   // Helper functions
-  const formatCount = (count: number): string => {
+  const formatCount = (count: number | null): string => {
+    if (!count) return "0";
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M`;
     } else if (count >= 1000) {
@@ -62,10 +63,8 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
               <i className="fas fa-video mr-1"></i> {formatCount(channel.videoCount)}
             </span>
           </div>
-          <Link href={`/channel/${channel.id}`}>
-            <a className="mt-3 px-4 py-1.5 bg-[#1E3A8A] hover:bg-blue-800 text-white rounded-full text-sm font-medium transition duration-200">
-              Ver canal
-            </a>
+          <Link href={`/channel/${channel.id}`} className="mt-3 px-4 py-1.5 bg-[#1E3A8A] hover:bg-blue-800 text-white rounded-full text-sm font-medium transition duration-200 inline-block">
+            Ver canal
           </Link>
         </div>
       </div>
