@@ -264,8 +264,13 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               size="sm" 
               variant="ghost" 
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#001C58]"
+              disabled={isSearching}
             >
-              <Search className="h-4 w-4" />
+              {isSearching ? (
+                <Loader2 className="h-4 w-4 animate-spin text-[#FDBE11]" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
             </Button>
           </form>
         </div>

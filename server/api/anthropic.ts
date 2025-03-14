@@ -7,6 +7,11 @@ interface ClassificationResult {
   confidence: number;
 }
 
+interface SummaryResult {
+  summary: string;
+  success: boolean;
+}
+
 // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
 // Claude 3.7 Sonnet provides excellent results for classification tasks with high accuracy
 const anthropic = new Anthropic({
