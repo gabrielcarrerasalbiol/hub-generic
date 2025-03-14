@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, uuid, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, uuid, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -58,6 +58,7 @@ export const videos = pgTable("videos", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description"),
+  summary: text("summary"), // Resumen del contenido generado por IA
   thumbnailUrl: text("thumbnail_url"),
   videoUrl: text("video_url").notNull(),
   embedUrl: text("embed_url").notNull(),
@@ -95,7 +96,7 @@ export const insertChannelSchema = createInsertSchema(channels).omit({
   id: true,
 });
 
-// Category schema
+// Categories schema
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -159,10 +160,6 @@ export const viewHistory = pgTable("view_history", {
   watchedAt: timestamp("watched_at").defaultNow().notNull(),
   watchDuration: integer("watch_duration"), // En segundos
   completionPercentage: integer("completion_percentage"), // 0-100
-}, (table) => {
-  return {
-    userVideoIndex: primaryKey(table.userId, table.videoId),
-  };
 });
 
 export const insertViewHistorySchema = createInsertSchema(viewHistory).omit({

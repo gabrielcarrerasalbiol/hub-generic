@@ -217,7 +217,7 @@ export class PgStorage implements IStorage {
     return db.select()
       .from(videos)
       .where(
-        sql`${videos.title} ILIKE ${searchPattern} OR ${videos.description} ILIKE ${searchPattern}`
+        sql`${videos.title} ILIKE ${searchPattern} OR ${videos.description} ILIKE ${searchPattern} OR ${videos.summary} ILIKE ${searchPattern}`
       )
       .limit(limit);
   }
@@ -343,6 +343,7 @@ export class PgStorage implements IStorage {
       id: videos.id,
       title: videos.title,
       description: videos.description,
+      summary: videos.summary,
       thumbnailUrl: videos.thumbnailUrl,
       videoUrl: videos.videoUrl,
       embedUrl: videos.embedUrl,
