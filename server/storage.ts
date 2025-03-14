@@ -4,6 +4,7 @@ import {
   InsertFavorite, Session, OAuthToken, InsertOAuthToken,
   videos, categories, channels, favorites, oauthTokens, users
 } from "../shared/schema";
+import { pgStorage } from './pgStorage';
 
 // Storage interface defining all operations
 export interface IStorage {
@@ -445,4 +446,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Exportar la implementación de PostgreSQL en lugar de la implementación en memoria
+export const storage = pgStorage;
