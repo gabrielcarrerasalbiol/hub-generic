@@ -78,28 +78,32 @@ export default function Home() {
         ) : featuredVideo ? (
           <FeaturedVideo video={featuredVideo as Video} />
         ) : (
-          <div className="bg-white rounded-xl shadow-md p-6 text-center">
-            <p>No hay contenido destacado disponible en este momento.</p>
+          <div className="bg-white rounded-xl shadow-md border-2 border-[#FDBE11] p-6 text-center">
+            <p className="text-[#001C58]">No hay contenido destacado disponible en este momento.</p>
           </div>
         )}
       </section>
       
       {/* Platform Filters */}
-      <PlatformFilters 
-        selectedPlatform={platform} 
-        onSelectPlatform={(newPlatform) => setPlatform(newPlatform)} 
-      />
-      
-      {/* Category Filters */}
-      <CategoryFilters 
-        selectedCategory={category} 
-        onSelectCategory={(newCategory) => setCategory(newCategory)} 
-      />
+      <div className="bg-[#F8F8FA] border border-[#FDBE11]/30 rounded-lg p-4 mb-6">
+        <PlatformFilters 
+          selectedPlatform={platform} 
+          onSelectPlatform={(newPlatform) => setPlatform(newPlatform)} 
+        />
+        
+        {/* Category Filters */}
+        <div className="mt-4">
+          <CategoryFilters 
+            selectedCategory={category} 
+            onSelectCategory={(newCategory) => setCategory(newCategory)} 
+          />
+        </div>
+      </div>
 
       {/* Filtered Videos Section (if filters are applied) */}
       {(platform !== "all" || category !== "all") && (
         <section className="mb-10">
-          <h2 className="text-xl font-bold mb-4">Videos Filtrados</h2>
+          <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Videos Filtrados</h2>
           
           {isFilteredLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -127,8 +131,8 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
-              <p>No se encontraron videos con los filtros seleccionados.</p>
+            <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
+              <p className="text-[#001C58]">No se encontraron videos con los filtros seleccionados.</p>
             </div>
           )}
         </section>
@@ -136,7 +140,7 @@ export default function Home() {
 
       {/* Trending Videos Section */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4">Videos Populares Esta Semana</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Videos Populares Esta Semana</h2>
         
         {isTrendingLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -164,13 +168,13 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center">
-            <p>No hay videos populares disponibles en este momento.</p>
+          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
+            <p className="text-[#001C58]">No hay videos populares disponibles en este momento.</p>
           </div>
         )}
         
         <div className="mt-4 text-center">
-          <Button variant="outline" className="px-6 py-2 border-[#1E3A8A] text-[#1E3A8A]">
+          <Button variant="outline" className="px-6 py-2 border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10">
             Ver más videos
           </Button>
         </div>
@@ -178,7 +182,7 @@ export default function Home() {
       
       {/* Top Channels Section */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4">Canales Recomendados</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Canales Recomendados</h2>
         
         {isChannelsLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -207,15 +211,15 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center">
-            <p>No hay canales recomendados disponibles en este momento.</p>
+          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
+            <p className="text-[#001C58]">No hay canales recomendados disponibles en este momento.</p>
           </div>
         )}
       </section>
       
       {/* Latest Videos Section */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4">Últimos Videos</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Últimos Videos</h2>
         
         {isLatestLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -243,13 +247,13 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center">
-            <p>No hay videos recientes disponibles en este momento.</p>
+          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
+            <p className="text-[#001C58]">No hay videos recientes disponibles en este momento.</p>
           </div>
         )}
         
         <div className="mt-4 text-center">
-          <Button variant="outline" className="px-6 py-2 border-[#1E3A8A] text-[#1E3A8A]">
+          <Button variant="outline" className="px-6 py-2 border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10">
             Cargar más
           </Button>
         </div>
