@@ -156,6 +156,13 @@ export default function PremiumChannelManagement() {
   const importPremiumVideos = async () => {
     try {
       setIsImporting(true);
+      
+      // Primero, notificamos que la importación ha comenzado
+      toast({
+        title: "Importación iniciada",
+        description: "La importación de videos de canales premium ha comenzado y puede tardar varios minutos. Recibirás una notificación cuando finalice.",
+      });
+      
       const response = await apiRequest("/api/premium-channels/import-videos", {
         method: "POST",
         body: JSON.stringify({ maxPerChannel: parseInt(maxVideosPerChannel) }),
@@ -164,10 +171,29 @@ export default function PremiumChannelManagement() {
         },
       });
 
-      toast({
-        title: "Importación completada",
-        description: response.message || `Se han importado videos de los canales premium`,
-      });
+      // Cuando finaliza mostramos un resumen detallado
+      if (response.addedVideos > 0) {
+        toast({
+          title: "Importación completada con éxito",
+          description: `Se han importado ${response.addedVideos} videos nuevos de un total de ${response.totalVideos} encontrados en ${response.processedChannels} canales.`,
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Importación completada",
+          description: `No se encontraron videos nuevos para importar. Se procesaron ${response.processedChannels} canales premium.`,
+          variant: "default",
+        });
+      }
+
+      // Si hay errores, mostramos un resumen
+      if (response.errors && response.errors.length > 0) {
+        toast({
+          title: "Advertencias durante la importación",
+          description: `Se encontraron ${response.errors.length} advertencias durante el proceso. Algunos canales pueden no haber sido procesados correctamente.`,
+          variant: "warning",
+        });
+      }
 
       // Refresh premium channels to update lastSyncAt
       refetchPremiumChannels();

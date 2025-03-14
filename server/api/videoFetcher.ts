@@ -335,6 +335,7 @@ export async function importChannelVideos(
     }
     
     let addedCount = 0;
+    let skippedCount = 0;
     const existingIds: string[] = [];
     
     // Obtener categorías una sola vez para todas las clasificaciones
@@ -343,13 +344,29 @@ export async function importChannelVideos(
     // Definir umbral mínimo de visualizaciones para considerar un video de calidad
     const MIN_VIEW_COUNT = 500; // Videos con menos de 500 visualizaciones serán ignorados
     
+    // Obtenemos primero todos los IDs existentes para hacer una comprobación más eficiente
+    // en lugar de hacer una consulta por cada video
+    const existingVideos = await Promise.all(
+      videoDetails.items.map(video => storage.getVideoByExternalId(video.id))
+    );
+    
+    // Crear un mapa de videos existentes por su ID para consulta rápida
+    const existingVideoMap = new Map();
+    existingVideos.forEach(video => {
+      if (video) {
+        existingVideoMap.set(video.externalId, video);
+        existingIds.push(video.externalId);
+      }
+    });
+    
+    console.log(`Se encontraron ${existingIds.length} videos ya existentes de ${videoDetails.items.length} totales`);
+    
     // Procesar cada video
     for (const video of videoDetails.items) {
       try {
-        // Verificar si el video ya existe en la base de datos
-        const existingVideo = await storage.getVideoByExternalId(video.id);
-        if (existingVideo) {
-          existingIds.push(video.id);
+        // Verificar si el video ya existe en la base de datos usando el mapa
+        if (existingVideoMap.has(video.id)) {
+          skippedCount++;
           continue;
         }
         
