@@ -196,62 +196,71 @@ export default function VideoPage() {
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-6 px-2">
-          {/* CONTROLES PRINCIPALES - MUY GRANDES Y VISIBLES - Con colores del Real Madrid */}
+          {/* Información principal del video */}
           <div className="w-full bg-white border-2 border-[#FDBE11] rounded-lg p-6 shadow-xl">
-            {/* Título grande y acción de favorito */}
-            <div className="flex justify-between items-start mb-4">
-              <h1 className="text-2xl font-bold text-[#001C58] pr-4">{video.title}</h1>
-              <button 
-                className={`text-3xl p-2 rounded-full ${video.isFavorite ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500'}`}
-                onClick={handleToggleFavorite}
-                aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-              >
-                <i className={video.isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
-              </button>
+            {/* Título del video */}
+            <div className="mb-4">
+              <h1 className="text-2xl font-bold text-[#001C58]">{video.title}</h1>
             </div>
           
-            {/* Información del canal y suscripción con un fondo diferente */}
-            <div className="bg-[#F8F8FA] rounded-lg p-4 mb-6 shadow-md border border-[#FDBE11] flex flex-wrap md:flex-nowrap justify-between items-center">
-              <div 
-                onClick={() => window.location.href = `/channel/${video.channelId}`}
-                className="flex items-center hover:bg-white p-2 rounded-md cursor-pointer mb-4 md:mb-0"
-              >
-                <img 
-                  src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`} 
-                  alt={video.channelTitle} 
-                  className="w-16 h-16 rounded-full object-cover border-2 border-[#FDBE11]" 
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null;
-                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`;
-                  }}
-                />
-                <div className="ml-4">
-                  <p className="font-bold text-lg text-[#001C58]">{video.channelTitle}</p>
-                  <p className="text-sm text-[#001C58]">
-                    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium text-white ${getPlatformColor(video.platform)}`}>
-                      <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
-                      {video.platform}
-                    </span>
-                    <span className="ml-2">{formatViewCount(video.viewCount)} visualizaciones</span>
-                  </p>
+            {/* Información del canal */}
+            <div className="bg-[#F8F8FA] rounded-lg p-4 mb-6 shadow-md border border-[#FDBE11]">
+              <div className="flex flex-wrap md:flex-nowrap items-start">
+                <div 
+                  onClick={() => window.location.href = `/channel/${video.channelId}`}
+                  className="flex items-center hover:bg-white p-2 rounded-md cursor-pointer mb-2"
+                >
+                  <img 
+                    src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`} 
+                    alt={video.channelTitle} 
+                    className="w-16 h-16 rounded-full object-cover border-2 border-[#FDBE11]" 
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`;
+                    }}
+                  />
+                  <div className="ml-4">
+                    <p className="font-bold text-lg text-[#001C58]">{video.channelTitle}</p>
+                    <p className="text-sm text-[#001C58]">
+                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium text-white ${getPlatformColor(video.platform)}`}>
+                        <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
+                        {video.platform}
+                      </span>
+                      <span className="ml-2">{formatViewCount(video.viewCount)} visualizaciones</span>
+                    </p>
+                  </div>
                 </div>
               </div>
               
-              {/* Subscribe Button MUY GRANDE */}
-              {user && video.channelId ? (
-                <div className="flex-shrink-0 scale-125 transform">
-                  <SubscribeButton 
-                    channelId={video.channelId}
-                    initialSubscribed={subscriptionStatus?.isSubscribed}
-                    initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
-                  />
-                </div>
-              ) : (
-                <div className="bg-gray-100 rounded p-3 text-center border border-[#FDBE11]">
-                  <p className="text-[#001C58]">Inicia sesión para agregar a favoritos</p>
-                </div>
-              )}
+              {/* Botones de acciones (Suscribir y Favorito) */}
+              <div className="mt-2 flex flex-wrap gap-2">
+                {user && video.channelId ? (
+                  <>
+                    <SubscribeButton 
+                      channelId={video.channelId}
+                      initialSubscribed={subscriptionStatus?.isSubscribed}
+                      initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
+                    />
+                    
+                    <button 
+                      className={`flex items-center px-3 py-1 rounded text-sm 
+                      ${video.isFavorite 
+                        ? 'bg-red-50 text-red-500 border border-red-200' 
+                        : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 border border-gray-200'}`}
+                      onClick={handleToggleFavorite}
+                      aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+                    >
+                      <i className={`${video.isFavorite ? 'fas fa-heart' : 'far fa-heart'} mr-1`}></i>
+                      {video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+                    </button>
+                  </>
+                ) : (
+                  <div className="bg-gray-100 rounded p-3 text-center border border-[#FDBE11]">
+                    <p className="text-[#001C58]">Inicia sesión para interactuar</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           
