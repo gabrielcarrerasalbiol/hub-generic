@@ -793,6 +793,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint para recategorizar un video específico usando IA
+  app.post("/api/videos/:id/recategorize", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const videoId = parseInt(req.params.id);
+      
+      if (isNaN(videoId)) {
+        return res.status(400).json({ message: "ID de video inválido" });
+      }
+      
+      const video = await storage.getVideoById(videoId);
+      if (!video) {
+        return res.status(404).json({ message: "Video no encontrado" });
+      }
+      
+      const success = await recategorizeVideo(videoId);
+      
+      if (success) {
+        const updatedVideo = await storage.getVideoById(videoId);
+        res.json({ 
+          message: "Video recategorizado exitosamente", 
+          video: updatedVideo,
+          categories: updatedVideo?.categoryIds
+        });
+      } else {
+        res.status(500).json({ message: "No se pudo recategorizar el video" });
+      }
+    } catch (error) {
+      console.error("Error recategorizando video:", error);
+      res.status(500).json({ message: "Error al recategorizar el video" });
+    }
+  });
+
+  // Endpoint para recategorizar todos los videos usando IA
+  app.post("/api/videos/recategorize/all", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const result = await recategorizeAllVideos();
+      
+      res.json({
+        message: `Recategorización completada: ${result.success} de ${result.total} videos actualizados`,
+        ...result
+      });
+    } catch (error) {
+      console.error("Error recategorizando todos los videos:", error);
+      res.status(500).json({ message: "Error al recategorizar videos" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
