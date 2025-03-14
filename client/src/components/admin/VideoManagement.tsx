@@ -62,6 +62,8 @@ export default function VideoManagement() {
   const [sortField, setSortField] = useState<string>('publishedAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [fetchVideoCount, setFetchVideoCount] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(20);
 
   // Obtener todos los videos
   const {
@@ -450,226 +452,297 @@ export default function VideoManagement() {
           <span className="ml-2 text-lg">Cargando vídeos...</span>
         </div>
       ) : (
-        <Table>
-          <TableCaption>Total de vídeos: {filteredVideos.length}</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[250px]">
-                <div className="flex items-center" onClick={() => handleSort('title')}>
-                  Título
-                  <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
-                </div>
-              </TableHead>
-              <TableHead>
-                <div className="flex items-center" onClick={() => handleSort('platform')}>
-                  Plataforma
-                  <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
-                </div>
-              </TableHead>
-              <TableHead>
-                <div className="flex items-center" onClick={() => handleSort('categoryIds')}>
-                  Categorías
-                  <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
-                </div>
-              </TableHead>
-              <TableHead className="text-center">
-                <div className="flex items-center justify-center" onClick={() => handleSort('featured')}>
-                  Destacado
-                  <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
-                </div>
-              </TableHead>
-              <TableHead className="text-center">
-                <div className="flex items-center justify-center" onClick={() => handleSort('viewCount')}>
-                  Vistas
-                  <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
-                </div>
-              </TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedVideos.length > 0 ? (
-              sortedVideos.map((video: Video) => (
-                <TableRow key={video.id}>
-                  <TableCell className="font-medium line-clamp-2">
-                    {video.title}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="capitalize">
-                      {video.platform}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {video.categoryIds?.map((catId) => (
-                        <Badge key={catId} className="mr-1 mb-1">
-                          {getCategoryName(catId)}
-                        </Badge>
-                      ))}
-                      {(!video.categoryIds || video.categoryIds.length === 0) && (
-                        <span className="text-muted-foreground text-sm">Sin categorías</span>
+        <>
+          <Table>
+            <TableCaption>Total de vídeos: {filteredVideos.length}</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[250px]">
+                  <div className="flex items-center" onClick={() => handleSort('title')}>
+                    Título
+                    <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center" onClick={() => handleSort('platform')}>
+                    Plataforma
+                    <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center" onClick={() => handleSort('categoryIds')}>
+                    Categorías
+                    <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
+                  </div>
+                </TableHead>
+                <TableHead className="text-center">
+                  <div className="flex items-center justify-center" onClick={() => handleSort('featured')}>
+                    Destacado
+                    <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
+                  </div>
+                </TableHead>
+                <TableHead className="text-center">
+                  <div className="flex items-center justify-center" onClick={() => handleSort('viewCount')}>
+                    Vistas
+                    <ArrowUpDown className="ml-2 h-4 w-4 cursor-pointer" />
+                  </div>
+                </TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedVideos.length > 0 ? (
+                // Calcular qué videos mostrar en la página actual
+                sortedVideos
+                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((video: Video) => (
+                  <TableRow key={video.id}>
+                    <TableCell className="font-medium line-clamp-2">
+                      {video.title}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="capitalize">
+                        {video.platform}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {video.categoryIds?.map((catId) => (
+                          <Badge key={catId} className="mr-1 mb-1">
+                            {getCategoryName(catId)}
+                          </Badge>
+                        ))}
+                        {(!video.categoryIds || video.categoryIds.length === 0) && (
+                          <span className="text-muted-foreground text-sm">Sin categorías</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {video.featured ? (
+                        <Star className="h-5 w-5 text-yellow-500 mx-auto" />
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
                       )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {video.featured ? (
-                      <Star className="h-5 w-5 text-yellow-500 mx-auto" />
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {video.viewCount?.toLocaleString() || '0'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="ghost" size="icon" onClick={() => handleEditVideo(video)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        {editingVideo && editingVideo.id === video.id && (
-                          <DialogContent className="sm:max-w-[600px]">
-                            <DialogHeader>
-                              <DialogTitle>Editar Video</DialogTitle>
-                              <DialogDescription>
-                                Modifica la información del video y presiona guardar para actualizar.
-                              </DialogDescription>
-                            </DialogHeader>
-                            
-                            <Tabs defaultValue="general">
-                              <TabsList className="mb-4">
-                                <TabsTrigger value="general">General</TabsTrigger>
-                                <TabsTrigger value="categories">Categorías</TabsTrigger>
-                              </TabsList>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {video.viewCount?.toLocaleString() || '0'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon" onClick={() => handleEditVideo(video)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          {editingVideo && editingVideo.id === video.id && (
+                            <DialogContent className="sm:max-w-[600px]">
+                              <DialogHeader>
+                                <DialogTitle>Editar Video</DialogTitle>
+                                <DialogDescription>
+                                  Modifica la información del video y presiona guardar para actualizar.
+                                </DialogDescription>
+                              </DialogHeader>
                               
-                              <TabsContent value="general">
-                                <div className="grid gap-4 py-4">
-                                  <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="title" className="text-right">Título</Label>
-                                    <Input 
-                                      id="title" 
-                                      value={editingVideo.title} 
-                                      onChange={(e) => setEditingVideo({...editingVideo, title: e.target.value})}
-                                      className="col-span-3"
-                                    />
-                                  </div>
-                                  <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="description" className="text-right">Descripción</Label>
-                                    <Input 
-                                      id="description" 
-                                      value={editingVideo.description || ''} 
-                                      onChange={(e) => setEditingVideo({...editingVideo, description: e.target.value})}
-                                      className="col-span-3" 
-                                    />
-                                  </div>
-                                  <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="platform" className="text-right">Plataforma</Label>
-                                    <Input 
-                                      id="platform" 
-                                      value={editingVideo.platform} 
-                                      disabled
-                                      className="col-span-3"
-                                    />
-                                  </div>
-                                  <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="featured" className="text-right">Destacado</Label>
-                                    <div className="flex items-center space-x-2 col-span-3">
-                                      <Switch
-                                        id="featured"
-                                        checked={editingVideo.featured || false}
-                                        onCheckedChange={(checked) => setEditingVideo({...editingVideo, featured: checked})}
+                              <Tabs defaultValue="general">
+                                <TabsList className="mb-4">
+                                  <TabsTrigger value="general">General</TabsTrigger>
+                                  <TabsTrigger value="categories">Categorías</TabsTrigger>
+                                </TabsList>
+                                
+                                <TabsContent value="general">
+                                  <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                      <Label htmlFor="title" className="text-right">Título</Label>
+                                      <Input 
+                                        id="title" 
+                                        value={editingVideo.title} 
+                                        onChange={(e) => setEditingVideo({...editingVideo, title: e.target.value})}
+                                        className="col-span-3"
                                       />
-                                      <Label htmlFor="featured">Marcar como destacado</Label>
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                      <Label htmlFor="description" className="text-right">Descripción</Label>
+                                      <Input 
+                                        id="description" 
+                                        value={editingVideo.description || ''} 
+                                        onChange={(e) => setEditingVideo({...editingVideo, description: e.target.value})}
+                                        className="col-span-3" 
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                      <Label htmlFor="platform" className="text-right">Plataforma</Label>
+                                      <Input 
+                                        id="platform" 
+                                        value={editingVideo.platform} 
+                                        disabled
+                                        className="col-span-3"
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                      <Label htmlFor="featured" className="text-right">Destacado</Label>
+                                      <div className="flex items-center space-x-2 col-span-3">
+                                        <Switch
+                                          id="featured"
+                                          checked={editingVideo.featured || false}
+                                          onCheckedChange={(checked) => setEditingVideo({...editingVideo, featured: checked})}
+                                        />
+                                        <Label htmlFor="featured">Marcar como destacado</Label>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </TabsContent>
-                              
-                              <TabsContent value="categories">
-                                <div className="py-4">
-                                  <div className="mb-4 flex justify-between">
-                                    <h3 className="text-sm font-medium">Selecciona las categorías para este video</h3>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm"
-                                      className="btn-madrid-outline"
-                                      onClick={() => recategorizeVideoMutation.mutate(editingVideo.id)}
-                                      disabled={isRecategorizing}
-                                    >
-                                      {isRecategorizing ? (
-                                        <>
-                                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                          Procesando...
-                                        </>
-                                      ) : (
-                                        <>
-                                          <RefreshCw className="mr-2 h-4 w-4" />
-                                          Recategorizar con IA
-                                        </>
-                                      )}
-                                    </Button>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-3">
-                                    {isLoadingCategories ? (
-                                      <div className="col-span-2 flex justify-center py-4">
-                                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                                      </div>
-                                    ) : (
-                                      Array.isArray(categories) && categories.map((category: Category) => (
-                                        <div key={category.id} className="flex items-center space-x-2 p-2 border rounded-md">
-                                          <Checkbox 
-                                            id={`category-${category.id}`}
-                                            checked={selectedCategoryIds.includes(category.id)}
-                                            onCheckedChange={() => toggleCategory(category.id)}
-                                          />
-                                          <Label htmlFor={`category-${category.id}`}>
-                                            {category.name}
-                                          </Label>
+                                </TabsContent>
+                                
+                                <TabsContent value="categories">
+                                  <div className="py-4">
+                                    <div className="mb-4 flex justify-between">
+                                      <h3 className="text-sm font-medium">Selecciona las categorías para este video</h3>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        className="btn-madrid-outline"
+                                        onClick={() => recategorizeVideoMutation.mutate(editingVideo.id)}
+                                        disabled={isRecategorizing}
+                                      >
+                                        {isRecategorizing ? (
+                                          <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Procesando...
+                                          </>
+                                        ) : (
+                                          <>
+                                            <RefreshCw className="mr-2 h-4 w-4" />
+                                            Recategorizar con IA
+                                          </>
+                                        )}
+                                      </Button>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                      {isLoadingCategories ? (
+                                        <div className="col-span-2 flex justify-center py-4">
+                                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
                                         </div>
-                                      ))
-                                    )}
+                                      ) : (
+                                        Array.isArray(categories) && categories.map((category: Category) => (
+                                          <div key={category.id} className="flex items-center space-x-2 p-2 border rounded-md">
+                                            <Checkbox 
+                                              id={`category-${category.id}`}
+                                              checked={selectedCategoryIds.includes(category.id)}
+                                              onCheckedChange={() => toggleCategory(category.id)}
+                                            />
+                                            <Label htmlFor={`category-${category.id}`}>
+                                              {category.name}
+                                            </Label>
+                                          </div>
+                                        ))
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              </TabsContent>
-                            </Tabs>
-                            
-                            <DialogFooter>
-                              <Button variant="outline" className="btn-madrid-outline" onClick={() => setEditingVideo(null)}>Cancelar</Button>
-                              <Button className="btn-madrid-gold" onClick={handleSaveChanges} disabled={updateVideoMutation.isPending}>
-                                {updateVideoMutation.isPending ? (
-                                  <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Guardando...
-                                  </>
-                                ) : 'Guardar cambios'}
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        )}
-                      </Dialog>
-                      
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => window.open(`/videos/${video.id}`, '_blank')}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </div>
+                                </TabsContent>
+                              </Tabs>
+                              
+                              <DialogFooter>
+                                <Button variant="outline" className="btn-madrid-outline" onClick={() => setEditingVideo(null)}>Cancelar</Button>
+                                <Button className="btn-madrid-gold" onClick={handleSaveChanges} disabled={updateVideoMutation.isPending}>
+                                  {updateVideoMutation.isPending ? (
+                                    <>
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                      Guardando...
+                                    </>
+                                  ) : 'Guardar cambios'}
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          )}
+                        </Dialog>
+                        
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => window.open(`/videos/${video.id}`, '_blank')}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-10">
+                    No se encontraron vídeos.
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-10">
-                  No se encontraron vídeos.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+
+          {/* Paginación */}
+          {sortedVideos.length > 0 && (
+            <div className="flex justify-between items-center mt-6">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  Mostrando {Math.min((currentPage * itemsPerPage), sortedVideos.length) - ((currentPage - 1) * itemsPerPage)} de {sortedVideos.length} videos
+                </span>
+                <Select
+                  value={itemsPerPage.toString()}
+                  onValueChange={(value) => {
+                    setItemsPerPage(parseInt(value));
+                    setCurrentPage(1); // Resetear a primera página cuando se cambia el número de items
+                  }}
+                >
+                  <SelectTrigger className="h-8 w-[100px]">
+                    <SelectValue placeholder="20 por página" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10 por página</SelectItem>
+                    <SelectItem value="20">20 por página</SelectItem>
+                    <SelectItem value="50">50 por página</SelectItem>
+                    <SelectItem value="100">100 por página</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                >
+                  Primera
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Anterior
+                </Button>
+                <span className="text-sm">
+                  Página {currentPage} de {Math.ceil(sortedVideos.length / itemsPerPage)}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(sortedVideos.length / itemsPerPage)))}
+                  disabled={currentPage >= Math.ceil(sortedVideos.length / itemsPerPage)}
+                >
+                  Siguiente
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(Math.ceil(sortedVideos.length / itemsPerPage))}
+                  disabled={currentPage >= Math.ceil(sortedVideos.length / itemsPerPage)}
+                >
+                  Última
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
