@@ -92,7 +92,7 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
   return (
     <Link 
       href={`/video/${video.id}`}
-      className="bg-white rounded-xl shadow-md overflow-hidden block"
+      className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md overflow-hidden block border border-[#FDBE11]/10 hover:border-[#FDBE11]/40 dark:border-[#FDBE11]/30 dark:hover:border-[#FDBE11]/80"
       onClick={(e) => {
         // Prevent click if star button was clicked
         if ((e.target as HTMLElement).tagName === 'I' || 
@@ -123,8 +123,8 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
       <div className="p-4">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-lg font-semibold mb-1">{video.title}</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="text-lg font-semibold mb-1 dark:text-white">{video.title}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               {video.channelTitle} • {formatViewCount(video.viewCount)} visualizaciones • {formatPublishedDate(video.publishedAt)}
             </p>
           </div>
@@ -137,7 +137,7 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
           </button>
         </div>
         {video.description && (
-          <p className="mt-2 text-gray-700">
+          <p className="mt-2 text-gray-700 dark:text-gray-300">
             {video.description.length > 150 
               ? `${video.description.substring(0, 150)}...` 
               : video.description
@@ -150,7 +150,7 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
               key={index} 
               className={index === 0 
                 ? "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#1E3A8A] text-white"
-                : "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                : "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-[#4A426E] dark:text-white"
               }
             >
               {categoryId === '1' && 'Partidos'}
