@@ -202,11 +202,11 @@ export default function VideoPage() {
             <div className="flex justify-between items-start mb-4">
               <h1 className="text-2xl font-bold text-[#001C58] pr-4">{video.title}</h1>
               <button 
-                className={`text-3xl p-2 rounded-full ${video.isFavorite ? 'bg-[#FDBE11] text-[#001C58]' : 'bg-gray-100 text-gray-400 hover:bg-[#FDBE11] hover:text-[#001C58]'}`}
+                className={`text-3xl p-2 rounded-full ${video.isFavorite ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500'}`}
                 onClick={handleToggleFavorite}
                 aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
               >
-                <i className={video.isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+                <i className={video.isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
               </button>
             </div>
           

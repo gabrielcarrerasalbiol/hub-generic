@@ -130,10 +130,10 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
           </div>
           <button 
             onClick={handleToggleFavorite}
-            className={`text-2xl ${isFavorite ? 'text-[#FEF08A]' : 'text-gray-400 hover:text-[#FEF08A]'} focus:outline-none`}
+            className={`text-2xl ${isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'} focus:outline-none`}
             aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
           >
-            <i className={isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+            <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
           </button>
         </div>
         {video.description && (

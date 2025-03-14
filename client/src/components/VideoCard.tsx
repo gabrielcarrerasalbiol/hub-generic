@@ -154,11 +154,11 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
                 onClick={handleToggleFavorite}
                 className={cn(
                   "text-sm",
-                  isFavorite ? "text-[#FDBE11]" : "text-gray-400 hover:text-[#FDBE11]"
+                  isFavorite ? "text-red-500" : "text-gray-400 hover:text-red-500"
                 )}
                 aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
               >
-                <i className={isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+                <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
               </button>
             </div>
           </div>
@@ -209,11 +209,11 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
             onClick={handleToggleFavorite}
             className={cn(
               "text-sm",
-              isFavorite ? "text-[#FDBE11]" : "text-gray-400 hover:text-[#FDBE11]"
+              isFavorite ? "text-red-500" : "text-gray-400 hover:text-red-500"
             )}
             aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
           >
-            <i className={isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
+            <i className={isFavorite ? 'fas fa-heart' : 'far fa-heart'}></i>
           </button>
         </div>
         <div className="mt-2 text-xs text-gray-500 dark:text-gray-300">
