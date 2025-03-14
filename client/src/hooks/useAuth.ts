@@ -105,8 +105,11 @@ export const useAuth = create<AuthState>((set, get) => ({
       // Actualizar el estado
       set({ user: result.user, token: result.token, isLoading: false });
       
-      // Forzar recarga de la página para asegurar un estado limpio
-      window.location.href = '/';
+      // Usar setTimeout para asegurar que el estado se actualice antes de redireccionar
+      setTimeout(() => {
+        // Usar window.location.replace en lugar de window.location.href
+        window.location.replace('/');
+      }, 500);
       
       return true;
     } catch (error: any) {
@@ -137,6 +140,11 @@ export const useAuth = create<AuthState>((set, get) => ({
     } finally {
       localStorage.removeItem('hubmadridista_token');
       set({ user: null, token: null, isLoading: false });
+      
+      // Usar setTimeout para asegurar que el estado se actualice antes de redireccionar
+      setTimeout(() => {
+        window.location.replace('/login');
+      }, 300);
     }
   },
   

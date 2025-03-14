@@ -71,76 +71,97 @@ export default function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Iniciar sesión</CardTitle>
-        <CardDescription>
-          Accede a tu cuenta en Hub Madridista
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre de usuario</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Introduce tu usuario" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex justify-between items-center">
-                    <FormLabel>Contraseña</FormLabel>
-                    <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-                      ¿Olvidaste tu contraseña?
-                    </Link>
-                  </div>
-                  <FormControl>
-                    <Input type="password" placeholder="Introduce tu contraseña" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-      <CardFooter className="flex flex-col gap-4">
-        <div className="text-center w-full">
-          <span className="text-sm text-gray-500">O inicia sesión con</span>
-          <div className="flex justify-center gap-4 mt-2">
-            <Button variant="outline" type="button" onClick={() => window.location.href = "/api/auth/google"}>
-              Google
-            </Button>
-            <Button variant="outline" type="button" onClick={() => window.location.href = "/api/auth/apple"}>
-              Apple
-            </Button>
-          </div>
+    <div className="w-full">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Nombre de usuario</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Introduce tu usuario" 
+                    className="py-6" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex justify-between items-center">
+                  <FormLabel className="text-gray-700">Contraseña</FormLabel>
+                  <Link href="/forgot-password" className="text-xs text-primary hover:underline">
+                    ¿Olvidaste tu contraseña?
+                  </Link>
+                </div>
+                <FormControl>
+                  <Input 
+                    type="password" 
+                    placeholder="Introduce tu contraseña" 
+                    className="py-6" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <Button 
+            type="submit" 
+            className="w-full py-6" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
+          </Button>
+        </form>
+      </Form>
+      
+      <div className="my-6 relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
         </div>
-        <div className="text-center w-full">
-          <p className="text-sm">
-            ¿No tienes cuenta?{' '}
-            <Link href="/register" className="text-primary underline">
-              Regístrate
-            </Link>
-          </p>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">O continúa con</span>
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+      
+      <div className="flex gap-4 mb-6">
+        <Button 
+          variant="outline" 
+          type="button" 
+          className="flex-1 py-5" 
+          onClick={() => window.location.href = "/api/auth/google"}
+        >
+          Google
+        </Button>
+        <Button 
+          variant="outline" 
+          type="button" 
+          className="flex-1 py-5" 
+          onClick={() => window.location.href = "/api/auth/apple"}
+        >
+          Apple
+        </Button>
+      </div>
+      
+      <div className="text-center">
+        <p className="text-gray-600">
+          ¿No tienes cuenta?{' '}
+          <Link href="/register" className="text-primary hover:underline font-medium">
+            Regístrate
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }
