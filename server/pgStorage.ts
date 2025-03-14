@@ -1,4 +1,4 @@
-import { eq, and, desc, like, sql, asc, inArray, count } from 'drizzle-orm';
+import { eq, and, desc, like, sql, asc, inArray, count, not } from 'drizzle-orm';
 import { db } from './db';
 import { IStorage } from './storage';
 import {
@@ -151,10 +151,55 @@ export class PgStorage implements IStorage {
   }
 
   async getTrendingVideos(limit = 20): Promise<Video[]> {
-    return db.select()
+    // Obtenemos la fecha de hace 30 días para considerar videos relativamente nuevos
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    // Primero obtenemos videos destacados (siempre primero en tendencias)
+    const featuredVideos = await db.select()
       .from(videos)
+      .where(eq(videos.featured, true))
+      .orderBy(desc(videos.publishedAt))
+      .limit(Math.ceil(limit * 0.3)); // 30% del límite para videos destacados
+      
+    // Calculamos cuántos videos más necesitamos
+    const remainingLimit = limit - featuredVideos.length;
+    
+    if (remainingLimit <= 0) {
+      return featuredVideos;
+    }
+    
+    // Consulta para obtener videos populares recientes (últimos 30 días)
+    const recentPopular = await db.select()
+      .from(videos)
+      .where(
+        and(
+          sql`${videos.publishedAt} >= ${thirtyDaysAgo.toISOString()}`,
+          not(inArray(videos.id, featuredVideos.map(v => v.id)))
+        )
+      )
       .orderBy(desc(videos.viewCount))
-      .limit(limit);
+      .limit(Math.ceil(remainingLimit * 0.6)); // 60% del resto para videos recientes populares
+      
+    // Consulta para obtener videos más vistos de todos los tiempos
+    const remainingCount = remainingLimit - recentPopular.length;
+    let allTimePopular: any[] = [];
+    
+    if (remainingCount > 0) {
+      allTimePopular = await db.select()
+        .from(videos)
+        .where(
+          not(inArray(
+            videos.id, 
+            [...featuredVideos, ...recentPopular].map(v => v.id)
+          ))
+        )
+        .orderBy(desc(videos.viewCount))
+        .limit(remainingCount);
+    }
+    
+    // Combinamos todos los resultados
+    return [...featuredVideos, ...recentPopular, ...allTimePopular];
   }
 
   async getLatestVideos(limit = 20): Promise<Video[]> {

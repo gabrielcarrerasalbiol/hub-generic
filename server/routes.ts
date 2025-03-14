@@ -1179,6 +1179,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Endpoint para eliminar un video (solo admin)
+  app.delete("/api/videos/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const videoId = parseInt(id);
+      
+      if (isNaN(videoId)) {
+        return res.status(400).json({ message: "ID de video inválido" });
+      }
+      
+      // Verificar que el video existe
+      const video = await storage.getVideoById(videoId);
+      if (!video) {
+        return res.status(404).json({ message: "Video no encontrado" });
+      }
+      
+      // Eliminar el video
+      const success = await storage.deleteVideo(videoId);
+      
+      if (success) {
+        res.status(200).json({ message: "Video eliminado correctamente" });
+      } else {
+        res.status(500).json({ message: "Error al eliminar el video" });
+      }
+    } catch (error: any) {
+      console.error("Error eliminando video:", error);
+      res.status(500).json({ message: `Error al eliminar video: ${error.message}` });
+    }
+  });
+  
+  // Endpoint para eliminar múltiples videos (solo admin)
+  app.delete("/api/videos", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { ids } = req.body;
+      
+      if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ message: "Se requiere una lista de IDs de videos" });
+      }
+      
+      const results = { total: ids.length, deleted: 0, failed: 0 };
+      
+      // Eliminar cada video de la lista
+      for (const id of ids) {
+        try {
+          const success = await storage.deleteVideo(id);
+          if (success) {
+            results.deleted++;
+          } else {
+            results.failed++;
+          }
+        } catch (error) {
+          console.error(`Error eliminando video ID ${id}:`, error);
+          results.failed++;
+        }
+      }
+      
+      res.status(200).json({
+        message: `Eliminación completada. Total: ${results.total}, Eliminados: ${results.deleted}, Fallidos: ${results.failed}`,
+        ...results
+      });
+    } catch (error: any) {
+      console.error("Error eliminando videos:", error);
+      res.status(500).json({ message: `Error al eliminar videos: ${error.message}` });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
