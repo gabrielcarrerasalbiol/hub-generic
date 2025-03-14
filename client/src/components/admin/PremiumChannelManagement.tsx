@@ -157,11 +157,21 @@ export default function PremiumChannelManagement() {
     try {
       setIsImporting(true);
       
-      // Primero, notificamos que la importación ha comenzado
+      // Primera notificación: importación iniciada
       toast({
         title: "Importación iniciada",
-        description: "La importación de videos de canales premium ha comenzado y puede tardar varios minutos. Recibirás una notificación cuando finalice.",
+        description: "La importación de videos de canales premium ha comenzado. Este proceso puede tardar varios minutos. Espere por favor...",
+        duration: 10000, // Mostrar por más tiempo
       });
+      
+      // Notificación temporal mientras se procesa (después de 5 segundos)
+      const processingToastId = setTimeout(() => {
+        toast({
+          title: "Procesando importación",
+          description: "El sistema está analizando los canales premium y verificando contenido duplicado. Este proceso puede tardar unos minutos más...",
+          duration: 8000,
+        });
+      }, 5000);
       
       const response = await apiRequest("/api/premium-channels/import-videos", {
         method: "POST",
@@ -170,19 +180,31 @@ export default function PremiumChannelManagement() {
           "Content-Type": "application/json",
         },
       });
+      
+      // Limpiar el toast de "procesando" si sigue activo
+      clearTimeout(processingToastId);
 
-      // Cuando finaliza mostramos un resumen detallado
+      // Cuando finaliza mostramos un resumen detallado con duración más larga
       if (response.addedVideos > 0) {
         toast({
           title: "Importación completada con éxito",
-          description: `Se han importado ${response.addedVideos} videos nuevos de un total de ${response.totalVideos} encontrados en ${response.processedChannels} canales.`,
+          description: `Se han importado ${response.addedVideos} videos nuevos, ${response.skippedVideos} omitidos (duplicados) de un total de ${response.totalVideos} encontrados en ${response.processedChannels} canales.`,
           variant: "default",
+          duration: 10000,
+        });
+      } else if (response.skippedVideos > 0) {
+        toast({
+          title: "Importación completada - Solo duplicados",
+          description: `No se encontraron videos nuevos para importar. Se omitieron ${response.skippedVideos} videos duplicados de ${response.totalVideos} encontrados. Se procesaron ${response.processedChannels} canales premium.`,
+          variant: "default",
+          duration: 10000,
         });
       } else {
         toast({
-          title: "Importación completada",
+          title: "Importación completada - Sin resultados",
           description: `No se encontraron videos nuevos para importar. Se procesaron ${response.processedChannels} canales premium.`,
           variant: "default",
+          duration: 8000,
         });
       }
 
@@ -191,8 +213,20 @@ export default function PremiumChannelManagement() {
         toast({
           title: "Advertencias durante la importación",
           description: `Se encontraron ${response.errors.length} advertencias durante el proceso. Algunos canales pueden no haber sido procesados correctamente.`,
-          variant: "warning",
+          variant: "default",
+          duration: 10000,
         });
+        
+        // Mostrar el primer error como ejemplo
+        if (response.errors[0]) {
+          console.error("Errores de importación:", response.errors);
+          toast({
+            title: "Ejemplo de error",
+            description: response.errors[0].substring(0, 255), // Limitar longitud
+            variant: "destructive",
+            duration: 10000,
+          });
+        }
       }
 
       // Refresh premium channels to update lastSyncAt
@@ -211,6 +245,24 @@ export default function PremiumChannelManagement() {
   // Import videos from a specific channel
   const importChannelVideos = async (channelId: number) => {
     try {
+      // Encontrar el canal para mostrar información más detallada
+      const channelInfo = premiumChannels?.find(pc => pc.channelId === channelId)?.channelDetails;
+      const channelName = channelInfo?.title || `Canal #${channelId}`;
+      
+      // Notificar inicio de importación
+      toast({
+        title: "Importación de canal iniciada",
+        description: `Importando videos de ${channelName}. Este proceso puede tardar un momento...`,
+        duration: 5000,
+      });
+      
+      // Añadir un indicador visual en el botón
+      const channelRow = document.querySelector(`[data-channel-id="${channelId}"]`);
+      if (channelRow) {
+        const refreshButton = channelRow.querySelector('.refresh-button');
+        if (refreshButton) refreshButton.classList.add('animate-spin');
+      }
+      
       const response = await apiRequest(`/api/channels/${channelId}/import-videos`, {
         method: "POST",
         body: JSON.stringify({ maxResults: parseInt(maxVideosPerChannel) }),
@@ -219,10 +271,40 @@ export default function PremiumChannelManagement() {
         },
       });
 
-      toast({
-        title: "Importación completada",
-        description: response.message || `Se han importado videos del canal`,
-      });
+      const videosAdded = response.added || 0;
+      const videosSkipped = response.skipped || 0;
+      const totalVideos = response.total || 0;
+      
+      // Notificar resultado con más detalle y duración más larga
+      if (videosAdded > 0) {
+        toast({
+          title: "Importación completada con éxito",
+          description: `Se han importado ${videosAdded} videos nuevos, ${videosSkipped} omitidos (duplicados) de un total de ${totalVideos} encontrados en ${channelName}.`,
+          duration: 8000,
+        });
+      } else if (videosSkipped > 0) {
+        toast({
+          title: "Importación completada - Solo duplicados",
+          description: `No se encontraron videos nuevos para importar en ${channelName}. Se omitieron ${videosSkipped} videos duplicados de ${totalVideos} encontrados.`,
+          duration: 8000,
+        });
+      } else {
+        toast({
+          title: "Importación completada - Sin resultados",
+          description: response.message || `No se encontraron videos para importar en ${channelName}.`,
+          duration: 6000,
+        });
+      }
+
+      // Mostrar errores específicos si existen
+      if (response.error) {
+        toast({
+          title: "Error específico",
+          description: response.error,
+          variant: "destructive",
+          duration: 8000,
+        });
+      }
 
       // Refresh premium channels to update lastSyncAt
       refetchPremiumChannels();
@@ -348,7 +430,7 @@ export default function PremiumChannelManagement() {
                 </TableHeader>
                 <TableBody>
                   {premiumChannels.map((premiumChannel) => (
-                    <TableRow key={premiumChannel.id}>
+                    <TableRow key={premiumChannel.id} data-channel-id={premiumChannel.channelId}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           {premiumChannel.channelDetails?.thumbnailUrl && (
@@ -388,6 +470,7 @@ export default function PremiumChannelManagement() {
                           <Button
                             size="sm"
                             variant="secondary"
+                            className="refresh-button"
                             onClick={() => importChannelVideos(premiumChannel.channelId)}
                           >
                             <RefreshCw size={16} />

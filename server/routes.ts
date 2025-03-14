@@ -1139,7 +1139,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await importPremiumChannelsVideos(limit);
       
       res.json({
-        message: `Importación de canales premium completada: ${result.addedVideos} videos añadidos de ${result.totalVideos} encontrados en ${result.processedChannels} de ${result.totalChannels} canales`,
+        message: `Importación completada: ${result.addedVideos} videos añadidos, ${result.skippedVideos} omitidos de ${result.totalVideos} encontrados en ${result.processedChannels} de ${result.totalChannels} canales`,
         ...result
       });
     } catch (error: any) {
@@ -1168,7 +1168,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await importChannelVideos(channel.externalId, limit);
       
       res.json({
-        message: `Importación completada: ${result.added} de ${result.total} videos añadidos del canal ${channel.title}`,
+        message: `Importación completada: ${result.added} videos añadidos, ${result.skipped || 0} omitidos de ${result.total} encontrados del canal ${channel.title}`,
         ...result
       });
     } catch (error: any) {
