@@ -7,8 +7,9 @@ import {
   InsertFavorite, OAuthToken, InsertOAuthToken,
   ChannelSubscription, InsertChannelSubscription,
   Notification, InsertNotification,
+  PremiumChannel, InsertPremiumChannel,
   users, videos, channels, categories, favorites, oauthTokens,
-  channelSubscriptions, notifications
+  channelSubscriptions, notifications, premiumChannels
 } from '@shared/schema';
 
 // PostgreSQL implementation of the storage interface
@@ -469,6 +470,93 @@ export class PgStorage implements IStorage {
       .where(eq(notifications.id, notificationId));
     
     return true;
+  }
+  
+  // Premium Channels operations
+  async getPremiumChannels(limit = 100, offset = 0): Promise<PremiumChannel[]> {
+    const results = await db.select({
+        id: premiumChannels.id,
+        channelId: premiumChannels.channelId,
+        addedById: premiumChannels.addedById,
+        notes: premiumChannels.notes,
+        priority: premiumChannels.priority,
+        createdAt: premiumChannels.createdAt,
+        lastSyncAt: premiumChannels.lastSyncAt
+      })
+      .from(premiumChannels)
+      .orderBy(desc(premiumChannels.priority))
+      .limit(limit)
+      .offset(offset);
+    
+    return results;
+  }
+  
+  async getPremiumChannelById(id: number): Promise<PremiumChannel | undefined> {
+    const result = await db.select({
+        id: premiumChannels.id,
+        channelId: premiumChannels.channelId,
+        addedById: premiumChannels.addedById,
+        notes: premiumChannels.notes,
+        priority: premiumChannels.priority,
+        createdAt: premiumChannels.createdAt,
+        lastSyncAt: premiumChannels.lastSyncAt
+      })
+      .from(premiumChannels)
+      .where(eq(premiumChannels.id, id));
+    return result.length > 0 ? result[0] : undefined;
+  }
+  
+  async getChannelDetailsWithPremiumInfo(channelId: number): Promise<Channel & {isPremium: boolean}> {
+    const channel = await this.getChannelById(channelId);
+    if (!channel) {
+      throw new Error(`Canal con ID ${channelId} no encontrado`);
+    }
+    
+    const premiumResult = await db.select({ id: premiumChannels.id })
+      .from(premiumChannels)
+      .where(eq(premiumChannels.channelId, channelId));
+    
+    return {
+      ...channel,
+      isPremium: premiumResult.length > 0
+    };
+  }
+  
+  async isPremiumChannel(channelId: number): Promise<boolean> {
+    const result = await db.select({ id: premiumChannels.id })
+      .from(premiumChannels)
+      .where(eq(premiumChannels.channelId, channelId));
+    return result.length > 0;
+  }
+  
+  async addPremiumChannel(premiumChannel: InsertPremiumChannel): Promise<PremiumChannel> {
+    const result = await db.insert(premiumChannels)
+      .values(premiumChannel)
+      .returning();
+    return result[0];
+  }
+  
+  async updatePremiumChannel(id: number, data: Partial<InsertPremiumChannel>): Promise<PremiumChannel | undefined> {
+    const result = await db.update(premiumChannels)
+      .set(data)
+      .where(eq(premiumChannels.id, id))
+      .returning();
+    return result.length > 0 ? result[0] : undefined;
+  }
+  
+  async removePremiumChannel(id: number): Promise<boolean> {
+    const result = await db.delete(premiumChannels)
+      .where(eq(premiumChannels.id, id))
+      .returning();
+    return result.length > 0;
+  }
+  
+  async updatePremiumChannelSyncTime(id: number): Promise<boolean> {
+    const result = await db.update(premiumChannels)
+      .set({ lastSyncAt: new Date() })
+      .where(eq(premiumChannels.id, id))
+      .returning();
+    return result.length > 0;
   }
 
   // Método para inicializar la base de datos con datos predeterminados

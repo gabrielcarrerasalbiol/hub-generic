@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { InsertVideo, Video } from '@shared/schema';
+import { InsertVideo, Video, PremiumChannel, Channel } from '@shared/schema';
 import { storage } from '../storage';
 import { 
   searchYouTubeVideos, 
