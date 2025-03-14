@@ -108,6 +108,7 @@ export class PgStorage implements IStorage {
 
   // Video operations
   async getVideos(limit = 100, offset = 0): Promise<Video[]> {
+    // Aumentamos el límite predeterminado a 100 videos
     return db.select()
       .from(videos)
       .limit(limit)
@@ -125,7 +126,7 @@ export class PgStorage implements IStorage {
     return result.length > 0 ? result[0] : undefined;
   }
 
-  async getVideosByPlatform(platform: string, limit = 20): Promise<Video[]> {
+  async getVideosByPlatform(platform: string, limit = 50): Promise<Video[]> {
     return db.select()
       .from(videos)
       .where(eq(videos.platform, platform))
@@ -133,7 +134,7 @@ export class PgStorage implements IStorage {
       .orderBy(desc(videos.publishedAt));
   }
 
-  async getVideosByCategory(categoryId: number, limit = 20): Promise<Video[]> {
+  async getVideosByCategory(categoryId: number, limit = 50): Promise<Video[]> {
     // Para buscar en un array, usamos sql.raw en PostgreSQL
     return db.select()
       .from(videos)
@@ -142,7 +143,7 @@ export class PgStorage implements IStorage {
       .orderBy(desc(videos.publishedAt));
   }
 
-  async getVideosByChannel(channelId: string, limit = 20): Promise<Video[]> {
+  async getVideosByChannel(channelId: string, limit = 50): Promise<Video[]> {
     return db.select()
       .from(videos)
       .where(eq(videos.channelId, channelId))
@@ -150,7 +151,7 @@ export class PgStorage implements IStorage {
       .orderBy(desc(videos.publishedAt));
   }
 
-  async getTrendingVideos(limit = 20): Promise<Video[]> {
+  async getTrendingVideos(limit = 50): Promise<Video[]> {
     // Obtenemos la fecha de hace 30 días para considerar videos relativamente nuevos
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -202,14 +203,14 @@ export class PgStorage implements IStorage {
     return [...featuredVideos, ...recentPopular, ...allTimePopular];
   }
 
-  async getLatestVideos(limit = 20): Promise<Video[]> {
+  async getLatestVideos(limit = 50): Promise<Video[]> {
     return db.select()
       .from(videos)
       .orderBy(desc(videos.publishedAt))
       .limit(limit);
   }
 
-  async searchVideos(query: string, limit = 20): Promise<Video[]> {
+  async searchVideos(query: string, limit = 50): Promise<Video[]> {
     const searchPattern = `%${query}%`;
     return db.select()
       .from(videos)
@@ -273,7 +274,7 @@ export class PgStorage implements IStorage {
     return result.length > 0 ? result[0] : undefined;
   }
 
-  async getChannelsByPlatform(platform: string, limit = 20): Promise<Channel[]> {
+  async getChannelsByPlatform(platform: string, limit = 50): Promise<Channel[]> {
     return db.select()
       .from(channels)
       .where(eq(channels.platform, platform))
@@ -287,7 +288,7 @@ export class PgStorage implements IStorage {
       .limit(limit);
   }
 
-  async searchChannels(query: string, limit = 20): Promise<Channel[]> {
+  async searchChannels(query: string, limit = 50): Promise<Channel[]> {
     const searchPattern = `%${query}%`;
     return db.select()
       .from(channels)
@@ -462,7 +463,7 @@ export class PgStorage implements IStorage {
   }
   
   // Notification operations
-  async getNotificationsByUserId(userId: number, limit = 20, offset = 0): Promise<Notification[]> {
+  async getNotificationsByUserId(userId: number, limit = 50, offset = 0): Promise<Notification[]> {
     return db
       .select()
       .from(notifications)
