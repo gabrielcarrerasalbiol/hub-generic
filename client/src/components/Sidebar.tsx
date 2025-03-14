@@ -103,10 +103,21 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]">
-                <History className="mr-3 h-4 w-4 text-gray-500 dark:text-[#FDBE11]/70" />
-                Historial
-              </a>
+              <Link 
+                href="/history" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/history") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                )}
+              >
+                <History className={cn(
+                  "mr-3 h-4 w-4",
+                  isLinkActive("/history") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                )} />
+                {t('sidebar.history')}
+              </Link>
             </li>
           </ul>
         </div>

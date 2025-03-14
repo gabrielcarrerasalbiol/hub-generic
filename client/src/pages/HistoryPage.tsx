@@ -148,7 +148,11 @@ export default function HistoryPage() {
     const categoryMap = new Map<number, number>();
     videos.forEach(video => {
       video.categoryIds?.forEach(catId => {
-        categoryMap.set(catId, (categoryMap.get(catId) || 0) + 1);
+        // Convertir a número si es necesario
+        const categoryId = typeof catId === 'string' ? parseInt(catId, 10) : catId;
+        if (!isNaN(categoryId)) {
+          categoryMap.set(categoryId, (categoryMap.get(categoryId) || 0) + 1);
+        }
       });
     });
     

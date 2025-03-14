@@ -25,6 +25,7 @@ import ContactPage from "@/pages/ContactPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import SettingsPage from "@/pages/SettingsPage";
 import AboutPage from "@/pages/AboutPage";
+import HistoryPage from "@/pages/HistoryPage";
 import Layout from "@/components/Layout";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
@@ -60,6 +61,7 @@ const Routes = () => {
             <Route path="/trending" component={TrendingPage} />
             <Route path="/notifications" component={NotificationsPage} />
             <Route path="/settings" component={SettingsPage} />
+            <Route path="/history" component={HistoryPage} />
             <Route path="/terminos" component={TermsPage} />
             <Route path="/privacidad" component={PrivacyPage} />
             <Route path="/cookies" component={CookiesPage} />
