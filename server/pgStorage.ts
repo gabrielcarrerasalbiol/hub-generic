@@ -12,6 +12,14 @@ import {
 export class PgStorage implements IStorage {
   
   // User operations
+  async getUsers(limit = 100, offset = 0): Promise<User[]> {
+    const result = await db.select()
+      .from(users)
+      .limit(limit)
+      .offset(offset);
+    return result;
+  }
+  
   async getUser(id: number): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id));
     return result.length > 0 ? result[0] : undefined;

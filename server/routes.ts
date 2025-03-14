@@ -5,7 +5,8 @@ import { z } from "zod";
 import { classifyContent, enhanceSearch } from "./api/openai";
 import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
-import { CategoryType, PlatformType, insertFavoriteSchema } from "../shared/schema";
+import { CategoryType, PlatformType, insertFavoriteSchema, Video } from "../shared/schema";
+import { isAuthenticated, isAdmin } from "./auth";
 
 // Demo user ID - in a real app, this would come from authentication
 const DEMO_USER_ID = 1;
@@ -569,7 +570,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
+  // Endpoint para obtener todos los usuarios (solo para administradores)
+  app.get("/api/users", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const users = await storage.getUsers(100, 0);
+      
+      // Devolvemos los usuarios sin información sensible
+      const safeUsers = users.map((user: User) => ({
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        role: user.role
+      }));
+      
+      res.json(safeUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "No se pudieron obtener los usuarios" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
