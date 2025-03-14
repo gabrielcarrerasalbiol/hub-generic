@@ -64,15 +64,20 @@ export default function VideoPlayer({ embedUrl, title, videoId }: VideoPlayerPro
     if (!user || !videoId) return;
     
     try {
-      await apiRequest('POST', '/api/history', {
-        body: JSON.stringify({
-          videoId,
-          watchDuration: duration,
-          completionPercentage: completion
-        }),
+      const data = {
+        videoId,
+        watchDuration: duration,
+        completionPercentage: completion
+      };
+      
+      await fetch('/api/history', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('hubmadridista_token')}`
+        },
+        body: JSON.stringify(data),
+        credentials: 'include'
       });
       
       console.log(`Visualización registrada: ${duration}s, ${completion}%`);
