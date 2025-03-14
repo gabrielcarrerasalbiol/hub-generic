@@ -44,7 +44,7 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
       <div className="px-4 pt-0 pb-4 relative">
         <div className="flex flex-col items-center">
           <img 
-            src={channel.thumbnailUrl || 'https://via.placeholder.com/150?text=Canal'} 
+            src={channel.thumbnailUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`} 
             alt={channel.title} 
             className="w-16 h-16 rounded-full border-4 border-white -mt-8 object-cover"
           />
