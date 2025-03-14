@@ -31,7 +31,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
 
   // Sidebar base classes
   const sidebarClasses = cn(
-    "bg-white dark:bg-[#18181B] dark:text-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-[#FDBE11]",
+    "bg-white dark:bg-[#2A2040] dark:text-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-[#FDBE11]",
     "md:block", // Always show on desktop
     isOpen 
       ? "fixed inset-0 w-full md:w-64 z-50 h-full" // Open state on mobile
@@ -64,28 +64,28 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link href="/trending" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/trending") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}>
                 <TrendingUp className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/trending") ? "text-[#FDBE11]" : "text-gray-500"
+                  isLinkActive("/trending") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
                 )} />
-                Tendencias
+                {t('nav.trending')}
               </Link>
             </li>
             <li>
               <Link href="/favorites" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/favorites") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 dark:text-gray-300 hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}>
                   <Star className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/favorites") ? "text-[#FDBE11]" : "text-gray-500"
+                    isLinkActive("/favorites") ? "text-[#FDBE11]" : "text-gray-500 dark:text-gray-400"
                   )} />
-                  Mis Favoritos
+                  {t('nav.favorites')}
               </Link>
             </li>
             <li>

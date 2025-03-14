@@ -5,7 +5,7 @@ export default function Footer() {
   const { t } = useLanguage();
   
   return (
-    <footer className="bg-white dark:bg-[#18181B] border-t border-gray-200 dark:border-gray-800 mt-auto py-6">
+    <footer className="bg-white dark:bg-[#2A2040] border-t border-gray-200 dark:border-gray-700 mt-auto py-6">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-4 md:mb-0">

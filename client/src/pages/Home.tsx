@@ -23,36 +23,36 @@ export default function Home() {
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
   const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch trending videos
+  // Fetch trending videos (limitado a 20)
   const { 
     data: trendingVideos = [], 
     isLoading: isTrendingLoading 
   } = useQuery<Video[]>({
-    queryKey: ["/api/videos/trending"],
+    queryKey: ["/api/videos/trending", { limit: 20 }],
   });
 
-  // Fetch latest videos
+  // Fetch latest videos (limitado a 20)
   const { 
     data: latestVideos = [], 
     isLoading: isLatestLoading 
   } = useQuery<Video[]>({
-    queryKey: ["/api/videos/latest"],
+    queryKey: ["/api/videos/latest", { limit: 20 }],
   });
 
-  // Fetch recommended channels
+  // Fetch recommended channels (limitado a 8)
   const { 
     data: recommendedChannels = [], 
     isLoading: isChannelsLoading 
   } = useQuery<Channel[]>({
-    queryKey: ["/api/channels/recommended"],
+    queryKey: ["/api/channels/recommended", { limit: 8 }],
   });
 
-  // Fetch videos filtered by platform and category
+  // Fetch videos filtered by platform and category (limitado a 20)
   const { 
     data: filteredVideos = [], 
     isLoading: isFilteredLoading 
   } = useQuery<Video[]>({
-    queryKey: ["/api/videos", { platform, category }],
+    queryKey: ["/api/videos", { platform, category, limit: 20 }],
     enabled: platform !== "all" || category !== "all",
   });
   

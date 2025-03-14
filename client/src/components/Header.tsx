@@ -82,7 +82,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   };
 
   return (
-    <header className="bg-white dark:bg-[#18181B] dark:text-white shadow-md sticky top-0 z-50 border-b-4 border-[#FDBE11]">
+    <header className="bg-white dark:bg-[#2A2040] dark:text-white shadow-md sticky top-0 z-50 border-b-4 border-[#FDBE11]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-3">
           {/* Logo */}
