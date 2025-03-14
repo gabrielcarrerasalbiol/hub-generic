@@ -598,6 +598,65 @@ export default function VideoManagement() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="default"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={isFetchingNewVideos}
+              >
+                {isFetchingNewVideos ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Actualizando...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCcw className="mr-2 h-4 w-4" />
+                    Actualizar Todo
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Actualizar todo el contenido del Real Madrid</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción buscará contenido reciente de todas las categorías relacionadas con el Real Madrid 
+                  (partidos, entrevistas, ruedas de prensa, análisis, etc.) y lo añadirá a la plataforma.
+                  Este proceso es más amplio y puede tardar varios minutos.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="py-4">
+                <div className="flex items-center space-x-4">
+                  <Label htmlFor="contentCount">Cantidad máxima de videos por categoría:</Label>
+                  <div className="flex-1">
+                    <Slider
+                      id="contentCount"
+                      min={5}
+                      max={50}
+                      step={5}
+                      value={[fetchVideoCount]}
+                      onValueChange={(values: number[]) => setFetchVideoCount(values[0])}
+                    />
+                  </div>
+                  <div className="w-12 text-center">
+                    <span className="text-lg font-medium">{fetchVideoCount}</span>
+                  </div>
+                </div>
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={() => fetchAllNewContentMutation.mutate(fetchVideoCount)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Actualizar Contenido
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
