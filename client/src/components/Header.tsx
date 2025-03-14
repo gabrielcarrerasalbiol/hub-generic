@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth, resetAuthStorage } from '@/hooks/useAuth';
 import NotificationBell from '@/components/NotificationBell';
 import {
   DropdownMenu,
@@ -22,7 +22,9 @@ import {
   LogOut,
   Settings,
   Bell,
-  Rss
+  Rss,
+  RefreshCw,
+  AlertTriangle
 } from 'lucide-react';
 
 type HeaderProps = {
@@ -66,6 +68,15 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
       description: "Has cerrado sesión correctamente",
     });
     navigate('/');
+  };
+  
+  // Reiniciar almacenamiento de autenticación (para errores de token)
+  const handleResetAuth = () => {
+    toast({
+      title: "Limpiando datos de sesión",
+      description: "Reiniciando sistema de autenticación...",
+    });
+    resetAuthStorage();
   };
 
   return (

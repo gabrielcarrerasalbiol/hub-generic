@@ -2,6 +2,22 @@ import { create } from 'zustand';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 
+// Función para limpiar el almacenamiento cuando hay problemas de tokens
+export function resetAuthStorage() {
+  console.log('Reseteando almacenamiento de autenticación');
+  
+  if (typeof window !== 'undefined') {
+    // Limpieza total de los tokens almacenados
+    window.localStorage.removeItem('hubmadridista_token');
+    window.sessionStorage.removeItem('hubmadridista_user');
+    window.sessionStorage.removeItem('auth_fetch_in_progress');
+    window.localStorage.removeItem('auth_service_blocked');
+    
+    // Forzar recarga para aplicar cambios
+    window.location.href = '/';
+  }
+}
+
 interface AuthState {
   user: UserAuth | null;
   token: string | null;
