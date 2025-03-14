@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,6 +31,7 @@ export default function LoginForm() {
   const login = useAuth((state) => state.login);
   const error = useAuth((state) => state.error);
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -52,6 +53,8 @@ export default function LoginForm() {
           title: 'Inicio de sesión exitoso',
           description: 'Has iniciado sesión correctamente.',
         });
+        // Usar navigate en lugar de window.location
+        navigate('/');
       } else {
         toast({
           variant: 'destructive',

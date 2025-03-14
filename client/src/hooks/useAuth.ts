@@ -171,13 +171,17 @@ export const useAuth = create<AuthState>((set, get) => {
         // Guardar el nuevo token
         localStorage.setItem('hubmadridista_token', result.token);
         
-        // Actualizar el estado
+        // Actualizar el estado sin redireccionamiento forzado
         set({ user: result.user, token: result.token, isLoading: false });
         
-        // Usar setTimeout para asegurar que el estado se actualice antes de redireccionar
-        setTimeout(() => {
-          window.location.replace('/');
-        }, 500);
+        // Guardar en caché de sesión para persistencia
+        if (typeof window !== 'undefined' && result.user) {
+          try {
+            window.sessionStorage.setItem('hubmadridista_user', JSON.stringify(result.user));
+          } catch (e) {
+            console.error('Error caching user:', e);
+          }
+        }
         
         return true;
       } catch (error: any) {
@@ -206,13 +210,12 @@ export const useAuth = create<AuthState>((set, get) => {
       } catch (error) {
         console.error('Error durante el cierre de sesión:', error);
       } finally {
+        // Limpiar datos de autenticación
         localStorage.removeItem('hubmadridista_token');
-        set({ user: null, token: null, isLoading: false });
+        sessionStorage.removeItem('hubmadridista_user');
         
-        // Usar setTimeout para asegurar que el estado se actualice antes de redireccionar
-        setTimeout(() => {
-          window.location.replace('/login');
-        }, 300);
+        // Actualizar estado sin redireccionamiento forzado
+        set({ user: null, token: null, isLoading: false });
       }
     },
     
