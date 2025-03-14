@@ -3,6 +3,18 @@
     "name": "Madridista Hub",
     "slogan": "All Real Madrid content in one place"
   },
+  "sidebar": {
+    "explore": "Explore",
+    "platforms": "Platforms",
+    "categories": "Categories",
+    "featured": "Featured Channels",
+    "history": "History",
+    "youtube_channel": "YouTube Channel",
+    "tiktok_channel": "TikTok Channel",
+    "twitter_account": "Twitter Account",
+    "instagram_account": "Instagram Account",
+    "no_featured": "No featured channels"
+  },
   "nav": {
     "home": "Home",
     "trending": "Trending",

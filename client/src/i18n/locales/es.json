@@ -3,6 +3,18 @@
     "name": "Hub Madridista",
     "slogan": "Todo el contenido del Real Madrid en un solo lugar"
   },
+  "sidebar": {
+    "explore": "Explorar",
+    "platforms": "Plataformas",
+    "categories": "Categorías",
+    "featured": "Canales Destacados",
+    "history": "Historial",
+    "youtube_channel": "Canal de YouTube",
+    "tiktok_channel": "Canal de TikTok",
+    "twitter_account": "Cuenta de Twitter",
+    "instagram_account": "Cuenta de Instagram",
+    "no_featured": "No hay canales destacados"
+  },
   "nav": {
     "home": "Inicio",
     "trending": "Tendencias",
