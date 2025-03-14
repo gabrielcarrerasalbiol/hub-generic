@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth, resetAuthStorage } from '@/hooks/useAuth';
 import NotificationBell from '@/components/NotificationBell';
+import { useLanguage } from '@/hooks/use-language';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +35,7 @@ type HeaderProps = {
 export default function Header({ onToggleSidebar }: HeaderProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   
   // Optimización: usar selectores específicos para evitar re-renders innecesarios
@@ -51,7 +53,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
     
     if (!searchQuery.trim()) {
       toast({
-        description: "Por favor, ingresa un término de búsqueda",
+        description: t('general.search'),
       });
       return;
     }
@@ -64,8 +66,8 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   const handleLogout = async () => {
     await logout();
     toast({
-      title: "Sesión cerrada",
-      description: "Has cerrado sesión correctamente",
+      title: t('toast.success'),
+      description: t('nav.logout'),
     });
     navigate('/');
   };
@@ -73,14 +75,14 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   // Reiniciar almacenamiento de autenticación (para errores de token)
   const handleResetAuth = () => {
     toast({
-      title: "Limpiando datos de sesión",
-      description: "Reiniciando sistema de autenticación...",
+      title: t('toast.info'),
+      description: t('toast.info'),
     });
     resetAuthStorage();
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50 border-b-4 border-[#FDBE11]">
+    <header className="bg-white dark:bg-[#18181B] dark:text-white shadow-md sticky top-0 z-50 border-b-4 border-[#FDBE11]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-3">
           {/* Logo */}
@@ -97,7 +99,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
             <form onSubmit={handleSearch} className="w-full relative">
               <Input
                 type="text"
-                placeholder="Buscar canales, videos o contenido..."
+                placeholder={t('general.search')}
                 className="w-full py-2 px-4 pr-10 rounded-full border border-[#FDBE11] focus:ring-[#001C58] focus:border-[#001C58]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -143,7 +145,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                       <Link href="/profile" className="w-full cursor-pointer">
                         <span className="flex items-center">
                           <User className="h-4 w-4 mr-2" />
-                          Mi perfil
+                          {t('nav.profile')}
                         </span>
                       </Link>
                     </DropdownMenuItem>
@@ -151,7 +153,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                       <Link href="/favorites" className="w-full cursor-pointer">
                         <span className="flex items-center">
                           <Heart className="h-4 w-4 mr-2 text-red-500" />
-                          Mis favoritos
+                          {t('nav.favorites')}
                         </span>
                       </Link>
                     </DropdownMenuItem>
@@ -159,7 +161,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                       <Link href="/subscriptions" className="w-full cursor-pointer">
                         <span className="flex items-center">
                           <Rss className="h-4 w-4 mr-2 text-orange-500" />
-                          Mis suscripciones
+                          {t('nav.subscriptions')}
                         </span>
                       </Link>
                     </DropdownMenuItem>
@@ -204,11 +206,11 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               </>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button asChild variant="ghost" className="text-[#001C58] hover:text-[#001C58]/80 hover:bg-[#FDBE11]/10">
-                  <Link href="/login">Iniciar sesión</Link>
+                <Button asChild variant="ghost" className="text-[#001C58] dark:text-white hover:text-[#001C58]/80 dark:hover:text-white/80 hover:bg-[#FDBE11]/10">
+                  <Link href="/login">{t('nav.login')}</Link>
                 </Button>
                 <Button asChild className="bg-gradient-to-r from-[#FDBE11] to-[#FFC72C] text-[#001C58] hover:from-[#FDC731] hover:to-[#FFD74C] border-none">
-                  <Link href="/register">Registrarse</Link>
+                  <Link href="/register">{t('nav.register')}</Link>
                 </Button>
               </div>
             )}

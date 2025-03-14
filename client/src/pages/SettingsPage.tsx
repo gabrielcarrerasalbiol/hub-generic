@@ -1,36 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Bell, Moon, Sun, Globe, Lock, Volume2, Mail, Play, LayoutGrid, TrendingUp } from 'lucide-react';
+import { useLanguage } from '@/hooks/use-language';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function SettingsPage() {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t, currentLanguage, changeLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
   
   // Configuraciones de la aplicación (podrían guardarse en el perfil del usuario o localStorage)
   const [settings, setSettings] = useState({
-    darkMode: false,
+    darkMode: theme === 'dark',
     notifications: true,
     emailNotifications: true,
-    language: 'es',
+    language: currentLanguage,
     autoplayVideos: true,
     showTrending: true,
     privacyMode: false,
     soundEffects: true
   });
 
+  // Actualizar el estado cuando cambia el tema o idioma externo
+  useEffect(() => {
+    setSettings(prev => ({
+      ...prev,
+      darkMode: theme === 'dark',
+      language: currentLanguage
+    }));
+  }, [theme, currentLanguage]);
+
   const handleToggle = (setting: keyof typeof settings) => {
+    const newValue = !settings[setting];
     setSettings({
       ...settings,
-      [setting]: !settings[setting]
+      [setting]: newValue
     });
     
+    // Si es el modo oscuro, actualiza el tema global
+    if (setting === 'darkMode') {
+      setTheme(newValue ? 'dark' : 'light');
+    }
+    
     toast({
-      title: "Configuración actualizada",
-      description: `La configuración ha sido guardada correctamente`,
+      title: t('toast.settingsUpdated'),
+      description: t('toast.settingsSaved'),
     });
     
     // Aquí se podría implementar la lógica para guardar en backend o localStorage
@@ -38,7 +57,7 @@ export default function SettingsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Configuración</h1>
+      <h1 className="text-3xl font-bold mb-6">{t('settings.title')}</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Tema */}
@@ -46,15 +65,15 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Sun className="mr-2 h-5 w-5 text-yellow-500" />
-              <span>Tema y Apariencia</span>
+              <span>{t('settings.theme')}</span>
             </CardTitle>
-            <CardDescription>Personaliza la apariencia de la aplicación</CardDescription>
+            <CardDescription>{t('settings.theme')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Moon className="h-4 w-4 text-slate-500" />
-                <span>Modo oscuro</span>
+                <span>{t('settings.darkMode')}</span>
               </div>
               <Switch 
                 checked={settings.darkMode} 
@@ -69,15 +88,15 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Bell className="mr-2 h-5 w-5 text-blue-500" />
-              <span>Notificaciones</span>
+              <span>{t('settings.notifications')}</span>
             </CardTitle>
-            <CardDescription>Configura cómo y cuándo recibes notificaciones</CardDescription>
+            <CardDescription>{t('settings.notifications')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Bell className="h-4 w-4 text-slate-500" />
-                <span>Notificaciones en la aplicación</span>
+                <span>{t('settings.appNotifications')}</span>
               </div>
               <Switch 
                 checked={settings.notifications} 
@@ -87,7 +106,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-slate-500" />
-                <span>Notificaciones por email</span>
+                <span>{t('settings.emailNotifications')}</span>
               </div>
               <Switch 
                 checked={settings.emailNotifications} 
@@ -102,19 +121,20 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Globe className="mr-2 h-5 w-5 text-green-500" />
-              <span>Idioma y Región</span>
+              <span>{t('settings.language')}</span>
             </CardTitle>
-            <CardDescription>Configura tus preferencias de idioma</CardDescription>
+            <CardDescription>{t('settings.language')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-2">
               <Button 
                 variant={settings.language === 'es' ? "default" : "outline"}
                 onClick={() => {
+                  changeLanguage('es');
                   setSettings({...settings, language: 'es'});
                   toast({
-                    title: "Idioma actualizado",
-                    description: "El idioma se ha cambiado a Español",
+                    title: t('toast.languageUpdated'),
+                    description: t('toast.languageChanged'),
                   });
                 }}
                 className="w-full"
@@ -124,10 +144,11 @@ export default function SettingsPage() {
               <Button 
                 variant={settings.language === 'en' ? "default" : "outline"}
                 onClick={() => {
+                  changeLanguage('en');
                   setSettings({...settings, language: 'en'});
                   toast({
-                    title: "Idioma actualizado",
-                    description: "El idioma se ha cambiado a Inglés",
+                    title: t('toast.languageUpdated'),
+                    description: t('toast.languageChangedEn'),
                   });
                 }}
                 className="w-full"
@@ -143,15 +164,15 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Play className="mr-2 h-5 w-5 text-red-500" />
-              <span>Reproducción</span>
+              <span>{t('settings.playback')}</span>
             </CardTitle>
-            <CardDescription>Configura cómo se reproducen los videos</CardDescription>
+            <CardDescription>{t('settings.playback')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Play className="h-4 w-4 text-slate-500" />
-                <span>Reproducción automática</span>
+                <span>{t('settings.autoplay')}</span>
               </div>
               <Switch 
                 checked={settings.autoplayVideos} 
@@ -161,7 +182,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Volume2 className="h-4 w-4 text-slate-500" />
-                <span>Efectos de sonido</span>
+                <span>{t('settings.soundEffects')}</span>
               </div>
               <Switch 
                 checked={settings.soundEffects} 
@@ -176,15 +197,15 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Lock className="mr-2 h-5 w-5 text-purple-500" />
-              <span>Privacidad</span>
+              <span>{t('settings.privacy')}</span>
             </CardTitle>
-            <CardDescription>Configura tus opciones de privacidad</CardDescription>
+            <CardDescription>{t('settings.privacy')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Lock className="h-4 w-4 text-slate-500" />
-                <span>Modo privado</span>
+                <span>{t('settings.privacyMode')}</span>
               </div>
               <Switch 
                 checked={settings.privacyMode} 
@@ -198,12 +219,12 @@ export default function SettingsPage() {
               className="w-full"
               onClick={() => {
                 toast({
-                  title: "Historial eliminado",
-                  description: "Tu historial de visualización ha sido eliminado",
+                  title: t('toast.historyCleared'),
+                  description: t('toast.historyDeleted'),
                 });
               }}
             >
-              Eliminar historial de visualización
+              {t('settings.clearHistory')}
             </Button>
           </CardFooter>
         </Card>
@@ -213,15 +234,15 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <LayoutGrid className="mr-2 h-5 w-5 text-orange-500" />
-              <span>Contenido</span>
+              <span>{t('settings.content')}</span>
             </CardTitle>
-            <CardDescription>Personaliza el contenido que ves</CardDescription>
+            <CardDescription>{t('settings.content')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <TrendingUp className="h-4 w-4 text-slate-500" />
-                <span>Mostrar tendencias</span>
+                <span>{t('settings.showTrending')}</span>
               </div>
               <Switch 
                 checked={settings.showTrending} 
@@ -236,12 +257,12 @@ export default function SettingsPage() {
         <Button 
           onClick={() => {
             toast({
-              title: "Configuración guardada",
-              description: "Tus preferencias han sido guardadas correctamente",
+              title: t('toast.settingsUpdated'),
+              description: t('toast.settingsSaved'),
             });
           }}
         >
-          Guardar toda la configuración
+          {t('settings.saveSettings')}
         </Button>
       </div>
     </div>
