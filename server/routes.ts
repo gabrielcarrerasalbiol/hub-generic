@@ -956,8 +956,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { getYouTubeChannelDetails, convertYouTubeChannelToSchema } = await import("./api/youtube");
       
       try {
+        console.log(`Buscando canal de YouTube con identificador: "${channelIdOrUsername}"`);
+        
         // Buscar detalles del canal
         const channelDetails = await getYouTubeChannelDetails([channelIdOrUsername]);
+        console.log("Respuesta de la API de YouTube:", JSON.stringify(channelDetails, null, 2));
         
         if (!channelDetails.items || channelDetails.items.length === 0) {
           return res.status(404).json({ error: "No se encontró el canal de YouTube" });

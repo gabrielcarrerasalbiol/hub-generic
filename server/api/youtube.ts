@@ -204,32 +204,118 @@ export async function getYouTubeVideoDetails(videoIds: string[]): Promise<YouTub
 
 /**
  * Get channel details from YouTube
- * Divide los IDs en grupos de 50 (límite de la API de YouTube) para manejar solicitudes grandes
+ * Maneja diferentes formatos de identificadores: IDs del canal, nombres de usuario y handles (@username)
  */
-export async function getYouTubeChannelDetails(channelIds: string[]): Promise<YouTubeChannelResult> {
+export async function getYouTubeChannelDetails(channelIdentifiers: string[]): Promise<YouTubeChannelResult> {
   try {
-    // YouTube API limita a 50 IDs por solicitud, dividir en lotes si es necesario
-    const MAX_IDS_PER_REQUEST = 50;
     let allItems: YouTubeChannelResult['items'] = [];
     
-    // Procesar en lotes de 50 IDs
-    for (let i = 0; i < channelIds.length; i += MAX_IDS_PER_REQUEST) {
-      const batchIds = channelIds.slice(i, i + MAX_IDS_PER_REQUEST);
+    // Procesar cada identificador por separado porque pueden ser de diferentes tipos
+    for (const identifier of channelIdentifiers) {
+      console.log(`Procesando identificador de canal: ${identifier}`);
       
-      const response = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, {
-        params: {
-          part: 'snippet,statistics,brandingSettings',
-          id: batchIds.join(','),
-          key: YOUTUBE_API_KEY
+      // Determinar qué parámetro usar basado en el formato del identificador
+      let params: any = {
+        part: 'snippet,statistics,brandingSettings',
+        key: YOUTUBE_API_KEY
+      };
+      
+      if (identifier.startsWith('@')) {
+        // Usar forUsername para handles (@username) - quitamos el @ para la consulta
+        // Nota: YouTube ha cambiado su API y ahora los handles se buscan con el parámetro 'forHandle'
+        const username = identifier.substring(1); // Eliminar el @ del inicio
+        console.log(`Usando handle para buscar: ${username}`);
+        
+        // Primero intentamos buscar por handle (formato más nuevo)
+        const searchResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/search`, {
+          params: {
+            part: 'snippet',
+            q: identifier,
+            type: 'channel',
+            maxResults: 1,
+            key: YOUTUBE_API_KEY
+          }
+        });
+        
+        if (searchResponse.data.items && searchResponse.data.items.length > 0) {
+          const channelId = searchResponse.data.items[0].id.channelId;
+          console.log(`Encontrado ID de canal por búsqueda: ${channelId}`);
+          
+          // Ahora obtenemos los detalles completos usando el ID
+          const detailsResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, {
+            params: {
+              part: 'snippet,statistics,brandingSettings',
+              id: channelId,
+              key: YOUTUBE_API_KEY
+            }
+          });
+          
+          if (detailsResponse.data.items && detailsResponse.data.items.length > 0) {
+            allItems.push(detailsResponse.data.items[0]);
+          }
+        } else {
+          console.log(`No se encontró ningún canal con el handle: ${identifier}`);
         }
-      });
-      
-      if (response.data.items && response.data.items.length > 0) {
-        allItems = [...allItems, ...response.data.items];
+      } else if (identifier.startsWith('UC')) {
+        // Es un ID de canal
+        params.id = identifier;
+        console.log(`Usando ID para buscar: ${identifier}`);
+        
+        const response = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, { params });
+        
+        if (response.data.items && response.data.items.length > 0) {
+          allItems.push(response.data.items[0]);
+        }
+      } else {
+        // Intentamos buscar por nombre de usuario
+        params.forUsername = identifier;
+        console.log(`Usando username para buscar: ${identifier}`);
+        
+        try {
+          // Primero probamos con forUsername
+          const response = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, { params });
+          
+          if (response.data.items && response.data.items.length > 0) {
+            allItems.push(response.data.items[0]);
+          } else {
+            // Si no funciona, hacemos una búsqueda general
+            console.log(`No se encontró canal con username, intentando búsqueda general para: ${identifier}`);
+            
+            const searchResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/search`, {
+              params: {
+                part: 'snippet',
+                q: identifier,
+                type: 'channel',
+                maxResults: 1,
+                key: YOUTUBE_API_KEY
+              }
+            });
+            
+            if (searchResponse.data.items && searchResponse.data.items.length > 0) {
+              const channelId = searchResponse.data.items[0].id.channelId;
+              console.log(`Encontrado ID de canal por búsqueda: ${channelId}`);
+              
+              // Ahora obtenemos los detalles completos usando el ID
+              const detailsResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, {
+                params: {
+                  part: 'snippet,statistics,brandingSettings',
+                  id: channelId,
+                  key: YOUTUBE_API_KEY
+                }
+              });
+              
+              if (detailsResponse.data.items && detailsResponse.data.items.length > 0) {
+                allItems.push(detailsResponse.data.items[0]);
+              }
+            }
+          }
+        } catch (error) {
+          console.error(`Error buscando canal por username ${identifier}:`, error);
+        }
       }
       
       // Pequeña pausa entre solicitudes para evitar límites de tasa de la API
-      if (channelIds.length > MAX_IDS_PER_REQUEST && i + MAX_IDS_PER_REQUEST < channelIds.length) {
+      if (channelIdentifiers.length > 1) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
