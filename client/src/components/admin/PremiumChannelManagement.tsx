@@ -417,12 +417,18 @@ export default function PremiumChannelManagement() {
                   <Label htmlFor="youtube-url">URL del Canal de YouTube:</Label>
                   <Input
                     id="youtube-url"
-                    placeholder="https://www.youtube.com/c/nombredelcanal"
+                    placeholder="https://www.youtube.com/@NombreCanal"
                     value={youtubeUrl}
                     onChange={(e) => setYoutubeUrl(e.target.value)}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Introduce la URL completa del canal de YouTube (ej: https://www.youtube.com/c/realmadrid)
+                    Introduce la URL completa del canal de YouTube. Formatos soportados: 
+                    <br />
+                    - https://www.youtube.com/@username (nuevo formato con handle)
+                    <br />
+                    - https://www.youtube.com/c/nombrecanal
+                    <br />
+                    - https://www.youtube.com/channel/UC...
                   </p>
                 </div>
 
