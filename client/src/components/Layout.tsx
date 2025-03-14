@@ -47,7 +47,7 @@ export default function Layout({ children }: LayoutProps) {
         {/* Mobile Sidebar Toggle Button */}
         <button 
           onClick={toggleSidebar}
-          className="md:hidden fixed bottom-5 right-5 bg-[#1E3A8A] text-white rounded-full p-3 shadow-lg z-40"
+          className="md:hidden fixed bottom-5 right-5 bg-[#FDBE11] text-[#001C58] rounded-full p-3 shadow-lg z-40"
           aria-label="Toggle Sidebar"
         >
           <i className="fas fa-bars"></i>

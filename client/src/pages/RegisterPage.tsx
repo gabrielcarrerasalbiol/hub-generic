@@ -17,24 +17,24 @@ export default function RegisterPage() {
   }, [user, token, setLocation]);
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-50">
-      <div className="w-1/4 bg-blue-900 text-white p-8 hidden lg:flex lg:flex-col">
+    <div className="min-h-screen flex bg-white">
+      <div className="w-1/4 bg-gradient-to-br from-[#FDBE11] to-[#FDDE81] text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Hub Madridista</h2>
-          <p className="text-gray-200">La plataforma definitiva para los fans del Real Madrid</p>
+          <img src="/images/hub-madridista-logo.jpg" alt="Hub Madridista" className="h-24 mb-4" />
+          <p className="text-[#001C58] font-medium">La plataforma definitiva para los fans del Real Madrid</p>
         </div>
         <div className="flex-grow flex flex-col justify-center">
           <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2">Contenido exclusivo</h3>
-            <p className="text-gray-200">Accede a contenido premium y guarda tus favoritos</p>
+            <h3 className="text-xl font-semibold mb-2 text-[#001C58]">Contenido exclusivo</h3>
+            <p className="text-[#001C58]">Accede a contenido premium y guarda tus favoritos</p>
           </div>
           <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2">Comunidad madridista</h3>
-            <p className="text-gray-200">Únete a la comunidad de aficionados</p>
+            <h3 className="text-xl font-semibold mb-2 text-[#001C58]">Comunidad madridista</h3>
+            <p className="text-[#001C58]">Únete a la comunidad de aficionados</p>
           </div>
           <div>
-            <h3 className="text-xl font-semibold mb-2">Beneficios premium</h3>
-            <p className="text-gray-200">Disfruta de todos los beneficios como miembro</p>
+            <h3 className="text-xl font-semibold mb-2 text-[#001C58]">Beneficios premium</h3>
+            <p className="text-[#001C58]">Disfruta de todos los beneficios como miembro</p>
           </div>
         </div>
       </div>
