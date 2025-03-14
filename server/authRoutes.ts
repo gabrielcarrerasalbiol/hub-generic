@@ -187,13 +187,24 @@ export function registerAuthRoutes(app: Express) {
   // Cache para limitar peticiones excesivas de /api/auth/me
   const authRequestCache: Map<string, {
     timestamp: number, 
-    response: any
+    response: any,
+    etagCache: string
   }> = new Map();
   
-  // Tiempo mínimo entre solicitudes (500ms)
-  const THROTTLE_TIME_MS = 500;
+  // Tiempo mínimo entre solicitudes (2000ms = 2 segundos)
+  const THROTTLE_TIME_MS = 2000;
+  
+  // Contador para limitar número total de solicitudes por sesión
+  const requestCounters: Map<string, number> = new Map();
+  const MAX_REQUESTS_PER_MINUTE = 120; // Muy permisivo al inicio
+  
+  // Resetear contadores al iniciar
+  setTimeout(() => {
+    console.log("Reseteando contadores de solicitudes");
+    requestCounters.clear();
+  }, 1000);
 
-  // Get current user with rate limiting
+  // Get current user with STRICT rate limiting
   app.get('/api/auth/me', isAuthenticated, (req: Request, res: Response) => {
     const user = req.user as any;
     
@@ -201,11 +212,42 @@ export function registerAuthRoutes(app: Express) {
     const cacheKey = `user_${user.id}`;
     const now = Date.now();
     
+    // Incrementar contador de solicitudes
+    const currentCount = requestCounters.get(cacheKey) || 0;
+    requestCounters.set(cacheKey, currentCount + 1);
+    
+    // Si se excede el límite de solicitudes, responder con un 429
+    if (currentCount > MAX_REQUESTS_PER_MINUTE) {
+      return res.status(429).json({ 
+        error: 'Too many requests, please try again later',
+        retryAfter: 60 // segundos
+      });
+    }
+    
+    // Cada minuto, resetear contadores
+    if (!authRequestCache.has('counterResetScheduled')) {
+      authRequestCache.set('counterResetScheduled', { timestamp: now, response: null, etagCache: '' });
+      setTimeout(() => {
+        requestCounters.clear();
+        authRequestCache.delete('counterResetScheduled');
+      }, 60000); // 1 minuto
+    }
+    
     // Verificar si hay una respuesta en caché reciente
     const cachedResponse = authRequestCache.get(cacheKey);
     if (cachedResponse && (now - cachedResponse.timestamp) < THROTTLE_TIME_MS) {
       // Log para depuración
       console.log(`Using cached response for user ${user.id}`);
+      
+      // Verificar si el cliente tiene la versión actual con ETag
+      const clientEtag = req.headers['if-none-match'];
+      if (clientEtag && clientEtag === cachedResponse.etagCache) {
+        return res.status(304).end();
+      }
+      
+      // Establecer ETag para futuras solicitudes
+      res.setHeader('ETag', cachedResponse.etagCache);
+      res.setHeader('Cache-Control', 'private, max-age=2');
       
       // Usar la respuesta en caché si la solicitud es demasiado frecuente
       return res.json(cachedResponse.response);
@@ -221,10 +263,16 @@ export function registerAuthRoutes(app: Express) {
       role: user.role
     };
     
+    // Generar ETag para esta respuesta
+    const etag = `"user-${user.id}-${now}"`;
+    res.setHeader('ETag', etag);
+    res.setHeader('Cache-Control', 'private, max-age=2');
+    
     // Actualizar la caché con esta respuesta
     authRequestCache.set(cacheKey, {
       timestamp: now,
-      response
+      response,
+      etagCache: etag
     });
     
     res.json(response);
