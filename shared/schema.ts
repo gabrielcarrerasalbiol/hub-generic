@@ -179,8 +179,28 @@ export type Favorite = typeof favorites.$inferSelect;
 export type InsertChannelSubscription = z.infer<typeof insertChannelSubscriptionSchema>;
 export type ChannelSubscription = typeof channelSubscriptions.$inferSelect;
 
+// Tabla de canales premium (canales seleccionados por el administrador)
+export const premiumChannels = pgTable("premium_channels", {
+  id: serial("id").primaryKey(),
+  channelId: integer("channel_id").references(() => channels.id).notNull().unique(),
+  addedById: integer("added_by_id").references(() => users.id).notNull(),
+  notes: text("notes"),
+  priority: integer("priority").default(0), // Mayor número = mayor prioridad
+  createdAt: timestamp("created_at").defaultNow(),
+  lastSyncAt: timestamp("last_sync_at"), // Última vez que se importaron videos
+});
+
+export const insertPremiumChannelSchema = createInsertSchema(premiumChannels).omit({
+  id: true,
+  createdAt: true,
+  lastSyncAt: true,
+});
+
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type Notification = typeof notifications.$inferSelect;
+
+export type InsertPremiumChannel = z.infer<typeof insertPremiumChannelSchema>;
+export type PremiumChannel = typeof premiumChannels.$inferSelect;
 
 // Tipos de roles de usuario
 export const UserRole = z.enum(["free", "premium", "admin"]);

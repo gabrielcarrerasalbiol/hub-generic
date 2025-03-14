@@ -76,6 +76,16 @@ export interface IStorage {
   createNotification(notification: InsertNotification): Promise<Notification>;
   deleteNotification(notificationId: number): Promise<boolean>;
   
+  // Premium Channels operations
+  getPremiumChannels(limit?: number, offset?: number): Promise<PremiumChannel[]>;
+  getPremiumChannelById(id: number): Promise<PremiumChannel | undefined>;
+  getChannelDetailsWithPremiumInfo(channelId: number): Promise<Channel & {isPremium: boolean}>;
+  isPremiumChannel(channelId: number): Promise<boolean>;
+  addPremiumChannel(premiumChannel: InsertPremiumChannel): Promise<PremiumChannel>;
+  updatePremiumChannel(id: number, data: Partial<InsertPremiumChannel>): Promise<PremiumChannel | undefined>;
+  removePremiumChannel(id: number): Promise<boolean>;
+  updatePremiumChannelSyncTime(id: number): Promise<boolean>;
+  
   // Initialize default data (for testing)
   initializeDefaultData?(): Promise<void>;
 }
