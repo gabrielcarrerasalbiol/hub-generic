@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import UserManagement from '@/components/admin/UserManagement';
 import VideoManagement from '@/components/admin/VideoManagement';
 import PremiumChannelManagement from '@/components/admin/PremiumChannelManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, Video, Activity, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Users, Video, Activity, Star, BarChart2 } from 'lucide-react';
 
 export default function AdminPage() {
   const { isAdmin, checkAuth } = useAuth();
@@ -23,7 +24,15 @@ export default function AdminPage() {
 
   return (
     <div className="container max-w-7xl py-6">
-      <h1 className="text-3xl font-bold mb-6">Panel de Administración</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Panel de Administración</h1>
+        <Link href="/dashboard">
+          <Button variant="outline" className="flex items-center gap-2">
+            <BarChart2 className="h-4 w-4" />
+            <span>Dashboard de Estadísticas</span>
+          </Button>
+        </Link>
+      </div>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-6 grid w-full grid-cols-4">
@@ -114,6 +123,24 @@ export default function AdminPage() {
                 >
                   Ir a canales premium
                 </button>
+              </div>
+              
+              <div className="border rounded-lg p-4 bg-green-50 dark:bg-green-950">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Dashboard de Estadísticas</h3>
+                  <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full text-xs font-medium">
+                    Destacado
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Visualiza estadísticas detalladas sobre videos, categorías, plataformas y tendencias temporales con gráficos interactivos.
+                </p>
+                <Link href="/dashboard">
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md flex items-center justify-center gap-2">
+                    <BarChart2 className="h-4 w-4" />
+                    <span>Ver dashboard</span>
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
