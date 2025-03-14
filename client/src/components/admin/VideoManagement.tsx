@@ -198,7 +198,7 @@ export default function VideoManagement() {
     }
   });
   
-  // Mutación para buscar y añadir nuevos videos
+  // Mutación para buscar y añadir nuevos videos de canales premium
   const fetchNewVideosMutation = useMutation({
     mutationFn: (count: number) => {
       setIsFetchingNewVideos(true);
@@ -220,6 +220,34 @@ export default function VideoManagement() {
       toast({
         title: "Error",
         description: error?.details || "No se pudieron buscar nuevos vídeos. Verifica las claves de API.",
+        variant: "destructive",
+      });
+      setIsFetchingNewVideos(false);
+    }
+  });
+  
+  // Mutación para buscar todo el contenido nuevo relacionado con el Real Madrid
+  const fetchAllNewContentMutation = useMutation({
+    mutationFn: (count: number) => {
+      setIsFetchingNewVideos(true);
+      return apiRequest('/api/videos/fetch-all-content', {
+        method: 'POST',
+        body: JSON.stringify({ maxResults: count })
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
+      toast({
+        title: "Actualización de contenido completada",
+        description: `${data.added} nuevos vídeos sobre el Real Madrid añadidos de ${data.total} encontrados`,
+      });
+      setIsFetchingNewVideos(false);
+    },
+    onError: (error: any) => {
+      console.error("Error fetching all new content:", error);
+      toast({
+        title: "Error",
+        description: error?.details || "No se pudo actualizar el contenido relacionado con el Real Madrid. Verifica las claves de API.",
         variant: "destructive",
       });
       setIsFetchingNewVideos(false);

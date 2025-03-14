@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import FeaturedVideo from "@/components/FeaturedVideo";
 import VideoCard from "@/components/VideoCard";
 import ChannelCard from "@/components/ChannelCard";
@@ -8,10 +8,20 @@ import CategoryFilters from "@/components/CategoryFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Video, Channel, PlatformType, CategoryType } from "@shared/schema";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Home() {
   const [platform, setPlatform] = useState<PlatformType>("all");
   const [category, setCategory] = useState<CategoryType>("all");
+  const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
+  const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch trending videos
   const { 
@@ -49,19 +59,88 @@ export default function Home() {
   // Verificar si la plataforma seleccionada está disponible
   const isPlatformAvailable = platform === "all" || platform === "youtube";
 
-  // Get featured video from the top trending video
-  const featuredVideo = trendingVideos.length > 0 ? trendingVideos[0] : null;
-  
-  // Get trending videos excluding the featured one
-  const trendingVideosWithoutFeatured = trendingVideos.length > 1 
-    ? trendingVideos.slice(1)
+  // Get featured videos (top 5 trending videos)
+  const featuredVideos = trendingVideos.length > 0 
+    ? trendingVideos.slice(0, Math.min(5, trendingVideos.length)) 
     : [];
+  
+  // Get trending videos excluding the featured ones
+  const trendingVideosWithoutFeatured = trendingVideos.length > 5 
+    ? trendingVideos.slice(5)
+    : [];
+
+  // Auto-rotate featured videos carousel
+  useEffect(() => {
+    if (featuredVideos.length > 1) {
+      carouselIntervalRef.current = setInterval(() => {
+        setCurrentFeaturedIndex((prevIndex) => 
+          prevIndex === featuredVideos.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 8000); // Rotate every 8 seconds
+    }
+    
+    return () => {
+      if (carouselIntervalRef.current) {
+        clearInterval(carouselIntervalRef.current);
+      }
+    };
+  }, [featuredVideos.length]);
+
+  const handleNextFeatured = () => {
+    if (carouselIntervalRef.current) {
+      clearInterval(carouselIntervalRef.current);
+    }
+    setCurrentFeaturedIndex((prevIndex) => 
+      prevIndex === featuredVideos.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const handlePrevFeatured = () => {
+    if (carouselIntervalRef.current) {
+      clearInterval(carouselIntervalRef.current);
+    }
+    setCurrentFeaturedIndex((prevIndex) => 
+      prevIndex === 0 ? featuredVideos.length - 1 : prevIndex - 1
+    );
+  };
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
       {/* Featured Content Section */}
       <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Contenido Destacado</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Contenido Destacado</h2>
+          {featuredVideos.length > 1 && (
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8 w-8 p-0 rounded-full" 
+                onClick={handlePrevFeatured}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <div className="flex space-x-1 items-center">
+                {featuredVideos.map((_, idx) => (
+                  <span 
+                    key={idx} 
+                    className={`block h-2 w-2 rounded-full ${
+                      idx === currentFeaturedIndex ? 'bg-[#FDBE11]' : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8 w-8 p-0 rounded-full" 
+                onClick={handleNextFeatured}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
         
         {isTrendingLoading ? (
           <div className="bg-white rounded-xl shadow-md overflow-hidden">
@@ -78,8 +157,19 @@ export default function Home() {
               </div>
             </div>
           </div>
-        ) : featuredVideo ? (
-          <FeaturedVideo video={featuredVideo as Video} />
+        ) : featuredVideos.length > 0 ? (
+          <div className="relative">
+            {featuredVideos.map((video, index) => (
+              <div 
+                key={video.id} 
+                className={`transition-opacity duration-500 ${
+                  index === currentFeaturedIndex ? 'opacity-100' : 'opacity-0 absolute inset-0'
+                }`}
+              >
+                <FeaturedVideo video={video as Video} />
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="bg-white rounded-xl shadow-md border-2 border-[#FDBE11] p-6 text-center">
             <p className="text-[#001C58]">No hay contenido destacado disponible en este momento.</p>
