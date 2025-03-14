@@ -695,12 +695,14 @@ export class PgStorage implements IStorage {
   }
 
   async getVideosByDateCounts(days: number): Promise<{date: string, count: number}[]> {
+    // Utilizamos un enfoque más seguro con prepared statements
+    const interval = `${days || 30} days`;
     const result = await db.execute(
       sql`SELECT 
             TO_DATE(SUBSTRING(published_at, 1, 10), 'YYYY-MM-DD') as date, 
             COUNT(*) as count 
           FROM ${videos} 
-          WHERE published_at >= (NOW() - INTERVAL '${days} days')::text 
+          WHERE published_at >= (NOW() - INTERVAL ${interval})::text 
           GROUP BY TO_DATE(SUBSTRING(published_at, 1, 10), 'YYYY-MM-DD')
           ORDER BY date`
     );
