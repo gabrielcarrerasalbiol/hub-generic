@@ -13,6 +13,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { 
+  Search, 
+  User, 
+  ChevronDown, 
+  Shield 
+} from 'lucide-react';
 
 type HeaderProps = {
   onToggleSidebar: () => void;
@@ -86,7 +92,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                 variant="ghost" 
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#001C58]"
               >
-                <i className="fas fa-search"></i>
+                <Search className="h-4 w-4" />
               </Button>
             </form>
           </div>
@@ -107,13 +113,13 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                             className="w-full h-full rounded-full object-cover"
                           />
                         ) : (
-                          <i className="fas fa-user"></i>
+                          <User className="h-4 w-4" />
                         )}
                       </div>
                       <span className="hidden md:inline font-medium">
                         {user?.name || user?.username || 'Usuario'}
                       </span>
-                      <i className="fas fa-chevron-down text-sm"></i>
+                      <ChevronDown className="h-3 w-3" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">

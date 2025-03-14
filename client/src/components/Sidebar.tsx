@@ -255,10 +255,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}
               >
-                <i className={cn(
-                  "fas fa-newspaper mr-3",
+                <Newspaper className={cn(
+                  "mr-3 h-4 w-4",
                   isLinkActive("/category/press") ? "text-[#FDBE11]" : "text-gray-500"
-                )}></i>
+                )} />
                 Noticias
               </Link>
             </li>
