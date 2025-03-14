@@ -22,6 +22,8 @@ import TermsPage from "@/pages/TermsPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import CookiesPage from "@/pages/CookiesPage";
 import ContactPage from "@/pages/ContactPage";
+import NotificationsPage from "@/pages/NotificationsPage";
+import SettingsPage from "@/pages/SettingsPage";
 import Layout from "@/components/Layout";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
@@ -44,6 +46,8 @@ const Routes = () => (
       <Route path="/reset-password" component={ResetPasswordPage} />
       <Route path="/category/:categorySlug" component={CategoryPage} />
       <Route path="/trending" component={TrendingPage} />
+      <Route path="/notifications" component={NotificationsPage} />
+      <Route path="/settings" component={SettingsPage} />
       <Route path="/terminos" component={TermsPage} />
       <Route path="/privacidad" component={PrivacyPage} />
       <Route path="/cookies" component={CookiesPage} />
