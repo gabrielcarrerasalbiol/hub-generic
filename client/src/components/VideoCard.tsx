@@ -123,7 +123,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
     return (
       <Link 
         href={`/video/${video.id}`}
-        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 flex border border-[#FDBE11]/20 hover:border-[#FDBE11]/60"
+        className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 flex border border-[#FDBE11]/20 hover:border-[#FDBE11]/60 dark:border-[#FDBE11]/30 dark:hover:border-[#FDBE11]/80"
         onClick={(e) => {
           // Prevent click if star button was clicked
           if ((e.target as HTMLElement).tagName === 'I' || 
@@ -143,11 +143,11 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
             </div>
           </div>
           <div className="p-3 w-2/3">
-            <h3 className="font-medium text-sm line-clamp-2">
+            <h3 className="font-medium text-sm line-clamp-2 dark:text-white">
               {video.title}
             </h3>
             <div className="flex justify-between items-center mt-2">
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 dark:text-gray-300">
                 {formatViewCount(video.viewCount)} visualizaciones
               </div>
               <button 
@@ -170,7 +170,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
   return (
     <Link 
       href={`/video/${video.id}`}
-      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 border border-[#FDBE11]/20 hover:border-[#FDBE11]/60"
+      className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 border border-[#FDBE11]/20 hover:border-[#FDBE11]/60 dark:border-[#FDBE11]/30 dark:hover:border-[#FDBE11]/80"
       onClick={(e) => {
         // Prevent click if star button was clicked
         if ((e.target as HTMLElement).tagName === 'I' || 
@@ -193,7 +193,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
         </div>
       </div>
       <div className="p-3">
-        <h3 className="font-medium text-sm line-clamp-2 h-10">
+        <h3 className="font-medium text-sm line-clamp-2 h-10 dark:text-white">
           {video.title}
         </h3>
         <div className="flex justify-between items-center mt-2">
@@ -203,7 +203,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
               alt={video.channelTitle} 
               className="w-6 h-6 rounded-full"
             />
-            <span className="ml-2 text-xs text-gray-600">{video.channelTitle}</span>
+            <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">{video.channelTitle}</span>
           </div>
           <button 
             onClick={handleToggleFavorite}
@@ -216,7 +216,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
             <i className={isFavorite ? 'fas fa-star' : 'far fa-star'}></i>
           </button>
         </div>
-        <div className="mt-2 text-xs text-gray-500">
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-300">
           {formatViewCount(video.viewCount)} visualizaciones • {formatPublishedDate(video.publishedAt)}
         </div>
       </div>
