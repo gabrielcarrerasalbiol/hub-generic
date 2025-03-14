@@ -925,18 +925,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Obtener el path de la URL
         const pathParts = url.pathname.split('/').filter(Boolean);
         
-        if (pathParts.length >= 2) {
+        // Manejar formatos especiales
+        if (pathParts.length >= 1) {
+          // Formato: youtube.com/@username
+          if (pathParts[0].startsWith('@')) {
+            channelIdOrUsername = pathParts[0];
+          }
           // Formato: youtube.com/channel/UC...
-          if (pathParts[0] === 'channel') {
+          else if (pathParts[0] === 'channel' && pathParts.length >= 2) {
             channelIdOrUsername = pathParts[1];
           } 
           // Formato: youtube.com/c/nombre o youtube.com/user/nombre
-          else if (pathParts[0] === 'c' || pathParts[0] === 'user' || pathParts[0] === '@') {
+          else if ((pathParts[0] === 'c' || pathParts[0] === 'user') && pathParts.length >= 2) {
             channelIdOrUsername = pathParts[1];
           }
-        } else if (pathParts.length === 1) {
           // Formato: youtube.com/nombrecanal
-          channelIdOrUsername = pathParts[0];
+          else {
+            channelIdOrUsername = pathParts[0];
+          }
         }
       } catch (error) {
         return res.status(400).json({ error: "URL de YouTube no válida" });
