@@ -123,7 +123,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
     return (
       <Link 
         href={`/video/${video.id}`}
-        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 flex"
+        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 flex border border-[#FDBE11]/20 hover:border-[#FDBE11]/60"
         onClick={(e) => {
           // Prevent click if star button was clicked
           if ((e.target as HTMLElement).tagName === 'I' || 
@@ -154,7 +154,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
                 onClick={handleToggleFavorite}
                 className={cn(
                   "text-sm",
-                  isFavorite ? "text-[#FEF08A]" : "text-gray-400 hover:text-[#FEF08A]"
+                  isFavorite ? "text-[#FDBE11]" : "text-gray-400 hover:text-[#FDBE11]"
                 )}
                 aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
               >
@@ -209,7 +209,7 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
             onClick={handleToggleFavorite}
             className={cn(
               "text-sm",
-              isFavorite ? "text-[#FEF08A]" : "text-gray-400 hover:text-[#FEF08A]"
+              isFavorite ? "text-[#FDBE11]" : "text-gray-400 hover:text-[#FDBE11]"
             )}
             aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
           >

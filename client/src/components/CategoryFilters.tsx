@@ -14,7 +14,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "all" ? "default" : "outline"}
           className={selectedCategory === "all" 
-            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
             : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("all")}
         >
@@ -24,7 +24,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "matches" ? "default" : "outline"}
           className={selectedCategory === "matches" 
-            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
             : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("matches")}
         >
@@ -34,7 +34,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
         <Button
           variant={selectedCategory === "training" ? "default" : "outline"}
           className={selectedCategory === "training" 
-            ? "bg-[#001C58] text-white border-[#FDBE11]" 
+            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
             : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
           onClick={() => onSelectCategory("training")}
         >
