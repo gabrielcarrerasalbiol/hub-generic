@@ -64,7 +64,10 @@ export default function VideoManagement() {
   const [fetchVideoCount, setFetchVideoCount] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
-
+  const [isDeletingVideo, setIsDeletingVideo] = useState(false);
+  const [selectedVideos, setSelectedVideos] = useState<number[]>([]);
+  const [isDeletingMultiple, setIsDeletingMultiple] = useState(false);
+  
   // Obtener todos los videos
   const {
     data: videos = [],
