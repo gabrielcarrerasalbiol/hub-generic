@@ -12,7 +12,7 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "all" ? "default" : "outline"}
         className={selectedPlatform === "all" 
-          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
           : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("all")}
       >
@@ -22,7 +22,7 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "youtube" ? "default" : "outline"}
         className={selectedPlatform === "youtube" 
-          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
           : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("youtube")}
       >
@@ -32,7 +32,7 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "tiktok" ? "default" : "outline"}
         className={selectedPlatform === "tiktok" 
-          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
           : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("tiktok")}
       >
@@ -42,7 +42,7 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "twitter" ? "default" : "outline"}
         className={selectedPlatform === "twitter" 
-          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
           : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("twitter")}
       >
@@ -52,7 +52,7 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
       <Button
         variant={selectedPlatform === "instagram" ? "default" : "outline"}
         className={selectedPlatform === "instagram" 
-          ? "bg-[#001C58] text-white border-[#FDBE11]" 
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold" 
           : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30"}
         onClick={() => onSelectPlatform("instagram")}
       >
