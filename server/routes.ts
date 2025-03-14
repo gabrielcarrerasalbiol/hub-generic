@@ -1255,6 +1255,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API Routes para estadísticas (Dashboard)
+  app.get("/api/statistics/overview", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const overview = await getStatisticsOverview();
+      res.json(overview);
+    } catch (error) {
+      console.error("Error al obtener estadísticas generales:", error);
+      res.status(500).json({ message: "Error al obtener estadísticas generales" });
+    }
+  });
+
+  app.get("/api/statistics/categories", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const stats = await getStatisticsByCategory();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error al obtener estadísticas por categoría:", error);
+      res.status(500).json({ message: "Error al obtener estadísticas por categoría" });
+    }
+  });
+
+  app.get("/api/statistics/platforms", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const stats = await getStatisticsByPlatform();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error al obtener estadísticas por plataforma:", error);
+      res.status(500).json({ message: "Error al obtener estadísticas por plataforma" });
+    }
+  });
+
+  app.get("/api/statistics/dates", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const days = parseInt(req.query.days as string) || 30;
+      const stats = await getStatisticsByDate(days);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error al obtener estadísticas por fecha:", error);
+      res.status(500).json({ message: "Error al obtener estadísticas por fecha" });
+    }
+  });
+
+  app.get("/api/statistics/top-channels", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const stats = await getTopChannelsByVideos(limit);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error al obtener top canales:", error);
+      res.status(500).json({ message: "Error al obtener top canales" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

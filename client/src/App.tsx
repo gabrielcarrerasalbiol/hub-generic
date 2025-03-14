@@ -17,6 +17,7 @@ import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import SubscriptionsPage from "@/pages/SubscriptionsPage";
 import CategoryPage from "@/pages/CategoryPage";
 import TrendingPage from "@/pages/TrendingPage";
+import DashboardPage from "@/pages/DashboardPage";
 import Layout from "@/components/Layout";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
