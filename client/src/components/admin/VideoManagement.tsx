@@ -214,6 +214,62 @@ export default function VideoManagement() {
       setIsFetchingNewVideos(false);
     }
   });
+  
+  // Mutación para eliminar un video individual
+  const deleteVideoMutation = useMutation({
+    mutationFn: (videoId: number) => {
+      setIsDeletingVideo(true);
+      return apiRequest(`/api/videos/${videoId}`, {
+        method: 'DELETE'
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
+      toast({
+        title: "Video eliminado",
+        description: "El video ha sido eliminado correctamente",
+      });
+      setIsDeletingVideo(false);
+    },
+    onError: (error) => {
+      console.error("Error deleting video:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el vídeo. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+      setIsDeletingVideo(false);
+    }
+  });
+  
+  // Mutación para eliminar múltiples videos
+  const deleteMultipleVideosMutation = useMutation({
+    mutationFn: (videoIds: number[]) => {
+      setIsDeletingMultiple(true);
+      return apiRequest('/api/videos', {
+        method: 'DELETE',
+        body: JSON.stringify({ ids: videoIds })
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
+      toast({
+        title: "Videos eliminados",
+        description: `${data.deleted} de ${data.total} videos han sido eliminados correctamente`,
+      });
+      setSelectedVideos([]);
+      setIsDeletingMultiple(false);
+    },
+    onError: (error) => {
+      console.error("Error deleting multiple videos:", error);
+      toast({
+        title: "Error",
+        description: "No se pudieron eliminar los vídeos seleccionados. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+      setIsDeletingMultiple(false);
+    }
+  });
 
   // Preparar datos para edición
   useEffect(() => {
@@ -305,6 +361,26 @@ export default function VideoManagement() {
     });
   };
 
+  // Función para manejar la selección de un video
+  const toggleVideoSelection = (videoId: number) => {
+    setSelectedVideos(prev => {
+      if (prev.includes(videoId)) {
+        return prev.filter(id => id !== videoId);
+      } else {
+        return [...prev, videoId];
+      }
+    });
+  };
+  
+  // Función para seleccionar/deseleccionar todos los videos
+  const toggleSelectAll = () => {
+    if (selectedVideos.length === filteredVideos.length) {
+      setSelectedVideos([]);
+    } else {
+      setSelectedVideos(filteredVideos.map(v => v.id));
+    }
+  };
+  
   // Renderizado del componente
   return (
     <div className="bg-white dark:bg-slate-800 rounded-md shadow-sm p-6">
@@ -321,6 +397,43 @@ export default function VideoManagement() {
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
           </div>
+          
+          {selectedVideos.length > 0 && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="destructive"
+                  className="gap-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Eliminar {selectedVideos.length} videos
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Eliminar múltiples videos</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    ¿Estás seguro de que deseas eliminar {selectedVideos.length} videos seleccionados?
+                    Esta acción no se puede deshacer.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => deleteMultipleVideosMutation.mutate(selectedVideos)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    {isDeletingMultiple ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Eliminando...
+                      </>
+                    ) : 'Eliminar seleccionados'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
           
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -460,6 +573,13 @@ export default function VideoManagement() {
             <TableCaption>Total de vídeos: {filteredVideos.length}</TableCaption>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">
+                  <Checkbox 
+                    id="select-all-header"
+                    checked={selectedVideos.length > 0 && selectedVideos.length === filteredVideos.length}
+                    onCheckedChange={toggleSelectAll}
+                  />
+                </TableHead>
                 <TableHead className="w-[250px]">
                   <div className="flex items-center" onClick={() => handleSort('title')}>
                     Título
@@ -500,6 +620,13 @@ export default function VideoManagement() {
                   .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                   .map((video: Video) => (
                   <TableRow key={video.id}>
+                    <TableCell>
+                      <Checkbox
+                        id={`video-${video.id}`}
+                        checked={selectedVideos.includes(video.id)}
+                        onCheckedChange={() => toggleVideoSelection(video.id)}
+                      />
+                    </TableCell>
                     <TableCell className="font-medium line-clamp-2">
                       {video.title}
                     </TableCell>
@@ -666,13 +793,52 @@ export default function VideoManagement() {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
+                        
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Eliminar video</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                ¿Estás seguro de que deseas eliminar este video?
+                                <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-md">
+                                  <p className="font-medium">{video.title}</p>
+                                  <p className="text-sm text-muted-foreground mt-1">{video.platform} • {new Date(video.publishedAt).toLocaleDateString()}</p>
+                                </div>
+                                Esta acción no se puede deshacer.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteVideoMutation.mutate(video.id)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                {isDeletingVideo ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Eliminando...
+                                  </>
+                                ) : 'Eliminar'}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-10">
+                  <TableCell colSpan={7} className="text-center py-10">
                     No se encontraron vídeos.
                   </TableCell>
                 </TableRow>
@@ -680,6 +846,33 @@ export default function VideoManagement() {
             </TableBody>
           </Table>
 
+          {/* Agregar un checkbox para seleccionar todos en la cabecera */}
+          <div className="flex justify-between items-center mt-6 mb-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="select-all"
+                checked={selectedVideos.length > 0 && selectedVideos.length === filteredVideos.length}
+                onCheckedChange={toggleSelectAll}
+              />
+              <Label htmlFor="select-all" className="cursor-pointer">
+                {selectedVideos.length === 0 ? 'Seleccionar todos' : 
+                 selectedVideos.length === filteredVideos.length ? 'Deseleccionar todos' : 
+                 `Seleccionados ${selectedVideos.length} de ${filteredVideos.length}`}
+              </Label>
+            </div>
+            
+            {selectedVideos.length > 0 && (
+              <Button 
+                variant="destructive"
+                size="sm"
+                className="gap-2"
+                onClick={() => setSelectedVideos([])}
+              >
+                Limpiar selección
+              </Button>
+            )}
+          </div>
+          
           {/* Paginación */}
           {sortedVideos.length > 0 && (
             <div className="flex justify-between items-center mt-6">
