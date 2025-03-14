@@ -23,7 +23,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
 
   // Sidebar base classes
   const sidebarClasses = cn(
-    "bg-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto h-[calc(100vh-4rem)]",
+    "bg-white w-64 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto h-[calc(100vh-4rem)] border-r-2 border-[#FDBE11]",
     "md:block", // Always show on desktop
     isOpen 
       ? "fixed inset-0 w-full md:w-64 z-50" // Open state on mobile
@@ -34,25 +34,25 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     <aside className={sidebarClasses}>
       <nav className="py-4">
         {/* Explore Section */}
-        <div className="px-4 pb-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-600 uppercase text-xs tracking-wide">Explorar</h3>
+        <div className="px-4 pb-4 border-b border-[#FDBE11]/50">
+          <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Explorar</h3>
           <ul className="mt-2 space-y-1">
             <li>
               <Link href="/" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/") 
-                    ? "bg-gray-100 text-[#1E3A8A]" 
-                    : "text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]"
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}>
                   <i className={cn(
                     "fas fa-home mr-3",
-                    isLinkActive("/") ? "text-[#1E3A8A]" : "text-gray-500"
+                    isLinkActive("/") ? "text-[#FDBE11]" : "text-gray-500"
                   )}></i>
                   Inicio
               </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fas fa-fire mr-3 text-gray-500"></i>
                 Tendencias
               </a>
@@ -61,12 +61,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link href="/favorites" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/favorites") 
-                    ? "bg-gray-100 text-[#1E3A8A]" 
-                    : "text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]"
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}>
                   <i className={cn(
                     "fas fa-star mr-3",
-                    isLinkActive("/favorites") ? "text-[#1E3A8A]" : "text-gray-500"
+                    isLinkActive("/favorites") ? "text-[#FDBE11]" : "text-gray-500"
                   )}></i>
                   Mis Favoritos
               </Link>
@@ -75,18 +75,18 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link href="/subscriptions" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/subscriptions") 
-                    ? "bg-gray-100 text-[#1E3A8A]" 
-                    : "text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]"
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
                 )}>
                   <i className={cn(
                     "fas fa-rss mr-3",
-                    isLinkActive("/subscriptions") ? "text-[#1E3A8A]" : "text-gray-500"
+                    isLinkActive("/subscriptions") ? "text-[#FDBE11]" : "text-gray-500"
                   )}></i>
                   Mis Suscripciones
               </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fas fa-history mr-3 text-gray-500"></i>
                 Historial
               </a>
@@ -95,29 +95,29 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Platforms Section */}
-        <div className="px-4 py-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-600 uppercase text-xs tracking-wide">Plataformas</h3>
+        <div className="px-4 py-4 border-b border-[#FDBE11]/50">
+          <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Plataformas</h3>
           <ul className="mt-2 space-y-1">
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fab fa-youtube mr-3 text-red-500"></i>
                 YouTube
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fab fa-tiktok mr-3 text-black"></i>
                 TikTok
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fab fa-twitter mr-3 text-blue-400"></i>
                 Twitter
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fab fa-instagram mr-3 text-pink-500"></i>
                 Instagram
               </a>
@@ -126,35 +126,35 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Categories Section */}
-        <div className="px-4 py-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-600 uppercase text-xs tracking-wide">Categorías</h3>
+        <div className="px-4 py-4 border-b border-[#FDBE11]/50">
+          <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Categorías</h3>
           <ul className="mt-2 space-y-1">
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
-                <i className="fas fa-futbol mr-3 text-gray-500"></i>
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
+                <i className="fas fa-futbol mr-3 text-[#FDBE11]"></i>
                 Partidos
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fas fa-comments mr-3 text-gray-500"></i>
                 Análisis
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
-                <i className="fas fa-trophy mr-3 text-gray-500"></i>
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
+                <i className="fas fa-trophy mr-3 text-[#FDBE11]"></i>
                 Momentos Históricos
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fas fa-user mr-3 text-gray-500"></i>
                 Jugadores
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]">
+              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
                 <i className="fas fa-newspaper mr-3 text-gray-500"></i>
                 Noticias
               </a>
@@ -164,7 +164,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         
         {/* Featured Channels Section */}
         <div className="px-4 py-4">
-          <h3 className="font-semibold text-gray-600 uppercase text-xs tracking-wide">Canales Destacados</h3>
+          <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Canales Destacados</h3>
           
           {isLoading ? (
             // Loading skeleton for featured channels
@@ -185,15 +185,15 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link 
                 key={channel.id} 
                 href={`/channel/${channel.id}`}
-                className="flex items-center mt-3 hover:bg-gray-100 rounded-md p-2 cursor-pointer"
+                className="flex items-center mt-3 hover:bg-[#FDBE11]/10 rounded-md p-2 cursor-pointer"
               >
                 <img 
                   src={channel.thumbnailUrl || 'https://via.placeholder.com/32'} 
                   alt={channel.title} 
-                  className="w-8 h-8 rounded-full" 
+                  className="w-8 h-8 rounded-full border border-[#FDBE11]" 
                 />
                 <div className="ml-2">
-                  <p className="text-sm font-medium">{channel.title}</p>
+                  <p className="text-sm font-medium text-[#001C58]">{channel.title}</p>
                   <p className="text-xs text-gray-500">
                     {channel.platform === 'YouTube' && 'Canal de YouTube'}
                     {channel.platform === 'TikTok' && 'Canal de TikTok'}
@@ -205,7 +205,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             ))
           ) : (
             // No channels available
-            <p className="text-sm text-gray-500 mt-3 text-center">
+            <p className="text-sm text-[#001C58]/70 mt-3 text-center">
               No hay canales destacados disponibles
             </p>
           )}
