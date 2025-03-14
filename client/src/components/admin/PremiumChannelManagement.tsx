@@ -392,100 +392,177 @@ export default function PremiumChannelManagement() {
               Selecciona un canal para agregarlo a la lista de canales premium. Estos canales serán escaneados regularmente
               para incorporar su nuevo contenido a la plataforma.
             </CardDescription>
+            <div className="flex space-x-2 pt-2">
+              <Button 
+                variant={isAddingByUrl ? "default" : "outline"} 
+                onClick={() => setIsAddingByUrl(true)}
+                className="flex-1"
+              >
+                Por URL
+              </Button>
+              <Button 
+                variant={!isAddingByUrl ? "default" : "outline"} 
+                onClick={() => setIsAddingByUrl(false)}
+                className="flex-1"
+              >
+                Por Canal Existente
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="platform-filter">Filtrar por plataforma:</Label>
-                <Select
-                  value={selectedPlatform}
-                  onValueChange={setSelectedPlatform}
-                >
-                  <SelectTrigger id="platform-filter">
-                    <SelectValue placeholder="Seleccionar plataforma" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas las plataformas</SelectItem>
-                    <SelectItem value="youtube">YouTube</SelectItem>
-                    <SelectItem value="twitter">Twitter</SelectItem>
-                    <SelectItem value="tiktok">TikTok</SelectItem>
-                    <SelectItem value="instagram">Instagram</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            {isAddingByUrl ? (
+              // Formulario para añadir por URL
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="youtube-url">URL del Canal de YouTube:</Label>
+                  <Input
+                    id="youtube-url"
+                    placeholder="https://www.youtube.com/c/nombredelcanal"
+                    value={youtubeUrl}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Introduce la URL completa del canal de YouTube (ej: https://www.youtube.com/c/realmadrid)
+                  </p>
+                </div>
 
-              <div>
-                <Label htmlFor="channel-select">Canal:</Label>
-                <Select
-                  value={selectedChannelId}
-                  onValueChange={setSelectedChannelId}
-                >
-                  <SelectTrigger id="channel-select">
-                    <SelectValue placeholder="Seleccionar canal" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filteredChannels.length === 0 ? (
-                      <SelectItem value="no-channels" disabled>
-                        No hay canales disponibles
-                      </SelectItem>
-                    ) : (
-                      filteredChannels.map((channel) => (
-                        <SelectItem key={channel.id} value={channel.id.toString()}>
-                          {channel.title} ({channel.platform})
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <Label htmlFor="priority-select-url">Prioridad:</Label>
+                  <Select value={priority} onValueChange={setPriority}>
+                    <SelectTrigger id="priority-select-url">
+                      <SelectValue placeholder="Seleccionar prioridad" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">⭐ Muy baja</SelectItem>
+                      <SelectItem value="2">⭐⭐ Baja</SelectItem>
+                      <SelectItem value="3">⭐⭐⭐ Media baja</SelectItem>
+                      <SelectItem value="4">⭐⭐⭐⭐ Media</SelectItem>
+                      <SelectItem value="5">⭐⭐⭐⭐⭐ Media alta</SelectItem>
+                      <SelectItem value="6">⭐⭐⭐⭐⭐⭐ Alta</SelectItem>
+                      <SelectItem value="7">⭐⭐⭐⭐⭐⭐⭐ Muy alta</SelectItem>
+                      <SelectItem value="8">⭐⭐⭐⭐⭐⭐⭐⭐ Extrema</SelectItem>
+                      <SelectItem value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ Crítica</SelectItem>
+                      <SelectItem value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ Máxima</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="priority-select">Prioridad:</Label>
-                <Select value={priority} onValueChange={setPriority}>
-                  <SelectTrigger id="priority-select">
-                    <SelectValue placeholder="Seleccionar prioridad" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">⭐ Muy baja</SelectItem>
-                    <SelectItem value="2">⭐⭐ Baja</SelectItem>
-                    <SelectItem value="3">⭐⭐⭐ Media baja</SelectItem>
-                    <SelectItem value="4">⭐⭐⭐⭐ Media</SelectItem>
-                    <SelectItem value="5">⭐⭐⭐⭐⭐ Media alta</SelectItem>
-                    <SelectItem value="6">⭐⭐⭐⭐⭐⭐ Alta</SelectItem>
-                    <SelectItem value="7">⭐⭐⭐⭐⭐⭐⭐ Muy alta</SelectItem>
-                    <SelectItem value="8">⭐⭐⭐⭐⭐⭐⭐⭐ Extrema</SelectItem>
-                    <SelectItem value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ Crítica</SelectItem>
-                    <SelectItem value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ Máxima</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div>
+                  <Label htmlFor="notes-url">Notas (opcional):</Label>
+                  <Textarea
+                    id="notes-url"
+                    placeholder="Añade notas sobre este canal premium"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                </div>
               </div>
+            ) : (
+              // Formulario para añadir por canal existente
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="platform-filter">Filtrar por plataforma:</Label>
+                  <Select
+                    value={selectedPlatform}
+                    onValueChange={setSelectedPlatform}
+                  >
+                    <SelectTrigger id="platform-filter">
+                      <SelectValue placeholder="Seleccionar plataforma" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas las plataformas</SelectItem>
+                      <SelectItem value="youtube">YouTube</SelectItem>
+                      <SelectItem value="twitter">Twitter</SelectItem>
+                      <SelectItem value="tiktok">TikTok</SelectItem>
+                      <SelectItem value="instagram">Instagram</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="notes">Notas (opcional):</Label>
-                <Textarea
-                  id="notes"
-                  placeholder="Añade notas sobre este canal premium"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                />
+                <div>
+                  <Label htmlFor="channel-select">Canal:</Label>
+                  <Select
+                    value={selectedChannelId}
+                    onValueChange={setSelectedChannelId}
+                  >
+                    <SelectTrigger id="channel-select">
+                      <SelectValue placeholder="Seleccionar canal" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filteredChannels.length === 0 ? (
+                        <div className="p-2 text-sm text-center text-muted-foreground">
+                          No hay canales disponibles
+                        </div>
+                      ) : (
+                        filteredChannels.map((channel) => (
+                          <SelectItem key={channel.id} value={channel.id.toString()}>
+                            {channel.title} ({channel.platform})
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="priority-select">Prioridad:</Label>
+                  <Select value={priority} onValueChange={setPriority}>
+                    <SelectTrigger id="priority-select">
+                      <SelectValue placeholder="Seleccionar prioridad" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">⭐ Muy baja</SelectItem>
+                      <SelectItem value="2">⭐⭐ Baja</SelectItem>
+                      <SelectItem value="3">⭐⭐⭐ Media baja</SelectItem>
+                      <SelectItem value="4">⭐⭐⭐⭐ Media</SelectItem>
+                      <SelectItem value="5">⭐⭐⭐⭐⭐ Media alta</SelectItem>
+                      <SelectItem value="6">⭐⭐⭐⭐⭐⭐ Alta</SelectItem>
+                      <SelectItem value="7">⭐⭐⭐⭐⭐⭐⭐ Muy alta</SelectItem>
+                      <SelectItem value="8">⭐⭐⭐⭐⭐⭐⭐⭐ Extrema</SelectItem>
+                      <SelectItem value="9">⭐⭐⭐⭐⭐⭐⭐⭐⭐ Crítica</SelectItem>
+                      <SelectItem value="10">⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐ Máxima</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="notes">Notas (opcional):</Label>
+                  <Textarea
+                    id="notes"
+                    placeholder="Añade notas sobre este canal premium"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={() => {
               setSelectedChannelId("");
+              setYoutubeUrl("");
               setPriority("5");
               setNotes("");
             }}>
               Cancelar
             </Button>
-            <Button
-              onClick={handleAddPremiumChannel}
-              disabled={!selectedChannelId || addPremiumChannelMutation.isPending}
-            >
-              <PlusCircle className="mr-2 h-4 w-4" />
-              {addPremiumChannelMutation.isPending ? "Añadiendo..." : "Añadir Canal Premium"}
-            </Button>
+            {isAddingByUrl ? (
+              <Button
+                onClick={handleAddChannelFromUrl}
+                disabled={!youtubeUrl || addChannelFromUrlMutation.isPending}
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                {addChannelFromUrlMutation.isPending ? "Añadiendo..." : "Añadir Canal por URL"}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleAddPremiumChannel}
+                disabled={!selectedChannelId || addPremiumChannelMutation.isPending}
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                {addPremiumChannelMutation.isPending ? "Añadiendo..." : "Añadir Canal Premium"}
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </TabsContent>
