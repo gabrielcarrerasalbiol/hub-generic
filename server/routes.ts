@@ -5,6 +5,7 @@ import { z } from "zod";
 import { classifyContent, enhanceSearch } from "./api/openai";
 import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
+import { recategorizeVideo, recategorizeAllVideos } from "./api/categoryUpdater";
 import { 
   CategoryType, PlatformType, insertFavoriteSchema, Video, User, 
   insertChannelSubscriptionSchema, insertNotificationSchema, 

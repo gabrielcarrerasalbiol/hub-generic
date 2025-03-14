@@ -130,34 +130,89 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           <h3 className="font-semibold text-[#001C58] uppercase text-xs tracking-wide">Categorías</h3>
           <ul className="mt-2 space-y-1">
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
-                <i className="fas fa-futbol mr-3 text-[#FDBE11]"></i>
+              <Link 
+                href="/category/matches" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/category/matches") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
+                <i className={cn(
+                  "fas fa-futbol mr-3",
+                  isLinkActive("/category/matches") ? "text-[#FDBE11]" : "text-[#FDBE11]"
+                )}></i>
                 Partidos
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
-                <i className="fas fa-comments mr-3 text-gray-500"></i>
+              <Link 
+                href="/category/analysis" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/category/analysis") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
+                <i className={cn(
+                  "fas fa-comments mr-3",
+                  isLinkActive("/category/analysis") ? "text-[#FDBE11]" : "text-gray-500"
+                )}></i>
                 Análisis
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
-                <i className="fas fa-trophy mr-3 text-[#FDBE11]"></i>
+              <Link 
+                href="/category/historic" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/category/historic") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
+                <i className={cn(
+                  "fas fa-trophy mr-3",
+                  isLinkActive("/category/historic") ? "text-[#FDBE11]" : "text-[#FDBE11]"
+                )}></i>
                 Momentos Históricos
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
-                <i className="fas fa-user mr-3 text-gray-500"></i>
+              <Link 
+                href="/category/players" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/category/players") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
+                <i className={cn(
+                  "fas fa-user mr-3",
+                  isLinkActive("/category/players") ? "text-[#FDBE11]" : "text-gray-500"
+                )}></i>
                 Jugadores
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]">
-                <i className="fas fa-newspaper mr-3 text-gray-500"></i>
+              <Link 
+                href="/category/press" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/category/press") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 hover:bg-[#FDBE11]/5 hover:text-[#001C58]"
+                )}
+              >
+                <i className={cn(
+                  "fas fa-newspaper mr-3",
+                  isLinkActive("/category/press") ? "text-[#FDBE11]" : "text-gray-500"
+                )}></i>
                 Noticias
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
