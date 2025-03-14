@@ -220,6 +220,11 @@ export default function VideoPage() {
                   src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=random&color=fff&size=128`} 
                   alt={video.channelTitle} 
                   className="w-16 h-16 rounded-full object-cover border-2 border-[#FDBE11]" 
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=random&color=fff&size=128`;
+                  }}
                 />
                 <div className="ml-4">
                   <p className="font-bold text-lg text-[#001C58]">{video.channelTitle}</p>

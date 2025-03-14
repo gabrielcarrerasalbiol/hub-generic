@@ -107,7 +107,10 @@ export default function SubscriptionsPage() {
 
   // Generar URL para avatar de canal
   const getChannelAvatar = (channel: Channel) => {
-    if (channel.thumbnailUrl) return channel.thumbnailUrl;
+    // Asegurarse de utilizar la imagen del thumbnail del canal cuando esté disponible
+    if (channel.thumbnailUrl && channel.thumbnailUrl.trim() !== '') {
+      return channel.thumbnailUrl;
+    }
     
     // Usar UI-Avatars.com como fallback
     const name = encodeURIComponent(channel.title);
@@ -138,6 +141,11 @@ export default function SubscriptionsPage() {
                   src={getChannelAvatar(channel)} 
                   alt={channel.title} 
                   className="w-16 h-16 rounded-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&size=128`;
+                  }}
                 />
                 <div className="flex-1">
                   <h3 className="font-bold text-lg line-clamp-1">{channel.title}</h3>

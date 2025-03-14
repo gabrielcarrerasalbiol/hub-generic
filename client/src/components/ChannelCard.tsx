@@ -47,6 +47,11 @@ export default function ChannelCard({ channel }: ChannelCardProps) {
             src={channel.thumbnailUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`} 
             alt={channel.title} 
             className="w-16 h-16 rounded-full border-4 border-white -mt-8 object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`;
+            }}
           />
           <h3 className="mt-2 font-bold text-center">{channel.title}</h3>
           <p className="text-sm text-gray-500 mb-3">

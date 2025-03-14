@@ -162,9 +162,14 @@ export default function ChannelPage() {
         <div className="p-6 relative">
           <div className="flex flex-col md:flex-row items-center md:items-start">
             <img 
-              src={channel.thumbnailUrl || 'https://via.placeholder.com/150'} 
+              src={channel.thumbnailUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`} 
               alt={channel.title} 
               className="w-24 h-24 rounded-full -mt-12 md:-mt-16 border-4 border-white object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`;
+              }}
             />
             
             <div className="md:ml-6 mt-4 md:mt-0 text-center md:text-left">
