@@ -125,11 +125,7 @@ function AppContent() {
     );
   }
 
-  return (
-    <Layout>
-      <Routes />
-    </Layout>
-  );
+  return <Routes />;
 }
 
 function App() {
