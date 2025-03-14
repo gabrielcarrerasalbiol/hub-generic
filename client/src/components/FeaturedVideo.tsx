@@ -103,11 +103,13 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
     >
       <div className="aspect-w-16 aspect-h-9 relative flex">
         <div className="absolute left-0 top-0 bottom-0 z-10 h-full">
-          <img 
-            src={video.thumbnailUrl} 
-            alt="Miniatura" 
-            className="h-full w-32 object-cover border-r-2 border-white shadow-lg"
-          />
+          {video.thumbnailUrl && (
+            <img 
+              src={video.thumbnailUrl}
+              alt="Miniatura" 
+              className="h-full w-32 object-cover border-r-2 border-white shadow-lg"
+            />
+          )}
         </div>
         <iframe 
           src={video.embedUrl}

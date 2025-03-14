@@ -886,6 +886,147 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Endpoint para buscar y añadir todo tipo de contenido relacionado con el Real Madrid
+  app.post("/api/videos/fetch-all-content", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { maxResults = 20 } = req.body;
+      const limit = Math.min(Math.max(parseInt(String(maxResults), 10) || 20, 5), 100); // Limitar entre 5 y 100
+      
+      // Variables para seguimiento
+      let total = 0;
+      let added = 0;
+      let errors = 0;
+      
+      // Obtener lista de categorías para clasificación
+      const categories = await storage.getCategories();
+      
+      // Términos de búsqueda en español e inglés para encontrar videos diversos del Real Madrid
+      const searchTerms = [
+        "Real Madrid recent matches",
+        "Real Madrid highlights",
+        "Real Madrid goals",
+        "Real Madrid transfers",
+        "Real Madrid mejores jugadas",
+        "Real Madrid entrevistas",
+        "Real Madrid rueda de prensa",
+        "Real Madrid entrenamiento",
+        "Real Madrid análisis táctico"
+      ];
+      
+      // Usamos Promise.all para ejecutar búsquedas en paralelo
+      const searchPromises = searchTerms.map(async (term) => {
+        try {
+          const { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails } = await import("./api/youtube");
+          const { convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } = await import("./api/youtube");
+          const { classifyContent } = await import("./api/openai");
+          
+          console.log(`Buscando videos con término: "${term}"`);
+          
+          // Buscar videos relacionados con el término
+          const searchResults = await searchYouTubeVideos(term, Math.ceil(limit / searchTerms.length));
+          
+          if (searchResults?.items && searchResults.items.length > 0) {
+            total += searchResults.items.length;
+            
+            // Obtener IDs de videos para buscar detalles
+            const videoIds = searchResults.items
+              .filter(item => item.id.videoId)
+              .map(item => item.id.videoId as string);
+            
+            if (videoIds.length > 0) {
+              // Obtener detalles completos de cada video
+              const videoDetails = await getYouTubeVideoDetails(videoIds);
+              
+              // Procesar cada video
+              for (const videoDetail of videoDetails.items) {
+                try {
+                  // Verificar si el video ya existe
+                  const existingVideo = await storage.getVideoByExternalId(videoDetail.id);
+                  
+                  if (!existingVideo) {
+                    // Convertir a nuestro formato
+                    const videoData = convertYouTubeVideoToSchema(videoDetail);
+                    
+                    // Verificar si el canal existe, si no, crearlo
+                    let channel = await storage.getChannelByExternalId(videoDetail.snippet.channelId);
+                    
+                    if (!channel) {
+                      try {
+                        const channelDetails = await getYouTubeChannelDetails([videoDetail.snippet.channelId]);
+                        if (channelDetails.items && channelDetails.items.length > 0) {
+                          const channelData = convertYouTubeChannelToSchema(channelDetails.items[0]);
+                          channel = await storage.createChannel(channelData);
+                        }
+                      } catch (e) {
+                        console.error("Error al crear canal:", e);
+                      }
+                    }
+                    
+                    // Clasificar el video con IA
+                    try {
+                      const classificationResult = await classifyContent(
+                        videoDetail.snippet.title,
+                        videoDetail.snippet.description,
+                        categories
+                      );
+                      
+                      if (classificationResult.relevance >= 0.6) {
+                        // El video es relevante para el Real Madrid
+                        videoData.categoryIds = classificationResult.categories.map(c => c.toString());
+                        await storage.createVideo(videoData);
+                        added++;
+                      }
+                    } catch (e) {
+                      console.error("Error al clasificar video:", e);
+                      errors++;
+                      
+                      // Intentar una clasificación básica como fallback
+                      const basicCategoryIds = categories
+                        .filter(cat => 
+                          videoDetail.snippet.title.toLowerCase().includes(cat.name.toLowerCase()) ||
+                          videoDetail.snippet.description.toLowerCase().includes(cat.name.toLowerCase())
+                        )
+                        .map(cat => cat.id.toString());
+                      
+                      if (basicCategoryIds.length > 0) {
+                        videoData.categoryIds = basicCategoryIds;
+                        await storage.createVideo(videoData);
+                        added++;
+                      }
+                    }
+                  }
+                } catch (e) {
+                  errors++;
+                  console.error("Error procesando video:", e);
+                  // Continuar con el siguiente video
+                  continue;
+                }
+              }
+            }
+          }
+        } catch (error) {
+          errors++;
+          console.error(`Error en término de búsqueda "${term}":`, error);
+        }
+      });
+      
+      await Promise.all(searchPromises);
+      
+      res.json({
+        message: `Búsqueda de contenido completada: ${added} de ${total} videos añadidos (${errors} errores)`,
+        total,
+        added,
+        errors
+      });
+    } catch (error: any) {
+      console.error("Error fetching all Real Madrid content:", error);
+      res.status(500).json({ 
+        error: "Error al buscar nuevo contenido del Real Madrid",
+        details: error.message
+      });
+    }
+  });
 
   // === PREMIUM CHANNELS ENDPOINTS ===
 
