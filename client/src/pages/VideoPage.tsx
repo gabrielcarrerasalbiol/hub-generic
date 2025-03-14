@@ -258,7 +258,7 @@ export default function VideoPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               {/* Video Player */}
-              <VideoPlayer embedUrl={video.embedUrl} title={video.title} />
+              <VideoPlayer embedUrl={video.embedUrl} title={video.title} videoId={video.id} />
               
               {/* Video Description con mejor formato - Colores Real Madrid */}
               <div className="bg-white rounded-lg shadow-md p-4 mt-4">
