@@ -24,8 +24,8 @@ export default function TrendingPage() {
   const [sortBy, setSortBy] = useState<string>("views");
   const [minViews, setMinViews] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [visibleVideos, setVisibleVideos] = useState<number>(12);
-  const VIDEOS_PER_PAGE = 12;
+  const [visibleVideos, setVisibleVideos] = useState<number>(9);
+  const VIDEOS_PER_PAGE = 9; // Cambiado a 9 para mostrar bloques de 3x3
   
   // Función para obtener el nombre de la categoría según su ID
   const getCategoryName = (categoryId: number): string => {
@@ -803,7 +803,7 @@ export default function TrendingPage() {
         </div>
       ) : sortedVideos.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {sortedVideos.slice(0, visibleVideos).map((video: Video) => (
               <VideoCard key={video.id} video={video} />
             ))}
@@ -829,13 +829,13 @@ export default function TrendingPage() {
             <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
               <TrendingUp className="h-8 w-8 text-amber-500" />
             </div>
-            <h3 className="text-xl font-semibold text-[#001C58] mb-2">No se encontraron videos</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-semibold text-[#001C58] dark:text-white mb-2">No se encontraron videos</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               No hay videos que coincidan con los filtros seleccionados. Intenta modificar los criterios de búsqueda.
             </p>
             <Button 
               variant="outline" 
-              className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+              className="border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
               onClick={() => {
                 setSearchQuery("");
                 setMinViews(0);
