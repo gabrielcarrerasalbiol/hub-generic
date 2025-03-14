@@ -58,11 +58,32 @@ export const useAuth = create<AuthState>((set, get) => ({
       set({ user: result.user, token: result.token, isLoading: false });
       return true;
     } catch (error: any) {
+      console.error('Error en el registro:', error);
+      
+      // Comprobar si el error tiene un mensaje específico del servidor
+      let errorMessage = 'Error en el registro';
+      
+      try {
+        // Intentar parsear el mensaje de error para obtener detalles específicos
+        if (error.message && error.message.includes(':')) {
+          const parts = error.message.split(':');
+          if (parts.length > 1) {
+            const errorBody = JSON.parse(parts[1].trim());
+            errorMessage = errorBody.error || errorMessage;
+          }
+        }
+      } catch (e) {
+        // Si hay algún error al parsear, usamos el mensaje original
+        errorMessage = error.message || errorMessage;
+      }
+      
       set({ 
-        error: error.message || 'Error en el registro', 
+        error: errorMessage, 
         isLoading: false 
       });
-      return false;
+      
+      // Lanzar el error para que pueda ser capturado por el componente
+      throw new Error(errorMessage);
     }
   },
   
@@ -79,11 +100,32 @@ export const useAuth = create<AuthState>((set, get) => ({
       set({ user: result.user, token: result.token, isLoading: false });
       return true;
     } catch (error: any) {
+      console.error('Error en el inicio de sesión:', error);
+      
+      // Comprobar si el error tiene un mensaje específico del servidor
+      let errorMessage = 'Error en el inicio de sesión';
+      
+      try {
+        // Intentar parsear el mensaje de error para obtener detalles específicos
+        if (error.message && error.message.includes(':')) {
+          const parts = error.message.split(':');
+          if (parts.length > 1) {
+            const errorBody = JSON.parse(parts[1].trim());
+            errorMessage = errorBody.error || errorMessage;
+          }
+        }
+      } catch (e) {
+        // Si hay algún error al parsear, usamos el mensaje original
+        errorMessage = error.message || errorMessage;
+      }
+      
       set({ 
-        error: error.message || 'Error en el inicio de sesión', 
+        error: errorMessage, 
         isLoading: false 
       });
-      return false;
+      
+      // Lanzar el error para que pueda ser capturado por el componente
+      throw new Error(errorMessage);
     }
   },
   

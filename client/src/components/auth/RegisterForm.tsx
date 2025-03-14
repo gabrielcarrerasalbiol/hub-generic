@@ -74,6 +74,13 @@ export default function RegisterForm() {
           description: error || 'No se pudo crear la cuenta. Intenta nuevamente.',
         });
       }
+    } catch (err: any) {
+      console.error('Error durante el registro:', err);
+      toast({
+        variant: 'destructive',
+        title: 'Error en el registro',
+        description: err.message || 'No se pudo crear la cuenta. Intenta nuevamente.',
+      });
     } finally {
       setIsSubmitting(false);
     }

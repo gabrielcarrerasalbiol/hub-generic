@@ -58,6 +58,13 @@ export default function LoginForm() {
           description: error || 'Usuario o contraseña incorrectos.',
         });
       }
+    } catch (err: any) {
+      console.error('Error durante el inicio de sesión:', err);
+      toast({
+        variant: 'destructive',
+        title: 'Error en el inicio de sesión',
+        description: err.message || 'Usuario o contraseña incorrectos.',
+      });
     } finally {
       setIsSubmitting(false);
     }
