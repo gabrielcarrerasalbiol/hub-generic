@@ -15,6 +15,9 @@ export default function Footer() {
           </div>
           
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+            <Link href="/sobre-nosotros" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
+              Sobre Nosotros
+            </Link>
             <Link href="/terminos" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
               {t('footer.terms')}
             </Link>

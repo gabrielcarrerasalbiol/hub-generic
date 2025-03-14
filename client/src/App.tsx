@@ -32,36 +32,43 @@ import { ThemeProvider } from '@/hooks/use-theme';
 
 // Definición de rutas en un único lugar para evitar re-renders innecesarios
 const Routes = () => {
-  const [location] = useLocation();
-  const isFullWidthPage = location === '/sobre-nosotros';
-  
+  // La ruta fullWidth ya está integrada en el componente AboutPage y se usa directamente
   return (
-    <Layout fullWidth={isFullWidthPage}>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/channel/:id" component={ChannelPage} />
-        <Route path="/video/:id" component={VideoPage} />
-        <Route path="/favorites" component={FavoritesPage} />
-        <Route path="/login" component={LoginPage} />
-        <Route path="/register" component={RegisterPage} />
-        <Route path="/profile" component={ProfilePage} />
-        <Route path="/admin" component={AdminPage} />
-        <Route path="/dashboard" component={DashboardPage} />
-        <Route path="/subscriptions" component={SubscriptionsPage} />
-        <Route path="/forgot-password" component={ForgotPasswordPage} />
-        <Route path="/reset-password" component={ResetPasswordPage} />
-        <Route path="/category/:categorySlug" component={CategoryPage} />
-        <Route path="/trending" component={TrendingPage} />
-        <Route path="/notifications" component={NotificationsPage} />
-        <Route path="/settings" component={SettingsPage} />
-        <Route path="/terminos" component={TermsPage} />
-        <Route path="/privacidad" component={PrivacyPage} />
-        <Route path="/cookies" component={CookiesPage} />
-        <Route path="/contacto" component={ContactPage} />
-        <Route path="/sobre-nosotros" component={AboutPage} />
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
+    <Switch>
+      <Route path="/sobre-nosotros">
+        <Layout fullWidth={true}>
+          <AboutPage />
+        </Layout>
+      </Route>
+      
+      <Route path="*">
+        <Layout>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/channel/:id" component={ChannelPage} />
+            <Route path="/video/:id" component={VideoPage} />
+            <Route path="/favorites" component={FavoritesPage} />
+            <Route path="/login" component={LoginPage} />
+            <Route path="/register" component={RegisterPage} />
+            <Route path="/profile" component={ProfilePage} />
+            <Route path="/admin" component={AdminPage} />
+            <Route path="/dashboard" component={DashboardPage} />
+            <Route path="/subscriptions" component={SubscriptionsPage} />
+            <Route path="/forgot-password" component={ForgotPasswordPage} />
+            <Route path="/reset-password" component={ResetPasswordPage} />
+            <Route path="/category/:categorySlug" component={CategoryPage} />
+            <Route path="/trending" component={TrendingPage} />
+            <Route path="/notifications" component={NotificationsPage} />
+            <Route path="/settings" component={SettingsPage} />
+            <Route path="/terminos" component={TermsPage} />
+            <Route path="/privacidad" component={PrivacyPage} />
+            <Route path="/cookies" component={CookiesPage} />
+            <Route path="/contacto" component={ContactPage} />
+            <Route component={NotFound} />
+          </Switch>
+        </Layout>
+      </Route>
+    </Switch>
   );
 };
 

@@ -11,12 +11,12 @@ export default function AboutPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Aquí iría la lógica para generar imágenes con IA, por ahora usamos urls estáticas
+    // Usamos imágenes disponibles en el proyecto
     setCarouselImages([
-      "/images/hub-madridista-1.jpg",
-      "/images/hub-madridista-2.jpg",
-      "/images/hub-madridista-3.jpg",
-      "/images/hub-madridista-4.jpg",
+      "/images/real-madrid-stadium.jpg",
+      "/images/RealMadridTracker-Replit.png",
+      "/images/RealMadridTracker-Replit(1).png",
+      "/images/RealMadridTracker-Replit(2).png",
     ]);
     setLoading(false);
   }, []);
