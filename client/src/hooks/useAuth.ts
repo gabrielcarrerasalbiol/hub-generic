@@ -15,6 +15,10 @@ interface AuthState {
   updateProfile: (data: Partial<{name: string, email: string, profilePicture: string}>) => Promise<boolean>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
   checkAuth: () => boolean;
+  isAdmin: () => boolean;
+  isPremium: () => boolean;
+  isFree: () => boolean;
+  getUserRole: () => string | null;
   processToken: (token: string) => Promise<void>;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
@@ -26,6 +30,7 @@ export interface UserAuth {
   email: string | null;
   name: string | null;
   profilePicture: string | null;
+  role: 'free' | 'premium' | 'admin';
 }
 
 interface AuthResponse {
@@ -156,6 +161,26 @@ export const useAuth = create<AuthState>((set, get) => ({
   checkAuth: () => {
     const { token } = get();
     return !!token;
+  },
+
+  isAdmin: () => {
+    const { user } = get();
+    return user?.role === 'admin';
+  },
+
+  isPremium: () => {
+    const { user } = get();
+    return user?.role === 'premium' || user?.role === 'admin';
+  },
+
+  isFree: () => {
+    const { user } = get();
+    return user?.role === 'free';
+  },
+
+  getUserRole: () => {
+    const { user } = get();
+    return user?.role || null;
   },
   
   processToken: async (token: string) => {

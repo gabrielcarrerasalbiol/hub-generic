@@ -160,6 +160,13 @@ export default function UserProfile() {
         <CardDescription>
           {user.email && <span className="block">{user.email}</span>}
           <span className="block">@{user.username}</span>
+          <span className="block mt-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary text-primary-foreground">
+              {user.role === 'admin' && 'Administrador'}
+              {user.role === 'premium' && 'Usuario Premium'}
+              {user.role === 'free' && 'Usuario Free'}
+            </span>
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent>
