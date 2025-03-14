@@ -673,14 +673,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/channels/:channelId/subscription", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const userId = (req.user as User).id;
-      const channelId = parseInt(req.params.channelId);
+      const channelIdParam = req.params.channelId;
+      let channelId: number;
       
-      if (isNaN(channelId)) {
-        return res.status(400).json({ message: "Invalid channel ID" });
+      // Verificar si el channelId es numérico o un ID externo
+      if (!isNaN(parseInt(channelIdParam))) {
+        channelId = parseInt(channelIdParam);
+      } else {
+        // Buscar el canal por ID externo
+        const channel = await storage.getChannelByExternalId(channelIdParam);
+        if (!channel) {
+          return res.status(404).json({ message: "Channel not found" });
+        }
+        channelId = channel.id;
       }
       
+      // Verificar suscripción
       const isSubscribed = await storage.isSubscribed(userId, channelId);
-      res.json({ isSubscribed });
+      const subscription = isSubscribed ? 
+        await storage.getSubscriptionsByUserId(userId).then(subs => 
+          subs.find(sub => sub.channelId === channelId)) : 
+        null;
+      
+      res.json({ 
+        isSubscribed, 
+        notificationsEnabled: subscription ? subscription.notificationsEnabled : false
+      });
     } catch (error) {
       console.error("Error checking subscription:", error);
       res.status(500).json({ message: "Failed to check subscription status" });
