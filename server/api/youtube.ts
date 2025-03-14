@@ -77,6 +77,54 @@ interface YouTubeChannelResult {
 }
 
 /**
+ * Obtiene todos los videos de un canal específico de YouTube
+ * @param channelId ID del canal de YouTube
+ * @param maxResults Número máximo de resultados a devolver (entre 1 y 50)
+ * @param pageToken Token de paginación para obtener la siguiente página de resultados
+ * @returns Objeto con los resultados de la búsqueda
+ */
+export async function getChannelVideos(
+  channelId: string,
+  maxResults = 50,
+  pageToken = ''
+): Promise<YouTubeSearchResult> {
+  try {
+    // Normalizar el canal ID por si se proporciona una URL completa
+    let normalizedChannelId = channelId;
+    
+    // Si es una URL de YouTube, extraer el ID del canal
+    if (channelId.includes('youtube.com')) {
+      // Extraer de URL del canal (/channel/ID o /c/NOMBRE o /user/NOMBRE)
+      const match = channelId.match(/\/channel\/([^\/\?]+)|\/c\/([^\/\?]+)|\/user\/([^\/\?]+)/);
+      if (match) {
+        normalizedChannelId = match[1] || match[2] || match[3];
+      }
+    }
+    
+    // Limitar el número de resultados entre 1 y 50 (limitación de la API de YouTube)
+    const limit = Math.min(Math.max(maxResults, 1), 50);
+    
+    const response = await axios.get(`${YOUTUBE_API_BASE_URL}/search`, {
+      params: {
+        part: 'snippet',
+        channelId: normalizedChannelId,
+        maxResults: limit,
+        pageToken,
+        order: 'date', // Ordenar por fecha de publicación (más recientes primero)
+        type: 'video',
+        relevanceLanguage: 'es', // Preferencia por videos en español
+        key: YOUTUBE_API_KEY
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error('YouTube API channel videos error:', error);
+    return { items: [] };
+  }
+}
+
+/**
  * Search YouTube for Real Madrid related content
  * Con preferencia por contenido en español y de canales populares
  */
