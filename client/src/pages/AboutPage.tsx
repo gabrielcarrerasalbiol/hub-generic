@@ -105,18 +105,6 @@ export default function AboutPage() {
         </Carousel>
       </section>
       
-      {/* Botón "Si eres socio, accede ya" */}
-      <section className="bg-[#FDBE11]/10 py-6 mb-8">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <Link href={user ? "/home" : "/login"}>
-            <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold px-6 py-3 rounded-lg shadow-md">
-              <UserCircle className="mr-2 h-5 w-5" />
-              {user ? "Ir a mi cuenta" : "Si eres socio, accede ya"}
-            </Button>
-          </Link>
-        </div>
-      </section>
-
       {/* About Hub Madridista */}
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
