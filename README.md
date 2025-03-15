@@ -59,11 +59,21 @@ Hub Madridista es una aplicación web full-stack que recopila, organiza y presen
 
 ## ⚙️ Configuración
 
+### Entornos de desarrollo y producción
+
+La aplicación soporta dos entornos distintos:
+
+- **Desarrollo**: Utiliza el archivo `.env` para desarrollo local
+- **Producción**: Utiliza el archivo `.env.production` para despliegue
+
+Para más detalles sobre la configuración de entornos, consulta [ENVIRONMENTS.md](ENVIRONMENTS.md).
+
 ### Variables de entorno necesarias
 
 ```env
 # Base de datos
 DATABASE_URL=postgresql://usuario:contraseña@host:puerto/nombre_db
+PROD_DATABASE_URL=postgresql://usuario:contraseña@host:puerto/nombre_db_produccion
 
 # Autenticación
 JWT_SECRET=tu_clave_secreta_jwt
@@ -73,6 +83,11 @@ SESSION_SECRET=tu_clave_secreta_sesion
 OPENAI_API_KEY=tu_clave_api_openai
 ANTHROPIC_API_KEY=tu_clave_api_anthropic
 GOOGLE_AI_API_KEY=tu_clave_api_gemini
+
+# Mailchimp (para newsletter)
+MAILCHIMP_API_KEY=tu_clave_api_mailchimp
+MAILCHIMP_SERVER_PREFIX=prefijo_servidor
+MAILCHIMP_AUDIENCE_ID=id_audiencia
 
 # OAuth (opcional)
 GOOGLE_CLIENT_ID=tu_id_cliente_google
@@ -85,6 +100,14 @@ GOOGLE_CLIENT_SECRET=tu_secreto_cliente_google
 - `npm run build`: Compila la aplicación para producción
 - `npm start`: Inicia la aplicación en modo producción
 - `npm run db:push`: Actualiza la estructura de la base de datos según el esquema
+
+### Scripts adicionales
+
+- `./setup-production.sh`: Configura el entorno de producción
+- `./migrate-export.sh`: Exporta datos del entorno de desarrollo
+- `./migrate-import.sh`: Importa datos al entorno de producción
+
+Para más detalles sobre la migración de datos, consulta [MIGRATION.md](MIGRATION.md).
 
 ## 💾 Base de datos
 
@@ -107,4 +130,8 @@ Las contribuciones son bienvenidas. Por favor, lee las directrices de contribuci
 
 ## ✉️ Contacto
 
-Para preguntas o sugerencias, por favor contacta con el equipo de desarrollo.
+Para preguntas o sugerencias, contacta con el equipo de desarrollo:
+
+- **Teléfono**: +34 667976076
+- **Twitter**: [@HubMadridistax](https://x.com/HubMadridistax)
+- **Email**: hubmadridista@gmail.com
