@@ -1,99 +1,84 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Award, Ban, Bell, CheckCircle, Crown, History, LineChart, Star, Trophy, Tv, UserCircle, UserPlus } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { useAuth } from "@/hooks/useAuth";
-import { apiRequest } from "@/lib/queryClient";
-import { useEffect, useState } from "react";
-import { Award, Bell, Crown, Ban, Trophy, LineChart, Star, CheckCircle, UserCircle, Tv, Smartphone, History, ChevronRight, Lock, UserPlus, LogIn } from "lucide-react";
+import { Smartphone } from "lucide-react";
 
 export default function AboutPage() {
   const { user } = useAuth();
-  const [heroImages, setHeroImages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Usamos las imágenes locales del Real Madrid que tenemos en carpeta pública
-    const images = [
-      "/images/oS2HuEQkJ3oQdHmK-generated_image.jpg",
-      "/images/J4WvzFO4Vrd5AnLt-generated_image.jpg",
-      "/images/9qpinTFKHhL8a2mx-generated_image.jpg",
-      "/images/jlyIqXxWaWqjqekk-generated_image.jpg",
-      "/images/xc5wANiFInHW8umi-generated_image.jpg"
-    ];
-    setHeroImages(images);
-    setLoading(false);
-  }, []);
+  // Texto para el carrusel con colores de Real Madrid
+  const heroSlides = [
+    {
+      title: "Hub Madridista",
+      subtitle: "El hogar digital para todos los madridistas",
+      bgColor: "bg-[#1E3A8A]",
+      textColor: "text-white"
+    },
+    {
+      title: "La Pasión Blanca",
+      subtitle: "Vive cada momento con la misma intensidad",
+      bgColor: "bg-white",
+      textColor: "text-[#1E3A8A]"
+    },
+    {
+      title: "El Sentimiento",
+      subtitle: "Unidos por los colores que nos representan",
+      bgColor: "bg-[#FDBE11]",
+      textColor: "text-[#1E3A8A]"
+    },
+    {
+      title: "La Afición Madridista",
+      subtitle: "El corazón que late en cada estadio",
+      bgColor: "bg-gradient-to-r from-[#1E3A8A] to-[#2C2152]",
+      textColor: "text-white"
+    }
+  ];
 
   return (
     <main className="flex-1 bg-gray-100 dark:bg-[#2C2152] overflow-y-auto">
-      {/* Hero Banner */}
-      <section className="relative w-full h-[600px] overflow-hidden">
-        {loading ? (
-          <div className="w-full h-full bg-gray-300 dark:bg-gray-700 animate-pulse flex items-center justify-center">
-            <p className="text-gray-500 dark:text-gray-400">Cargando imágenes...</p>
-          </div>
-        ) : (
-          <Carousel className="w-full h-full" opts={{ loop: true }}>
-            <CarouselContent>
-              {heroImages.map((imageUrl, index) => (
-                <CarouselItem key={index} className="w-full h-[600px]">
-                  <div 
-                    className="w-full h-full relative bg-cover bg-center"
-                    style={{ backgroundImage: `url(${imageUrl})` }}
-                  >
-                    {/* Agregamos capa de contraste para texto */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+      {/* Hero Banner - Simplificado con colores del Real Madrid */}
+      <section className="relative w-full overflow-hidden">
+        <Carousel className="w-full" opts={{ loop: true }}>
+          <CarouselContent>
+            {heroSlides.map((slide, index) => (
+              <CarouselItem key={index} className="w-full">
+                <div className={`w-full py-32 ${slide.bgColor}`}>
+                  <div className="max-w-6xl mx-auto px-4 text-center">
+                    <h1 className={`text-5xl md:text-6xl font-bold mb-6 ${slide.textColor}`}>{slide.title}</h1>
+                    <p className={`text-2xl md:text-3xl opacity-90 ${slide.textColor}`}>{slide.subtitle}</p>
                     
                     {index === 0 && (
-                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">Hub Madridista</h1>
-                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">El hogar digital para todos los madridistas</p>
-                      </div>
-                    )}
-                    
-                    {index === 1 && (
-                      <div className="absolute bottom-0 left-0 p-8 md:p-12 max-w-3xl">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-[#1E3A8A] drop-shadow-lg">La Pasión Blanca</h1>
-                        <p className="text-2xl md:text-3xl text-[#1E3A8A]/90 drop-shadow-md">Vive cada momento con la misma intensidad</p>
-                      </div>
-                    )}
-                    
-                    {index === 2 && (
-                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">El Sentimiento</h1>
-                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">Unidos por los colores que nos representan</p>
-                      </div>
-                    )}
-                    
-                    {index === 3 && (
-                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">La Afición</h1>
-                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">El corazón que late en cada estadio</p>
-                      </div>
-                    )}
-                    
-                    {index === 4 && (
-                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">Tu Experiencia</h1>
-                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">Todo el contenido madridista en un solo lugar</p>
+                      <div className="mt-8">
+                        <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold px-6 py-3 text-lg rounded-lg shadow-md">
+                          Descubrir más
+                        </Button>
                       </div>
                     )}
                   </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="absolute inset-x-0 bottom-5 flex justify-center gap-2 z-50">
-              {heroImages.map((_: string, index: number) => (
-                <div 
-                  key={index} 
-                  className="w-3 h-3 rounded-full bg-white/50 transition-all duration-300"
-                />
-              ))}
-            </div>
-            <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
-            <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
-          </Carousel>
-        )}
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="absolute inset-x-0 bottom-5 flex justify-center gap-2 z-50">
+            {heroSlides.map((_, index) => (
+              <div 
+                key={index} 
+                className="w-3 h-3 rounded-full bg-white/50 transition-all duration-300"
+              />
+            ))}
+          </div>
+          <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
+          <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
+        </Carousel>
       </section>
       
       {/* Botón "Si eres socio, accede ya" */}
@@ -268,12 +253,10 @@ export default function AboutPage() {
             <p className="text-gray-600 dark:text-gray-300 italic">
               "Hub Madridista ha cambiado la forma en que sigo al Real Madrid. Toda la información en un solo lugar y categorizada perfectamente. ¡Increíble servicio!"
             </p>
-            <div className="mt-4 text-[#FDBE11]">
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
+            <div className="mt-4 flex">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-5 h-5 text-[#FDBE11] mr-1" fill="#FDBE11" />
+              ))}
             </div>
           </div>
 
@@ -290,12 +273,11 @@ export default function AboutPage() {
             <p className="text-gray-600 dark:text-gray-300 italic">
               "Las notificaciones personalizadas son geniales, nunca me pierdo contenido nuevo de mis canales favoritos. La suscripción premium es totalmente recomendable."
             </p>
-            <div className="mt-4 text-[#FDBE11]">
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star-half-alt"></i>
+            <div className="mt-4 flex">
+              {[...Array(4)].map((_, i) => (
+                <Star key={i} className="w-5 h-5 text-[#FDBE11] mr-1" fill="#FDBE11" />
+              ))}
+              <Star className="w-5 h-5 text-[#FDBE11] mr-1" fill="#FDBE11" strokeWidth={3} />
             </div>
           </div>
 
@@ -312,12 +294,11 @@ export default function AboutPage() {
             <p className="text-gray-600 dark:text-gray-300 italic">
               "Incluso la versión gratuita es excepcional. La interfaz es intuitiva y encuentro todo el contenido relevante rápidamente. Definitivamente voy a actualizar a Premium."
             </p>
-            <div className="mt-4 text-[#FDBE11]">
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="far fa-star"></i>
+            <div className="mt-4 flex">
+              {[...Array(4)].map((_, i) => (
+                <Star key={i} className="w-5 h-5 text-[#FDBE11] mr-1" fill="#FDBE11" />
+              ))}
+              <Star className="w-5 h-5 text-[#FDBE11]/30 mr-1" />
             </div>
           </div>
         </div>
@@ -344,42 +325,35 @@ export default function AboutPage() {
                     Registrarse Ahora
                   </Button>
                 </Link>
-                <Link href="/login">
-                  <Button variant="outline" className="bg-transparent border-[#1E3A8A] text-[#1E3A8A] dark:border-white dark:text-white hover:bg-[#1E3A8A]/10 font-medium text-lg px-8 py-3 rounded-lg">
-                    <LogIn className="mr-2 h-5 w-5" />
-                    Iniciar Sesión
-                  </Button>
-                </Link>
               </div>
-              
-              <div className="mt-6 flex justify-center">
-                <Link href="/register">
-                  <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold text-xl px-10 py-4 rounded-full shadow-lg animate-pulse">
-                    <Crown className="mr-2 h-5 w-5" />
-                    ¡Suscríbete Ahora!
-                    <ChevronRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-              
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
-                <Lock className="inline-block text-[#FDBE11] h-4 w-4 mr-1" />
-                Acceso instantáneo a todo el contenido premium
-              </p>
             </div>
           ) : (
-            user.role !== 'premium' && (
-              <div className="mt-6">
-                <Link href="/profile">
-                  <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold text-xl px-10 py-4 rounded-full shadow-lg animate-pulse">
-                    <Crown className="mr-2 h-5 w-5" />
-                    ¡Actualiza a Premium!
-                    <ChevronRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-            )
+            <Link href="/home">
+              <Button className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/80 text-white font-medium text-lg px-8 py-3 rounded-lg">
+                Explorar Contenido
+              </Button>
+            </Link>
           )}
+        </div>
+      </section>
+
+      {/* Footer Branding */}
+      <section className="bg-[#1E3A8A] text-white py-12">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">Hub Madridista</h2>
+          <p className="text-sm text-white/70 mb-4">La mejor plataforma de contenido para aficionados del Real Madrid</p>
+          <div className="flex justify-center gap-6">
+            <Link href="/terminos">
+              <p className="text-sm text-white/70 hover:text-white transition">Términos y Condiciones</p>
+            </Link>
+            <Link href="/privacidad">
+              <p className="text-sm text-white/70 hover:text-white transition">Política de Privacidad</p>
+            </Link>
+            <Link href="/contacto">
+              <p className="text-sm text-white/70 hover:text-white transition">Contacto</p>
+            </Link>
+          </div>
+          <p className="mt-6 text-xs text-white/50">© 2025 Hub Madridista. Todos los derechos reservados.</p>
         </div>
       </section>
     </main>
