@@ -2,8 +2,7 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
-import { classifyContent, enhanceSearch } from "./api/openai";
-import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } from "./api/anthropic";
+import { AIService } from "./services/aiService";
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
 import { recategorizeVideo, recategorizeAllVideos } from "./api/categoryUpdater";
 import { generateSummaryForVideo, generateSummariesForAllVideos } from "./api/summaryUpdater";
@@ -95,24 +94,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Try to classify content, but don't block if it fails
           let categoryIds: number[] = [];
           try {
-            // First try with Anthropic Claude (primary)
-            try {
-              const classification = await classifyContentWithAnthropicClaude(
-                video.snippet.title,
-                video.snippet.description,
-                categories
-              );
-              categoryIds = classification.categories;
-            } catch (claudeError) {
-              console.warn("Claude classification failed, falling back to Gemini:", claudeError);
-              // Fallback to Gemini
-              const classification = await classifyContent(
-                video.snippet.title,
-                video.snippet.description,
-                categories
-              );
-              categoryIds = classification.categories;
-            }
+            // Usar servicio centralizado AIService con DeepSeek y fallback automático
+            const classification = await AIService.classifyContent(
+              video.snippet.title,
+              video.snippet.description,
+              categories
+            );
+            categoryIds = classification.categories;
           } catch (error) {
             console.warn("Could not classify video content with any AI service, continuing without categories:", error);
           }
@@ -1157,15 +1145,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
                       }
                     }
                     
-                    // Clasificar el video con IA
+                    // Clasificar el video con AIService (sistema centralizado con DeepSeek)
                     try {
-                      const classificationResult = await classifyContent(
+                      const classificationResult = await AIService.classifyContent(
                         videoDetail.snippet.title,
                         videoDetail.snippet.description,
                         categories
                       );
                       
-                      if (classificationResult.relevance >= 0.6) {
+                      if (classificationResult.relevance >= 60) { // AIService usa escala 0-100
                         // El video es relevante para el Real Madrid
                         videoData.categoryIds = classificationResult.categories.map(c => c.toString());
                         await storage.createVideo(videoData);
