@@ -1595,6 +1595,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Importar videos por plataforma específica
+  app.post("/api/videos/import-by-platform", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { platform, maxResults = 20 } = req.body;
+      const limit = Math.min(Math.max(parseInt(String(maxResults)) || 20, 5), 50); // Limitar entre 5 y 50
+      
+      // Validar la plataforma
+      if (!PlatformType.safeParse(platform).success || platform === "all") {
+        return res.status(400).json({ error: "Plataforma inválida o no específica" });
+      }
+      
+      let result;
+      switch (platform) {
+        case "youtube":
+          const { fetchAndProcessNewVideos } = await import("./api/videoFetcher");
+          result = await fetchAndProcessNewVideos(limit);
+          break;
+        case "twitch":
+          // Importar videos de Twitch
+          const { searchTwitchVideos, convertTwitchVideoToSchema } = await import("./api/twitch");
+          const videos = await searchTwitchVideos("Real Madrid", limit);
+          
+          let added = 0;
+          let total = videos.length;
+          
+          for (const video of videos) {
+            try {
+              const videoData = convertTwitchVideoToSchema(video);
+              const existingVideo = await storage.getVideoByExternalId(video.id);
+              
+              if (!existingVideo) {
+                await storage.createVideo(videoData);
+                added++;
+              }
+            } catch (error) {
+              console.error("Error importing Twitch video:", error);
+            }
+          }
+          
+          result = { total, added };
+          break;
+        default:
+          return res.status(400).json({ 
+            error: "Plataforma no implementada",
+            message: "La importación para esta plataforma aún no está disponible" 
+          });
+      }
+      
+      res.json({
+        message: `Importación de ${platform} completada: ${result.added} videos añadidos de ${result.total} encontrados`,
+        ...result
+      });
+    } catch (error: any) {
+      console.error(`Error importing videos from platform:`, error);
+      res.status(500).json({ 
+        error: "Error al importar videos de la plataforma",
+        details: error.message
+      });
+    }
+  });
+  
   // Endpoint para eliminar un video (solo admin)
   app.delete("/api/videos/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {

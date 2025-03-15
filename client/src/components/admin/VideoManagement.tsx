@@ -68,6 +68,8 @@ export default function VideoManagement() {
   const [selectedVideos, setSelectedVideos] = useState<number[]>([]);
   const [isDeletingMultiple, setIsDeletingMultiple] = useState(false);
   const [isGeneratingSummaries, setIsGeneratingSummaries] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<string>("youtube");
+  const [isImportingByPlatform, setIsImportingByPlatform] = useState(false);
   
   // Estado para paginación
   const [visibleVideos, setVisibleVideos] = useState(20);
@@ -335,6 +337,34 @@ export default function VideoManagement() {
         variant: "destructive",
       });
       setIsGeneratingSummaries(false);
+    }
+  });
+  
+  // Mutación para importar videos por plataforma específica
+  const importByPlatformMutation = useMutation({
+    mutationFn: ({ platform, maxResults }: { platform: string; maxResults: number }) => {
+      setIsImportingByPlatform(true);
+      return apiRequest('/api/videos/import-by-platform', {
+        method: 'POST',
+        body: JSON.stringify({ platform, maxResults })
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
+      toast({
+        title: `Importación de ${selectedPlatform} completada`,
+        description: `${data.added} nuevos vídeos añadidos de ${data.total} encontrados`,
+      });
+      setIsImportingByPlatform(false);
+    },
+    onError: (error: any) => {
+      console.error(`Error importing videos from ${selectedPlatform}:`, error);
+      toast({
+        title: "Error",
+        description: error?.details || `No se pudieron importar videos de ${selectedPlatform}. Verifica las claves de API.`,
+        variant: "destructive",
+      });
+      setIsImportingByPlatform(false);
     }
   });
 
