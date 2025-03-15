@@ -23,6 +23,12 @@ const initMailchimp = () => {
  */
 export async function isEmailSubscribed(email: string): Promise<boolean> {
   try {
+    // Verificar que tenemos el audience_id configurado
+    if (!process.env.MAILCHIMP_AUDIENCE_ID || process.env.MAILCHIMP_AUDIENCE_ID === 'your_audience_id_here') {
+      console.warn('MAILCHIMP_AUDIENCE_ID no está configurado correctamente para verificar suscripción');
+      return false;
+    }
+    
     const client = initMailchimp();
     
     // Crear un hash MD5 del email en minúsculas para identificar al suscriptor
@@ -33,7 +39,7 @@ export async function isEmailSubscribed(email: string): Promise<boolean> {
     
     // Intenta obtener el suscriptor por su hash
     await client.lists.getListMember(
-      process.env.MAILCHIMP_AUDIENCE_ID!,
+      process.env.MAILCHIMP_AUDIENCE_ID,
       emailHash
     );
     
@@ -47,7 +53,7 @@ export async function isEmailSubscribed(email: string): Promise<boolean> {
     
     // Para cualquier otro error, lo consideramos como un problema técnico
     console.error('Error verificando suscripción en Mailchimp:', error);
-    throw new Error('Error al verificar la suscripción');
+    return false; // Cambiamos para manejar mejor los errores
   }
 }
 
@@ -62,6 +68,15 @@ export async function subscribeToNewsletter(email: string, name?: string): Promi
   message: string;
 }> {
   try {
+    // Verificar que tenemos el audience_id configurado
+    if (!process.env.MAILCHIMP_AUDIENCE_ID || process.env.MAILCHIMP_AUDIENCE_ID === 'your_audience_id_here') {
+      console.warn('MAILCHIMP_AUDIENCE_ID no está configurado correctamente');
+      return {
+        success: false,
+        message: 'La suscripción a la newsletter no está disponible en este momento. Por favor, inténtalo más tarde.'
+      };
+    }
+    
     // Verificar si el email ya está suscrito
     const isSubscribed = await isEmailSubscribed(email);
     
@@ -85,7 +100,7 @@ export async function subscribeToNewsletter(email: string, name?: string): Promi
     }
     
     // Suscribir al usuario
-    await client.lists.addListMember(process.env.MAILCHIMP_AUDIENCE_ID!, {
+    await client.lists.addListMember(process.env.MAILCHIMP_AUDIENCE_ID, {
       email_address: email,
       status: 'subscribed', // o 'pending' para doble opt-in
       merge_fields: {
