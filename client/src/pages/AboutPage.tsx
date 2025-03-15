@@ -12,16 +12,15 @@ export default function AboutPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Usamos degradados personalizados con colores del Real Madrid
-    // Esto asegura que el carrusel se vea correctamente incluso sin acceso a las imágenes
-    const colors = [
-      "bg-gradient-to-r from-[#1E3A8A] to-[#1E3A8A]/70", // Azul Real Madrid
-      "bg-gradient-to-br from-[#FFFFFF] via-[#F5F5F5] to-[#EAEAEA]", // Blanco Real Madrid
-      "bg-gradient-to-tl from-[#FDBE11]/30 via-[#1E3A8A] to-[#0F172A]", // Combinación azul y dorado
-      "bg-gradient-to-br from-[#1E3A8A] via-[#334188] to-[#FDBE11]/20", // Degradado azul y dorado
-      "bg-gradient-to-r from-[#0F172A] via-[#1E3A8A]/80 to-[#FDBE11]/20", // Otra variante azul y dorado
+    // Usamos las imágenes locales del Real Madrid que tenemos en carpeta pública
+    const images = [
+      "/images/oS2HuEQkJ3oQdHmK-generated_image.jpg",
+      "/images/J4WvzFO4Vrd5AnLt-generated_image.jpg",
+      "/images/9qpinTFKHhL8a2mx-generated_image.jpg",
+      "/images/jlyIqXxWaWqjqekk-generated_image.jpg",
+      "/images/xc5wANiFInHW8umi-generated_image.jpg"
     ];
-    setHeroImages(colors);
+    setHeroImages(images);
     setLoading(false);
   }, []);
 
@@ -39,7 +38,8 @@ export default function AboutPage() {
               {heroImages.map((imageUrl, index) => (
                 <CarouselItem key={index} className="w-full h-[600px]">
                   <div 
-                    className={`w-full h-full relative ${imageUrl}`}
+                    className="w-full h-full relative bg-cover bg-center"
+                    style={{ backgroundImage: `url(${imageUrl})` }}
                   >
                     {/* Agregamos capa de contraste para texto */}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
