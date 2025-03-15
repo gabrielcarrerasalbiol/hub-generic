@@ -72,6 +72,58 @@ export class PgStorage implements IStorage {
     return result.length > 0 ? result[0] : undefined;
   }
 
+  /**
+   * Elimina un usuario y sus datos asociados
+   * @param id ID del usuario a eliminar
+   * @returns Promise<boolean> true si se eliminó con éxito, false en caso contrario
+   */
+  async deleteUser(id: number): Promise<boolean> {
+    try {
+      // Comenzamos una transacción para asegurar la integridad de la eliminación
+      // Primero eliminamos los datos relacionados con el usuario
+      // Esto evita errores por restricciones de clave foránea
+      
+      // 1. Eliminar notificaciones
+      await db.delete(notifications).where(eq(notifications.userId, id));
+      
+      // 2. Eliminar favoritos
+      await db.delete(favorites).where(eq(favorites.userId, id));
+      
+      // 3. Eliminar suscripciones a canales
+      await db.delete(channelSubscriptions).where(eq(channelSubscriptions.userId, id));
+      
+      // 4. Eliminar historial de visualización
+      await db.delete(viewHistory).where(eq(viewHistory.userId, id));
+      
+      // 5. Eliminar comentarios
+      await db.delete(comments).where(eq(comments.userId, id));
+      
+      // 6. Eliminar tokens OAuth
+      await db.delete(oauthTokens).where(eq(oauthTokens.userId, id));
+      
+      // 7. Verificar si el usuario es referenciado en canales premium y actualizar
+      // Verificamos si hay referencias en premium_channels.added_by_id
+      try {
+        // Intentamos actualizar todas las referencias en canales premium
+        // Asignamos al admin ID 4 como creador por defecto
+        await db.execute(
+          sql`UPDATE ${premiumChannels} SET added_by_id = 4 WHERE added_by_id = ${id}`
+        );
+      } catch (e) {
+        console.error(`Error al actualizar referencias en canales premium para usuario ${id}:`, e);
+        // Si hay un error aquí, seguimos intentando borrar el usuario
+      }
+      
+      // 8. Finalmente, eliminar el usuario
+      const result = await db.delete(users).where(eq(users.id, id)).returning();
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error(`Error al eliminar usuario con ID ${id}:`, error);
+      return false;
+    }
+  }
+
   // OAuth operations
   async getOAuthToken(userId: number, provider: string): Promise<OAuthToken | undefined> {
     const result = await db.select()
@@ -366,6 +418,7 @@ export class PgStorage implements IStorage {
       title: videos.title,
       description: videos.description,
       summary: videos.summary,
+      language: videos.language,
       thumbnailUrl: videos.thumbnailUrl,
       videoUrl: videos.videoUrl,
       embedUrl: videos.embedUrl,

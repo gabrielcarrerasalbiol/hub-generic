@@ -19,6 +19,7 @@ export interface IStorage {
   getUserByAppleId(appleId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: number): Promise<boolean>;
   
   // OAuth operations
   getOAuthToken(userId: number, provider: string): Promise<OAuthToken | undefined>;

@@ -887,6 +887,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint para eliminar un usuario (solo para administradores)
+  app.delete("/api/users/:userId", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Verificar que el ID de usuario es válido
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "ID de usuario no válido" });
+      }
+      
+      // No permitir eliminar al propio usuario administrador que realiza la solicitud
+      if (req.user && req.user.id === userId) {
+        return res.status(403).json({ 
+          message: "No puedes eliminar tu propia cuenta de administrador" 
+        });
+      }
+      
+      // Verificar que el usuario existe
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+      
+      // No permitir eliminar otros administradores (solo un super admin podría)
+      if (user.role === 'admin' && req.user && req.user.role !== 'super_admin') {
+        return res.status(403).json({ 
+          message: "No tienes permisos para eliminar otros administradores" 
+        });
+      }
+      
+      // Proceder con la eliminación
+      const deleted = await storage.deleteUser(userId);
+      
+      if (deleted) {
+        res.status(200).json({ 
+          message: `Usuario ${user.username} eliminado correctamente` 
+        });
+      } else {
+        res.status(500).json({ 
+          message: "No se pudo eliminar el usuario" 
+        });
+      }
+    } catch (error) {
+      console.error("Error eliminando usuario:", error);
+      res.status(500).json({ 
+        message: "Error al procesar la solicitud de eliminación" 
+      });
+    }
+  });
+
   // Endpoint para recategorizar un video específico usando IA
   app.post("/api/videos/:id/recategorize", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
