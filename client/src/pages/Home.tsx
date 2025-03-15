@@ -263,6 +263,43 @@ export default function Home() {
         </section>
       )}
 
+      {/* Latest Videos Section */}
+      <section className="mb-10">
+        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Últimos Videos</h2>
+        
+        {isLatestLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <Skeleton className="w-full aspect-video" />
+                <div className="p-3">
+                  <Skeleton className="h-5 w-full mb-3" />
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
+                      <Skeleton className="w-6 h-6 rounded-full" />
+                      <Skeleton className="h-4 w-24 ml-2" />
+                    </div>
+                    <Skeleton className="h-4 w-4" />
+                  </div>
+                  <Skeleton className="h-3 w-40 mt-2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : latestVideos.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Mostramos solo los primeros 9 videos (3 filas de 3) */}
+            {latestVideos.slice(0, 9).map((video) => (
+              <VideoCard key={video.id} video={video} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
+            <p className="text-[#001C58] dark:text-white">No hay videos recientes disponibles en este momento.</p>
+          </div>
+        )}
+      </section>
+      
       {/* Trending Videos Section */}
       <section className="mb-10">
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Videos Populares Esta Semana</h2>
@@ -348,54 +385,7 @@ export default function Home() {
           </div>
         )}
       </section>
-      
-      {/* Latest Videos Section */}
-      <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Últimos Videos</h2>
-        
-        {isLatestLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <Skeleton className="w-full aspect-video" />
-                <div className="p-3">
-                  <Skeleton className="h-5 w-full mb-3" />
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <Skeleton className="w-6 h-6 rounded-full" />
-                      <Skeleton className="h-4 w-24 ml-2" />
-                    </div>
-                    <Skeleton className="h-4 w-4" />
-                  </div>
-                  <Skeleton className="h-3 w-40 mt-2" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : latestVideos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Mostramos solo los primeros 9 videos (3 filas de 3) */}
-            {latestVideos.slice(0, 9).map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58] dark:text-white">No hay videos recientes disponibles en este momento.</p>
-          </div>
-        )}
-        
-        <div className="mt-4 text-center">
-          <Link href="/category/latest">
-            <Button 
-              variant="outline" 
-              className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
-            >
-              Ver más videos
-            </Button>
-          </Link>
-        </div>
-      </section>
+
     </main>
   );
 }
