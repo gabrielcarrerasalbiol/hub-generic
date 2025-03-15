@@ -117,40 +117,10 @@ export default function RegisterForm() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="compact-form-item">
                     <FormLabel>Correo electrónico</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="tu@email.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nombre completo</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Tu nombre" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contraseña*</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Contraseña" {...field} />
+                      <Input type="email" placeholder="tu@email.com" {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -159,18 +129,48 @@ export default function RegisterForm() {
             </div>
             
             <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirmar contraseña*</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Confirma contraseña" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="compact-form-item">
+                    <FormLabel>Nombre completo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu nombre" {...field} className="h-9" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="compact-form-item">
+                    <FormLabel>Contraseña*</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Contraseña" {...field} className="h-9" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem className="compact-form-item">
+                    <FormLabel>Confirmar contraseña*</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Confirma contraseña" {...field} className="h-9" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             
             <Button type="submit" className="w-full mt-4" disabled={isSubmitting}>
               {isSubmitting ? 'Registrando...' : 'Crear cuenta'}
