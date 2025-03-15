@@ -366,12 +366,17 @@ sudo chmod +x /usr/local/bin/backup-hubmadridista-db.sh
 
 Para actualizar a una nueva versión:
 
-#### Método recomendado (usando scripts de automatización):
+#### Método recomendado (verificación previa y scripts de automatización):
 
 ```bash
 cd /var/www/hubmadridista
 git pull
 npm install
+
+# Verificar que todo esté correctamente configurado
+./check-production.sh
+
+# Si la verificación es exitosa, continuar con la actualización
 ./setup-production.sh
 pm2 restart hubmadridista
 ```
@@ -382,6 +387,9 @@ pm2 restart hubmadridista
 cd /var/www/hubmadridista
 git pull
 npm install
+
+# Verificar configuración
+./check-production.sh
 
 # Actualizar base de datos (solo si hay cambios en el esquema)
 ./setup-production-db.sh
@@ -400,6 +408,9 @@ Si necesitas mantener los datos al actualizar:
 ```bash
 cd /var/www/hubmadridista
 
+# Verificar configuración
+./check-production.sh
+
 # Exportar datos del entorno actual
 ./migrate-export.sh
 
@@ -416,6 +427,8 @@ npm install
 # Reiniciar aplicación
 pm2 restart hubmadridista
 ```
+
+> **Nota importante**: El script `check-production.sh` verifica la configuración del entorno de producción y debe ejecutarse antes de cualquier operación de actualización para evitar problemas. Si falla, soluciona los problemas indicados antes de continuar.
 
 ## Solución de problemas comunes
 

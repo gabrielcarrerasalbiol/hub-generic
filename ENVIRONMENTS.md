@@ -66,6 +66,23 @@ Configuración específica para el entorno de producción. En general, debe usar
 
 Hemos creado varios scripts para facilitar la gestión de entornos:
 
+### `check-production.sh`
+
+Script para verificar la configuración del entorno de producción:
+
+```bash
+./check-production.sh
+```
+
+Este script:
+- Verifica que el archivo `.env.production` exista
+- Comprueba que todas las variables críticas estén configuradas
+- Revisa variables recomendadas y opcionales
+- Prueba la conexión a la base de datos de producción
+- Genera un informe detallado sobre el estado de la configuración
+
+> **Recomendación**: Ejecuta este script antes de cualquier despliegue para verificar que todo está correctamente configurado.
+
 ### `setup-production.sh`
 
 Script para configurar el entorno de producción:
@@ -201,10 +218,13 @@ Cuando cambies el esquema (agregando nuevas tablas, columnas, etc.):
 
 Para desplegar en Replit:
 
-1. Configura correctamente `.env.production`
-2. Ejecuta `./setup-production.sh` para preparar el build
-3. Usa el botón "Deploy" en la interfaz de Replit
-4. Verifica que la aplicación funcione correctamente después del despliegue
+1. Configura correctamente `.env.production` (usa `.env.production.example` como base)
+2. Ejecuta `./check-production.sh` para verificar que todo esté correctamente configurado
+3. Ejecuta `./setup-production.sh` para preparar el build
+4. Usa el botón "Deploy" en la interfaz de Replit
+5. Verifica que la aplicación funcione correctamente después del despliegue
+
+> **Flujo recomendado**: Siempre ejecuta primero `./check-production.sh` antes de cualquier despliegue para evitar problemas.
 
 ### Configuración de Dominio
 
