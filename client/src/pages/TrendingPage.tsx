@@ -42,12 +42,12 @@ export default function TrendingPage() {
     return categoryMap[categoryId] || `Categoría ${categoryId}`;
   };
 
-  // Fetch trending videos
+  // Fetch trending videos - pedimos 100 videos en lugar de los 50 por defecto
   const { 
     data: trendingVideos = [], 
     isLoading 
   } = useQuery({
-    queryKey: ["/api/videos/trending"],
+    queryKey: ["/api/videos/trending?displayLimit=100"],
   });
 
   // Filter and sort trending videos
