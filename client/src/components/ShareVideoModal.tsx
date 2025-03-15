@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Copy, Mail, Check, Share2 } from "lucide-react";
+import { FaTwitter, FaFacebook, FaWhatsapp, FaLinkedin, FaTelegram } from "react-icons/fa";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -40,7 +41,6 @@ export default function ShareVideoModal({ videoId, videoTitle, isOpen, onClose }
       toast({
         title: "Enlace copiado",
         description: "El enlace se ha copiado al portapapeles",
-        variant: "success",
       });
       
       // Resetear el estado después de 2 segundos
@@ -94,7 +94,6 @@ export default function ShareVideoModal({ videoId, videoTitle, isOpen, onClose }
         toast({
           title: "Email enviado",
           description: "Se ha enviado el enlace por email correctamente",
-          variant: "success",
         });
         
         // Resetear el estado después de 3 segundos
@@ -117,7 +116,7 @@ export default function ShareVideoModal({ videoId, videoTitle, isOpen, onClose }
   };
 
   // Función para compartir en redes sociales
-  const shareOnSocial = (platform: "twitter" | "facebook" | "whatsapp") => {
+  const shareOnSocial = (platform: "twitter" | "facebook" | "whatsapp" | "linkedin" | "telegram") => {
     let shareUrl = "";
     
     const encodedTitle = encodeURIComponent(`¡Mira este video de Real Madrid! - ${videoTitle}`);
@@ -132,6 +131,12 @@ export default function ShareVideoModal({ videoId, videoTitle, isOpen, onClose }
         break;
       case "whatsapp":
         shareUrl = `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`;
+        break;
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+        break;
+      case "telegram":
+        shareUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`;
         break;
     }
     
@@ -177,30 +182,56 @@ export default function ShareVideoModal({ videoId, videoTitle, isOpen, onClose }
             
             <div className="pt-4">
               <h4 className="text-sm font-medium mb-2">Compartir en redes sociales</h4>
-              <div className="flex space-x-2">
+              <div className="grid grid-cols-5 gap-2 mb-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => shareOnSocial("twitter")}
-                  className="flex-1"
+                  className="flex items-center justify-center gap-1"
+                  title="Compartir en Twitter"
                 >
-                  Twitter
+                  <FaTwitter className="text-[#1DA1F2]" />
+                  <span className="sr-only md:not-sr-only md:inline-block">Twitter</span>
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => shareOnSocial("facebook")}
-                  className="flex-1"
+                  className="flex items-center justify-center gap-1"
+                  title="Compartir en Facebook"
                 >
-                  Facebook
+                  <FaFacebook className="text-[#4267B2]" />
+                  <span className="sr-only md:not-sr-only md:inline-block">Facebook</span>
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => shareOnSocial("whatsapp")}
-                  className="flex-1"
+                  className="flex items-center justify-center gap-1"
+                  title="Compartir en WhatsApp"
                 >
-                  WhatsApp
+                  <FaWhatsapp className="text-[#25D366]" />
+                  <span className="sr-only md:not-sr-only md:inline-block">WhatsApp</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => shareOnSocial("linkedin")}
+                  className="flex items-center justify-center gap-1"
+                  title="Compartir en LinkedIn"
+                >
+                  <FaLinkedin className="text-[#0077B5]" />
+                  <span className="sr-only md:not-sr-only md:inline-block">LinkedIn</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => shareOnSocial("telegram")}
+                  className="flex items-center justify-center gap-1"
+                  title="Compartir en Telegram"
+                >
+                  <FaTelegram className="text-[#0088cc]" />
+                  <span className="sr-only md:not-sr-only md:inline-block">Telegram</span>
                 </Button>
               </div>
             </div>
