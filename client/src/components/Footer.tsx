@@ -57,18 +57,10 @@ export default function Footer() {
             </div>
             
             <div className="flex space-x-4 pt-2">
-              <a href="https://twitter.com/realmadrid" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
+              <a href="https://x.com/HubMadridistax" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="https://facebook.com/realmadrid" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="https://instagram.com/realmadrid" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="https://youtube.com/realmadrid" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
-                <Youtube className="h-5 w-5" />
-              </a>
+              {/* Solo dejamos el enlace a X/Twitter hasta que tengamos las demás redes sociales */}
             </div>
           </div>
           
