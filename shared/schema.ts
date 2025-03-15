@@ -228,7 +228,7 @@ export const UserRole = z.enum(["free", "premium", "admin"]);
 export type UserRole = z.infer<typeof UserRole>;
 
 // Platform type for frontend filtering
-export const PlatformType = z.enum(["all", "youtube", "tiktok", "twitter", "instagram"]);
+export const PlatformType = z.enum(["all", "youtube", "tiktok", "twitter", "instagram", "twitch"]);
 export type PlatformType = z.infer<typeof PlatformType>;
 
 // Category type for frontend filtering

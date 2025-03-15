@@ -9,11 +9,20 @@ import {
   getYouTubeChannelDetails,
   convertYouTubeChannelToSchema
 } from './youtube';
+import {
+  searchTwitchVideos,
+  convertTwitchVideoToSchema,
+  searchTwitchChannels,
+  getTwitchUserDetails,
+  convertTwitchChannelToSchema,
+  importTwitchChannelVideos
+} from './twitch';
 import { classifyContent } from './openai';
 import { classifyContentWithAnthropicClaude } from './anthropic';
 import { classifyContentWithGemini, generateVideoSummary } from './gemini';
 import { sendNewVideoNotificationEmail } from './emailService';
 import { processVideoNotifications } from './notificationService';
+import { AIService } from '../services/aiService';
 
 /**
  * Busca nuevos videos en YouTube relacionados con el Real Madrid 
