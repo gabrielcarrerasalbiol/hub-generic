@@ -13,11 +13,11 @@ export default function AboutPage() {
   useEffect(() => {
     // Usamos las nuevas imágenes del Real Madrid para el carrusel
     setCarouselImages([
-      "/images/real-madrid-hero.jpg",
-      "/images/real-madrid-fans-stadium.jpg",
-      "/images/real-madrid-fans-back.jpg",
-      "/images/real-madrid-fans-singing.jpg",
-      "/images/real-madrid-ultimate-fan.jpg",
+      "https://i.imgur.com/OZ5V3yH.jpg", // real-madrid-hero.jpg
+      "https://i.imgur.com/NvWXnQA.jpg", // real-madrid-fans-stadium.jpg
+      "https://i.imgur.com/WFG6gSL.jpg", // real-madrid-fans-back.jpg
+      "https://i.imgur.com/R1YILX6.jpg", // real-madrid-fans-singing.jpg
+      "https://i.imgur.com/1bFzicm.jpg", // real-madrid-ultimate-fan.jpg
     ]);
     setLoading(false);
   }, []);
@@ -45,15 +45,6 @@ export default function AboutPage() {
                       <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
                         <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">Hub Madridista</h1>
                         <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">El hogar digital para todos los madridistas</p>
-                        
-                        <div className="absolute top-6 right-6 md:top-8 md:right-8 z-10">
-                          <Link href="/login">
-                            <Button className="bg-white/90 hover:bg-white text-[#1E3A8A] font-bold px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg">
-                              <i className="fas fa-user-circle mr-2"></i>
-                              {user ? "Ir a mi cuenta" : "Si eres socio, accede ya"}
-                            </Button>
-                          </Link>
-                        </div>
                       </div>
                     )}
                     
@@ -100,6 +91,18 @@ export default function AboutPage() {
             <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
           </Carousel>
         )}
+      </section>
+      
+      {/* Botón "Si eres socio, accede ya" */}
+      <section className="bg-[#FDBE11]/10 py-6 mb-8">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <Link href="/login">
+            <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold px-6 py-3 rounded-lg shadow-md">
+              <i className="fas fa-user-circle mr-2 text-lg"></i>
+              {user ? "Ir a mi cuenta" : "Si eres socio, accede ya"}
+            </Button>
+          </Link>
+        </div>
       </section>
 
       {/* About Hub Madridista */}

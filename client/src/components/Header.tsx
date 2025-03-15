@@ -110,6 +110,16 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               </span>
           </Link>
           
+          {/* Menú de Navegación Principal - Desktop */}
+          <div className="hidden md:flex items-center space-x-6 mx-6">
+            <Link href="/" className="font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300">
+              Home
+            </Link>
+            <Link href="/home" className="font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300">
+              Plataforma
+            </Link>
+          </div>
+          
           {/* Search Bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-2xl mx-10">
             <form onSubmit={handleSearch} className="w-full relative">
@@ -250,6 +260,24 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               </Button>
             )}
           </div>
+        </div>
+        
+        {/* Menú de Navegación Principal - Mobile */}
+        <div className="md:hidden flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-3 mt-1 pb-2">
+          <Link 
+            href="/" 
+            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/2"
+          >
+            <i className="fas fa-home text-lg mb-1"></i>
+            <span>Home</span>
+          </Link>
+          <Link 
+            href="/home" 
+            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/2"
+          >
+            <i className="fas fa-tv text-lg mb-1"></i>
+            <span>Plataforma</span>
+          </Link>
         </div>
         
         {/* Search Bar - Mobile */}
