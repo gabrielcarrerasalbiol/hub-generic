@@ -11,13 +11,13 @@ export default function AboutPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Usamos las nuevas imágenes del Real Madrid para el carrusel
+    // Usamos colores sólidos con gradientes para el fondo del carrusel
     setCarouselImages([
-      "https://i.imgur.com/OZ5V3yH.jpg", // real-madrid-hero.jpg
-      "https://i.imgur.com/NvWXnQA.jpg", // real-madrid-fans-stadium.jpg
-      "https://i.imgur.com/WFG6gSL.jpg", // real-madrid-fans-back.jpg
-      "https://i.imgur.com/R1YILX6.jpg", // real-madrid-fans-singing.jpg
-      "https://i.imgur.com/1bFzicm.jpg", // real-madrid-ultimate-fan.jpg
+      "linear-gradient(135deg, #041E42 0%, #053B83 100%)", // Azul oscuro a azul Real Madrid
+      "linear-gradient(135deg, #053B83 0%, #0960CF 100%)", // Azul Real Madrid a azul claro
+      "linear-gradient(135deg, #041E42 0%, #0A223D 50%, #053B83 100%)", // Azul oscuro con transición
+      "linear-gradient(135deg, #FDBE11 0%, #FFD26A 100%)", // Dorado a amarillo claro
+      "linear-gradient(to right, #041E42, #053B83, #FDBE11)", // Azul a dorado
     ]);
     setLoading(false);
   }, []);
@@ -37,7 +37,7 @@ export default function AboutPage() {
                 <CarouselItem key={index} className="w-full h-[600px]">
                   <div 
                     className="w-full h-full bg-cover bg-center relative" 
-                    style={{ backgroundImage: `url(${image})` }}
+                    style={{ background: image }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
                     
@@ -96,7 +96,7 @@ export default function AboutPage() {
       {/* Botón "Si eres socio, accede ya" */}
       <section className="bg-[#FDBE11]/10 py-6 mb-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <Link href="/login">
+          <Link href={user ? "/home" : "/login"}>
             <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold px-6 py-3 rounded-lg shadow-md">
               <i className="fas fa-user-circle mr-2 text-lg"></i>
               {user ? "Ir a mi cuenta" : "Si eres socio, accede ya"}
