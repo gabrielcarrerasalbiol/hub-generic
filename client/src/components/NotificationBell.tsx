@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, Video } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import { getQueryFn } from '@/lib/queryClient';
+import { Link } from 'wouter';
 import {
   Popover,
   PopoverContent,
@@ -142,6 +143,16 @@ export default function NotificationBell() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <p className="text-sm font-medium">{notification.message}</p>
+                      {notification.videoId && (
+                        <Link 
+                          to={`/video/${notification.videoId}`} 
+                          onClick={() => setIsOpen(false)}
+                          className="flex items-center text-xs text-blue-600 hover:text-blue-800 mt-1"
+                        >
+                          <Video className="h-3 w-3 mr-1" /> 
+                          Ver video
+                        </Link>
+                      )}
                       <p className="text-xs text-muted-foreground mt-1">
                         {new Date(notification.createdAt).toLocaleDateString('es-ES', {
                           hour: '2-digit',

@@ -7,9 +7,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Video, User, Check, Trash2, Rss } from 'lucide-react';
+import { Bell, Video, User, Check, Trash2, Rss, ExternalLink } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { Link } from 'wouter';
 
 interface Notification {
   id: number;
@@ -156,6 +157,17 @@ export default function NotificationsPage() {
                   </CardHeader>
                   <CardContent>
                     <p>{notification.message}</p>
+                    {notification.videoId && (
+                      <div className="mt-3">
+                        <Link
+                          to={`/video/${notification.videoId}`}
+                          className="inline-flex items-center text-blue-600 hover:text-blue-800"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-1" />
+                          Ver video
+                        </Link>
+                      </div>
+                    )}
                   </CardContent>
                   <CardFooter className="pt-0 flex justify-end space-x-2">
                     {!notification.isRead && (
