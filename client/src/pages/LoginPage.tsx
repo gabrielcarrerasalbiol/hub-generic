@@ -31,8 +31,7 @@ export default function LoginPage() {
         <div className="mb-8">
           <div className="relative mb-8 overflow-hidden rounded-lg shadow-md h-64 bg-[#001C58]">
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <Trophy className="w-24 h-24 text-[#FDBE11] mb-4" />
-              <h2 className="text-white text-xl font-bold text-center">14 CHAMPIONS LEAGUE</h2>
+              <Trophy className="w-28 h-28 text-[#FDBE11]" />
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58] to-transparent p-4">
               <p className="text-white text-lg font-medium">La plataforma definitiva para los fans del Real Madrid</p>

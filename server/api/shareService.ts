@@ -3,21 +3,10 @@
  * Proporciona funcionalidades para compartir videos por email y generar enlaces cortos
  */
 
-/**
- * Valida que el formato de un email sea correcto
- * @param email Email a validar
- * @returns true si es válido, false en caso contrario
- */
-export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
+import { isValidEmail, sendEmail } from './emailService';
 
 /**
  * Envía un email con el enlace al video
- * 
- * En un entorno de producción, esto se conectaría con un servicio 
- * de email como SendGrid, Mailgun, AWS SES, etc.
  * 
  * @param to Email del destinatario
  * @param videoTitle Título del video
@@ -32,35 +21,49 @@ export async function sendShareEmail(
   message?: string
 ): Promise<boolean> {
   try {
-    // En un entorno real, aquí se conectaría con un servicio de envío de emails
-    console.log("Enviando email a:", to);
-    console.log("Asunto:", `¡Mira este video de Real Madrid! - ${videoTitle}`);
-    console.log("Contenido:");
-    console.log("----------------------------------------");
-    console.log("Hola,");
-    console.log("");
-    console.log("Te comparto este video de Real Madrid que creo que te gustará:");
-    console.log(`"${videoTitle}"`);
-    console.log("");
+    const subject = `¡Mira este video de Real Madrid! - ${videoTitle}`;
     
-    if (message) {
-      console.log("Mensaje personalizado:");
-      console.log(message);
-      console.log("");
-    }
-    
-    console.log("Puedes verlo aquí:");
-    console.log(shareLink);
-    console.log("");
-    console.log("¡Hala Madrid!");
-    console.log("----------------------------------------");
-    
-    // Simulamos un pequeño retraso para simular el envío del email
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    return true;
+    // Crear contenido HTML
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h1 style="color: #001C58; margin: 0;">Hub<span style="color: #FDBE11;">Madridista</span></h1>
+          <div style="height: 4px; width: 100px; background: linear-gradient(to right, #001C58, #FDBE11); margin: 10px auto;"></div>
+        </div>
+        
+        <h2 style="color: #333; margin-top: 0;">¡Alguien ha compartido un video contigo!</h2>
+        
+        <p>Te han compartido este video de Real Madrid que podría gustarte:</p>
+        
+        <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <h3 style="color: #001C58; margin-top: 0;">${videoTitle}</h3>
+          
+          ${message ? `
+            <div style="border-left: 3px solid #FDBE11; padding-left: 10px; margin: 15px 0;">
+              <p style="font-style: italic; color: #555;">${message}</p>
+            </div>
+          ` : ''}
+          
+          <p style="margin: 20px 0;">
+            <a href="${shareLink}" style="background-color: #001C58; color: white; padding: 10px 15px; text-decoration: none; border-radius: 3px; display: inline-block;">
+              Ver Video
+            </a>
+          </p>
+        </div>
+        
+        <p>Si el botón no funciona, puedes copiar y pegar este enlace en tu navegador:</p>
+        <p style="word-break: break-all; color: #0066cc;">${shareLink}</p>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+          <p style="color: #666; font-size: 12px;">Hub Madridista - La plataforma para los fans del Real Madrid</p>
+          <p style="color: #666; font-size: 12px;">¡Hala Madrid!</p>
+        </div>
+      </div>
+    `;
+
+    return await sendEmail(to, subject, html);
   } catch (error) {
-    console.error("Error al enviar email:", error);
+    console.error("Error al enviar el email:", error);
     return false;
   }
 }
