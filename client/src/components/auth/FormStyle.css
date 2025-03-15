@@ -1,18 +1,28 @@
-/* Clases personalizadas para el formulario de registro */
+/* Estilos compactos para formularios */
 .compact-form-item {
-  margin-bottom: 0.5rem;
-}
-
-.compact-form-item .space-y-2 {
-  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
 }
 
 .compact-form-item label {
-  font-size: 0.875rem;
   margin-bottom: 0.25rem;
+  font-size: 0.9rem;
 }
 
 .compact-form-item input {
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Estilos específicos para la página de registro */
+.register-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .register-form-container {
+    gap: 0.5rem;
+  }
 }

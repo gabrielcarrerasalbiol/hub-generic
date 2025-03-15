@@ -20,19 +20,18 @@ export default function RegisterPage() {
     <div className="min-h-screen flex bg-white">
       <div className="w-1/3 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
         <div className="mb-8">
-          <img src="/hubmadridista.png" alt="Hub Madridista" className="h-24 mb-4" />
-          <p className="text-[#001C58] font-medium">La plataforma definitiva para los fans del Real Madrid</p>
+          <p className="text-[#001C58] text-xl font-bold mb-4">La plataforma definitiva para los fans del Real Madrid</p>
         </div>
         
         {/* Imagen de aficionados */}
-        <div className="relative mb-6 overflow-hidden rounded-lg shadow-md">
+        <div className="relative mb-8 overflow-hidden rounded-lg shadow-md">
           <img 
             src="/images/real-madrid-fans.jpg" 
             alt="Aficionados del Real Madrid" 
-            className="w-full object-cover h-64"
+            className="w-full object-cover h-96"
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58]/80 to-transparent p-3">
-            <p className="text-white text-sm font-medium">Únete a la pasión madridista</p>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58]/80 to-transparent p-4">
+            <p className="text-white text-lg font-medium">Únete a la pasión madridista</p>
           </div>
         </div>
         
@@ -53,8 +52,13 @@ export default function RegisterPage() {
       </div>
       <div className="w-full lg:w-2/3 flex items-center justify-center p-6">
         <div className="w-full max-w-2xl p-8 bg-white rounded-lg shadow-lg">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Crear cuenta</h1>
+          <div className="text-center mb-6">
+            <h1 className="text-4xl font-bold mb-1">
+              <span className="text-[#001C58]">Hub</span>
+              <span className="text-[#FDBE11]">Madridista</span>
+            </h1>
+            <div className="h-1 w-24 bg-gradient-to-r from-[#001C58] to-[#FDBE11] mx-auto mb-6"></div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">Crear cuenta</h2>
             <p className="text-gray-600">Únete para acceder a todo el contenido exclusivo</p>
           </div>
           <RegisterForm />
