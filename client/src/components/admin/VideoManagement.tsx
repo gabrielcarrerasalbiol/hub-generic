@@ -628,7 +628,7 @@ export default function VideoManagement() {
             <AlertDialogTrigger asChild>
               <Button 
                 variant="secondary"
-                className="btn-madrid-gold"
+                className="btn-madrid-gold w-[180px]"
                 disabled={isFetchingNewVideos}
               >
                 {isFetchingNewVideos ? (
@@ -686,7 +686,7 @@ export default function VideoManagement() {
             <AlertDialogTrigger asChild>
               <Button 
                 variant="outline"
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-green-600 hover:bg-green-700 text-white w-[180px]"
                 disabled={isGeneratingSummaries}
               >
                 {isGeneratingSummaries ? (
@@ -727,7 +727,7 @@ export default function VideoManagement() {
             <AlertDialogTrigger asChild>
               <Button 
                 variant="default"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white w-[180px]"
                 disabled={isFetchingNewVideos}
               >
                 {isFetchingNewVideos ? (
@@ -782,12 +782,12 @@ export default function VideoManagement() {
             </AlertDialogContent>
           </AlertDialog>
           
-          {/* Nuevo botón para importar por plataforma específica */}
+          {/* Botón para importar por plataforma específica */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button 
                 variant="default"
-                className="bg-purple-600 hover:bg-purple-700 text-white"
+                className="bg-purple-600 hover:bg-purple-700 text-white w-[180px]"
                 disabled={isImportingByPlatform}
               >
                 {isImportingByPlatform ? (
@@ -798,7 +798,7 @@ export default function VideoManagement() {
                 ) : (
                   <>
                     <Download className="mr-2 h-4 w-4" />
-                    Importar por Plataforma
+                    Importar
                   </>
                 )}
               </Button>
