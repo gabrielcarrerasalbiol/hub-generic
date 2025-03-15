@@ -225,3 +225,66 @@ export async function sendPasswordResetEmail(
 
   return await sendEmail(to, subject, html);
 }
+
+/**
+ * Envía una notificación por correo electrónico sobre un nuevo video en un canal suscrito
+ * @param to Email del usuario
+ * @param videoTitle Título del video
+ * @param videoId número ID del video
+ * @param channelName Nombre del canal
+ * @param thumbnailUrl URL de la miniatura del video (opcional)
+ * @returns Promise<boolean> Resultado del envío
+ */
+export async function sendNewVideoNotificationEmail(
+  to: string,
+  videoTitle: string,
+  videoId: number,
+  channelName: string,
+  thumbnailUrl?: string | null
+): Promise<boolean> {
+  const subject = `📺 Nuevo video de ${channelName} - Hub Madridista`;
+
+  // Crear la URL del video
+  const videoUrl = `${process.env.FRONTEND_URL || 'https://hubmadridista.com'}/video/${videoId}`;
+  
+  // Crear contenido HTML
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color: #001C58; margin: 0;">Hub<span style="color: #FDBE11;">Madridista</span></h1>
+        <div style="height: 4px; width: 100px; background: linear-gradient(to right, #001C58, #FDBE11); margin: 10px auto;"></div>
+      </div>
+      
+      <h2 style="color: #333; margin-top: 0;">¡Nuevo video publicado!</h2>
+      
+      <p>El canal <strong>${channelName}</strong> acaba de publicar un nuevo video que podría interesarte:</p>
+      
+      <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        ${thumbnailUrl ? `
+          <div style="text-align: center; margin-bottom: 15px;">
+            <img src="${thumbnailUrl}" alt="Miniatura del video" style="max-width: 100%; height: auto; border-radius: 3px;">
+          </div>
+        ` : ''}
+        
+        <h3 style="color: #001C58; margin-top: 0;">${videoTitle}</h3>
+        
+        <p style="margin: 20px 0; text-align: center;">
+          <a href="${videoUrl}" style="background-color: #001C58; color: white; padding: 10px 20px; text-decoration: none; border-radius: 3px; display: inline-block;">
+            Ver Video
+          </a>
+        </p>
+      </div>
+      
+      <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; font-size: 12px;">Hub Madridista - La plataforma para los fans del Real Madrid</p>
+        <p style="color: #666; font-size: 12px;">¡Hala Madrid!</p>
+        <p style="color: #666; font-size: 12px; margin-top: 15px;">
+          Estás recibiendo este correo porque estás suscrito a este canal.<br>
+          Si deseas dejar de recibir estas notificaciones, puedes desactivarlas en tu perfil.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return await sendEmail(to, subject, html);
+}

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { InsertVideo, Video, PremiumChannel, Channel } from '@shared/schema';
+import { InsertVideo, Video, PremiumChannel, Channel, User } from '@shared/schema';
 import { storage } from '../storage';
 import { 
   searchYouTubeVideos, 
@@ -12,6 +12,7 @@ import {
 import { classifyContent } from './openai';
 import { classifyContentWithAnthropicClaude } from './anthropic';
 import { classifyContentWithGemini, generateVideoSummary } from './gemini';
+import { sendNewVideoNotificationEmail } from './emailService';
 
 /**
  * Busca nuevos videos en YouTube relacionados con el Real Madrid 
