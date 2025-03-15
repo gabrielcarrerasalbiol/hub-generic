@@ -37,16 +37,26 @@ const Routes = () => {
   // La ruta fullWidth ya está integrada en el componente AboutPage y se usa directamente
   return (
     <Switch>
-      <Route path="/sobre-nosotros">
+      <Route path="/">
         <Layout fullWidth={true}>
           <AboutPage />
+        </Layout>
+      </Route>
+      
+      <Route path="/home">
+        <Layout>
+          <Home />
         </Layout>
       </Route>
       
       <Route path="*">
         <Layout>
           <Switch>
-            <Route path="/" component={Home} />
+            <Route path="/sobre-nosotros">
+              <Layout fullWidth={true}>
+                <AboutPage />
+              </Layout>
+            </Route>
             <Route path="/channel/:id" component={ChannelPage} />
             <Route path="/video/:id" component={VideoPage} />
             <Route path="/favorites" component={FavoritesPage} />

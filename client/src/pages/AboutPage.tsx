@@ -45,6 +45,15 @@ export default function AboutPage() {
                       <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
                         <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">Hub Madridista</h1>
                         <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">El hogar digital para todos los madridistas</p>
+                        
+                        <div className="absolute top-6 right-6 md:top-8 md:right-8 z-10">
+                          <Link href="/login">
+                            <Button className="bg-white/90 hover:bg-white text-[#1E3A8A] font-bold px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg">
+                              <i className="fas fa-user-circle mr-2"></i>
+                              {user ? "Ir a mi cuenta" : "Si eres socio, accede ya"}
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
                     )}
                     
