@@ -132,37 +132,51 @@ npm install
 
 ### 3. Configurar variables de entorno
 
-Crea un archivo `.env` en la raíz del proyecto:
+Hub Madridista usa dos archivos de configuración separados:
+- `.env` - Para desarrollo
+- `.env.production` - Para producción
+
+Para configurar el entorno de producción, crea el archivo `.env.production`:
 
 ```bash
-nano .env
+nano .env.production
 ```
 
 Añade el siguiente contenido (ajusta los valores según tu configuración):
 
 ```env
-# Base de datos
-DATABASE_URL=postgresql://hubmadridista:tu_contraseña_segura@localhost:5432/hubmadridista_db
-
-# Servidor
-PORT=5000
+# Entorno
 NODE_ENV=production
+
+# Base de datos
+PROD_DATABASE_URL=postgresql://hubmadridista:tu_contraseña_segura@localhost:5432/hubmadridista_db
 
 # Autenticación
 JWT_SECRET=genera_un_token_seguro_aleatorio
+JWT_EXPIRES_IN=30d
 SESSION_SECRET=genera_otro_token_seguro_aleatorio
+SESSION_MAX_AGE=604800000
+
+# URLs y configuración
+CALLBACK_URL=https://tu-dominio.com/api/auth/callback
+FRONTEND_URL=https://tu-dominio.com
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=500
+
+# CORS
+CORS_ALLOWED_ORIGINS=https://tu-dominio.com
+
+# Mailchimp (para newsletter)
+MAILCHIMP_API_KEY=tu_clave_api_mailchimp
+MAILCHIMP_SERVER_PREFIX=prefijo_servidor
+MAILCHIMP_AUDIENCE_ID=id_audiencia
 
 # APIs (opcionales pero recomendadas)
 OPENAI_API_KEY=tu_clave_api_openai
 ANTHROPIC_API_KEY=tu_clave_api_anthropic
 GOOGLE_AI_API_KEY=tu_clave_api_gemini
-
-# OAuth (opcional)
-GOOGLE_CLIENT_ID=tu_id_cliente_google
-GOOGLE_CLIENT_SECRET=tu_secreto_cliente_google
-
-# URL de la aplicación
-APP_URL=https://tu-dominio.com
 ```
 
 Para generar tokens seguros, puedes usar:
@@ -171,29 +185,67 @@ Para generar tokens seguros, puedes usar:
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-## Compilación y despliegue
+### 4. Configurar la base de datos de producción
 
-### 1. Compilar la aplicación
+Hub Madridista incluye scripts automatizados para configurar la base de datos de producción:
 
 ```bash
-# Compilar el frontend y backend
-npm run build
+# Dar permisos de ejecución a los scripts
+chmod +x setup-production-db.sh
+chmod +x setup-production.sh
+
+# Configurar solo la base de datos
+./setup-production-db.sh
+
+# O configurar todo el entorno de producción (incluida la BD)
+./setup-production.sh
 ```
 
-### 2. Configurar PM2 para gestionar el proceso
+## Compilación y despliegue
+
+### 1. Utilizar el script de configuración de producción
+
+La forma recomendada de preparar la aplicación para producción es utilizar el script `setup-production.sh` incluido:
+
+```bash
+# Dar permisos de ejecución
+chmod +x setup-production.sh
+
+# Ejecutar script de configuración
+./setup-production.sh
+```
+
+Este script realiza automáticamente las siguientes acciones:
+- Verifica la configuración en `.env.production`
+- Configura la base de datos de producción
+- Construye la aplicación para producción
+- Ofrece la opción de migrar datos desde el entorno de desarrollo
+
+### 2. Compilación manual (alternativa)
+
+Si prefieres compilar manualmente:
+
+```bash
+# Establecer entorno de producción y compilar
+NODE_ENV=production npm run build
+```
+
+### 3. Configurar PM2 para gestionar el proceso
 
 ```bash
 # Instalar PM2 globalmente
 sudo npm install -g pm2
 
 # Iniciar la aplicación con PM2
-pm2 start npm --name "hubmadridista" -- start
+NODE_ENV=production pm2 start npm --name "hubmadridista" -- start
 
 # Configurar inicio automático
 pm2 startup
 sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u $USER --hp $HOME
 pm2 save
 ```
+
+> **Nota**: Es importante establecer `NODE_ENV=production` al iniciar con PM2 para asegurar que se carguen las variables de entorno de producción correctamente.
 
 ## Configuración del servidor web
 
@@ -314,11 +366,54 @@ sudo chmod +x /usr/local/bin/backup-hubmadridista-db.sh
 
 Para actualizar a una nueva versión:
 
+#### Método recomendado (usando scripts de automatización):
+
 ```bash
 cd /var/www/hubmadridista
 git pull
 npm install
-npm run build
+./setup-production.sh
+pm2 restart hubmadridista
+```
+
+#### Actualización con control total del proceso:
+
+```bash
+cd /var/www/hubmadridista
+git pull
+npm install
+
+# Actualizar base de datos (solo si hay cambios en el esquema)
+./setup-production-db.sh
+
+# Construir para producción
+NODE_ENV=production npm run build
+
+# Reiniciar aplicación
+pm2 restart hubmadridista
+```
+
+#### Actualización con migración de datos:
+
+Si necesitas mantener los datos al actualizar:
+
+```bash
+cd /var/www/hubmadridista
+
+# Exportar datos del entorno actual
+./migrate-export.sh
+
+# Actualizar código
+git pull
+npm install
+
+# Reconstruir y configurar entorno
+./setup-production.sh
+
+# Importar datos previamente exportados
+./migrate-import.sh
+
+# Reiniciar aplicación
 pm2 restart hubmadridista
 ```
 
@@ -346,9 +441,23 @@ Si hay problemas con migraciones o esquemas:
 # Verifica que la base de datos existe
 sudo -u postgres psql -c "\l"
 
-# Ejecuta manualmente la migración
+# Ejecuta manualmente la configuración de la base de datos de producción
 cd /var/www/hubmadridista
-npm run db:push
+./setup-production-db.sh
+
+# Si necesitas hacer un push específico del esquema (para actualizaciones menores)
+NODE_ENV=production npx drizzle-kit push:pg
+```
+
+Para problemas específicos con entornos separados:
+
+```bash
+# Verifica las variables de entorno activas
+env | grep DATABASE_URL
+env | grep PROD_DATABASE_URL
+
+# Prueba la conexión a la base de datos de producción
+node -e "const { Client } = require('pg'); const client = new Client({connectionString: process.env.PROD_DATABASE_URL}); client.connect().then(() => { console.log('Conexión exitosa a BD de producción'); process.exit(0); }).catch(e => { console.error('Error de conexión:', e); process.exit(1); });"
 ```
 
 ### Problemas con Nginx
