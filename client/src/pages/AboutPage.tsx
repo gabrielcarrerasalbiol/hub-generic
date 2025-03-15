@@ -39,6 +39,7 @@ export default function AboutPage() {
                   <div 
                     className={`w-full h-full relative ${image}`}
                   >
+                    {/* Mantenemos el gradiente para dar profundidad */}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
                     
                     {index === 0 && (
@@ -216,7 +217,7 @@ export default function AboutPage() {
             {user ? (
               user.role === 'premium' ? (
                 <div className="bg-white/20 backdrop-blur inline-block px-6 py-3 rounded-lg">
-                  <i className="fas fa-check-circle text-[#FDBE11] mr-2"></i>
+                  <CheckCircle className="inline-block text-[#FDBE11] h-5 w-5 mr-2" />
                   <span className="font-medium">¡Ya disfrutas de los beneficios premium!</span>
                 </div>
               ) : (
