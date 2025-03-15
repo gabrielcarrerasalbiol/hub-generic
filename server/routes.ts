@@ -277,17 +277,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Query parameter is required" });
       }
       
-      // Enhance search with AI if possible
+      // Enhance search with AIService (usa DeepSeek y tiene fallback automático)
       let enhancedQuery = query;
       try {
-        // First try with Anthropic Claude (primary)
-        try {
-          enhancedQuery = await enhanceSearchWithAnthropicClaude(query);
-        } catch (claudeError) {
-          console.warn("Claude search enhancement failed, falling back to Gemini:", claudeError);
-          // Fallback to Gemini
-          enhancedQuery = await enhanceSearch(query);
-        }
+        enhancedQuery = await AIService.enhanceSearch(query);
       } catch (error) {
         console.log("Search enhancement failed with all AI services, using original query");
       }
@@ -319,24 +312,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 // Try to classify content, but don't block if it fails
                 let categoryIds: number[] = [];
                 try {
-                  // First try with Anthropic Claude (primary)
-                  try {
-                    const classification = await classifyContentWithAnthropicClaude(
-                      video.snippet.title,
-                      video.snippet.description,
-                      categories
-                    );
-                    categoryIds = classification.categories;
-                  } catch (claudeError) {
-                    console.warn("Claude classification failed, falling back to Gemini:", claudeError);
-                    // Fallback to Gemini
-                    const classification = await classifyContent(
-                      video.snippet.title,
-                      video.snippet.description,
-                      categories
-                    );
-                    categoryIds = classification.categories;
-                  }
+                  // Usar servicio centralizado AIService con DeepSeek y fallback automático
+                  const classification = await AIService.classifyContent(
+                    video.snippet.title,
+                    video.snippet.description,
+                    categories
+                  );
+                  categoryIds = classification.categories;
                 } catch (error) {
                   console.warn("Could not classify video content with any AI service, continuing without categories:", error);
                 }
