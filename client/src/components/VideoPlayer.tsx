@@ -87,11 +87,17 @@ export default function VideoPlayer({ embedUrl, title, videoId }: VideoPlayerPro
   };
   
   // Make sure YouTube embeds have autoplay disabled and related videos disabled
+  // And handle Twitch embeds properly
   const formatEmbedUrl = (url: string): string => {
     if (url.includes('youtube.com/embed/')) {
       // Add parameters to YouTube embed URL
       const separator = url.includes('?') ? '&' : '?';
       return `${url}${separator}rel=0&enablejsapi=1`;
+    } 
+    else if (url.includes('player.twitch.tv')) {
+      // Ensure Twitch player has proper configuration
+      const separator = url.includes('?') ? '&' : '?';
+      return `${url}${separator}autoplay=false`;
     }
     return url;
   };

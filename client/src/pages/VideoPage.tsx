@@ -182,6 +182,8 @@ export default function VideoPage() {
         return 'bg-blue-400';
       case 'instagram':
         return 'bg-pink-500';
+      case 'twitch':
+        return 'bg-purple-600';
       default:
         return 'bg-gray-500';
     }
@@ -197,6 +199,8 @@ export default function VideoPage() {
         return 'fab fa-twitter';
       case 'instagram':
         return 'fab fa-instagram';
+      case 'twitch':
+        return 'fab fa-twitch';
       default:
         return 'fas fa-play';
     }
