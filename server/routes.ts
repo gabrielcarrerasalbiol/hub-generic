@@ -1729,6 +1729,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error al obtener los datos del dashboard" });
     }
   });
+  
+  // Endpoint para compartir videos por email
+  app.post("/api/share/email", async (req: Request, res: Response) => {
+    try {
+      const { videoId, videoTitle, email, message, shareLink } = req.body;
+      
+      if (!videoId || !videoTitle || !email || !shareLink) {
+        return res.status(400).json({ message: "Faltan datos requeridos" });
+      }
+      
+      // Importar el servicio de envío de emails
+      const { sendShareEmail, isValidEmail } = await import("./api/shareService");
+      
+      // Validar el formato del email
+      if (!isValidEmail(email)) {
+        return res.status(400).json({ message: "Formato de email inválido" });
+      }
+      
+      // Enviar el email
+      await sendShareEmail(email, videoTitle, shareLink, message);
+      
+      // Registrar actividad (futuro: podríamos guardar estadísticas de compartición)
+      console.log(`Video ${videoId} compartido por email a ${email}`);
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error al compartir video por email:", error);
+      res.status(500).json({ message: "Error al enviar el email" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
