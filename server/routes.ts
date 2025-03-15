@@ -21,6 +21,7 @@ import {
   ChannelSubscription, Notification, ViewHistory
 } from "../shared/schema";
 import { isAuthenticated, isAdmin } from "./auth";
+import { handleNewsletterSubscription } from './api/mailchimpService';
 
 // Demo user ID - in a real app, this would come from authentication
 const DEMO_USER_ID = 1;
@@ -1946,6 +1947,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error al quitar like al comentario" });
     }
   });
+
+  // Newsletter subscription endpoint
+  app.post("/api/newsletter/subscribe", handleNewsletterSubscription);
 
   const httpServer = createServer(app);
   return httpServer;
