@@ -7,7 +7,7 @@ import { classifyContentWithAnthropicClaude, enhanceSearchWithAnthropicClaude } 
 import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } from "./api/youtube";
 import { recategorizeVideo, recategorizeAllVideos } from "./api/categoryUpdater";
 import { generateSummaryForVideo, generateSummariesForAllVideos } from "./api/summaryUpdater";
-import { cleanupUnavailableVideos } from "./api/videoValidator";
+import { checkUnavailableVideos, deleteUnavailableVideos } from "./api/videoValidator";
 import { 
   getStatisticsOverview, 
   getStatisticsByCategory, 
@@ -18,7 +18,7 @@ import {
 import { 
   CategoryType, PlatformType, insertFavoriteSchema, Video, User, 
   insertChannelSubscriptionSchema, insertNotificationSchema, 
-  ChannelSubscription, Notification
+  ChannelSubscription, Notification, ViewHistory
 } from "../shared/schema";
 import { isAuthenticated, isAdmin } from "./auth";
 
@@ -1012,13 +1012,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Endpoint para verificar disponibilidad de videos (eliminar los no disponibles)
+  // Endpoint para verificar disponibilidad de videos 
+  // Ahora en dos pasos: primero verificar y luego confirmar el borrado
   app.post("/api/videos/verify", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
-      const result = await cleanupUnavailableVideos();
+      // Si hay una confirmación para borrar, procesamos los IDs
+      if (req.body.confirm && req.body.videoIds && Array.isArray(req.body.videoIds)) {
+        const videoIds = req.body.videoIds.map((id: any) => parseInt(id));
+        
+        // Solo procedemos si hay IDs válidos
+        if (videoIds.length > 0) {
+          const result = await deleteUnavailableVideos(videoIds);
+          
+          return res.json({
+            message: `Borrado completado: ${result.deleted} de ${result.requested} videos han sido eliminados`,
+            ...result
+          });
+        } else {
+          return res.status(400).json({ message: "No se proporcionaron IDs de video válidos" });
+        }
+      }
+      
+      // Si no hay confirmación, solo verificamos la disponibilidad
+      const result = await checkUnavailableVideos();
+      
+      let message = "";
+      if (result.apiLimitReached) {
+        message = `⚠️ VERIFICACIÓN LIMITADA: Límite de API de YouTube alcanzado. Solo se verificaron ${result.checked} de ${result.total} videos.`;
+      } else if (result.toDelete > 0) {
+        message = `⚠️ Se encontraron ${result.toDelete} videos que deberían ser eliminados. Confirme para proceder con el borrado.`;
+      } else {
+        message = `✅ Verificación completada: Todos los ${result.available} videos verificados están disponibles.`;
+      }
       
       res.json({
-        message: `Verificación completada: ${result.removed} videos eliminados de ${result.total} verificados`,
+        message,
+        requiereConfirmacion: result.toDelete > 0,
         ...result
       });
     } catch (error) {

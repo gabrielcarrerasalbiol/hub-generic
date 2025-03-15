@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import VideoPlayer from "@/components/VideoPlayer";
 import VideoCard from "@/components/VideoCard";
 import SubscribeButton from "@/components/SubscribeButton";
+import ShareVideoModal from "@/components/ShareVideoModal";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -20,6 +23,7 @@ export default function VideoPage() {
   const { user } = useAuth();
   const [, params] = useRoute("/video/:id");
   const videoId = params?.id ? parseInt(params.id) : 0;
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   // Fetch video details
   const { 
@@ -207,32 +211,60 @@ export default function VideoPage() {
             <div className="mb-4">
               <div className="flex justify-between items-start">
                 <h1 className="text-2xl font-bold text-[#001C58] flex-grow">{video.title}</h1>
-                {user && (
-                  <button 
-                    className={`flex-shrink-0 flex items-center px-3 py-1 ml-2 rounded text-sm 
-                    ${video.isFavorite 
-                      ? 'bg-red-50 text-red-500 border border-red-200' 
-                      : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 border border-gray-200'}`}
-                    onClick={handleToggleFavorite}
-                    aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+                <div className="flex space-x-2">
+                  {/* Botón de compartir */}
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                    onClick={() => setShareModalOpen(true)}
                   >
                     <svg 
                       xmlns="http://www.w3.org/2000/svg" 
                       width="16" 
                       height="16" 
                       viewBox="0 0 24 24" 
-                      fill={video.isFavorite ? "currentColor" : "none"}
+                      fill="none"
                       stroke="currentColor" 
                       strokeWidth="2" 
                       strokeLinecap="round" 
                       strokeLinejoin="round" 
                       className="mr-1"
                     >
-                      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                      <polyline points="16 6 12 2 8 6" />
+                      <line x1="12" y1="2" x2="12" y2="15" />
                     </svg>
-                    {video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-                  </button>
-                )}
+                    Compartir
+                  </Button>
+                  
+                  {/* Botón de favoritos (solo para usuarios autenticados) */}
+                  {user && (
+                    <button 
+                      className={`flex-shrink-0 flex items-center px-3 py-1 rounded text-sm 
+                      ${video.isFavorite 
+                        ? 'bg-red-50 text-red-500 border border-red-200' 
+                        : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 border border-gray-200'}`}
+                      onClick={handleToggleFavorite}
+                      aria-label={video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+                    >
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="16" 
+                        height="16" 
+                        viewBox="0 0 24 24" 
+                        fill={video.isFavorite ? "currentColor" : "none"}
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        className="mr-1"
+                      >
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                      </svg>
+                      {video.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           
@@ -356,6 +388,16 @@ export default function VideoPage() {
           </div>
         </div>
       </div>
+      
+      {/* Modal de compartir */}
+      {video && (
+        <ShareVideoModal
+          videoId={video.id}
+          videoTitle={video.title}
+          isOpen={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+        />
+      )}
     </main>
   );
 }
