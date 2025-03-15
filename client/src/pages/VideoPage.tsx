@@ -7,6 +7,7 @@ import VideoPlayer from "@/components/VideoPlayer";
 import VideoCard from "@/components/VideoCard";
 import SubscribeButton from "@/components/SubscribeButton";
 import ShareVideoModal from "@/components/ShareVideoModal";
+import CommentSection from "@/components/CommentSection";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -351,6 +352,11 @@ export default function VideoPage() {
                   <p className="text-gray-500 text-sm">Este video no tiene descripción.</p>
                 )}
                 <p className="text-xs text-gray-500 mt-3">Publicado: {formatPublishedDate(video.publishedAt)}</p>
+              </div>
+              
+              {/* Sección de comentarios */}
+              <div className="bg-white rounded-lg shadow-md p-4 mt-4">
+                <CommentSection videoId={video.id} />
               </div>
             </div>
             

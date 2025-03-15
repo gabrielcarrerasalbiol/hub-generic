@@ -1760,6 +1760,193 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API Routes for Comments
+  // Get comments for a video
+  app.get("/api/videos/:videoId/comments", async (req: Request, res: Response) => {
+    try {
+      const videoId = parseInt(req.params.videoId);
+      const limit = parseInt(req.query.limit as string) || 50;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      if (isNaN(videoId)) {
+        return res.status(400).json({ message: "ID de video inválido" });
+      }
+      
+      const comments = await storage.getCommentsByVideoId(videoId, limit, offset);
+      const count = await storage.getCommentCount(videoId);
+      
+      res.json({
+        comments,
+        count,
+        limit,
+        offset
+      });
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      res.status(500).json({ message: "Error al obtener los comentarios" });
+    }
+  });
+  
+  // Add a new comment
+  app.post("/api/videos/:videoId/comments", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const videoId = parseInt(req.params.videoId);
+      const { content, parentId } = req.body;
+      
+      if (!content || content.trim() === "") {
+        return res.status(400).json({ message: "El comentario no puede estar vacío" });
+      }
+      
+      if (isNaN(videoId)) {
+        return res.status(400).json({ message: "ID de video inválido" });
+      }
+      
+      // Verificar existencia del video
+      const video = await storage.getVideoById(videoId);
+      if (!video) {
+        return res.status(404).json({ message: "Video no encontrado" });
+      }
+      
+      // Si hay parentId, verificar que exista el comentario padre
+      if (parentId) {
+        const parentComment = await storage.getCommentById(parentId);
+        if (!parentComment) {
+          return res.status(404).json({ message: "Comentario padre no encontrado" });
+        }
+      }
+      
+      const newComment = await storage.createComment({
+        userId: req.user.id,
+        videoId,
+        parentId: parentId || null,
+        content: content.trim()
+      });
+      
+      // Si el comentario es una respuesta, obtenemos también los datos del usuario
+      if (newComment.parentId) {
+        // En un caso real, aquí añadiríamos la información del usuario
+        // como el nombre y la foto de perfil
+        const user = await storage.getUser(req.user.id);
+        
+        res.status(201).json({
+          ...newComment,
+          username: user?.username,
+          profilePicture: user?.profilePicture,
+          name: user?.name
+        });
+      } else {
+        // Devolvemos el comentario principal con las respuestas vacías
+        const user = await storage.getUser(req.user.id);
+        
+        res.status(201).json({
+          ...newComment,
+          username: user?.username,
+          profilePicture: user?.profilePicture,
+          name: user?.name,
+          replies: []
+        });
+      }
+    } catch (error) {
+      console.error("Error creating comment:", error);
+      res.status(500).json({ message: "Error al crear el comentario" });
+    }
+  });
+  
+  // Update a comment
+  app.put("/api/comments/:commentId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const commentId = parseInt(req.params.commentId);
+      const { content } = req.body;
+      
+      if (!content || content.trim() === "") {
+        return res.status(400).json({ message: "El comentario no puede estar vacío" });
+      }
+      
+      // Verificar que el comentario existe
+      const comment = await storage.getCommentById(commentId);
+      if (!comment) {
+        return res.status(404).json({ message: "Comentario no encontrado" });
+      }
+      
+      // Verificar que el usuario es el autor del comentario
+      if (comment.userId !== req.user.id && req.user.role !== "admin") {
+        return res.status(403).json({ message: "No tienes permiso para editar este comentario" });
+      }
+      
+      const updatedComment = await storage.updateComment(commentId, content.trim());
+      
+      res.json(updatedComment);
+    } catch (error) {
+      console.error("Error updating comment:", error);
+      res.status(500).json({ message: "Error al actualizar el comentario" });
+    }
+  });
+  
+  // Delete a comment
+  app.delete("/api/comments/:commentId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const commentId = parseInt(req.params.commentId);
+      
+      // Verificar que el comentario existe
+      const comment = await storage.getCommentById(commentId);
+      if (!comment) {
+        return res.status(404).json({ message: "Comentario no encontrado" });
+      }
+      
+      // Verificar que el usuario es el autor del comentario o es admin
+      if (comment.userId !== req.user.id && req.user.role !== "admin") {
+        return res.status(403).json({ message: "No tienes permiso para eliminar este comentario" });
+      }
+      
+      await storage.deleteComment(commentId);
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      res.status(500).json({ message: "Error al eliminar el comentario" });
+    }
+  });
+  
+  // Like a comment
+  app.post("/api/comments/:commentId/like", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const commentId = parseInt(req.params.commentId);
+      
+      // Verificar que el comentario existe
+      const comment = await storage.getCommentById(commentId);
+      if (!comment) {
+        return res.status(404).json({ message: "Comentario no encontrado" });
+      }
+      
+      await storage.likeComment(commentId);
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error liking comment:", error);
+      res.status(500).json({ message: "Error al dar like al comentario" });
+    }
+  });
+  
+  // Unlike a comment
+  app.post("/api/comments/:commentId/unlike", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const commentId = parseInt(req.params.commentId);
+      
+      // Verificar que el comentario existe
+      const comment = await storage.getCommentById(commentId);
+      if (!comment) {
+        return res.status(404).json({ message: "Comentario no encontrado" });
+      }
+      
+      await storage.unlikeComment(commentId);
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error unliking comment:", error);
+      res.status(500).json({ message: "Error al quitar like al comentario" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
