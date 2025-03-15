@@ -4,10 +4,12 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Channel } from "@shared/schema";
 import { useLanguage } from '@/hooks/use-language';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   Home, TrendingUp, Star, Rss, History, 
   Youtube, Twitter, Instagram, 
-  Radio, MessageSquare, Trophy, User, Newspaper
+  Radio, MessageSquare, Trophy, User, Newspaper,
+  Crown, Shield
 } from "lucide-react";
 import { TikTokIcon } from "./icons/TikTokIcon";
 
@@ -18,10 +20,18 @@ type SidebarProps = {
 export default function Sidebar({ isOpen }: SidebarProps) {
   const [location] = useLocation();
   const { t } = useLanguage();
+  const isPremium = useAuth(state => state.isPremium());
+  const isAuthenticated = useAuth(state => state.checkAuth());
 
   // Fetch recommended channels for sidebar
   const { data: featuredChannels = [], isLoading } = useQuery<Channel[]>({
     queryKey: ['/api/channels/recommended', { limit: 3 }],
+  });
+  
+  // Fetch premium channels for premium users
+  const { data: premiumChannels = [], isLoading: isPremiumLoading } = useQuery<Channel[]>({
+    queryKey: ['/api/premium-channels/list'],
+    enabled: isPremium && isAuthenticated
   });
 
   // Helper function to determine if a link is active
@@ -281,7 +291,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Featured Channels Section */}
-        <div className="px-4 py-4">
+        <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
           <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.featured')}</h3>
           
           {isLoading ? (
@@ -333,6 +343,88 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             </p>
           )}
         </div>
+        
+        {/* Premium Channels Section - Only for premium users */}
+        {isPremium && (
+          <div className="px-4 py-4">
+            <div className="flex items-center">
+              <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide flex-grow">
+                Canales Premium
+              </h3>
+              <Crown className="w-4 h-4 text-[#FDBE11]" />
+            </div>
+            
+            {isPremiumLoading ? (
+              // Loading skeleton for premium channels
+              <>
+                {[...Array(3)].map((_, index) => (
+                  <div key={index} className="flex items-center mt-3 p-2">
+                    <Skeleton className="w-8 h-8 rounded-full dark:bg-gray-700" />
+                    <div className="ml-2">
+                      <Skeleton className="h-4 w-24 mb-1 dark:bg-gray-700" />
+                      <Skeleton className="h-3 w-16 dark:bg-gray-700" />
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : premiumChannels && premiumChannels.length > 0 ? (
+              // Render premium channels
+              premiumChannels.map((channel: Channel) => (
+                <Link 
+                  key={channel.id} 
+                  href={`/channel/${channel.id}`}
+                  className="flex items-center mt-3 hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20 rounded-md p-2 cursor-pointer"
+                >
+                  <div className="relative">
+                    <img 
+                      src={channel.thumbnailUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=32`} 
+                      alt={channel.title} 
+                      className="w-8 h-8 rounded-full border border-[#FDBE11]"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null;
+                        target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=32`;
+                      }}
+                    />
+                    <span className="absolute -top-1 -right-1 bg-[#FDBE11] rounded-full w-4 h-4 flex items-center justify-center">
+                      <Crown className="w-3 h-3 text-[#001C58]" />
+                    </span>
+                  </div>
+                  <div className="ml-2">
+                    <p className="text-sm font-medium text-[#001C58] dark:text-white flex items-center">
+                      {channel.title}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {channel.platform === 'YouTube' && t('sidebar.youtube_channel')}
+                      {channel.platform === 'TikTok' && t('sidebar.tiktok_channel')}
+                      {channel.platform === 'Twitter' && t('sidebar.twitter_account')}
+                      {channel.platform === 'Instagram' && t('sidebar.instagram_account')}
+                    </p>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              // No premium channels available
+              <div className="mt-3 p-2 text-center">
+                <p className="text-sm text-[#001C58]/70 dark:text-gray-400">
+                  No hay canales premium disponibles
+                </p>
+              </div>
+            )}
+            
+            {!isPremium && (
+              <div className="mt-4 p-3 bg-[#FDBE11]/10 dark:bg-[#FDBE11]/5 rounded-md border border-[#FDBE11]/30">
+                <p className="text-sm text-[#001C58] dark:text-white flex items-center mb-2">
+                  <Crown className="w-4 h-4 text-[#FDBE11] mr-2" />
+                  Acceso Premium
+                </p>
+                <p className="text-xs text-[#001C58]/80 dark:text-gray-300">
+                  Actualiza a premium para acceder a canales exclusivos con el mejor contenido del Real Madrid.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </nav>
     </aside>
   );

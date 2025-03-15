@@ -20,7 +20,7 @@ import {
   insertChannelSubscriptionSchema, insertNotificationSchema, 
   ChannelSubscription, Notification, ViewHistory
 } from "../shared/schema";
-import { isAuthenticated, isAdmin } from "./auth";
+import { isAuthenticated, isAdmin, isPremium } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';
 import { isValidEmail } from './api/emailService';
 import { sendShareEmail } from './api/shareService';
@@ -1224,7 +1224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // === PREMIUM CHANNELS ENDPOINTS ===
 
-  // Obtener todos los canales premium
+  // Obtener todos los canales premium (solo para administradores)
   app.get("/api/premium-channels", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
       const premiumChannels = await storage.getPremiumChannels();
@@ -1243,6 +1243,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(enrichedChannels);
     } catch (error: any) {
       console.error("Error fetching premium channels:", error);
+      res.status(500).json({ 
+        error: "Error al obtener canales premium",
+        details: error.message
+      });
+    }
+  });
+  
+  // Obtener canales premium para usuarios premium
+  app.get("/api/premium-channels/list", isAuthenticated, isPremium, async (req: Request, res: Response) => {
+    try {
+      const premiumChannels = await storage.getPremiumChannels();
+      
+      // Enriquecer con información adicional del canal
+      const enrichedChannels = await Promise.all(
+        premiumChannels.map(async (premiumChannel) => {
+          const channel = await storage.getChannelById(premiumChannel.channelId);
+          if (!channel) return null;
+          
+          return {
+            id: channel.id,
+            title: channel.title,
+            description: channel.description,
+            thumbnailUrl: channel.thumbnailUrl,
+            platform: channel.platform,
+            externalId: channel.externalId,
+            priority: premiumChannel.priority
+          };
+        })
+      );
+      
+      // Filtrar los canales nulos (por si hubo algún error)
+      const filteredChannels = enrichedChannels.filter(Boolean);
+      
+      // Ordenar por prioridad (mayor primero)
+      const sortedChannels = filteredChannels.sort((a, b) => (b?.priority || 0) - (a?.priority || 0));
+      
+      res.json(sortedChannels);
+    } catch (error: any) {
+      console.error("Error fetching premium channels for premium users:", error);
       res.status(500).json({ 
         error: "Error al obtener canales premium",
         details: error.message
