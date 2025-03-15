@@ -37,8 +37,9 @@ import { registerRoutes } from "./routes";
 import { registerAuthRoutes } from "./authRoutes";
 import { setupPassport } from "./auth";
 import { setupVite, serveStatic, log } from "./vite";
-import { initDb } from "./db";
+import { initDb, isReadOnlyMode } from "./db";
 import { pgStorage } from "./pgStorage";
+import { preventWritesMiddleware } from "./middlewares/readOnlyMode";
 
 const app = express();
 
@@ -131,6 +132,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 setupPassport();
+
+// Aplicar middleware de solo lectura si estamos en modo de solo lectura
+if (isReadOnlyMode()) {
+  console.log('🔒 Activando middleware de modo solo lectura - Las operaciones de escritura serán bloqueadas');
+  app.use(preventWritesMiddleware);
+}
 
 app.use((req, res, next) => {
   const start = Date.now();
