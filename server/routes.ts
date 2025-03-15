@@ -1083,7 +1083,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails } = await import("./api/youtube");
           const { convertYouTubeVideoToSchema, convertYouTubeChannelToSchema } = await import("./api/youtube");
-          const { classifyContent } = await import("./api/openai");
+          // No necesitamos importar clasificación, usamos AIService
           
           console.log(`Buscando videos con término: "${term}"`);
           
