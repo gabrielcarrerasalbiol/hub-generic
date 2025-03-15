@@ -353,15 +353,15 @@ export default function VideoPage() {
                 )}
                 <p className="text-xs text-gray-500 mt-3">Publicado: {formatPublishedDate(video.publishedAt)}</p>
               </div>
-              
-              {/* Sección de comentarios */}
-              <div className="bg-white rounded-lg shadow-md p-4 mt-4">
-                <CommentSection videoId={video.id} />
-              </div>
             </div>
             
-            {/* Related Videos */}
+            {/* Related Videos y Comentarios */}
             <div className="lg:col-span-1">
+              {/* Sección de comentarios */}
+              <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+                <CommentSection videoId={video.id} />
+              </div>
+              
               <h2 className="font-bold text-xl mb-4 text-[#001C58]">Videos relacionados</h2>
               
               {isRelatedLoading ? (
