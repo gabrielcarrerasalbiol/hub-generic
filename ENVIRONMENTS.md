@@ -1,8 +1,8 @@
-# Guía de Configuración de Entornos para Hub Madridista
+# 🛠️ Guía de Configuración de Entornos para Hub Madridista
 
 Este documento proporciona información detallada sobre cómo configurar y gestionar los entornos de desarrollo y producción para la plataforma Hub Madridista.
 
-## Entornos Disponibles
+## 🌐 Entornos Disponibles
 
 La plataforma Hub Madridista está diseñada para funcionar en dos entornos distintos:
 
@@ -28,7 +28,7 @@ La plataforma Hub Madridista está diseñada para funcionar en dos entornos dist
   - Manejo de errores sin exposición de detalles sensibles
   - Configuraciones de seguridad fortalecidas
 
-## Archivos de Configuración
+## 📝 Archivos de Configuración
 
 ### Archivo `.env` (Desarrollo)
 
@@ -47,7 +47,9 @@ Configuración específica para el entorno de producción. En general, debe usar
 - Potencialmente diferentes límites de tasa (rate limits)
 - Valores específicos para servicios externos en producción
 
-## Uso
+> **Importante**: Usa `.env.production.example` como plantilla para tu archivo `.env.production`. Este archivo contiene todas las variables necesarias organizadas por categorías: obligatorias, recomendadas y opcionales.
+
+## 🚀 Uso
 
 ### Para Desarrollo Local
 
@@ -58,28 +60,31 @@ Configuración específica para el entorno de producción. En general, debe usar
 ### Para Producción
 
 1. Configura correctamente el archivo `.env.production`
-2. Construye la aplicación con `NODE_ENV=production npm run build`
-3. Inicia el servidor con `NODE_ENV=production npm run start`
-4. La aplicación cargará automáticamente las variables desde `.env.production`
+2. Ejecuta `./check-production.sh` para verificar tu configuración
+3. Construye la aplicación con `NODE_ENV=production npm run build`
+4. Inicia el servidor con `NODE_ENV=production npm run start`
+5. La aplicación cargará automáticamente las variables desde `.env.production`
 
-## Scripts de Ayuda
+## 🧰 Scripts de Ayuda
 
 Hemos creado varios scripts para facilitar la gestión de entornos:
 
 ### `check-production.sh`
 
-Script para verificar la configuración del entorno de producción:
+Script mejorado para verificar exhaustivamente la configuración del entorno de producción:
 
 ```bash
 ./check-production.sh
 ```
 
-Este script:
+Este script realiza verificaciones avanzadas:
 - Verifica que el archivo `.env.production` exista
-- Comprueba que todas las variables críticas estén configuradas
-- Revisa variables recomendadas y opcionales
+- Comprueba que todas las variables críticas estén configuradas (con código de colores para mejor visualización)
+- Revisa variables recomendadas y muestra advertencias si faltan
 - Prueba la conexión a la base de datos de producción
-- Genera un informe detallado sobre el estado de la configuración
+- Verifica que las tablas necesarias existan en la base de datos
+- Genera un informe detallado por categorías sobre el estado de la configuración
+- Proporciona sugerencias específicas para resolver problemas detectados
 
 > **Recomendación**: Ejecuta este script antes de cualquier despliegue para verificar que todo está correctamente configurado.
 
@@ -92,24 +97,27 @@ Script para configurar el entorno de producción:
 ```
 
 Este script:
-- Verifica la configuración de `.env.production`
+- Verifica primero la configuración usando `check-production.sh`
 - Configura la base de datos de producción con el esquema correcto
 - Construye la aplicación para producción
 - Ofrece migrar datos del entorno de desarrollo al de producción
 
-### `setup-production-db.sh`
+### `setup-production-db.sh` (Mejorado)
 
-Script para configurar específicamente la base de datos de producción:
+Script mejorado para configurar específicamente la base de datos de producción:
 
 ```bash
 ./setup-production-db.sh
 ```
 
-Este script:
-- Aplica automáticamente el esquema de base de datos a la producción
-- Ejecuta migraciones necesarias desde el directorio de migraciones
-- Intenta inicializar datos por defecto en la nueva base de datos
-- Puede ejecutarse de forma independiente para actualizar solo la base de datos
+Mejoras en este script:
+- Ahora integra `check-production.sh` para verificación previa
+- Realiza verificaciones detalladas antes de proceder con la configuración
+- Detecta y reporta problemas específicos en la conexión a la base de datos
+- Proporciona mensajes de error más claros con sugerencias para soluciones
+- Incluye salida con código de colores para mejor visualización
+- Verifica la integridad del esquema antes de aplicar migraciones
+- Manejo mejorado de errores durante el proceso de configuración
 
 ### `migrate-export.sh` y `migrate-import.sh`
 
@@ -122,7 +130,7 @@ Scripts para migrar datos entre entornos:
 
 Consulta `MIGRATION.md` para más detalles sobre la migración de datos.
 
-## Mejores Prácticas
+## 🔒 Mejores Prácticas
 
 ### Desarrollo
 
@@ -132,12 +140,13 @@ Consulta `MIGRATION.md` para más detalles sobre la migración de datos.
 
 ### Transición a Producción
 
-1. Verifica que las migraciones de base de datos estén completas
-2. Prueba la aplicación en un entorno similar a producción antes de desplegar
-3. Verifica que las variables de entorno de producción sean seguras y correctas
-4. Construye la aplicación con `NODE_ENV=production npm run build`
-5. Realiza pruebas finales en el build de producción
-6. Despliega a producción
+1. Verifica que las migraciones de base de datos estén completas y coherentes
+2. Ejecuta `./check-production.sh` para validar el entorno de producción
+3. Prueba la aplicación en un entorno similar a producción antes de desplegar
+4. Verifica que las variables de entorno de producción sean seguras y correctas
+5. Construye la aplicación con `NODE_ENV=production npm run build`
+6. Realiza pruebas finales en el build de producción
+7. Despliega a producción
 
 ### Seguridad
 
@@ -146,7 +155,15 @@ Consulta `MIGRATION.md` para más detalles sobre la migración de datos.
 - Considera el uso de secretos rotados regularmente para producción
 - Usa límites más restrictivos en producción para evitar abusos
 
-## Solución de Problemas
+## ⚠️ Solución de Problemas
+
+### Diagnóstico Automatizado
+
+El script `check-production.sh` proporciona un diagnóstico automatizado de problemas comunes. Ejecútalo para obtener un informe detallado:
+
+```bash
+./check-production.sh
+```
 
 ### Problemas Comunes en Desarrollo
 
@@ -156,28 +173,52 @@ Consulta `MIGRATION.md` para más detalles sobre la migración de datos.
 ### Problemas Comunes en Producción
 
 - **Error al cargar variables de entorno**: Verifica que `.env.production` exista y esté bien formateado
-- **Problemas de conexión a la base de datos**: Verifica que `PROD_DATABASE_URL` sea accesible desde el servidor
+- **Problemas de conexión a la base de datos**: 
+  - Ejecuta `./check-production.sh` para diagnóstico automático
+  - Verifica que `PROD_DATABASE_URL` sea accesible desde el servidor
+  - Comprueba que las credenciales sean correctas
+  - Confirma que el servidor de base de datos permita conexiones desde tu servidor
 - **Problemas de CORS**: Asegúrate de que `CORS_ALLOWED_ORIGINS` incluya todos los dominios necesarios
 
-## Variables de Entorno Críticas
+## 📋 Variables de Entorno Críticas
 
-### Desarrollo (`.env`)
+### Variables Obligatorias
 
+```env
+# Base de datos (obligatorio)
+PROD_DATABASE_URL=postgres://usuario:contraseña@hostname:5432/nombre_db
+
+# Configuración básica (obligatorio)
+PORT=5000
+NODE_ENV=production
+JWT_SECRET=valor_secreto_seguro
+SESSION_SECRET=otro_valor_secreto_seguro
+FRONTEND_URL=https://tu-dominio.com
+CORS_ALLOWED_ORIGINS=https://tu-dominio.com
 ```
-DATABASE_URL=...
-JWT_SECRET=...
-MAILCHIMP_API_KEY=...
+
+### Variables Recomendadas
+
+```env
+# Mailchimp (recomendado para newsletter)
+MAILCHIMP_API_KEY=tu_clave_api_mailchimp
+MAILCHIMP_SERVER=us17
+MAILCHIMP_AUDIENCE_ID=tu_audience_id
+
+# APIs de IA (recomendadas para funcionalidades de IA)
+ANTHROPIC_API_KEY=tu_clave_api_anthropic
+GEMINI_API_KEY=tu_clave_api_gemini
+OPENAI_API_KEY=tu_clave_api_openai
+
+# Autenticación OAuth (recomendada)
+GOOGLE_CLIENT_ID=tu_client_id_google
+GOOGLE_CLIENT_SECRET=tu_client_secret_google
+CALLBACK_URL=https://tu-dominio.com/api/auth/google/callback
 ```
 
-### Producción (`.env.production`)
+Consulta `.env.production.example` para una lista completa de todas las variables disponibles.
 
-```
-PROD_DATABASE_URL=...
-JWT_SECRET=... (diferente del de desarrollo)
-MAILCHIMP_API_KEY=...
-```
-
-## Consideraciones Adicionales
+## 🔄 Consideraciones Adicionales
 
 ### Base de Datos
 
@@ -212,7 +253,7 @@ Cuando cambies el esquema (agregando nuevas tablas, columnas, etc.):
 - API keys: Considera tener credenciales separadas para desarrollo y producción
 - Servicios de terceros: Configura correctamente los callbacks y webhooks para cada entorno
 
-## Despliegue en Replit
+## 🚀 Despliegue en Replit
 
 ### Proceso de Despliegue
 
@@ -249,3 +290,16 @@ Después del despliegue, verifica:
 2. Que puedes iniciar sesión y usar todas las funcionalidades
 3. Que la conexión a la base de datos de producción funciona correctamente
 4. Que las integraciones con servicios externos (Mailchimp, etc.) funcionan
+
+## 📊 Categorías de Variables de Entorno
+
+El script `check-production.sh` clasifica las variables en las siguientes categorías:
+
+- **Base de datos**: Variables relacionadas con conexiones y configuración de base de datos
+- **Autenticación**: Variables para JWT, sesiones y proveedores OAuth
+- **APIs externas**: Claves para servicios de IA y otras APIs externas
+- **URLs y direcciones**: Dominios y rutas para la aplicación
+- **Correo y comunicación**: Configuración para newsletter y comunicación
+- **Configuración general**: Variables de entorno, puerto y otras configuraciones básicas
+
+Al ejecutar `./check-production.sh`, obtendrás un resumen detallado por categoría, mostrando cuántas variables están configuradas y cuáles faltan.

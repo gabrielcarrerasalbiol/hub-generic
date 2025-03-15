@@ -96,6 +96,12 @@ async function main() {
     
     // Crear conexión
     const connectionString = process.env.PROD_DATABASE_URL;
+    
+    // Verificar que connectionString sea válido
+    if (!connectionString) {
+      throw new Error("PROD_DATABASE_URL está indefinido");
+    }
+    
     const client = postgres(connectionString, { max: 1 });
     const db = drizzle(client, { schema });
 
