@@ -1,14 +1,26 @@
 // Nota: Mover la carga de dotenv al principio para que esté disponible para todos los módulos
 // Esto debe ejecutarse antes de importar otros módulos
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+
+// Determinar el entorno y cargar el archivo .env correspondiente
+const nodeEnv = process.env.NODE_ENV || 'development';
+console.log(`Modo de la aplicación: ${nodeEnv === 'production' ? 'PRODUCCIÓN' : 'DESARROLLO'}`);
+
+let dotenvPath = '.env';
+if (nodeEnv === 'production' && fs.existsSync('.env.production')) {
+  dotenvPath = '.env.production';
+}
+
 try {
-  const dotenvResult = dotenv.config();
+  const dotenvResult = dotenv.config({ path: dotenvPath });
   if (dotenvResult.parsed) {
-    console.log('Variables de entorno cargadas correctamente desde .env');
+    console.log(`Variables de entorno cargadas correctamente desde ${dotenvPath}`);
     console.log('Variables cargadas:', Object.keys(dotenvResult.parsed).join(', '));
     console.log('JWT_SECRET está definido:', dotenvResult.parsed.JWT_SECRET ? 'Sí (valor oculto)' : 'No');
   } else {
-    console.error('Error al cargar las variables de entorno: No se encontró el archivo .env o está vacío');
+    console.error(`Error al cargar las variables de entorno: No se encontró el archivo ${dotenvPath} o está vacío`);
   }
 } catch (error) {
   console.error('Error al cargar dotenv:', error);
