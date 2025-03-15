@@ -11,12 +11,13 @@ export default function AboutPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Usamos imágenes disponibles en el proyecto
+    // Usamos las nuevas imágenes del Real Madrid para el carrusel
     setCarouselImages([
-      "/images/real-madrid-stadium.jpg",
-      "/images/RealMadridTracker-Replit.png",
-      "/images/RealMadridTracker-Replit(1).png",
-      "/images/RealMadridTracker-Replit(2).png",
+      "/images/real-madrid-hero.jpg",
+      "/images/real-madrid-fans-stadium.jpg",
+      "/images/real-madrid-fans-back.jpg",
+      "/images/real-madrid-fans-singing.jpg",
+      "/images/real-madrid-ultimate-fan.jpg",
     ]);
     setLoading(false);
   }, []);
@@ -24,31 +25,70 @@ export default function AboutPage() {
   return (
     <main className="flex-1 bg-gray-100 dark:bg-[#2C2152] overflow-y-auto">
       {/* Hero Banner */}
-      <section className="relative w-full h-[500px] overflow-hidden">
+      <section className="relative w-full h-[600px] overflow-hidden">
         {loading ? (
           <div className="w-full h-full bg-gray-300 dark:bg-gray-700 animate-pulse flex items-center justify-center">
             <p className="text-gray-500 dark:text-gray-400">Cargando imágenes...</p>
           </div>
         ) : (
-          <Carousel className="w-full h-full">
+          <Carousel className="w-full h-full" opts={{ loop: true }}>
             <CarouselContent>
               {carouselImages.map((image, index) => (
-                <CarouselItem key={index} className="w-full h-[500px]">
+                <CarouselItem key={index} className="w-full h-[600px]">
                   <div 
                     className="w-full h-full bg-cover bg-center relative" 
                     style={{ backgroundImage: `url(${image})` }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-2xl">
-                      <h1 className="text-4xl md:text-5xl font-bold mb-3">Hub Madridista</h1>
-                      <p className="text-xl md:text-2xl">Tu portal exclusivo al universo del Real Madrid</p>
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
+                    
+                    {index === 0 && (
+                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
+                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">Hub Madridista</h1>
+                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">El hogar digital para todos los madridistas</p>
+                      </div>
+                    )}
+                    
+                    {index === 1 && (
+                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
+                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">La Pasión Blanca</h1>
+                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">Vive cada momento con la misma intensidad</p>
+                      </div>
+                    )}
+                    
+                    {index === 2 && (
+                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
+                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">El Sentimiento</h1>
+                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">Unidos por los colores que nos representan</p>
+                      </div>
+                    )}
+                    
+                    {index === 3 && (
+                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
+                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">La Afición</h1>
+                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">El corazón que late en cada estadio</p>
+                      </div>
+                    )}
+                    
+                    {index === 4 && (
+                      <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white max-w-3xl">
+                        <h1 className="text-5xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">Tu Experiencia</h1>
+                        <p className="text-2xl md:text-3xl text-white/90 drop-shadow-md">Todo el contenido madridista en un solo lugar</p>
+                      </div>
+                    )}
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="left-4" />
-            <CarouselNext className="right-4" />
+            <div className="absolute inset-x-0 bottom-5 flex justify-center gap-2 z-50">
+              {carouselImages.map((_, index) => (
+                <div 
+                  key={index} 
+                  className="w-3 h-3 rounded-full bg-white/50 transition-all duration-300"
+                />
+              ))}
+            </div>
+            <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
+            <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
           </Carousel>
         )}
       </section>
@@ -68,7 +108,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
-              <i className="fas fa-video text-white text-2xl"></i>
+              <i className="fas fa-award text-white text-2xl"></i>
             </div>
             <h3 className="text-xl font-semibold mb-3 dark:text-white">Contenido Curado</h3>
             <p className="text-gray-600 dark:text-gray-300">
@@ -78,7 +118,8 @@ export default function AboutPage() {
 
           <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
-              <i className="fas fa-globe text-white text-2xl"></i>
+              <i className="fas fa-tv text-white text-2xl"></i>
+              <i className="fas fa-mobile-alt text-white text-lg ml-1"></i>
             </div>
             <h3 className="text-xl font-semibold mb-3 dark:text-white">Multiplataforma</h3>
             <p className="text-gray-600 dark:text-gray-300">
@@ -88,7 +129,8 @@ export default function AboutPage() {
 
           <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
-              <i className="fas fa-bell text-white text-2xl"></i>
+              <i className="fas fa-bell text-white text-2xl mr-1"></i>
+              <i className="fas fa-star text-white text-sm absolute top-4 right-4 animate-ping"></i>
             </div>
             <h3 className="text-xl font-semibold mb-3 dark:text-white">Notificaciones</h3>
             <p className="text-gray-600 dark:text-gray-300">
