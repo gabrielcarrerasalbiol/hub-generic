@@ -65,6 +65,7 @@ export interface IStorage {
   // Channel subscription operations
   getSubscriptionsByUserId(userId: number): Promise<ChannelSubscription[]>;
   getSubscribedChannelsByUserId(userId: number): Promise<Channel[]>;
+  getSubscriptionsByChannelId(channelId: number): Promise<ChannelSubscription[]>;
   isSubscribed(userId: number, channelId: number): Promise<boolean>;
   createSubscription(subscription: InsertChannelSubscription): Promise<ChannelSubscription>;
   updateSubscription(userId: number, channelId: number, notificationsEnabled: boolean): Promise<ChannelSubscription>;
