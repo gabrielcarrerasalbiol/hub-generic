@@ -18,11 +18,24 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex bg-white">
-      <div className="w-1/4 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
+      <div className="w-1/3 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
         <div className="mb-8">
           <img src="/images/hub-madridista-logo.jpg" alt="Hub Madridista" className="h-24 mb-4" />
           <p className="text-[#001C58] font-medium">La plataforma definitiva para los fans del Real Madrid</p>
         </div>
+        
+        {/* Imagen de aficionados */}
+        <div className="relative mb-6 overflow-hidden rounded-lg shadow-md">
+          <img 
+            src="/images/auth/real-madrid-fans.jpg" 
+            alt="Aficionados del Real Madrid" 
+            className="w-full object-cover"
+          />
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58]/80 to-transparent p-3">
+            <p className="text-white text-sm font-medium">Únete a la pasión madridista</p>
+          </div>
+        </div>
+        
         <div className="flex-grow flex flex-col justify-center">
           <div className="mb-6">
             <h3 className="text-xl font-semibold mb-2 text-[#001C58]">Contenido exclusivo</h3>
@@ -38,8 +51,8 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      <div className="w-full lg:w-3/4 flex items-center justify-center p-4">
-        <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+      <div className="w-full lg:w-2/3 flex items-center justify-center p-6">
+        <div className="w-full max-w-2xl p-8 bg-white rounded-lg shadow-lg">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Crear cuenta</h1>
             <p className="text-gray-600">Únete para acceder a todo el contenido exclusivo</p>
