@@ -270,16 +270,80 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
           continue;
         }
 
-        // Solo procesamos canales de YouTube por ahora
-        if (!channel.platform || !channel.platform.toLowerCase().includes('youtube')) {
-          result.errors.push(`Canal ${channel.title} no es de YouTube (plataforma: ${channel.platform || 'desconocida'})`);
+        console.log(`Importando videos del canal premium: ${channel.title} (${channel.platform})`);
+        
+        // Importar videos del canal según su plataforma
+        let importResult;
+        
+        if (channel.platform.toLowerCase() === 'youtube') {
+          // Para YouTube, usamos el ID externo directamente
+          importResult = await importChannelVideos(channel.externalId, maxPerChannel);
+        } 
+        else if (channel.platform.toLowerCase() === 'twitch') {
+          // Para Twitch, usamos la función especializada de importación
+          importResult = await importTwitchChannelVideos(channel.externalId, maxPerChannel);
+          
+          // Si hay error, intentamos completar la importación usando búsqueda alternativa
+          if (importResult.error) {
+            try {
+              console.log(`Intentando método alternativo para canal Twitch: ${channel.title}`);
+              // Usamos el handle (nombre de usuario) o título del canal para buscar
+              const searchQuery = channel.handle || channel.title;
+              const videos = await searchTwitchVideos(`${searchQuery} real madrid`, maxPerChannel);
+              
+              if (videos && videos.length > 0) {
+                console.log(`Se encontraron ${videos.length} videos mediante búsqueda alternativa`);
+                
+                let addedCount = 0;
+                let skippedCount = 0;
+                
+                // Obtener categorías para clasificación
+                const availableCategories = await storage.getCategories();
+                
+                for (const video of videos) {
+                  try {
+                    // Verificar si el video ya existe en la base de datos
+                    const existingVideo = await storage.getVideoByExternalId(video.id);
+                    if (existingVideo) {
+                      skippedCount++;
+                      continue;
+                    }
+                    
+                    // Convertir al formato de nuestro esquema
+                    const videoData = convertTwitchVideoToSchema(video);
+                    
+                    // Guardar en la base de datos
+                    const savedVideo = await storage.createVideo(videoData);
+                    addedCount++;
+                    
+                    // Generar resumen
+                    await AIService.generateVideoSummary(savedVideo.id);
+                    
+                  } catch (error) {
+                    console.error(`Error procesando video alternativo de Twitch: ${error}`);
+                  }
+                }
+                
+                importResult = {
+                  total: videos.length,
+                  added: addedCount,
+                  skipped: skippedCount,
+                  error: importResult.error + " (se aplicó método alternativo)"
+                };
+              }
+            } catch (twitchError) {
+              console.error("Error en búsqueda alternativa de Twitch:", twitchError);
+            }
+          }
+        }
+        else {
+          result.errors.push(`Plataforma ${channel.platform} no soportada para importación automática`);
           continue;
         }
-
-        console.log(`Importando videos del canal premium: ${channel.title}`);
         
-        // Importar videos del canal
-        const importResult = await importChannelVideos(channel.externalId, maxPerChannel);
+        if (!importResult) {
+          importResult = { total: 0, added: 0, skipped: 0, error: "Resultado de importación indefinido" };
+        }
         
         // Actualizar estadísticas
         result.processedChannels++;
@@ -294,7 +358,6 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
         
         // Registrar información detallada en consola
         console.log(`Canal ${channel.title}: Total ${importResult.total}, Agregados ${importResult.added}, Omitidos ${importResult.skipped || 0}`);
-        
         
         // Actualizar tiempo de última sincronización
         await storage.updatePremiumChannelSyncTime(premiumChannel.id);

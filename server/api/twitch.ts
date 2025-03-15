@@ -6,6 +6,8 @@
 import axios from "axios";
 import { InsertVideo, InsertChannel } from "@shared/schema";
 import { AIService } from "../services/aiService";
+import { storage } from "../storage";
+import { processVideoNotifications } from "./notificationService";
 
 // Definiciones de tipos para respuestas de Twitch
 interface TwitchStream {
@@ -59,8 +61,8 @@ interface TwitchUser {
 // Función para obtener token de acceso a la API de Twitch
 async function getTwitchAccessToken(): Promise<string | null> {
   try {
-    // Para acceso sin Client Secret, usamos el enfoque de cliente implícito
-    // que es suficiente para búsquedas en contenido público
+    // Para la versión actual, usaremos una autenticación simplificada
+    // basada en Client ID que funciona para consultas públicas
     const clientId = process.env.TWITCH_CLIENT_ID;
     
     if (!clientId) {
@@ -68,7 +70,7 @@ async function getTwitchAccessToken(): Promise<string | null> {
       return null;
     }
     
-    // En este enfoque, el token es el Client ID mismo para peticiones simples
+    console.log("Usando Client ID para acceso a API de Twitch");
     return clientId;
   } catch (error) {
     console.error("Error al obtener el token de Twitch:", error);
@@ -225,7 +227,7 @@ export async function getTwitchUserDetails(userId: string): Promise<TwitchUser |
  */
 export function convertTwitchVideoToSchema(
   video: TwitchVideo,
-  category?: number
+  category: number = 1
 ): InsertVideo {
   // Parsear la duración de Twitch (formato: "1h2m3s") a segundos
   const durationString = video.duration;
@@ -250,17 +252,18 @@ export function convertTwitchVideoToSchema(
     description: video.description || '',
     channelId: video.user_id,
     channelTitle: video.user_name,
-    publishedAt: new Date(video.published_at),
+    publishedAt: video.published_at, // Mantener como string, la conversión ocurre en el Storage
     platform: "twitch",
-    duration: durationInSeconds,
+    duration: String(durationInSeconds), // Convertir a string para cumplir con el esquema
     viewCount: video.view_count,
     thumbnailUrl: thumbnailUrl,
-    categoryId: category || 1, // Se actualizará mediante IA si no se proporciona
-    relevance: 0.7, // Valor inicial, será actualizado por IA
-    verified: false,
+    videoUrl: video.url,
+    embedUrl: `https://player.twitch.tv/?video=${video.id}&parent=${process.env.TWITCH_PARENT_DOMAIN || 'localhost'}`,
     language: video.language,
     summary: null,
-    url: video.url,
+    categoryIds: [String(category || 1)],
+    featured: false,
+    featuredOrder: 0,
   };
 }
 
@@ -293,6 +296,7 @@ export function convertTwitchChannelToSchema(user: TwitchUser): InsertChannel {
 export async function importTwitchChannelVideos(channelId: string, maxResults = 20): Promise<{
   total: number,
   added: number,
+  skipped?: number,
   error?: string
 }> {
   try {
@@ -301,8 +305,39 @@ export async function importTwitchChannelVideos(channelId: string, maxResults = 
       return {
         total: 0,
         added: 0,
+        skipped: 0,
         error: "No se pudo obtener el token de acceso para Twitch"
       };
+    }
+    
+    // Primero verificamos que el canal exista
+    const userResponse = await axios.get(`https://api.twitch.tv/helix/users?id=${channelId}`, {
+      headers: {
+        'Client-ID': process.env.TWITCH_CLIENT_ID || '',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!userResponse.data || !userResponse.data.data || userResponse.data.data.length === 0) {
+      return {
+        total: 0,
+        added: 0,
+        skipped: 0,
+        error: "Canal de Twitch no encontrado"
+      };
+    }
+    
+    const userData: TwitchUser = userResponse.data.data[0];
+    
+    // Verificar si el canal ya existe en nuestra base de datos
+    let channelInDb = await storage.getChannelByExternalId(userData.id);
+    if (!channelInDb) {
+      // Si no existe, lo creamos
+      const channelData = convertTwitchChannelToSchema(userData);
+      channelInDb = await storage.createChannel(channelData);
+      console.log(`Canal de Twitch añadido a la base de datos: ${channelData.title}`);
+    } else {
+      console.log(`Canal de Twitch ya existe en la base de datos: ${channelInDb.title}`);
     }
     
     // Obtener videos del canal
@@ -313,28 +348,123 @@ export async function importTwitchChannelVideos(channelId: string, maxResults = 
       }
     });
     
-    if (!response.data || !response.data.data) {
+    if (!response.data || !response.data.data || response.data.data.length === 0) {
       return {
         total: 0,
         added: 0,
+        skipped: 0,
         error: "No se encontraron videos para este canal"
       };
     }
     
     const videos: TwitchVideo[] = response.data.data;
+    console.log(`Se encontraron ${videos.length} videos en el canal de Twitch ${userData.display_name}`);
     
-    // Aquí se implementaría la lógica para guardar los videos en la base de datos
-    // Similar a como se hace con YouTube, pero está fuera del alcance de este archivo
+    let addedCount = 0;
+    let skippedCount = 0;
+    
+    // Obtener categorías para clasificación IA
+    const availableCategories = await storage.getCategories();
+    
+    // Umbrales para filtrar videos
+    const MIN_VIEW_COUNT = 100; // Umbral más bajo para Twitch
+    
+    // Procesar cada video
+    for (const video of videos) {
+      try {
+        // Verificar si el video ya existe en la base de datos
+        const existingVideo = await storage.getVideoByExternalId(video.id);
+        if (existingVideo) {
+          skippedCount++;
+          continue;
+        }
+        
+        // Filtrar videos con pocas visualizaciones
+        if (video.view_count < MIN_VIEW_COUNT) {
+          console.log(`Ignorando video de Twitch ${video.id} con solo ${video.view_count} visualizaciones`);
+          skippedCount++;
+          continue;
+        }
+        
+        // Filtrar por relevancia: el título o descripción debe contener palabras clave de Real Madrid
+        const keywords = [
+          "real madrid", "madrid", "bernabeu", "santiago bernabeu", 
+          "la liga", "champions", "copa del rey", "kroos", "modric", 
+          "vinicius", "bellingham", "ancelotti", "merengue"
+        ];
+        
+        const title = video.title.toLowerCase();
+        const desc = video.description?.toLowerCase() || '';
+        const isRelevant = keywords.some(keyword => title.includes(keyword) || desc.includes(keyword));
+        
+        if (!isRelevant) {
+          console.log(`Ignorando video no relevante: ${video.title}`);
+          skippedCount++;
+          continue;
+        }
+        
+        // Convertir al formato de esquema
+        const videoData = convertTwitchVideoToSchema(video);
+        
+        // Clasificar contenido con AIService para asignar categorías
+        try {
+          // Utilizar el servicio AIService centralizado para clasificación
+          const classificationResult = await AIService.classifyContent(
+            videoData.title,
+            videoData.description || "",
+            availableCategories
+          );
+          
+          if (classificationResult && classificationResult.categories.length > 0) {
+            videoData.categoryIds = classificationResult.categories.map(id => id.toString());
+          }
+          
+        } catch (aiError) {
+          console.error("Error clasificando contenido con IA:", aiError);
+          // Mantenemos la categoría default (1)
+        }
+        
+        // Crear el video en la base de datos
+        const createdVideo = await storage.createVideo(videoData);
+        addedCount++;
+        
+        // Después generamos el resumen usando el ID interno, que es el parámetro que espera generateVideoSummary
+        try {
+          const summaryResult = await AIService.generateVideoSummary(createdVideo.id);
+          
+          if (summaryResult && summaryResult.success) {
+            console.log(`Resumen generado para video ${createdVideo.id} de Twitch`);
+            // No necesitamos hacer nada más aquí, el método ya actualiza la base de datos
+          }
+          
+        } catch (summaryError) {
+          console.error("Error generando resumen:", summaryError);
+          // El video ya está guardado, continuamos con el procesamiento
+        }
+        
+        // Enviar notificaciones a los suscriptores del canal
+        try {
+          await processVideoNotifications(createdVideo.id);
+        } catch (notificationError) {
+          console.error(`Error enviando notificaciones para el video ${createdVideo.id}:`, notificationError);
+        }
+        
+      } catch (error) {
+        console.error(`Error procesando video de Twitch ${video.id}:`, error);
+      }
+    }
     
     return {
       total: videos.length,
-      added: videos.length,
+      added: addedCount,
+      skipped: skippedCount
     };
   } catch (error) {
     console.error("Error al importar videos del canal de Twitch:", error);
     return {
       total: 0,
       added: 0,
+      skipped: 0,
       error: "Error al importar videos: " + (error instanceof Error ? error.message : String(error))
     };
   }

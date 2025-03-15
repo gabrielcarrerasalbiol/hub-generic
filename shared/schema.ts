@@ -87,10 +87,13 @@ export const channels = pgTable("channels", {
   description: text("description"),
   thumbnailUrl: text("thumbnail_url"),
   bannerUrl: text("banner_url"),
-  platform: text("platform").notNull(), // YouTube, TikTok, Twitter, Instagram
+  platform: text("platform").notNull(), // YouTube, TikTok, Twitter, Instagram, Twitch
   externalId: text("external_id").notNull(),
   subscriberCount: integer("subscriber_count").default(0),
   videoCount: integer("video_count").default(0),
+  url: text("url"), // URL del canal (perfil)
+  verified: boolean("verified").default(false), // Si el canal está verificado
+  handle: text("handle"), // Nombre de usuario/handle (@username)
 });
 
 export const insertChannelSchema = createInsertSchema(channels).omit({
