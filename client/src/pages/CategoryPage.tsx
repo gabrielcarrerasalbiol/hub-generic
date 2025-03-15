@@ -78,9 +78,14 @@ export default function CategoryPage() {
   const [filterMenuOpen, setFilterMenuOpen] = useState<boolean>(false);
   
   // Fetch videos filtered by category
-  const { data: videos = [], isLoading } = useQuery<Video[]>({
-    queryKey: ['/api/videos', { category: categoryType }],
+  const { data: videos = [], isLoading, refetch } = useQuery<Video[]>({
+    queryKey: ['/api/videos', { category: categoryType, platform: platformFilter }],
   });
+  
+  // Refrescar la consulta cuando cambie la plataforma seleccionada
+  useEffect(() => {
+    refetch();
+  }, [platformFilter, refetch]);
 
   // Fetch categories
   const { data: categories = [] } = useQuery<Category[]>({
@@ -112,19 +117,25 @@ export default function CategoryPage() {
     return true;
   });
 
+  // Función para obtener fecha segura
+  const getDateTimestamp = (dateString: string | null | undefined): number => {
+    if (!dateString) return 0;
+    return new Date(dateString).getTime();
+  };
+
   // Ordenar videos
   const sortedVideos = [...filteredVideos].sort((a, b) => {
     switch (sortBy) {
       case "date-desc":
-        return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+        return getDateTimestamp(b.publishedAt) - getDateTimestamp(a.publishedAt);
       case "date-asc":
-        return new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime();
+        return getDateTimestamp(a.publishedAt) - getDateTimestamp(b.publishedAt);
       case "views-desc":
         return (b.viewCount || 0) - (a.viewCount || 0);
       case "views-asc":
         return (a.viewCount || 0) - (b.viewCount || 0);
       default:
-        return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+        return getDateTimestamp(b.publishedAt) - getDateTimestamp(a.publishedAt);
     }
   });
 
