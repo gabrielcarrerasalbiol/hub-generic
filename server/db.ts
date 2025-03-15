@@ -24,8 +24,20 @@ const pool = new Pool({
   ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
 
+// Configura el schema de la base de datos según el entorno
+const schemaName = isProduction ? 'production' : 'public';
+console.log(`Usando el schema ${schemaName} de la base de datos`);
+
 // Crea una instancia de Drizzle ORM
 export const db = drizzle(pool, { schema });
+
+// Configura el schema en tiempo de ejecución
+if (isProduction) {
+  // Establecer el schema de producción
+  pool.query(`SET search_path TO ${schemaName};`).catch(err => {
+    console.error(`Error al establecer el schema ${schemaName}:`, err);
+  });
+}
 
 // Exporta la función para inicializar la base de datos
 export async function initDb() {
