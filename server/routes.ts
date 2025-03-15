@@ -1626,28 +1626,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
           break;
           
         case "twitch":
-          // Importar videos de Twitch
-          const { searchTwitchVideos, convertTwitchVideoToSchema } = await import("./api/twitch");
-          const twitchVideos = await searchTwitchVideos("Real Madrid", limit);
+          // Importar videos de Twitch usando las nuevas credenciales de la API
+          const { searchTwitchVideos, convertTwitchVideoToSchema, searchTwitchChannels, importTwitchChannelVideos } = await import("./api/twitch");
           
-          let twitchAdded = 0;
-          const twitchTotal = twitchVideos.length;
-          
-          for (const video of twitchVideos) {
-            try {
-              const videoData = convertTwitchVideoToSchema(video);
-              const existingVideo = await storage.getVideoByExternalId(video.id);
-              
-              if (!existingVideo) {
-                await storage.createVideo(videoData);
-                twitchAdded++;
-              }
-            } catch (error) {
-              console.error("Error importing Twitch video:", error);
+          try {
+            // Primero buscamos canales populares relacionados con Real Madrid
+            const channels = await searchTwitchChannels("Real Madrid", 5);
+            
+            if (channels.length === 0) {
+              result = { 
+                total: 0, 
+                added: 0,
+                error: "No se encontraron canales de Twitch relacionados con Real Madrid" 
+              };
+              break;
             }
+            
+            console.log(`Se encontraron ${channels.length} canales de Twitch relacionados con Real Madrid`);
+            
+            // Importamos videos de los canales encontrados
+            let totalAdded = 0;
+            let totalProcessed = 0;
+            let totalSkipped = 0;
+            
+            for (const channel of channels) {
+              console.log(`Importando videos del canal de Twitch: ${channel.display_name}`);
+              
+              // Utilizamos la función especializada para importar videos de un canal
+              const importResult = await importTwitchChannelVideos(
+                channel.id, 
+                Math.ceil(limit / channels.length)
+              );
+              
+              totalAdded += importResult.added || 0;
+              totalProcessed += importResult.total || 0;
+              totalSkipped += importResult.skipped || 0;
+              
+              // Si ya hemos importado suficientes videos, paramos
+              if (totalAdded >= limit) break;
+            }
+            
+            // Como respaldo, si no se encontraron suficientes videos en los canales,
+            // también buscamos videos directamente
+            if (totalAdded < limit / 2) {
+              console.log("Buscando videos adicionales por búsqueda directa");
+              const twitchVideos = await searchTwitchVideos("Real Madrid", limit - totalAdded);
+              
+              // Filtrar videos que ya hayamos procesado
+              const availableCategories = await storage.getCategories();
+              
+              for (const video of twitchVideos) {
+                try {
+                  const existingVideo = await storage.getVideoByExternalId(video.id);
+                  
+                  if (!existingVideo) {
+                    // Convertir al formato de la base de datos
+                    const videoData = convertTwitchVideoToSchema(video);
+                    
+                    // Intentar clasificar el contenido con IA
+                    try {
+                      const classificationResult = await AIService.classifyContent(
+                        videoData.title,
+                        videoData.description || "",
+                        availableCategories
+                      );
+                      
+                      if (classificationResult && classificationResult.categories.length > 0) {
+                        videoData.categoryIds = classificationResult.categories.map(id => id.toString());
+                      }
+                    } catch (aiError) {
+                      console.error("Error clasificando contenido con IA:", aiError);
+                      // Mantenemos la categoría default
+                    }
+                    
+                    const newVideo = await storage.createVideo(videoData);
+                    totalAdded++;
+                    
+                    // Generar resumen si es posible
+                    try {
+                      await AIService.generateVideoSummary(newVideo.id);
+                    } catch (summaryError) {
+                      console.error("Error generando resumen:", summaryError);
+                    }
+                  } else {
+                    totalSkipped++;
+                  }
+                } catch (error) {
+                  console.error("Error importing Twitch video:", error);
+                  totalSkipped++;
+                }
+              }
+              
+              totalProcessed += twitchVideos.length;
+            }
+            
+            result = { 
+              total: totalProcessed, 
+              added: totalAdded,
+              skipped: totalSkipped
+            };
+          } catch (twitchError) {
+            console.error("Error en la importación de Twitch:", twitchError);
+            result = { 
+              total: 0, 
+              added: 0,
+              error: `Error en la API de Twitch: ${twitchError.message || String(twitchError)}`
+            };
           }
-          
-          result = { total: twitchTotal, added: twitchAdded };
           break;
           
         case "twitter":

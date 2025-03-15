@@ -61,17 +61,26 @@ interface TwitchUser {
 // Función para obtener token de acceso a la API de Twitch
 async function getTwitchAccessToken(): Promise<string | null> {
   try {
-    // Para la versión actual, usaremos una autenticación simplificada
-    // basada en Client ID que funciona para consultas públicas
     const clientId = process.env.TWITCH_CLIENT_ID;
+    const clientSecret = process.env.TWITCH_CLIENT_SECRET;
     
-    if (!clientId) {
-      console.error("TWITCH_CLIENT_ID no está configurado en las variables de entorno");
+    if (!clientId || !clientSecret) {
+      console.error("TWITCH_CLIENT_ID o TWITCH_CLIENT_SECRET no están configurados en las variables de entorno");
       return null;
     }
     
-    console.log("Usando Client ID para acceso a API de Twitch");
-    return clientId;
+    // Obtener token de acceso usando las credenciales configuradas
+    const tokenResponse = await axios.post(
+      `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=client_credentials`
+    );
+    
+    if (tokenResponse.data && tokenResponse.data.access_token) {
+      console.log("Token de acceso para Twitch obtenido correctamente");
+      return tokenResponse.data.access_token;
+    } else {
+      console.error("No se pudo obtener un token de acceso para Twitch");
+      return null;
+    }
   } catch (error) {
     console.error("Error al obtener el token de Twitch:", error);
     return null;
