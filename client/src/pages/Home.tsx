@@ -63,6 +63,7 @@ export default function Home() {
   });
   
   // Verificar si la plataforma seleccionada está disponible
+  // Consideramos "twitch" como una plataforma disponible
   const isPlatformAvailable = platform === "all" || platform === "youtube" || platform === "twitch";
 
   // Get featured videos (top 5 trending videos)
