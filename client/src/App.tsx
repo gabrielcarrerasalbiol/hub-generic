@@ -27,6 +27,8 @@ import SettingsPage from "@/pages/SettingsPage";
 import AboutPage from "@/pages/AboutPage";
 import HistoryPage from "@/pages/HistoryPage";
 import SearchPage from "@/pages/SearchPage";
+import FeaturedChannelsPage from "@/pages/FeaturedChannelsPage";
+import PremiumChannelsPage from "@/pages/PremiumChannelsPage";
 import Layout from "@/components/Layout";
 import CookieConsent from "@/components/CookieConsent";
 import { useAuth } from '@/hooks/useAuth';
@@ -79,6 +81,8 @@ const Routes = () => {
             <Route path="/privacidad" component={PrivacyPage} />
             <Route path="/cookies" component={CookiesPage} />
             <Route path="/contacto" component={ContactPage} />
+            <Route path="/featured-channels" component={FeaturedChannelsPage} />
+            <Route path="/premium-channels" component={PremiumChannelsPage} />
             <Route component={NotFound} />
           </Switch>
         </Layout>
