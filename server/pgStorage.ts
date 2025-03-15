@@ -206,17 +206,17 @@ export class PgStorage implements IStorage {
       .orderBy(desc(videos.publishedAt));
   }
 
-  async getTrendingVideos(limit = 50): Promise<Video[]> {
-    // Obtenemos la fecha de hace 30 días para considerar videos relativamente nuevos
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  async getTrendingVideos(limit = 200): Promise<Video[]> {
+    // Obtenemos la fecha de hace 45 días para considerar videos más recientes
+    const fortyfiveDaysAgo = new Date();
+    fortyfiveDaysAgo.setDate(fortyfiveDaysAgo.getDate() - 45);
     
     // Primero obtenemos videos destacados (siempre primero en tendencias)
     const featuredVideos = await db.select()
       .from(videos)
       .where(eq(videos.featured, true))
       .orderBy(desc(videos.publishedAt))
-      .limit(Math.ceil(limit * 0.3)); // 30% del límite para videos destacados
+      .limit(Math.ceil(limit * 0.2)); // 20% del límite para videos destacados
       
     // Calculamos cuántos videos más necesitamos
     const remainingLimit = limit - featuredVideos.length;
@@ -225,24 +225,26 @@ export class PgStorage implements IStorage {
       return featuredVideos;
     }
     
-    // Consulta para obtener videos populares recientes (últimos 30 días)
+    // Consulta para obtener videos populares recientes (últimos 45 días)
+    // Priorizamos videos más recientes con alto número de vistas
     const recentPopular = await db.select()
       .from(videos)
       .where(
         and(
-          sql`${videos.publishedAt} >= ${thirtyDaysAgo.toISOString()}`,
+          sql`${videos.publishedAt} >= ${fortyfiveDaysAgo.toISOString()}`,
           not(inArray(videos.id, featuredVideos.map(v => v.id)))
         )
       )
       .orderBy(desc(videos.viewCount))
       .limit(Math.ceil(remainingLimit * 0.6)); // 60% del resto para videos recientes populares
       
-    // Consulta para obtener videos más vistos de todos los tiempos
+    // Consulta para obtener videos más recientes independientemente de las vistas
+    // Esto garantiza que tengamos contenido fresco, aunque no tenga muchas visualizaciones aún
     const remainingCount = remainingLimit - recentPopular.length;
-    let allTimePopular: any[] = [];
+    let recentVideos: any[] = [];
     
     if (remainingCount > 0) {
-      allTimePopular = await db.select()
+      recentVideos = await db.select()
         .from(videos)
         .where(
           not(inArray(
@@ -250,12 +252,12 @@ export class PgStorage implements IStorage {
             [...featuredVideos, ...recentPopular].map(v => v.id)
           ))
         )
-        .orderBy(desc(videos.viewCount))
+        .orderBy(desc(videos.publishedAt))
         .limit(remainingCount);
     }
     
     // Combinamos todos los resultados
-    return [...featuredVideos, ...recentPopular, ...allTimePopular];
+    return [...featuredVideos, ...recentPopular, ...recentVideos];
   }
 
   async getLatestVideos(limit = 50): Promise<Video[]> {

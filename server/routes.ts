@@ -224,7 +224,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/videos/trending", async (req: Request, res: Response) => {
     try {
-      const limit = parseInt(req.query.limit as string) || 50;
+      // Aumentamos el límite a 200 para analizar un conjunto más amplio de videos recientes
+      const limit = parseInt(req.query.limit as string) || 200;
       const videos = await storage.getTrendingVideos(limit);
       
       // Check if any videos are favorites (solo si hay usuario autenticado)
@@ -244,7 +245,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }));
       }
       
-      res.json(videosWithFavorite);
+      // Limitamos los resultados a los primeros 50 después de procesar favoritos
+      // para evitar sobrecargar la interfaz, pero habremos analizado 200 videos
+      const limitedResults = videosWithFavorite.slice(0, 50);
+      
+      res.json(limitedResults);
     } catch (error) {
       console.error("Error fetching trending videos:", error);
       res.status(500).json({ message: "Failed to fetch trending videos" });
