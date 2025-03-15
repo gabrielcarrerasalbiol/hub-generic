@@ -229,7 +229,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <span className="flex items-center">
                         <LogOut className="h-4 w-4 mr-2" />
-                        Cerrar sesión
+                        {t('nav.logout')}
                       </span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
