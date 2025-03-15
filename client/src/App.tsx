@@ -28,6 +28,7 @@ import AboutPage from "@/pages/AboutPage";
 import HistoryPage from "@/pages/HistoryPage";
 import SearchPage from "@/pages/SearchPage";
 import Layout from "@/components/Layout";
+import CookieConsent from "@/components/CookieConsent";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/hooks/use-theme';
@@ -180,6 +181,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AppContent />
+        <CookieConsent />
         <Toaster />
       </ThemeProvider>
     </QueryClientProvider>
