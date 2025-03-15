@@ -107,8 +107,8 @@ export default function ChannelPage() {
   }
 
   // Format subscriber and video counts
-  const formatCount = (count: number | null): string => {
-    if (count === null) return '0';
+  const formatCount = (count?: number | null): string => {
+    if (count === null || count === undefined) return '0';
     
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M`;

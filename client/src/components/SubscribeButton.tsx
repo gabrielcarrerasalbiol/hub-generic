@@ -26,14 +26,14 @@ export default function SubscribeButton({
   
   // Cargar el estado inicial de suscripción cuando se monta el componente
   useEffect(() => {
-    if (user) {
+    if (user && channelId && channelId !== 'undefined') {
       checkSubscriptionStatus();
     }
   }, [channelId, user]);
 
   // Verificar el estado actual de suscripción al canal
   const checkSubscriptionStatus = async () => {
-    if (!checkAuth()) return;
+    if (!checkAuth() || !channelId || channelId === 'undefined') return;
     
     try {
       setIsLoading(true);
@@ -62,14 +62,29 @@ export default function SubscribeButton({
       return;
     }
     
+    if (!channelId || channelId === 'undefined') {
+      toast({
+        title: "Error al procesar",
+        description: "No se pudo identificar el canal, por favor recarga la página",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     if (!isSubscribed) {
       try {
         // Suscribirse al canal
-        await apiRequest('POST', '/api/subscriptions', {
-          channelId,
-          notificationsEnabled: true
+        await apiRequest('/api/subscriptions', {
+          method: 'POST',
+          body: JSON.stringify({
+            channelId,
+            notificationsEnabled: true
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
         
         setIsSubscribed(true);
@@ -93,9 +108,12 @@ export default function SubscribeButton({
     } else {
       try {
         // Cancelar suscripción
-        await apiRequest('DELETE', `/api/subscriptions/${channelId}`);
+        await apiRequest(`/api/subscriptions/${channelId}`, {
+          method: 'DELETE'
+        });
         
         setIsSubscribed(false);
+        setNotificationsEnabled(false);
         toast({
           title: "Suscripción cancelada",
           description: "Ya no recibirás actualizaciones de este canal",
@@ -104,6 +122,9 @@ export default function SubscribeButton({
         // Invalidar consultas relacionadas
         queryClient.invalidateQueries({ queryKey: ['/api/subscriptions'] });
         queryClient.invalidateQueries({ queryKey: ['/api/subscriptions/channels'] });
+        if (channelId && channelId !== 'undefined') {
+          queryClient.invalidateQueries({ queryKey: [`/api/channels/${channelId}/subscription`] });
+        }
       } catch (error) {
         console.error("Error unsubscribing from channel:", error);
         toast({
@@ -119,13 +140,19 @@ export default function SubscribeButton({
 
   // Actualizar preferencias de notificaciones
   const toggleNotifications = async () => {
-    if (!checkAuth() || !isSubscribed) return;
+    if (!checkAuth() || !isSubscribed || !channelId || channelId === 'undefined') return;
     
     setIsLoading(true);
     
     try {
-      await apiRequest('PUT', `/api/subscriptions/${channelId}`, {
-        notificationsEnabled: !notificationsEnabled
+      await apiRequest(`/api/subscriptions/${channelId}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          notificationsEnabled: !notificationsEnabled
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       
       setNotificationsEnabled(!notificationsEnabled);
