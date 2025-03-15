@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import './FormStyle.css';
 
 import {
   Form,
@@ -87,71 +88,75 @@ export default function RegisterForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
+    <Card className="w-full max-w-xl mx-auto">
+      <CardHeader className="pb-4">
         <CardTitle>Crear cuenta</CardTitle>
         <CardDescription>
           Regístrate para acceder a Hub Madridista
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-2 pb-2">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre de usuario*</FormLabel>
-                  <FormControl>
-                    <Input placeholder="madridista123" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem className="compact-form-item">
+                    <FormLabel>Nombre de usuario*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="madridista123" {...field} className="h-9" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Correo electrónico</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="tu@email.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Correo electrónico</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="tu@email.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre completo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Tu nombre" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contraseña*</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Contraseña" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre completo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu nombre" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contraseña*</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Contraseña" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             
             <FormField
               control={form.control}
@@ -167,13 +172,13 @@ export default function RegisterForm() {
               )}
             />
             
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full mt-4" disabled={isSubmitting}>
               {isSubmitting ? 'Registrando...' : 'Crear cuenta'}
             </Button>
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex flex-col gap-4">
+      <CardFooter className="flex flex-col pt-2 pb-4">
         {/* SSO buttons temporarily hidden */}
         <div className="text-center w-full">
           <p className="text-sm">

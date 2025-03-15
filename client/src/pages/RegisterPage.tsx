@@ -20,7 +20,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex bg-white">
       <div className="w-1/3 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
         <div className="mb-8">
-          <img src="/images/hub-madridista-logo.jpg" alt="Hub Madridista" className="h-24 mb-4" />
+          <img src="/hubmadridista.png" alt="Hub Madridista" className="h-24 mb-4" />
           <p className="text-[#001C58] font-medium">La plataforma definitiva para los fans del Real Madrid</p>
         </div>
         
@@ -29,7 +29,7 @@ export default function RegisterPage() {
           <img 
             src="/images/auth/real-madrid-fans.jpg" 
             alt="Aficionados del Real Madrid" 
-            className="w-full object-cover"
+            className="w-full object-cover h-64"
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58]/80 to-transparent p-3">
             <p className="text-white text-sm font-medium">Únete a la pasión madridista</p>
