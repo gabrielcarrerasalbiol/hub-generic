@@ -12,13 +12,13 @@ export default function AboutPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Usamos imágenes locales que sabemos que existen
+    // Usamos gradientes personalizados en lugar de imágenes
     setCarouselImages([
-      "/images/real-madrid-hero.jpg",
-      "/images/real-madrid-fans-stadium.jpg", 
-      "/images/real-madrid-fans-back.jpg",
-      "/images/real-madrid-fans-singing.jpg",
-      "/images/real-madrid-ultimate-fan.jpg",
+      "bg-gradient-to-r from-[#1E3A8A] to-[#1E3A8A]/70",
+      "bg-gradient-to-r from-[#0F172A] to-[#1E3A8A]", 
+      "bg-gradient-to-tl from-[#FDBE11]/30 via-[#1E3A8A] to-[#0F172A]",
+      "bg-gradient-to-br from-[#1E3A8A] via-[#334188] to-[#FDBE11]/20",
+      "bg-gradient-to-r from-[#0F172A] via-[#1E3A8A]/80 to-[#FDBE11]/20",
     ]);
     setLoading(false);
   }, []);
@@ -37,8 +37,7 @@ export default function AboutPage() {
               {carouselImages.map((image, index) => (
                 <CarouselItem key={index} className="w-full h-[600px]">
                   <div 
-                    className="w-full h-full bg-cover bg-center relative" 
-                    style={{ backgroundImage: `url(${image})` }}
+                    className={`w-full h-full relative ${image}`}
                   >
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
                     
@@ -121,7 +120,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
-              <i className="fas fa-award text-white text-2xl"></i>
+              <Award className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-xl font-semibold mb-3 dark:text-white">Contenido Curado</h3>
             <p className="text-gray-600 dark:text-gray-300">
@@ -131,8 +130,10 @@ export default function AboutPage() {
 
           <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
-              <i className="fas fa-tv text-white text-2xl"></i>
-              <i className="fas fa-mobile-alt text-white text-lg ml-1"></i>
+              <div className="flex items-center">
+                <Tv className="w-7 h-7 text-white" />
+                <Smartphone className="w-5 h-5 text-white ml-1" />
+              </div>
             </div>
             <h3 className="text-xl font-semibold mb-3 dark:text-white">Multiplataforma</h3>
             <p className="text-gray-600 dark:text-gray-300">
@@ -141,9 +142,9 @@ export default function AboutPage() {
           </div>
 
           <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
-            <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
-              <i className="fas fa-bell text-white text-2xl mr-1"></i>
-              <i className="fas fa-star text-white text-sm absolute top-4 right-4 animate-ping"></i>
+            <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center relative">
+              <Bell className="w-8 h-8 text-white" />
+              <Star className="w-4 h-4 text-white absolute top-2 right-2 animate-ping" />
             </div>
             <h3 className="text-xl font-semibold mb-3 dark:text-white">Notificaciones</h3>
             <p className="text-gray-600 dark:text-gray-300">
@@ -168,10 +169,10 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
-                <i className="fas fa-crown text-[#FDBE11] text-2xl"></i>
+                <Crown className="w-6 h-6 text-[#FDBE11]" />
               </div>
-              <i className="fas fa-star text-[#FDBE11] text-xs absolute top-4 right-4"></i>
-              <i className="fas fa-star text-[#FDBE11] text-xs absolute top-4 left-4"></i>
+              <Star className="w-3 h-3 text-[#FDBE11] absolute top-4 right-4" />
+              <Star className="w-3 h-3 text-[#FDBE11] absolute top-4 left-4" />
               <h3 className="text-xl font-semibold mb-2">Canales Exclusivos</h3>
               <p className="text-gray-200">
                 Acceso a canales premium con contenido exclusivo y análisis en profundidad.
@@ -180,10 +181,8 @@ export default function AboutPage() {
 
             <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
-                <i className="fas fa-ban text-[#FDBE11] text-2xl"></i>
+                <Ban className="w-6 h-6 text-[#FDBE11]" />
               </div>
-              <i className="fas fa-ad text-white/20 text-xs absolute top-8 right-8 line-through"></i>
-              <i className="fas fa-ad text-white/20 text-xs absolute top-6 left-10 line-through"></i>
               <h3 className="text-xl font-semibold mb-2">Sin Publicidad</h3>
               <p className="text-gray-200">
                 Disfruta de una experiencia sin interrupciones publicitarias en toda la plataforma.
@@ -192,10 +191,10 @@ export default function AboutPage() {
 
             <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
-                <i className="fas fa-trophy text-[#FDBE11] text-2xl"></i>
+                <Trophy className="w-6 h-6 text-[#FDBE11]" />
               </div>
-              <i className="fas fa-history text-white/30 text-xs absolute top-4 right-6"></i>
-              <i className="fas fa-history text-white/30 text-xs absolute top-6 right-10"></i>
+              <History className="w-3 h-3 text-white/30 absolute top-4 right-6" />
+              <History className="w-3 h-3 text-white/30 absolute top-6 right-10" />
               <h3 className="text-xl font-semibold mb-2">Archivo Histórico</h3>
               <p className="text-gray-200">
                 Accede a nuestro archivo completo de momentos históricos del Real Madrid.
@@ -204,10 +203,8 @@ export default function AboutPage() {
 
             <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
-                <i className="fas fa-chart-line text-[#FDBE11] text-2xl"></i>
+                <LineChart className="w-6 h-6 text-[#FDBE11]" />
               </div>
-              <i className="fas fa-futbol text-white/30 text-xs absolute top-5 right-6"></i>
-              <i className="fas fa-tactics text-white/30 text-xs absolute top-7 left-10"></i>
               <h3 className="text-xl font-semibold mb-2">Análisis Avanzado</h3>
               <p className="text-gray-200">
                 Estadísticas detalladas y análisis tácticos exclusivos de cada partido.
@@ -340,13 +337,13 @@ export default function AboutPage() {
               <div className="flex flex-wrap justify-center gap-4">
                 <Link href="/register">
                   <Button className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/80 text-white font-medium text-lg px-8 py-3 rounded-lg">
-                    <i className="fas fa-user-plus mr-2"></i>
+                    <UserPlus className="mr-2 h-5 w-5" />
                     Registrarse Ahora
                   </Button>
                 </Link>
                 <Link href="/login">
                   <Button variant="outline" className="bg-transparent border-[#1E3A8A] text-[#1E3A8A] dark:border-white dark:text-white hover:bg-[#1E3A8A]/10 font-medium text-lg px-8 py-3 rounded-lg">
-                    <i className="fas fa-sign-in-alt mr-2"></i>
+                    <LogIn className="mr-2 h-5 w-5" />
                     Iniciar Sesión
                   </Button>
                 </Link>
@@ -355,15 +352,15 @@ export default function AboutPage() {
               <div className="mt-6 flex justify-center">
                 <Link href="/register">
                   <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold text-xl px-10 py-4 rounded-full shadow-lg animate-pulse">
-                    <i className="fas fa-crown mr-2"></i>
+                    <Crown className="mr-2 h-5 w-5" />
                     ¡Suscríbete Ahora!
-                    <i className="fas fa-chevron-right ml-2"></i>
+                    <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
               </div>
               
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
-                <i className="fas fa-lock text-[#FDBE11] mr-1"></i>
+                <Lock className="inline-block text-[#FDBE11] h-4 w-4 mr-1" />
                 Acceso instantáneo a todo el contenido premium
               </p>
             </div>
@@ -372,9 +369,9 @@ export default function AboutPage() {
               <div className="mt-6">
                 <Link href="/profile">
                   <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold text-xl px-10 py-4 rounded-full shadow-lg animate-pulse">
-                    <i className="fas fa-crown mr-2"></i>
+                    <Crown className="mr-2 h-5 w-5" />
                     ¡Actualiza a Premium!
-                    <i className="fas fa-chevron-right ml-2"></i>
+                    <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
               </div>
