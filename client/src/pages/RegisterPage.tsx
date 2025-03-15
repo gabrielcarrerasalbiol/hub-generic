@@ -22,7 +22,7 @@ export default function RegisterPage() {
         <div className="mb-8">
           <div className="relative mb-8 overflow-hidden rounded-lg shadow-md">
             <img 
-              src="/images/real-madrid-fans.jpg" 
+              src="images/real-madrid-fans.jpg" 
               alt="Aficionados del Real Madrid" 
               className="w-full object-cover h-64"
             />
