@@ -1,10 +1,9 @@
 import { storage } from '../storage';
 import { Video } from '@shared/schema';
-import { generateVideoSummary } from './gemini';
-import { classifyContent } from './openai';
+import { AIService } from '../services/aiService';
 
 /**
- * Genera un resumen para un video existente utilizando Gemini Pro
+ * Genera un resumen para un video existente utilizando el servicio de IA
  * @param videoId ID del video en la base de datos
  * @returns true si se actualizó correctamente, false en caso contrario
  */
@@ -24,23 +23,12 @@ export async function generateSummaryForVideo(videoId: number): Promise<boolean>
       return true;
     }
     
-    // Generar resumen con Gemini
+    // Generar resumen con el servicio de IA unificado (prioriza DeepSeek)
     console.log(`Generando resumen para el video ${videoId}: ${video.title}`);
-    const result = await generateVideoSummary(video.title, video.description || "");
+    const result = await AIService.generateVideoSummary(videoId);
     
-    if (!result || !result.summary) {
+    if (!result.success || !result.summary) {
       console.error(`No se pudo generar resumen para el video ${videoId}`);
-      return false;
-    }
-    
-    // Actualizar el video con el nuevo resumen y el idioma detectado
-    const updated = await storage.updateVideo(videoId, {
-      summary: result.summary,
-      language: result.language
-    });
-    
-    if (!updated) {
-      console.error(`Error al actualizar el resumen del video ${videoId}`);
       return false;
     }
     
@@ -71,14 +59,14 @@ async function recategorizeVideoUsingNewSummary(video: Video, summary: string): 
       console.log(`Recategorizando video ${video.id} usando el resumen generado`);
       
       // Clasificar el contenido utilizando el título, descripción y resumen
-      const result = await classifyContent(
+      const result = await AIService.classifyContent(
         video.title,
         (video.description || "") + "\n\n" + summary,
         availableCategories
       );
       
       // Si la clasificación es relevante, actualizar las categorías
-      if (result.relevance >= 0.7) {
+      if (result.relevance >= 70) { // El nuevo servicio usa 0-100 en lugar de 0-1
         const categoryIds = result.categories.map(id => id.toString());
         console.log(`Nuevas categorías asignadas para video ${video.id}: ${categoryIds.join(', ')}`);
         
@@ -130,52 +118,24 @@ export async function generateSummariesForAllVideos(limit = 100): Promise<{
   success: number;
   failed: number;
 }> {
-  const result = {
-    total: 0,
-    processed: 0,
-    success: 0,
-    failed: 0
-  };
-  
   try {
-    // Obtener todos los videos
-    const allVideos = await storage.getVideos(1000, 0); // Obtener hasta 1000 videos
-    result.total = allVideos.length;
+    console.log(`Generando resúmenes para videos sin contenido usando AIService...`);
+    // Usar el método optimizado del servicio de IA
+    const result = await AIService.generateSummariesForVideosWithoutSummary(limit);
     
-    // Filtrar videos sin resumen o con resumen básico
-    const videosToProcess = allVideos
-      .filter(video => !video.summary || 
-              video.summary.length < 50 || 
-              video.summary.startsWith('Contenido sobre Real Madrid:'))
-      .slice(0, limit); // Limitar la cantidad de videos a procesar
-    
-    console.log(`Se procesarán ${videosToProcess.length} videos de un total de ${allVideos.length}`);
-    
-    // Procesar cada video
-    for (const video of videosToProcess) {
-      result.processed++;
-      
-      try {
-        const success = await generateSummaryForVideo(video.id);
-        if (success) {
-          result.success++;
-        } else {
-          result.failed++;
-        }
-        
-        // Esperar un breve tiempo entre solicitudes para no sobrecargar la API
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-      } catch (error) {
-        console.error(`Error procesando video ${video.id}:`, error);
-        result.failed++;
-      }
-    }
-    
-    return result;
-    
+    return {
+      total: result.total,
+      processed: result.processed,
+      success: result.succeeded,
+      failed: result.failed
+    };
   } catch (error) {
     console.error("Error en generateSummariesForAllVideos:", error);
-    return result;
+    return {
+      total: 0,
+      processed: 0,
+      success: 0,
+      failed: 0
+    };
   }
 }
