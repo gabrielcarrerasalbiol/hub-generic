@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { PlatformType } from "@shared/schema";
 import { Layers, Youtube, Twitter, Instagram } from 'lucide-react';
 import { TikTokIcon } from './icons/TikTokIcon';
+import { TwitchIcon } from './icons/TwitchIcon';
 
 interface PlatformFiltersProps {
   selectedPlatform: PlatformType;
@@ -59,6 +60,16 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
         onClick={() => onSelectPlatform("instagram")}
       >
         <Instagram className="h-4 w-4 mr-2 text-pink-500" /> Instagram
+      </Button>
+      
+      <Button
+        variant={selectedPlatform === "twitch" ? "default" : "outline"}
+        className={selectedPlatform === "twitch" 
+          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
+        onClick={() => onSelectPlatform("twitch")}
+      >
+        <TwitchIcon className="h-4 w-4 mr-2 text-purple-500" /> Twitch
       </Button>
     </div>
   );
