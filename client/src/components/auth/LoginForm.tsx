@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import './FormStyle.css';
 
 import {
   Form,
@@ -75,71 +76,79 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="w-full">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700">Nombre de usuario</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Introduce tu usuario" 
-                    className="py-6" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex justify-between items-center">
-                  <FormLabel className="text-gray-700">Contraseña</FormLabel>
-                  <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-                    ¿Olvidaste tu contraseña?
-                  </Link>
-                </div>
-                <FormControl>
-                  <Input 
-                    type="password" 
-                    placeholder="Introduce tu contraseña" 
-                    className="py-6" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <Button 
-            type="submit" 
-            className="w-full py-6" 
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
-          </Button>
-        </form>
-      </Form>
-      
-      {/* SSO buttons temporarily hidden */}
-      
-      <div className="text-center">
-        <p className="text-gray-600">
-          ¿No tienes cuenta?{' '}
-          <Link href="/register" className="text-primary hover:underline font-medium">
-            Regístrate
-          </Link>
-        </p>
-      </div>
-    </div>
+    <Card className="w-full max-w-xl mx-auto">
+      <CardHeader className="pb-4">
+        <CardTitle>Iniciar sesión</CardTitle>
+        <CardDescription>
+          Accede a Hub Madridista para disfrutar del contenido exclusivo
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-2 pb-2">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem className="compact-form-item">
+                  <FormLabel>Nombre de usuario</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Introduce tu usuario" 
+                      className="h-9" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="compact-form-item">
+                  <div className="flex justify-between items-center">
+                    <FormLabel>Contraseña</FormLabel>
+                    <Link href="/forgot-password" className="text-xs text-primary hover:underline">
+                      ¿Olvidaste tu contraseña?
+                    </Link>
+                  </div>
+                  <FormControl>
+                    <Input 
+                      type="password" 
+                      placeholder="Introduce tu contraseña" 
+                      className="h-9" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <Button 
+              type="submit" 
+              className="w-full mt-4" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+      <CardFooter className="flex flex-col pt-2 pb-4">
+        {/* SSO buttons temporarily hidden */}
+        <div className="text-center w-full">
+          <p className="text-sm">
+            ¿No tienes cuenta?{' '}
+            <Link href="/register" className="text-primary underline">
+              Regístrate
+            </Link>
+          </p>
+        </div>
+      </CardFooter>
+    </Card>
   );
 }

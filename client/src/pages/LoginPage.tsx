@@ -26,10 +26,11 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-white">
-      <div className="w-1/4 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
-        <div className="mb-8">
-          <img src="/images/hub-madridista-logo.jpg" alt="Hub Madridista" className="h-24 mb-4" />
-          <p className="text-[#001C58] font-medium">La plataforma definitiva para los fans del Real Madrid</p>
+      <div className="w-1/3 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
+        <div className="mb-8 text-center">
+          <img src="/hubmadridista.png" alt="Hub Madridista" className="h-32 mx-auto mb-4" />
+          <p className="text-[#001C58] text-xl font-bold">La plataforma definitiva para los fans del Real Madrid</p>
+          <p className="text-[#001C58] font-medium mt-2">Descubre todo sobre tu equipo favorito</p>
         </div>
         <div className="flex-grow flex flex-col justify-center">
           <div className="mb-6">
@@ -46,10 +47,15 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="w-full lg:w-3/4 flex items-center justify-center p-4">
+      <div className="w-full lg:w-2/3 flex items-center justify-center p-6">
         <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Iniciar sesión</h1>
+          <div className="text-center mb-6">
+            <h1 className="text-4xl font-bold mb-1">
+              <span className="text-[#001C58]">Hub</span>
+              <span className="text-[#FDBE11]">Madridista</span>
+            </h1>
+            <div className="h-1 w-24 bg-gradient-to-r from-[#001C58] to-[#FDBE11] mx-auto mb-6"></div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">Iniciar sesión</h2>
             <p className="text-gray-600">Accede a todo el contenido de tu equipo favorito</p>
           </div>
           <LoginForm />

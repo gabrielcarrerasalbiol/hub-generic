@@ -21,6 +21,9 @@ export default function Layout({ children, fullWidth = false }: LayoutProps) {
   // Verificar si hay bloqueo permanente activo
   const [isServiceBlocked, setIsServiceBlocked] = useState(false);
   
+  // Verificar si estamos en páginas de login o register para ocultar el sidebar
+  const isAuthPage = location === '/login' || location === '/register';
+  
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const authErrorFlag = window.localStorage.getItem('auth_service_blocked');
@@ -45,8 +48,8 @@ export default function Layout({ children, fullWidth = false }: LayoutProps) {
       <Header onToggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 relative">
-        {/* Mobile Sidebar Toggle Button - Hidden in fullWidth mode */}
-        {!fullWidth && (
+        {/* Mobile Sidebar Toggle Button - Hidden in fullWidth mode and auth pages */}
+        {!fullWidth && !isAuthPage && (
           <button 
             onClick={toggleSidebar}
             className="md:hidden fixed bottom-5 right-5 bg-[#FDBE11] text-[#001C58] rounded-full p-3 shadow-lg z-40"
@@ -56,11 +59,11 @@ export default function Layout({ children, fullWidth = false }: LayoutProps) {
           </button>
         )}
         
-        {/* Sidebar - Hidden in fullWidth mode */}
-        {!fullWidth && <Sidebar isOpen={sidebarOpen} />}
+        {/* Sidebar - Hidden in fullWidth mode and auth pages */}
+        {!fullWidth && !isAuthPage && <Sidebar isOpen={sidebarOpen} />}
         
-        {/* Main Content - Full width when sidebar is hidden */}
-        <main className={`flex-1 overflow-x-hidden min-h-[calc(100vh-8rem)] ${fullWidth ? 'p-0' : 'px-4 py-4 md:px-6'}`}>
+        {/* Main Content - Full width when sidebar is hidden or in auth pages */}
+        <main className={`flex-1 overflow-x-hidden min-h-[calc(100vh-8rem)] ${fullWidth || isAuthPage ? 'p-0' : 'px-4 py-4 md:px-6'}`}>
           {isServiceBlocked && (
             <Alert variant="destructive" className="mb-4">
               <AlertTriangle className="h-4 w-4" />
