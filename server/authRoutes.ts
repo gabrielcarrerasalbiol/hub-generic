@@ -573,8 +573,16 @@ export function registerAuthRoutes(app: Express) {
         expiresAt
       };
       
-      // En producción, aquí enviaríamos un correo con el link de reseteo
-      // Por ahora, solo devolvemos el token para testing
+      // Enviar el correo electrónico con las instrucciones para resetear la contraseña
+      try {
+        await sendPasswordResetEmail(email, resetToken, user.username);
+        console.log(`Correo de reseteo enviado a ${email}`);
+      } catch (emailError) {
+        console.error('Error enviando email de reseteo:', emailError);
+        // No detener el proceso si falla el envío de correo
+      }
+      
+      // Mantenemos los logs para depuración
       console.log(`Token de reseteo para ${email}: ${resetToken}`);
       console.log(`Link de reseteo: http://localhost:5000/reset-password?token=${resetToken}`);
       

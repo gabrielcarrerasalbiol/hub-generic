@@ -22,6 +22,8 @@ import {
 } from "../shared/schema";
 import { isAuthenticated, isAdmin } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';
+import { isValidEmail } from './api/emailService';
+import { sendShareEmail } from './api/shareService';
 
 // Demo user ID - in a real app, this would come from authentication
 const DEMO_USER_ID = 1;
@@ -1741,7 +1743,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Importar el servicio de envío de emails
-      const { sendShareEmail, isValidEmail } = await import("./api/shareService");
+      const { sendShareEmail } = await import("./api/shareService");
+      const { isValidEmail } = await import("./api/emailService");
       
       // Validar el formato del email
       if (!isValidEmail(email)) {
