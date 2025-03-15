@@ -4,7 +4,7 @@ import Layout from "@/components/Layout";
 import { Video, Category, Channel } from "@shared/schema";
 import VideoCard from "@/components/VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { 
   Select, 
   SelectContent, 
@@ -79,13 +79,15 @@ export default function CategoryPage() {
   
   // Fetch videos filtered by category
   const { data: videos = [], isLoading, refetch } = useQuery<Video[]>({
-    queryKey: ['/api/videos', { category: categoryType, platform: platformFilter }],
+    queryKey: ['/api/videos', { category: categoryType }],
+    enabled: !!categoryType, // Solo ejecutar cuando categoryType esté definido
   });
   
-  // Refrescar la consulta cuando cambie la plataforma seleccionada
+  // Refrescar la consulta cuando la página se cargue y cuando cambie la plataforma
   useEffect(() => {
+    // Forzar recarga cuando cambie la plataforma o cuando cambie la categoría
     refetch();
-  }, [platformFilter, refetch]);
+  }, [categoryType, platformFilter, refetch]);
 
   // Fetch categories
   const { data: categories = [] } = useQuery<Category[]>({
