@@ -267,7 +267,7 @@ export function convertTwitchVideoToSchema(
     viewCount: video.view_count,
     thumbnailUrl: thumbnailUrl,
     videoUrl: video.url,
-    embedUrl: `https://player.twitch.tv/?video=${video.id}&parent=${process.env.TWITCH_PARENT_DOMAIN || 'localhost'}`,
+    embedUrl: `https://player.twitch.tv/?video=${video.id}&parent=${process.env.TWITCH_PARENT_DOMAIN || 'replit.app'}`,
     language: video.language,
     summary: null,
     categoryIds: [String(category || 1)],
