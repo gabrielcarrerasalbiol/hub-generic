@@ -51,16 +51,18 @@ export default function AboutPage() {
           <CarouselContent>
             {heroSlides.map((slide, index) => (
               <CarouselItem key={index} className="w-full">
-                <div className={`w-full py-32 ${slide.bgColor}`}>
+                <div className={`w-full py-16 ${slide.bgColor}`}>
                   <div className="max-w-6xl mx-auto px-4 text-center">
-                    <h1 className={`text-5xl md:text-6xl font-bold mb-6 ${slide.textColor}`}>{slide.title}</h1>
-                    <p className={`text-2xl md:text-3xl opacity-90 ${slide.textColor}`}>{slide.subtitle}</p>
+                    <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${slide.textColor}`}>{slide.title}</h1>
+                    <p className={`text-xl md:text-2xl opacity-90 ${slide.textColor}`}>{slide.subtitle}</p>
                     
                     {index === 0 && (
-                      <div className="mt-8">
-                        <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold px-6 py-3 text-lg rounded-lg shadow-md">
-                          Descubrir más
-                        </Button>
+                      <div className="mt-6">
+                        <Link href="/register">
+                          <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold px-6 py-2 text-lg rounded-lg shadow-md">
+                            Registrarse
+                          </Button>
+                        </Link>
                       </div>
                     )}
                   </div>
