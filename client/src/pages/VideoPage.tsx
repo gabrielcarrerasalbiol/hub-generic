@@ -268,55 +268,6 @@ export default function VideoPage() {
                 </div>
               </div>
             </div>
-          
-            {/* Información del canal */}
-            <div className="bg-[#F8F8FA] rounded-lg p-4 mb-6 shadow-md border border-[#FDBE11]">
-              <div className="flex flex-wrap md:flex-nowrap items-start">
-                <div 
-                  onClick={() => window.location.href = `/channel/${video.channelId}`}
-                  className="flex items-center hover:bg-white p-2 rounded-md cursor-pointer mb-2"
-                >
-                  <img 
-                    src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`} 
-                    alt={video.channelTitle} 
-                    className="w-16 h-16 rounded-full object-cover border-2 border-[#FDBE11]" 
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.onerror = null;
-                      target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`;
-                    }}
-                  />
-                  <div className="ml-4">
-                    <p className="font-bold text-lg text-[#001C58]">{video.channelTitle}</p>
-                    <p className="text-sm text-[#001C58]">
-                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium text-white ${getPlatformColor(video.platform)}`}>
-                        <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
-                        {video.platform}
-                      </span>
-                      <span className="ml-2">{formatViewCount(video.viewCount)} visualizaciones</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Botón de suscripción al canal */}
-              <div className="mt-2">
-                {user && video.channelId ? (
-                  <div className="flex flex-wrap gap-2">
-                    <SubscribeButton 
-                      channelId={video.channelId}
-                      initialSubscribed={subscriptionStatus?.isSubscribed}
-                      initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
-                    />
-                  </div>
-                ) : (
-                  <div className="bg-gray-100 rounded p-3 text-center border border-[#FDBE11]">
-                    <p className="text-[#001C58]">Inicia sesión para interactuar</p>
-                  </div>
-                )}
-              </div>
-
-            </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -355,8 +306,43 @@ export default function VideoPage() {
               </div>
             </div>
             
-            {/* Related Videos y Comentarios */}
+            {/* Canal, Comentarios y Videos Relacionados */}
             <div className="lg:col-span-1">
+              {/* Información del canal */}
+              <div 
+                onClick={() => window.location.href = `/channel/${video.channelId}`}
+                className="bg-white rounded-lg shadow-md p-4 mb-6 hover:shadow-lg transition-shadow cursor-pointer"
+              >
+                <div className="flex items-center mb-3">
+                  <img 
+                    src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`} 
+                    alt={video.channelTitle} 
+                    className="w-12 h-12 rounded-full object-cover border-2 border-[#FDBE11]" 
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`;
+                    }}
+                  />
+                  <div className="ml-3">
+                    <p className="font-bold text-md text-[#001C58]">{video.channelTitle}</p>
+                    <p className="text-xs text-[#001C58]">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white ${getPlatformColor(video.platform)}`}>
+                        <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
+                        {video.platform}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                {user && video.channelId && (
+                  <SubscribeButton 
+                    channelId={video.channelId}
+                    initialSubscribed={subscriptionStatus?.isSubscribed}
+                    initialNotificationsEnabled={subscriptionStatus?.notificationsEnabled}
+                  />
+                )}
+              </div>
+              
               {/* Sección de comentarios */}
               <div className="bg-white rounded-lg shadow-md p-4 mb-6">
                 <CommentSection videoId={video.id} />

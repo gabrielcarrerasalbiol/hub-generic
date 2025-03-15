@@ -182,7 +182,7 @@ export default function ShareVideoModal({ videoId, videoTitle, isOpen, onClose }
             
             <div className="pt-4">
               <h4 className="text-sm font-medium mb-2">Compartir en redes sociales</h4>
-              <div className="grid grid-cols-5 gap-2 mb-2">
+              <div className="grid grid-cols-3 gap-2 mb-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -213,6 +213,8 @@ export default function ShareVideoModal({ videoId, videoTitle, isOpen, onClose }
                   <FaWhatsapp className="text-[#25D366]" />
                   <span className="sr-only md:not-sr-only md:inline-block">WhatsApp</span>
                 </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
