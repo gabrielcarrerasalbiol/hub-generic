@@ -153,32 +153,48 @@ export default function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300">
-              <i className="fas fa-crown text-[#FDBE11] text-3xl mb-4"></i>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
+              <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-crown text-[#FDBE11] text-2xl"></i>
+              </div>
+              <i className="fas fa-star text-[#FDBE11] text-xs absolute top-4 right-4"></i>
+              <i className="fas fa-star text-[#FDBE11] text-xs absolute top-4 left-4"></i>
               <h3 className="text-xl font-semibold mb-2">Canales Exclusivos</h3>
               <p className="text-gray-200">
                 Acceso a canales premium con contenido exclusivo y análisis en profundidad.
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300">
-              <i className="fas fa-ad text-[#FDBE11] text-3xl mb-4"></i>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
+              <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-ban text-[#FDBE11] text-2xl"></i>
+              </div>
+              <i className="fas fa-ad text-white/20 text-xs absolute top-8 right-8 line-through"></i>
+              <i className="fas fa-ad text-white/20 text-xs absolute top-6 left-10 line-through"></i>
               <h3 className="text-xl font-semibold mb-2">Sin Publicidad</h3>
               <p className="text-gray-200">
                 Disfruta de una experiencia sin interrupciones publicitarias en toda la plataforma.
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300">
-              <i className="fas fa-history text-[#FDBE11] text-3xl mb-4"></i>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
+              <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-trophy text-[#FDBE11] text-2xl"></i>
+              </div>
+              <i className="fas fa-history text-white/30 text-xs absolute top-4 right-6"></i>
+              <i className="fas fa-history text-white/30 text-xs absolute top-6 right-10"></i>
               <h3 className="text-xl font-semibold mb-2">Archivo Histórico</h3>
               <p className="text-gray-200">
                 Accede a nuestro archivo completo de momentos históricos del Real Madrid.
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300">
-              <i className="fas fa-chart-line text-[#FDBE11] text-3xl mb-4"></i>
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
+              <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
+                <i className="fas fa-chart-line text-[#FDBE11] text-2xl"></i>
+              </div>
+              <i className="fas fa-futbol text-white/30 text-xs absolute top-5 right-6"></i>
+              <i className="fas fa-tactics text-white/30 text-xs absolute top-7 left-10"></i>
               <h3 className="text-xl font-semibold mb-2">Análisis Avanzado</h3>
               <p className="text-gray-200">
                 Estadísticas detalladas y análisis tácticos exclusivos de cada partido.
@@ -306,19 +322,50 @@ export default function AboutPage() {
             Real Madrid. ¡Sé parte de nuestra comunidad hoy mismo!
           </p>
           
-          {!user && (
-            <div className="space-x-4">
-              <Link href="/register">
-                <Button className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/80 text-white font-medium text-lg px-8 py-3 rounded-lg">
-                  Registrarse Ahora
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button variant="outline" className="bg-transparent border-[#1E3A8A] text-[#1E3A8A] dark:border-white dark:text-white hover:bg-[#1E3A8A]/10 font-medium text-lg px-8 py-3 rounded-lg">
-                  Iniciar Sesión
-                </Button>
-              </Link>
+          {!user ? (
+            <div className="space-y-6">
+              <div className="flex flex-wrap justify-center gap-4">
+                <Link href="/register">
+                  <Button className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/80 text-white font-medium text-lg px-8 py-3 rounded-lg">
+                    <i className="fas fa-user-plus mr-2"></i>
+                    Registrarse Ahora
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button variant="outline" className="bg-transparent border-[#1E3A8A] text-[#1E3A8A] dark:border-white dark:text-white hover:bg-[#1E3A8A]/10 font-medium text-lg px-8 py-3 rounded-lg">
+                    <i className="fas fa-sign-in-alt mr-2"></i>
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+              </div>
+              
+              <div className="mt-6 flex justify-center">
+                <Link href="/register">
+                  <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold text-xl px-10 py-4 rounded-full shadow-lg animate-pulse">
+                    <i className="fas fa-crown mr-2"></i>
+                    ¡Suscríbete Ahora!
+                    <i className="fas fa-chevron-right ml-2"></i>
+                  </Button>
+                </Link>
+              </div>
+              
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+                <i className="fas fa-lock text-[#FDBE11] mr-1"></i>
+                Acceso instantáneo a todo el contenido premium
+              </p>
             </div>
+          ) : (
+            user.role !== 'premium' && (
+              <div className="mt-6">
+                <Link href="/profile">
+                  <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold text-xl px-10 py-4 rounded-full shadow-lg animate-pulse">
+                    <i className="fas fa-crown mr-2"></i>
+                    ¡Actualiza a Premium!
+                    <i className="fas fa-chevron-right ml-2"></i>
+                  </Button>
+                </Link>
+              </div>
+            )
           )}
         </div>
       </section>
