@@ -8,18 +8,19 @@ import { Award, Bell, Crown, Ban, Trophy, LineChart, Star, CheckCircle, UserCirc
 
 export default function AboutPage() {
   const { user } = useAuth();
-  const [carouselImages, setCarouselImages] = useState<string[]>([]);
+  const [heroImages, setHeroImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Usamos gradientes personalizados en lugar de imágenes
-    setCarouselImages([
-      "bg-gradient-to-r from-[#1E3A8A] to-[#1E3A8A]/70",
-      "bg-gradient-to-r from-[#0F172A] to-[#1E3A8A]", 
-      "bg-gradient-to-tl from-[#FDBE11]/30 via-[#1E3A8A] to-[#0F172A]",
-      "bg-gradient-to-br from-[#1E3A8A] via-[#334188] to-[#FDBE11]/20",
-      "bg-gradient-to-r from-[#0F172A] via-[#1E3A8A]/80 to-[#FDBE11]/20",
-    ]);
+    // Usamos las imágenes proporcionadas de Real Madrid
+    const images = [
+      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553512_oS2HuEQkJ3oQdHmK-generated_image.jpg",
+      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553514_J4WvzFO4Vrd5AnLt-generated_image.jpg",
+      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553513_9qpinTFKHhL8a2mx-generated_image.jpg",
+      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553515_jlyIqXxWaWqjqekk-generated_image.jpg",
+      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553517_xc5wANiFInHW8umi-generated_image.jpg"
+    ];
+    setHeroImages(images);
     setLoading(false);
   }, []);
 
@@ -34,10 +35,11 @@ export default function AboutPage() {
         ) : (
           <Carousel className="w-full h-full" opts={{ loop: true }}>
             <CarouselContent>
-              {carouselImages.map((image, index) => (
+              {heroImages.map((imageUrl, index) => (
                 <CarouselItem key={index} className="w-full h-[600px]">
                   <div 
-                    className={`w-full h-full relative ${image}`}
+                    className="w-full h-full relative bg-cover bg-center"
+                    style={{ backgroundImage: `url(${imageUrl})` }}
                   >
                     {/* Mantenemos el gradiente para dar profundidad */}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
@@ -81,7 +83,7 @@ export default function AboutPage() {
               ))}
             </CarouselContent>
             <div className="absolute inset-x-0 bottom-5 flex justify-center gap-2 z-50">
-              {carouselImages.map((_, index) => (
+              {heroImages.map((_: string, index: number) => (
                 <div 
                   key={index} 
                   className="w-3 h-3 rounded-full bg-white/50 transition-all duration-300"
