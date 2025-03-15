@@ -776,6 +776,162 @@ export class PgStorage implements IStorage {
       console.log('Categorías predeterminadas creadas exitosamente');
     }
   }
+
+  // Comment operations
+  async getCommentsByVideoId(videoId: number, limit = 50, offset = 0): Promise<Comment[]> {
+    // Obtenemos primero los comentarios principales (sin padre)
+    const mainComments = await db
+      .select({
+        id: comments.id,
+        userId: comments.userId,
+        videoId: comments.videoId,
+        parentId: comments.parentId,
+        content: comments.content,
+        likes: comments.likes,
+        createdAt: comments.createdAt,
+        updatedAt: comments.updatedAt,
+        isEdited: comments.isEdited,
+        // Incluimos los datos del usuario que comentó
+        username: users.username,
+        profilePicture: users.profilePicture,
+        name: users.name
+      })
+      .from(comments)
+      .leftJoin(users, eq(comments.userId, users.id))
+      .where(
+        and(
+          eq(comments.videoId, videoId),
+          sql`${comments.parentId} IS NULL`
+        )
+      )
+      .orderBy(desc(comments.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    // Para cada comentario principal, buscamos sus respuestas
+    const result = await Promise.all(mainComments.map(async (comment) => {
+      const replies = await this.getRepliesByCommentId(comment.id);
+      return {
+        ...comment,
+        replies: replies
+      };
+    }));
+
+    return result;
+  }
+
+  async getCommentsByUserId(userId: number, limit = 50, offset = 0): Promise<Comment[]> {
+    return db
+      .select()
+      .from(comments)
+      .where(eq(comments.userId, userId))
+      .orderBy(desc(comments.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getCommentById(id: number): Promise<Comment | undefined> {
+    const result = await db
+      .select()
+      .from(comments)
+      .where(eq(comments.id, id));
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async getRepliesByCommentId(commentId: number, limit = 10, offset = 0): Promise<Comment[]> {
+    return db
+      .select({
+        id: comments.id,
+        userId: comments.userId,
+        videoId: comments.videoId,
+        parentId: comments.parentId,
+        content: comments.content,
+        likes: comments.likes,
+        createdAt: comments.createdAt,
+        updatedAt: comments.updatedAt,
+        isEdited: comments.isEdited,
+        // Incluimos los datos del usuario que respondió
+        username: users.username,
+        profilePicture: users.profilePicture,
+        name: users.name
+      })
+      .from(comments)
+      .leftJoin(users, eq(comments.userId, users.id))
+      .where(eq(comments.parentId, commentId))
+      .orderBy(asc(comments.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getCommentCount(videoId: number): Promise<number> {
+    const result = await db
+      .select({
+        count: count()
+      })
+      .from(comments)
+      .where(eq(comments.videoId, videoId));
+    
+    return result[0].count;
+  }
+
+  async createComment(comment: InsertComment): Promise<Comment> {
+    const result = await db.insert(comments).values(comment).returning();
+    return result[0];
+  }
+
+  async updateComment(id: number, content: string): Promise<Comment | undefined> {
+    const result = await db
+      .update(comments)
+      .set({
+        content,
+        updatedAt: new Date(),
+        isEdited: true
+      })
+      .where(eq(comments.id, id))
+      .returning();
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async deleteComment(id: number): Promise<boolean> {
+    // Primero eliminamos las respuestas a este comentario
+    await db
+      .delete(comments)
+      .where(eq(comments.parentId, id));
+    
+    // Luego eliminamos el comentario principal
+    const result = await db
+      .delete(comments)
+      .where(eq(comments.id, id))
+      .returning();
+    
+    return result.length > 0;
+  }
+
+  async likeComment(id: number): Promise<boolean> {
+    const result = await db
+      .update(comments)
+      .set({
+        likes: sql`${comments.likes} + 1`
+      })
+      .where(eq(comments.id, id))
+      .returning();
+    
+    return result.length > 0;
+  }
+
+  async unlikeComment(id: number): Promise<boolean> {
+    const result = await db
+      .update(comments)
+      .set({
+        likes: sql`GREATEST(0, ${comments.likes} - 1)` // Aseguramos que no sea negativo
+      })
+      .where(eq(comments.id, id))
+      .returning();
+    
+    return result.length > 0;
+  }
 }
 
 // Exportar una instancia para su uso en la aplicación

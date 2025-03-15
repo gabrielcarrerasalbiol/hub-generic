@@ -249,7 +249,7 @@ export const comments = pgTable("comments", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   videoId: integer("video_id").notNull().references(() => videos.id, { onDelete: "cascade" }),
-  parentId: integer("parent_id").references(() => comments.id, { onDelete: "set null" }), // Para respuestas a otros comentarios
+  parentId: integer("parent_id"), // Para respuestas a otros comentarios
   content: text("content").notNull(),
   likes: integer("likes").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

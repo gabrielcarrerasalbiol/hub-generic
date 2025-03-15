@@ -4,7 +4,8 @@ import {
   InsertFavorite, Session, OAuthToken, InsertOAuthToken,
   ChannelSubscription, InsertChannelSubscription,
   Notification, InsertNotification, PremiumChannel,
-  InsertPremiumChannel, ViewHistory, InsertViewHistory
+  InsertPremiumChannel, ViewHistory, InsertViewHistory,
+  Comment, InsertComment
 } from "../shared/schema";
 
 // Storage interface defining all operations
