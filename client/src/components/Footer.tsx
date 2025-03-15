@@ -24,7 +24,7 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center mb-4">
               <img 
-                src="/images/hub-madridista-logo-new.jpg" 
+                src="/hubmadridista.png" 
                 alt="Hub Madridista Logo" 
                 className="h-12 mr-2" 
               />
