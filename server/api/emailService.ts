@@ -167,3 +167,61 @@ export async function sendWelcomeEmail(
 
   return await sendEmail(to, subject, html);
 }
+
+/**
+ * Envía un email con instrucciones para restablecer la contraseña
+ * @param to Email del usuario
+ * @param resetToken Token de restablecimiento
+ * @param username Nombre de usuario
+ * @returns Promise<boolean> Resultado del envío
+ */
+export async function sendPasswordResetEmail(
+  to: string,
+  resetToken: string,
+  username: string
+): Promise<boolean> {
+  const subject = 'Restablece tu contraseña en Hub Madridista';
+  
+  // Crear la URL de restablecimiento
+  const resetUrl = `${process.env.FRONTEND_URL || 'https://hubmadridista.com'}/reset-password?token=${resetToken}`;
+  
+  // Crear contenido HTML
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color: #001C58; margin: 0;">Hub<span style="color: #FDBE11;">Madridista</span></h1>
+        <div style="height: 4px; width: 100px; background: linear-gradient(to right, #001C58, #FDBE11); margin: 10px auto;"></div>
+      </div>
+      
+      <h2 style="color: #333; margin-top: 0;">Restablecimiento de contraseña</h2>
+      
+      <p>Hola ${username},</p>
+      
+      <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en Hub Madridista.</p>
+      
+      <p>Para crear una nueva contraseña, haz clic en el siguiente enlace:</p>
+      
+      <p style="margin: 20px 0; text-align: center;">
+        <a href="${resetUrl}" style="background-color: #001C58; color: white; padding: 10px 20px; text-decoration: none; border-radius: 3px; display: inline-block;">
+          Restablecer contraseña
+        </a>
+      </p>
+      
+      <p>Este enlace expirará en 24 horas. Si no solicitaste este cambio, ignora este correo y tu contraseña seguirá siendo la misma.</p>
+      
+      <div style="margin: 20px 0; padding: 15px; background-color: #f8f8f8; border-radius: 5px;">
+        <p style="margin: 0;"><strong>¿No funciona el botón?</strong> Copia y pega este enlace en tu navegador:</p>
+        <p style="margin: 5px 0; word-break: break-all; font-size: 14px;">
+          ${resetUrl}
+        </p>
+      </div>
+      
+      <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; font-size: 12px;">Hub Madridista - La plataforma para los fans del Real Madrid</p>
+        <p style="color: #666; font-size: 12px;">Este es un correo automático, por favor no responder.</p>
+      </div>
+    </div>
+  `;
+
+  return await sendEmail(to, subject, html);
+}

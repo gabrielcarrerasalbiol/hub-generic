@@ -8,6 +8,7 @@ import { generateToken, isAuthenticated, isAdmin } from './auth';
 import { insertUserSchema, UserRole } from '../shared/schema';
 import { z } from 'zod';
 import * as fs from 'fs';
+import { sendNewUserNotification, sendWelcomeEmail, sendPasswordResetEmail } from './api/emailService';
 
 // Schema for login validation
 const loginSchema = z.object({
@@ -105,6 +106,20 @@ export function registerAuthRoutes(app: Express) {
       
       // Generate auth token
       const token = generateToken(user);
+      
+      // Enviar email de bienvenida al usuario si proporcionó correo
+      if (email) {
+        try {
+          // Enviar email de bienvenida al usuario
+          await sendWelcomeEmail(email, username, name || undefined);
+          
+          // Notificar al administrador sobre el nuevo registro
+          await sendNewUserNotification(username, email, name || undefined);
+        } catch (emailError) {
+          console.error('Error enviando emails de registro:', emailError);
+          // No detener el registro si falla el email
+        }
+      }
       
       // Return user data and token
       res.status(201).json({
