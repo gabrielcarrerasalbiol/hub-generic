@@ -24,8 +24,8 @@ import { handleNewsletterSubscription } from './api/mailchimpService';
 import { isValidEmail } from './api/emailService';
 import { sendShareEmail } from './api/shareService';
 
-// Demo user ID - in a real app, this would come from authentication
-const DEMO_USER_ID = 1;
+// Demo user ID - el ID actual puede variar si se elimina y se vuelve a crear
+// Se debe recuperar dinámicamente cada vez que se necesita
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create a demo user if it doesn't exist
@@ -183,12 +183,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if any videos are favorites
-      const videosWithFavorite = await Promise.all(
-        videos.map(async (video) => {
-          const isFavorite = await storage.isFavorite(DEMO_USER_ID, video.id);
-          return { ...video, isFavorite };
-        })
-      );
+      // Obtenemos el usuario demo dinámicamente en lugar de usar un ID constante
+      let videosWithFavorite = videos;
+      let demoUser = await storage.getUserByUsername("demo");
+      
+      if (demoUser) {
+        videosWithFavorite = await Promise.all(
+          videos.map(async (video) => {
+            const isFavorite = await storage.isFavorite(demoUser!.id, video.id);
+            return { ...video, isFavorite };
+          })
+        );
+      } else {
+        // Si no hay usuario demo, ningún video es favorito
+        videosWithFavorite = videos.map(video => ({
+          ...video,
+          isFavorite: false
+        }));
+      }
       
       res.json(videosWithFavorite);
     } catch (error) {
