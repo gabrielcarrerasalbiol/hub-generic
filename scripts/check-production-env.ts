@@ -6,7 +6,8 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { bold, red, green, yellow, blue, cyan, magenta } from './colorUtils';
-import { Client } from 'pg';
+import pkg from 'pg';
+const { Client } = pkg;
 
 // Cargar variables de entorno de producción
 dotenv.config({ path: '.env.production' });
