@@ -60,64 +60,48 @@ Configuración específica para el entorno de producción. En general, debe usar
 ### Para Producción
 
 1. Configura correctamente el archivo `.env.production`
-2. Ejecuta `./check-production.sh` para verificar tu configuración
-3. Construye la aplicación con `NODE_ENV=production npm run build`
-4. Inicia el servidor con `NODE_ENV=production npm run start`
-5. La aplicación cargará automáticamente las variables desde `.env.production`
+2. Ejecuta `./setup-production-db.sh` para configurar la base de datos de producción 
+3. Usa `./start-production.sh` para iniciar la aplicación en modo producción 
+4. La aplicación cargará automáticamente las variables desde `.env.production`
 
 ## 🧰 Scripts de Ayuda
 
 Hemos creado varios scripts para facilitar la gestión de entornos:
 
-### `check-production.sh`
+### `setup-production-db.sh`
 
-Script mejorado para verificar exhaustivamente la configuración del entorno de producción:
-
-```bash
-./check-production.sh
-```
-
-Este script realiza verificaciones avanzadas:
-- Verifica que el archivo `.env.production` exista
-- Comprueba que todas las variables críticas estén configuradas (con código de colores para mejor visualización)
-- Revisa variables recomendadas y muestra advertencias si faltan
-- Prueba la conexión a la base de datos de producción
-- Verifica que las tablas necesarias existan en la base de datos
-- Genera un informe detallado por categorías sobre el estado de la configuración
-- Proporciona sugerencias específicas para resolver problemas detectados
-
-> **Recomendación**: Ejecuta este script antes de cualquier despliegue para verificar que todo está correctamente configurado.
-
-### `setup-production.sh`
-
-Script para configurar el entorno de producción:
-
-```bash
-./setup-production.sh
-```
-
-Este script:
-- Verifica primero la configuración usando `check-production.sh`
-- Configura la base de datos de producción con el esquema correcto
-- Construye la aplicación para producción
-- Ofrece migrar datos del entorno de desarrollo al de producción
-
-### `setup-production-db.sh` (Mejorado)
-
-Script mejorado para configurar específicamente la base de datos de producción:
+Script para configurar específicamente la base de datos de producción:
 
 ```bash
 ./setup-production-db.sh
 ```
 
-Mejoras en este script:
-- Ahora integra `check-production.sh` para verificación previa
-- Realiza verificaciones detalladas antes de proceder con la configuración
-- Detecta y reporta problemas específicos en la conexión a la base de datos
-- Proporciona mensajes de error más claros con sugerencias para soluciones
-- Incluye salida con código de colores para mejor visualización
-- Verifica la integridad del esquema antes de aplicar migraciones
-- Manejo mejorado de errores durante el proceso de configuración
+Este script:
+- Crea el schema de producción si no existe
+- Crea todas las tablas en el esquema de producción 
+- Configura las secuencias para las tablas
+- Crea las categorías predeterminadas
+- Crea un usuario administrador para el entorno de producción
+  - Usuario: admin
+  - Contraseña: Oldbury2022@
+  - Email: contacto@hubmadridista.com
+
+> **Nota**: Este script debe ejecutarse una sola vez para inicializar la base de datos. Para actualizaciones posteriores, usar comandos específicos.
+
+### `start-production.sh`
+
+Script para iniciar la aplicación en modo producción:
+
+```bash
+./start-production.sh
+```
+
+Este script:
+- Establece NODE_ENV=production
+- Carga las variables de entorno desde `.env.production`
+- Inicia la aplicación usando `npm run dev` (que se configura automáticamente para producción)
+
+> **Importante**: Este es el comando principal para ejecutar la aplicación en producción.
 
 ### `migrate-export.sh` y `migrate-import.sh`
 
@@ -260,12 +244,12 @@ Cuando cambies el esquema (agregando nuevas tablas, columnas, etc.):
 Para desplegar en Replit:
 
 1. Configura correctamente `.env.production` (usa `.env.production.example` como base)
-2. Ejecuta `./check-production.sh` para verificar que todo esté correctamente configurado
-3. Ejecuta `./setup-production.sh` para preparar el build
+2. Ejecuta `./setup-production-db.sh` para configurar la base de datos de producción
+3. Modifica el archivo `.replit` para usar `./start-production.sh` como comando de ejecución principal
 4. Usa el botón "Deploy" en la interfaz de Replit
 5. Verifica que la aplicación funcione correctamente después del despliegue
 
-> **Flujo recomendado**: Siempre ejecuta primero `./check-production.sh` antes de cualquier despliegue para evitar problemas.
+> **Nota**: La configuración de Replit ya está preparada para usar el workflow "Start application", que se ejecutará en modo producción si NODE_ENV está configurado como 'production'.
 
 ### Configuración de Dominio
 

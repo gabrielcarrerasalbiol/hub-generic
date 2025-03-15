@@ -108,13 +108,13 @@ GOOGLE_CLIENT_SECRET=tu_secreto_cliente_google
 Para configurar y desplegar la aplicación en producción:
 
 1. Configura el archivo `.env.production` con tus variables de entorno de producción
-2. Ejecuta el script de configuración: `./setup-production.sh`
-3. Inicia la aplicación: `NODE_ENV=production npm start`
+2. Ejecuta el script para configurar la base de datos: `./setup-production-db.sh`
+3. Inicia la aplicación en modo producción: `./start-production.sh`
 
 ### Scripts adicionales
 
-- `./setup-production.sh`: Configura el entorno de producción completo (BD + build)
-- `./setup-production-db.sh`: Configura solo la base de datos de producción
+- `./setup-production-db.sh`: Configura la base de datos de producción (crea schema, tablas y usuario admin)
+- `./start-production.sh`: Inicia la aplicación en modo producción con las variables de entorno correctas
 - `./migrate-export.sh`: Exporta datos del entorno de desarrollo
 - `./migrate-import.sh`: Importa datos al entorno de producción
 
