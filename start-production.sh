@@ -5,15 +5,13 @@ echo "Iniciando Hub Madridista en modo PRODUCCIÓN..."
 
 # Establece las variables de entorno
 export NODE_ENV=production
+export SCHEMA_NAME=production
 export $(grep -v '^#' .env.production | xargs)
 
-# Verifica si existe el directorio de construcción
-if [ ! -d "dist" ] || [ ! "$(ls -A dist)" ]; then
-  echo "⚠️ ADVERTENCIA: No se ha detectado una construcción previa."
-  echo "Por favor ejecuta primero ./build-production.sh"
-  echo "Intentando iniciar de todas formas..."
-fi
+# Este enfoque simplificado usa el servidor de desarrollo 
+# pero con el esquema de la base de datos de producción
+# En un entorno real, deberías usar código compilado en producción
 
 # Inicia el servidor en modo producción
-echo "Iniciando el servidor en modo producción..."
+echo "Iniciando el servidor en modo desarrollo con esquema de producción..."
 npm run dev
