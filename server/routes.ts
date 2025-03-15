@@ -1612,30 +1612,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const { fetchAndProcessNewVideos } = await import("./api/videoFetcher");
           result = await fetchAndProcessNewVideos(limit);
           break;
+          
         case "twitch":
           // Importar videos de Twitch
           const { searchTwitchVideos, convertTwitchVideoToSchema } = await import("./api/twitch");
-          const videos = await searchTwitchVideos("Real Madrid", limit);
+          const twitchVideos = await searchTwitchVideos("Real Madrid", limit);
           
-          let added = 0;
-          let total = videos.length;
+          let twitchAdded = 0;
+          const twitchTotal = twitchVideos.length;
           
-          for (const video of videos) {
+          for (const video of twitchVideos) {
             try {
               const videoData = convertTwitchVideoToSchema(video);
               const existingVideo = await storage.getVideoByExternalId(video.id);
               
               if (!existingVideo) {
                 await storage.createVideo(videoData);
-                added++;
+                twitchAdded++;
               }
             } catch (error) {
               console.error("Error importing Twitch video:", error);
             }
           }
           
-          result = { total, added };
+          result = { total: twitchTotal, added: twitchAdded };
           break;
+          
+        case "twitter":
+          // Importar videos de Twitter
+          const { searchTwitterVideos, convertTwitterVideoToSchema, getTwitterUserDetails } = await import("./api/twitter");
+          const twitterVideos = await searchTwitterVideos("Real Madrid", limit);
+          
+          let twitterAdded = 0;
+          const twitterTotal = twitterVideos.length;
+          
+          for (const tweet of twitterVideos) {
+            try {
+              // Para Twitter necesitamos obtener detalles del usuario para cada tweet
+              if (tweet.author_id) {
+                const user = await getTwitterUserDetails(tweet.author_id);
+                if (user && tweet.attachments?.media_keys?.length) {
+                  // Asumimos que el primer adjunto multimedia es el video
+                  const mediaKey = tweet.attachments.media_keys[0];
+                  // Aquí simplificamos y usamos una estructura básica para representar el media
+                  // En una implementación real, tendrías que obtener estos detalles de la API
+                  const media = {
+                    media_key: mediaKey,
+                    type: 'video',
+                    url: tweet.entities?.urls?.find(u => u.media_key === mediaKey)?.expanded_url || '',
+                  };
+                  
+                  const videoData = convertTwitterVideoToSchema(tweet, user, media);
+                  const existingVideo = await storage.getVideoByExternalId(tweet.id);
+                  
+                  if (!existingVideo) {
+                    await storage.createVideo(videoData);
+                    twitterAdded++;
+                  }
+                }
+              }
+            } catch (error) {
+              console.error("Error importing Twitter video:", error);
+            }
+          }
+          
+          result = { total: twitterTotal, added: twitterAdded };
+          break;
+          
+        case "tiktok":
+          // Importar videos de TikTok
+          const { searchTikTokVideos, convertTikTokVideoToSchema } = await import("./api/tiktok");
+          const tiktokVideos = await searchTikTokVideos("Real Madrid", limit);
+          
+          let tiktokAdded = 0;
+          const tiktokTotal = tiktokVideos.length;
+          
+          for (const video of tiktokVideos) {
+            try {
+              const videoData = convertTikTokVideoToSchema(video);
+              const existingVideo = await storage.getVideoByExternalId(video.id);
+              
+              if (!existingVideo) {
+                await storage.createVideo(videoData);
+                tiktokAdded++;
+              }
+            } catch (error) {
+              console.error("Error importing TikTok video:", error);
+            }
+          }
+          
+          result = { total: tiktokTotal, added: tiktokAdded };
+          break;
+          
         default:
           return res.status(400).json({ 
             error: "Plataforma no implementada",
