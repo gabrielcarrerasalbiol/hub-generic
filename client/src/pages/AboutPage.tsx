@@ -12,13 +12,13 @@ export default function AboutPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Usamos las imágenes proporcionadas de Real Madrid
+    // Usamos imágenes públicas relacionadas con el Real Madrid
     const images = [
-      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553512_oS2HuEQkJ3oQdHmK-generated_image.jpg",
-      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553514_J4WvzFO4Vrd5AnLt-generated_image.jpg",
-      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553513_9qpinTFKHhL8a2mx-generated_image.jpg",
-      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553515_jlyIqXxWaWqjqekk-generated_image.jpg",
-      "https://replit.com/cdn-cgi/image/width=1920,quality=80,format=auto/https://storage.googleapis.com/replit/images/1710701553517_xc5wANiFInHW8umi-generated_image.jpg"
+      "https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt1a47e0dbc3220d8d/64d8e17c66db131a0ec6f5f7/GettyImages-1616945746.jpg",
+      "https://www.realmadrid.com/StaticFiles/RealMadridResponsive/images/static/og-image.png",
+      "https://www.thetimes.co.uk/imageserver/image/%2Fmethode%2Ftimes%2Fprod%2Fweb%2Fbin%2F7ca3c25a-1c48-11ee-b3b5-9fe049851c9d.jpg?crop=2732%2C1537%2C134%2C173",
+      "https://cdn.vox-cdn.com/thumbor/tZwYx-QHvpZiX-3YDIIVAiNMIOg=/0x0:4815x3456/1200x800/filters:focal(2023x1344:2793x2114)/cdn.vox-cdn.com/uploads/chorus_image/image/70912805/1395046577.0.jpg",
+      "https://www.realmadrid.com/img/horizontal_940px/estadio_3am7850_horizontalweb-3_20220803041750.jpg"
     ];
     setHeroImages(images);
     setLoading(false);
