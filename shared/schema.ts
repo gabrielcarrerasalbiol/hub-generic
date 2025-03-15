@@ -243,3 +243,27 @@ export const CategoryType = z.enum([
   "news"
 ]);
 export type CategoryType = z.infer<typeof CategoryType>;
+
+// Tabla para comentarios en videos
+export const comments = pgTable("comments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  videoId: integer("video_id").notNull().references(() => videos.id, { onDelete: "cascade" }),
+  parentId: integer("parent_id").references(() => comments.id, { onDelete: "set null" }), // Para respuestas a otros comentarios
+  content: text("content").notNull(),
+  likes: integer("likes").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  isEdited: boolean("is_edited").default(false).notNull(),
+});
+
+export const insertCommentSchema = createInsertSchema(comments).omit({
+  id: true,
+  likes: true,
+  createdAt: true,
+  updatedAt: true,
+  isEdited: true,
+});
+
+export type InsertComment = z.infer<typeof insertCommentSchema>;
+export type Comment = typeof comments.$inferSelect;

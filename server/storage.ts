@@ -91,6 +91,18 @@ export interface IStorage {
   getViewHistory(userId: number, limit?: number): Promise<ViewHistory[]>;
   addViewHistory(viewHistory: InsertViewHistory): Promise<ViewHistory>;
   
+  // Comment operations
+  getCommentsByVideoId(videoId: number, limit?: number, offset?: number): Promise<Comment[]>;
+  getCommentsByUserId(userId: number, limit?: number, offset?: number): Promise<Comment[]>;
+  getCommentById(id: number): Promise<Comment | undefined>;
+  getRepliesByCommentId(commentId: number, limit?: number, offset?: number): Promise<Comment[]>;
+  getCommentCount(videoId: number): Promise<number>;
+  createComment(comment: InsertComment): Promise<Comment>;
+  updateComment(id: number, content: string): Promise<Comment | undefined>;
+  deleteComment(id: number): Promise<boolean>;
+  likeComment(id: number): Promise<boolean>;
+  unlikeComment(id: number): Promise<boolean>;
+  
   // Dashboard Statistics operations
   getVideosAddedInTimeRange(days: number): Promise<Video[]>;
   getVideosByPlatformCounts(): Promise<{platform: string, count: number}[]>;

@@ -9,9 +9,10 @@ import {
   Notification, InsertNotification,
   PremiumChannel, InsertPremiumChannel,
   ViewHistory, InsertViewHistory,
+  Comment, InsertComment,
   users, videos, channels, categories, favorites, oauthTokens,
   channelSubscriptions, notifications, premiumChannels,
-  viewHistory
+  viewHistory, comments
 } from '@shared/schema';
 
 // PostgreSQL implementation of the storage interface
