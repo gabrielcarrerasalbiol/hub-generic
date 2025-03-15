@@ -20,13 +20,8 @@ export default function RegisterPage() {
     <div className="min-h-screen flex bg-white">
       <div className="w-1/3 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
         <div className="mb-8">
-          <div className="relative mb-8 overflow-hidden rounded-lg shadow-md">
-            <img 
-              src="images/real-madrid-fans.jpg" 
-              alt="Aficionados del Real Madrid" 
-              className="w-full object-cover h-64"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58]/80 to-transparent p-4">
+          <div className="relative mb-8 overflow-hidden rounded-lg shadow-md h-64 bg-[#001C58]">
+            <div className="absolute inset-0 bg-gradient-to-b from-[#001C58]/60 to-[#001C58]/90 flex items-end p-4">
               <p className="text-white text-lg font-medium">La plataforma definitiva para los fans del Real Madrid</p>
             </div>
           </div>
