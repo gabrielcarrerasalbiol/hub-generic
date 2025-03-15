@@ -39,23 +39,37 @@ export default function NewsletterSubscription() {
     setIsLoading(true);
     
     try {
-      // Aquí iría la lógica para enviar los datos a Mailchimp
-      // Cuando tenga los datos de tu cuenta de Mailchimp, actualizaré esta parte
-
-      // Por ahora, simulamos una respuesta exitosa
-      toast({
-        title: "¡Suscripción exitosa!",
-        description: "Gracias por suscribirte a nuestra newsletter.",
-        variant: "default",
+      // Enviar la solicitud al endpoint de newsletter
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          name: data.name || undefined, // Si está vacío, enviamos undefined
+        }),
       });
       
-      // Reset del formulario
-      form.reset();
-    } catch (error) {
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        toast({
+          title: "¡Suscripción exitosa!",
+          description: result.message || "Gracias por suscribirte a nuestra newsletter.",
+          variant: "default",
+        });
+        
+        // Reset del formulario
+        form.reset();
+      } else {
+        throw new Error(result.message || 'Error desconocido');
+      }
+    } catch (error: any) {
       console.error('Error al suscribirse:', error);
       toast({
         title: "Error en la suscripción",
-        description: "Ha ocurrido un error. Por favor, inténtalo de nuevo.",
+        description: error.message || "Ha ocurrido un error. Por favor, inténtalo de nuevo.",
         variant: "destructive",
       });
     } finally {
