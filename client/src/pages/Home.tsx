@@ -184,85 +184,109 @@ export default function Home() {
         )}
       </section>
       
-      {/* Platform Filters */}
-      <div className="bg-[#F8F8FA] border border-[#FDBE11]/30 rounded-lg p-4 mb-6">
-        <PlatformFilters 
-          selectedPlatform={platform} 
-          onSelectPlatform={(newPlatform) => setPlatform(newPlatform)} 
-        />
+      {/* Videos Filtrables Section */}
+      <section className="mb-10">
+        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Explorar Videos</h2>
         
-        {/* Category Filters */}
-        <div className="mt-4">
-          <CategoryFilters 
-            selectedCategory={category} 
-            onSelectCategory={(newCategory) => setCategory(newCategory)} 
-          />
+        {/* Filters Container */}
+        <div className="bg-[#F8F8FA] border border-[#FDBE11]/30 rounded-lg p-4 mb-6">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+            <div className="flex-1">
+              <h3 className="text-sm font-medium mb-2 text-[#001C58]">Plataforma</h3>
+              <PlatformFilters 
+                selectedPlatform={platform} 
+                onSelectPlatform={(newPlatform) => setPlatform(newPlatform)} 
+              />
+            </div>
+            
+            <div className="flex-1">
+              <h3 className="text-sm font-medium mb-2 text-[#001C58]">Categoría</h3>
+              <CategoryFilters 
+                selectedCategory={category} 
+                onSelectCategory={(newCategory) => setCategory(newCategory)} 
+              />
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Filtered Videos Section (if filters are applied) */}
-      {(platform !== "all" || category !== "all") && (
-        <section className="mb-10">
-          <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Videos Filtrados</h2>
-          
-          {!isPlatformAvailable ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center border border-amber-200">
-              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
-                  <i className={`fab fa-${platform} text-3xl ${
-                    platform === 'tiktok' ? 'text-black' : 
-                    platform === 'twitter' ? 'text-blue-400' : 
-                    platform === 'instagram' ? 'text-pink-500' : ''
-                  }`}></i>
-                </div>
-                <h3 className="text-xl font-semibold text-[#001C58] mb-2">Plataforma en desarrollo</h3>
-                <p className="text-gray-600 mb-4">
-                  Estamos trabajando para incorporar contenido de <span className="font-semibold capitalize">{platform}</span> a nuestro Hub Madridista.
-                </p>
-                <p className="text-sm text-gray-500 mb-6">
-                  Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.
-                </p>
-                <Button 
-                  variant="outline" 
-                  className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
-                  onClick={() => setPlatform("all")}
-                >
-                  Volver a todos los videos
-                </Button>
+        
+        {/* Videos Grid */}
+        {!isPlatformAvailable ? (
+          <div className="bg-white rounded-lg shadow-md p-8 text-center border border-amber-200">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
+                <i className={`fab fa-${platform} text-3xl ${
+                  platform === 'tiktok' ? 'text-black' : 
+                  platform === 'twitter' ? 'text-blue-400' : 
+                  platform === 'instagram' ? 'text-pink-500' : ''
+                }`}></i>
               </div>
+              <h3 className="text-xl font-semibold text-[#001C58] mb-2">Plataforma en desarrollo</h3>
+              <p className="text-gray-600 mb-4">
+                Estamos trabajando para incorporar contenido de <span className="font-semibold capitalize">{platform}</span> a nuestro Hub Madridista.
+              </p>
+              <p className="text-sm text-gray-500 mb-6">
+                Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.
+              </p>
+              <Button 
+                variant="outline" 
+                className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                onClick={() => setPlatform("all")}
+              >
+                Volver a todos los videos
+              </Button>
             </div>
-          ) : isFilteredLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, index) => (
-                <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <Skeleton className="w-full aspect-video" />
-                  <div className="p-3">
-                    <Skeleton className="h-5 w-full mb-3" />
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <Skeleton className="w-6 h-6 rounded-full" />
-                        <Skeleton className="h-4 w-24 ml-2" />
-                      </div>
-                      <Skeleton className="h-4 w-4" />
+          </div>
+        ) : isFilteredLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {[...Array(12)].map((_, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <Skeleton className="w-full aspect-video" />
+                <div className="p-3">
+                  <Skeleton className="h-5 w-full mb-3" />
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center">
+                      <Skeleton className="w-6 h-6 rounded-full" />
+                      <Skeleton className="h-4 w-24 ml-2" />
                     </div>
-                    <Skeleton className="h-3 w-40 mt-2" />
+                    <Skeleton className="h-4 w-4" />
                   </div>
+                  <Skeleton className="h-3 w-40 mt-2" />
                 </div>
-              ))}
-            </div>
-          ) : filteredVideos.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredVideos.map((video) => (
-                <VideoCard key={video.id} video={video} />
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-              <p className="text-[#001C58]">No se encontraron videos con los filtros seleccionados.</p>
-            </div>
-          )}
-        </section>
-      )}
+              </div>
+            ))}
+          </div>
+        ) : (platform !== "all" || category !== "all") && filteredVideos.length > 0 ? (
+          // Mostrar videos filtrados cuando se ha aplicado algún filtro
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredVideos.slice(0, 12).map((video) => (
+              <VideoCard key={video.id} video={video} />
+            ))}
+          </div>
+        ) : trendingVideos.length > 0 ? (
+          // Mostrar videos en tendencia cuando no hay filtros aplicados
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {trendingVideos.slice(0, 12).map((video) => (
+              <VideoCard key={video.id} video={video} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
+            <p className="text-[#001C58]">No se encontraron videos disponibles.</p>
+          </div>
+        )}
+        
+        {/* Botón de ver más */}
+        <div className="mt-6 text-center">
+          <Link href="/videos">
+            <Button 
+              variant="outline" 
+              className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+            >
+              Ver todos los videos
+            </Button>
+          </Link>
+        </div>
+      </section>
 
       {/* Latest Videos Section */}
       <section className="mb-10">
