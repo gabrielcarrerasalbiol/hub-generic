@@ -47,7 +47,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Star, Plus, Search, RefreshCcw, Trash2, Edit, Eye, ArrowUpDown, FileText, Youtube, Twitter, Filter, Download } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Loader2, Star, Plus, Search, RefreshCcw, Trash2, Edit, Eye, ArrowUpDown, FileText, Youtube, Twitter, Filter, Download, MoreHorizontal, PlayCircle, FileImport, FileWarning } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 
 export default function VideoManagement() {
