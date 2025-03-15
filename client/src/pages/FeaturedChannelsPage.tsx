@@ -24,8 +24,8 @@ export default function FeaturedChannelsPage() {
   );
   
   // Format subcriber count
-  const formatSubscriberCount = (count?: number): string => {
-    if (!count && count !== 0) return "";
+  const formatSubscriberCount = (count?: number | null): string => {
+    if (count === null || count === undefined) return "";
     
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M suscriptores`;
@@ -119,7 +119,7 @@ export default function FeaturedChannelsPage() {
                       {channel.platform === 'Instagram' && t('sidebar.instagram_account')}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {formatSubscriberCount(channel.subscriberCount)}
+                      {formatSubscriberCount(channel.subscriberCount || undefined)}
                     </p>
                   </div>
                 </div>

@@ -292,7 +292,15 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         
         {/* Featured Channels Section */}
         <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
-          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.featured')}</h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.featured')}</h3>
+            <Link 
+              href="/featured-channels"
+              className="text-xs text-[#001C58] dark:text-[#FDBE11] hover:underline"
+            >
+              Ver todos
+            </Link>
+          </div>
           
           {isLoading ? (
             // Loading skeleton for featured channels
@@ -347,11 +355,19 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         {/* Premium Channels Section - Only for premium users */}
         {isPremium && (
           <div className="px-4 py-4">
-            <div className="flex items-center">
-              <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide flex-grow">
-                Canales Premium
-              </h3>
-              <Crown className="w-4 h-4 text-[#FDBE11]" />
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide mr-2">
+                  Canales Premium
+                </h3>
+                <Crown className="w-4 h-4 text-[#FDBE11]" />
+              </div>
+              <Link 
+                href="/premium-channels"
+                className="text-xs text-[#001C58] dark:text-[#FDBE11] hover:underline"
+              >
+                Ver todos
+              </Link>
             </div>
             
             {isPremiumLoading ? (
