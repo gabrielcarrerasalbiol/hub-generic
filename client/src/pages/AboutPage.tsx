@@ -1,7 +1,25 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Award, Ban, Bell, CheckCircle, Crown, History, LineChart, Star, Trophy, Tv, UserCircle, UserPlus } from "lucide-react";
+import { 
+  Award, 
+  Ban, 
+  Bell, 
+  CheckCircle, 
+  Crown, 
+  History, 
+  LineChart, 
+  Star, 
+  Trophy, 
+  Tv, 
+  UserCircle, 
+  UserPlus,
+  Home,
+  Flame,
+  Heart,
+  Users,
+  Sparkles
+} from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -21,25 +39,29 @@ export default function AboutPage() {
       title: "Hub Madridista",
       subtitle: "El hogar digital para todos los madridistas",
       bgColor: "bg-[#1E3A8A]",
-      textColor: "text-white"
+      textColor: "text-white",
+      icon: <Home className="inline-block mr-3 h-8 w-8" />
     },
     {
       title: "La Pasión Blanca",
       subtitle: "Vive cada momento con la misma intensidad",
       bgColor: "bg-white",
-      textColor: "text-[#1E3A8A]"
+      textColor: "text-[#1E3A8A]",
+      icon: <Flame className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />
     },
     {
       title: "El Sentimiento",
       subtitle: "Unidos por los colores que nos representan",
       bgColor: "bg-[#FDBE11]",
-      textColor: "text-[#1E3A8A]"
+      textColor: "text-[#1E3A8A]",
+      icon: <Heart className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />
     },
     {
       title: "La Afición Madridista",
       subtitle: "El corazón que late en cada estadio",
       bgColor: "bg-gradient-to-r from-[#1E3A8A] to-[#2C2152]",
-      textColor: "text-white"
+      textColor: "text-white",
+      icon: <Users className="inline-block mr-3 h-8 w-8" />
     }
   ];
 
@@ -53,7 +75,7 @@ export default function AboutPage() {
               <CarouselItem key={index} className="w-full">
                 <div className={`w-full py-16 ${slide.bgColor}`}>
                   <div className="max-w-6xl mx-auto px-4 text-center">
-                    <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${slide.textColor}`}>{slide.title}</h1>
+                    <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${slide.textColor}`}>{slide.icon}{slide.title}</h1>
                     <p className={`text-xl md:text-2xl opacity-90 ${slide.textColor}`}>{slide.subtitle}</p>
                     
                     {index === 0 && (
