@@ -63,7 +63,7 @@ export default function Home() {
   });
   
   // Verificar si la plataforma seleccionada está disponible
-  const isPlatformAvailable = platform === "all" || platform === "youtube";
+  const isPlatformAvailable = platform === "all" || platform === "youtube" || platform === "twitch";
 
   // Get featured videos (top 5 trending videos)
   const featuredVideos = trendingVideos.length > 0 
