@@ -153,6 +153,20 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             </li>
             <li>
               <Link 
+                href="/?platform=twitch" 
+                className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  location === "/?platform=twitch" 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                )}
+              >
+                <TwitchIcon className="mr-3 h-4 w-4 text-purple-500" />
+                Twitch
+              </Link>
+            </li>
+            <li>
+              <Link 
                 href="/?platform=tiktok" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
@@ -194,20 +208,6 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 <Instagram className="mr-3 h-4 w-4 text-pink-500" />
                 Instagram
                 <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 dark:bg-amber-900 text-amber-600 dark:text-amber-300 rounded border border-amber-200 dark:border-amber-700">Próximamente</span>
-              </Link>
-            </li>
-            <li>
-              <Link 
-                href="/?platform=twitch" 
-                className={cn(
-                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  location === "/?platform=twitch" 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
-                )}
-              >
-                <TwitchIcon className="mr-3 h-4 w-4 text-purple-500" />
-                Twitch
               </Link>
             </li>
           </ul>
