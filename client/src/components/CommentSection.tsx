@@ -45,10 +45,9 @@ export default function CommentSection({ videoId }: CommentSectionProps) {
     const fetchComments = async () => {
       try {
         setLoading(true);
-        const response = await apiRequest<{comments: CommentData[], count: number}>({
-          url: `/api/videos/${videoId}/comments`,
-          method: 'GET'
-        });
+        const response = await apiRequest<{comments: CommentData[], count: number}>(
+          `/api/videos/${videoId}/comments`
+        );
         
         if (response) {
           setComments(response.comments);
@@ -86,11 +85,13 @@ export default function CommentSection({ videoId }: CommentSectionProps) {
     
     try {
       setSubmitting(true);
-      const response = await apiRequest<CommentData>({
-        url: `/api/videos/${videoId}/comments`,
-        method: 'POST',
-        data: { content: newComment }
-      });
+      const response = await apiRequest<CommentData>(
+        `/api/videos/${videoId}/comments`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ content: newComment })
+        }
+      );
       
       if (response) {
         setComments(prev => [response, ...prev]);
@@ -129,14 +130,16 @@ export default function CommentSection({ videoId }: CommentSectionProps) {
     
     try {
       setSubmitting(true);
-      const response = await apiRequest<CommentData>({
-        url: `/api/videos/${videoId}/comments`,
-        method: 'POST',
-        data: { 
-          content: replyContent,
-          parentId 
+      const response = await apiRequest<CommentData>(
+        `/api/videos/${videoId}/comments`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ 
+            content: replyContent,
+            parentId 
+          })
         }
-      });
+      );
       
       if (response) {
         // Actualizar el comentario padre con la nueva respuesta
@@ -178,11 +181,13 @@ export default function CommentSection({ videoId }: CommentSectionProps) {
     
     try {
       setSubmitting(true);
-      const response = await apiRequest<CommentData>({
-        url: `/api/comments/${commentId}`,
-        method: 'PUT',
-        data: { content: editContent }
-      });
+      const response = await apiRequest<CommentData>(
+        `/api/comments/${commentId}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({ content: editContent })
+        }
+      );
       
       if (response) {
         // Actualizar el comentario en la lista
@@ -234,10 +239,12 @@ export default function CommentSection({ videoId }: CommentSectionProps) {
     if (!confirmDelete) return;
     
     try {
-      await apiRequest({
-        url: `/api/comments/${commentId}`,
-        method: 'DELETE'
-      });
+      await apiRequest(
+        `/api/comments/${commentId}`,
+        {
+          method: 'DELETE'
+        }
+      );
       
       if (isReply && parentId) {
         // Si es una respuesta, la quitamos del comentario padre
@@ -284,10 +291,12 @@ export default function CommentSection({ videoId }: CommentSectionProps) {
     }
     
     try {
-      await apiRequest({
-        url: `/api/comments/${commentId}/${liked ? 'unlike' : 'like'}`,
-        method: 'POST'
-      });
+      await apiRequest(
+        `/api/comments/${commentId}/${liked ? 'unlike' : 'like'}`,
+        {
+          method: 'POST'
+        }
+      );
       
       // Actualizar el estado del comentario
       if (isReply && parentId) {
