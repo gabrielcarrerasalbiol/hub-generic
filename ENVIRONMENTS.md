@@ -76,8 +76,23 @@ Script para configurar el entorno de producción:
 
 Este script:
 - Verifica la configuración de `.env.production`
+- Configura la base de datos de producción con el esquema correcto
 - Construye la aplicación para producción
 - Ofrece migrar datos del entorno de desarrollo al de producción
+
+### `setup-production-db.sh`
+
+Script para configurar específicamente la base de datos de producción:
+
+```bash
+./setup-production-db.sh
+```
+
+Este script:
+- Aplica automáticamente el esquema de base de datos a la producción
+- Ejecuta migraciones necesarias desde el directorio de migraciones
+- Intenta inicializar datos por defecto en la nueva base de datos
+- Puede ejecutarse de forma independiente para actualizar solo la base de datos
 
 ### `migrate-export.sh` y `migrate-import.sh`
 
@@ -149,9 +164,31 @@ MAILCHIMP_API_KEY=...
 
 ### Base de Datos
 
-- Considera usar bases de datos separadas para desarrollo y producción
+#### Configuración Actual
+
+Hub Madridista utiliza dos bases de datos separadas para desarrollo y producción:
+
+- **Base de datos de desarrollo**: Configurada mediante `DATABASE_URL` en el archivo `.env`.
+- **Base de datos de producción**: Configurada mediante `PROD_DATABASE_URL` en el archivo `.env.production`.
+
+La base de datos de producción usa NeonDB, un servicio PostgreSQL en la nube optimizado para aplicaciones serverless.
+
+#### Gestión de Esquemas
+
+Cuando cambies el esquema (agregando nuevas tablas, columnas, etc.):
+
+1. Actualiza primero los modelos en `shared/schema.ts`
+2. Durante el desarrollo, usa `npm run db:push` para aplicar cambios a la BD de desarrollo
+3. Para la base de datos de producción, usa:
+   - Si es una nueva configuración: `./setup-production-db.sh`
+   - Si es una actualización incremental: `NODE_ENV=production npx drizzle-kit push:pg --schema=./shared/schema.ts`
+
+#### Mejores prácticas
+
+- Usa bases de datos separadas para desarrollo y producción
 - Realiza copias de seguridad regulares de la base de datos de producción
-- Usa esquemas de base de datos idénticos en ambos entornos
+- Mantén esquemas de base de datos idénticos en ambos entornos
+- Verifica migraciones en desarrollo antes de aplicarlas en producción
 
 ### Recursos Externos
 
@@ -160,9 +197,35 @@ MAILCHIMP_API_KEY=...
 
 ## Despliegue en Replit
 
+### Proceso de Despliegue
+
 Para desplegar en Replit:
 
 1. Configura correctamente `.env.production`
 2. Ejecuta `./setup-production.sh` para preparar el build
 3. Usa el botón "Deploy" en la interfaz de Replit
 4. Verifica que la aplicación funcione correctamente después del despliegue
+
+### Configuración de Dominio
+
+Hub Madridista está configurado para funcionar con los siguientes dominios:
+
+- **Desarrollo**: `http://localhost:5000`
+- **Producción**: `https://hubmadridista.replit.app`
+- **Dominio personalizado**: Si configuras un dominio personalizado, debes actualizar todas las URLs correspondientes en `.env.production`.
+
+Para configurar un dominio personalizado:
+
+1. En Replit, ve a la configuración del proyecto → Dominios
+2. Configura tu dominio siguiendo las instrucciones de Replit
+3. Actualiza `FRONTEND_URL`, `CALLBACK_URL` y `CORS_ALLOWED_ORIGINS` en `.env.production`
+4. Vuelve a desplegar la aplicación
+
+### Verificación de Despliegue
+
+Después del despliegue, verifica:
+
+1. Que puedes acceder a la aplicación en la URL de producción
+2. Que puedes iniciar sesión y usar todas las funcionalidades
+3. Que la conexión a la base de datos de producción funciona correctamente
+4. Que las integraciones con servicios externos (Mailchimp, etc.) funcionan

@@ -96,18 +96,30 @@ GOOGLE_CLIENT_SECRET=tu_secreto_cliente_google
 
 ## 📝 Comandos disponibles
 
+### Comandos principales
+
 - `npm run dev`: Inicia la aplicación en modo desarrollo
 - `npm run build`: Compila la aplicación para producción
 - `npm start`: Inicia la aplicación en modo producción
 - `npm run db:push`: Actualiza la estructura de la base de datos según el esquema
 
+### Entorno de producción
+
+Para configurar y desplegar la aplicación en producción:
+
+1. Configura el archivo `.env.production` con tus variables de entorno de producción
+2. Ejecuta el script de configuración: `./setup-production.sh`
+3. Inicia la aplicación: `NODE_ENV=production npm start`
+
 ### Scripts adicionales
 
-- `./setup-production.sh`: Configura el entorno de producción
+- `./setup-production.sh`: Configura el entorno de producción completo (BD + build)
+- `./setup-production-db.sh`: Configura solo la base de datos de producción
 - `./migrate-export.sh`: Exporta datos del entorno de desarrollo
 - `./migrate-import.sh`: Importa datos al entorno de producción
 
 Para más detalles sobre la migración de datos, consulta [MIGRATION.md](MIGRATION.md).
+Para más información sobre la configuración de entornos, consulta [ENVIRONMENTS.md](ENVIRONMENTS.md).
 
 ## 💾 Base de datos
 
