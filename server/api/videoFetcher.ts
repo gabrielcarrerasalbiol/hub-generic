@@ -13,6 +13,7 @@ import { classifyContent } from './openai';
 import { classifyContentWithAnthropicClaude } from './anthropic';
 import { classifyContentWithGemini, generateVideoSummary } from './gemini';
 import { sendNewVideoNotificationEmail } from './emailService';
+import { processVideoNotifications } from './notificationService';
 
 /**
  * Busca nuevos videos en YouTube relacionados con el Real Madrid 

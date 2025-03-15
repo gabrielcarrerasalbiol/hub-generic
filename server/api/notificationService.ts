@@ -50,8 +50,7 @@ export async function sendNewVideoNotifications(
           channelId: channel.id,
           videoId: video.id,
           type: 'new_video',
-          message: `Nuevo video de ${channel.title}: ${video.title}`,
-          isRead: false
+          message: `Nuevo video de ${channel.title}: ${video.title}`
         };
         
         await storage.createNotification(notification);

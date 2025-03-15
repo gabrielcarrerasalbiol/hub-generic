@@ -441,6 +441,13 @@ export class PgStorage implements IStorage {
       .from(channels)
       .where(inArray(channels.id, channelIds));
   }
+  
+  async getSubscriptionsByChannelId(channelId: number): Promise<ChannelSubscription[]> {
+    return db
+      .select()
+      .from(channelSubscriptions)
+      .where(eq(channelSubscriptions.channelId, channelId));
+  }
 
   async isSubscribed(userId: number, channelId: number): Promise<boolean> {
     const result = await db
