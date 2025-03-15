@@ -119,7 +119,9 @@ export default function ChannelPage() {
   };
 
   // Determine platform-specific styling
-  const getPlatformColor = (platform: string): string => {
+  const getPlatformColor = (platform?: string): string => {
+    if (!platform) return 'bg-gray-500';
+    
     switch (platform.toLowerCase()) {
       case 'youtube':
         return 'bg-red-500';
@@ -134,7 +136,9 @@ export default function ChannelPage() {
     }
   };
 
-  const getPlatformIcon = (platform: string): string => {
+  const getPlatformIcon = (platform?: string): string => {
+    if (!platform) return 'fas fa-play';
+    
     switch (platform.toLowerCase()) {
       case 'youtube':
         return 'fab fa-youtube';
@@ -175,10 +179,12 @@ export default function ChannelPage() {
             <div className="md:ml-6 mt-4 md:mt-0 text-center md:text-left">
               <div className="flex items-center flex-col md:flex-row">
                 <h1 className="text-2xl font-bold">{channel.title}</h1>
-                <span className={`ml-0 md:ml-3 mt-2 md:mt-0 text-xs px-2 py-1 text-white rounded-full ${getPlatformColor(channel.platform)}`}>
-                  <i className={`${getPlatformIcon(channel.platform)} mr-1`}></i> 
-                  {channel.platform}
-                </span>
+                {channel.platform && (
+                  <span className={`ml-0 md:ml-3 mt-2 md:mt-0 text-xs px-2 py-1 text-white rounded-full ${getPlatformColor(channel.platform)}`}>
+                    <i className={`${getPlatformIcon(channel.platform)} mr-1`}></i> 
+                    {channel.platform}
+                  </span>
+                )}
               </div>
               
               <div className="flex items-center mt-2 space-x-4 justify-center md:justify-start">
