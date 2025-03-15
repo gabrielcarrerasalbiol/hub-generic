@@ -47,7 +47,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Star, Plus, Search, RefreshCcw, Trash2, Edit, Eye, ArrowUpDown, FileText } from 'lucide-react';
+import { Loader2, Star, Plus, Search, RefreshCcw, Trash2, Edit, Eye, ArrowUpDown, FileText, Youtube, Twitter, Filter, Download } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 
 export default function VideoManagement() {
@@ -70,6 +70,7 @@ export default function VideoManagement() {
   const [isGeneratingSummaries, setIsGeneratingSummaries] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<string>("youtube");
   const [isImportingByPlatform, setIsImportingByPlatform] = useState(false);
+  const [platformFilter, setPlatformFilter] = useState<string>("all");
   
   // Estado para paginación
   const [visibleVideos, setVisibleVideos] = useState(20);
@@ -400,8 +401,14 @@ export default function VideoManagement() {
     });
   };
 
-  // Filtrar videos por búsqueda
+  // Filtrar videos por búsqueda y plataforma
   const filteredVideos = Array.isArray(videos) ? videos.filter((video: Video) => {
+    // Filtro por plataforma
+    if (platformFilter !== 'all' && video.platform !== platformFilter) {
+      return false;
+    }
+    
+    // Filtro por texto de búsqueda
     if (!searchQuery) return true;
     return (
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -484,6 +491,7 @@ export default function VideoManagement() {
       <h2 className="text-2xl font-bold mb-6">Gestión de Vídeos</h2>
 
       <div className="flex flex-col space-y-4 mb-6">
+        {/* Filtros de búsqueda y plataforma */}
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
             <Input
@@ -493,6 +501,23 @@ export default function VideoManagement() {
               className="pl-10"
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Filter className="h-5 w-5 text-muted-foreground" />
+            <Select value={platformFilter} onValueChange={setPlatformFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filtrar por plataforma" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas las plataformas</SelectItem>
+                <SelectItem value="youtube">YouTube</SelectItem>
+                <SelectItem value="twitch">Twitch</SelectItem>
+                <SelectItem value="twitter">Twitter</SelectItem>
+                <SelectItem value="instagram">Instagram</SelectItem>
+                <SelectItem value="tiktok">TikTok</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
           {selectedVideos.length > 0 && (
@@ -752,6 +777,79 @@ export default function VideoManagement() {
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   Actualizar Contenido
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          
+          {/* Nuevo botón para importar por plataforma específica */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="default"
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+                disabled={isImportingByPlatform}
+              >
+                {isImportingByPlatform ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Importando...
+                  </>
+                ) : (
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Importar por Plataforma
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Importar videos por plataforma</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción buscará e importará videos del Real Madrid desde la plataforma seleccionada.
+                  Selecciona la plataforma de origen y la cantidad de videos a importar.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="py-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="platformSelect">Plataforma:</Label>
+                  <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+                    <SelectTrigger id="platformSelect" className="w-full">
+                      <SelectValue placeholder="Selecciona una plataforma" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="youtube">YouTube</SelectItem>
+                      <SelectItem value="twitch">Twitch</SelectItem>
+                      <SelectItem value="twitter">Twitter</SelectItem>
+                      <SelectItem value="tiktok">TikTok</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Label htmlFor="importCount">Cantidad de videos a importar:</Label>
+                  <div className="flex-1">
+                    <Slider
+                      id="importCount"
+                      min={5}
+                      max={50}
+                      step={5}
+                      value={[fetchVideoCount]}
+                      onValueChange={(values: number[]) => setFetchVideoCount(values[0])}
+                    />
+                  </div>
+                  <div className="w-12 text-center">
+                    <span className="text-lg font-medium">{fetchVideoCount}</span>
+                  </div>
+                </div>
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={() => importByPlatformMutation.mutate({ platform: selectedPlatform, maxResults: fetchVideoCount })}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  Importar Videos
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
