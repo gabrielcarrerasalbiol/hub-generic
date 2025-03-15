@@ -3,10 +3,13 @@
  * Crea todas las tablas definidas en el esquema
  */
 
-require('dotenv').config({ path: '.env.production' });
-const { drizzle } = require('drizzle-orm/postgres-js');
-const postgres = require('postgres');
-const { migrate } = require('drizzle-orm/postgres-js/migrator');
+import { config } from 'dotenv';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+
+// Cargar variables de entorno
+config({ path: '.env.production' });
 
 async function main() {
   console.log('Iniciando configuración de la base de datos de producción...');

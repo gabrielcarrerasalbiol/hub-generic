@@ -13,7 +13,7 @@ fi
 
 # Ejecutar el script de configuración
 echo "Ejecutando la configuración de la base de datos..."
-node setup-production-db.js
+npx tsx setup-production-db.ts
 
 # Verificar si la ejecución fue exitosa
 if [ $? -eq 0 ]; then

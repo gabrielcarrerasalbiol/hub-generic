@@ -18,6 +18,27 @@ if [ $? -ne 0 ]; then
   echo "⚠️ ADVERTENCIA: La variable PROD_DATABASE_URL no parece estar correctamente configurada."
   echo "   Por favor, edita el archivo .env.production para incluir la URL de la base de datos de producción."
   echo "   Ejemplo: PROD_DATABASE_URL=postgresql://usuario:contraseña@db-servidor/nombre-db"
+  read -p "¿Deseas continuar de todos modos? (s/N): " continue_anyway
+  if [ "$continue_anyway" != "s" ] && [ "$continue_anyway" != "S" ]; then
+    echo "Operación cancelada. Configura PROD_DATABASE_URL correctamente e inténtalo de nuevo."
+    exit 1
+  fi
+fi
+
+# Configurar la base de datos de producción
+echo "🗃️  Configurando la base de datos de producción..."
+./setup-production-db.sh
+
+if [ $? -ne 0 ]; then
+  echo "❌ ERROR: La configuración de la base de datos de producción ha fallado."
+  echo "   Revisa los mensajes de error anteriores para más información."
+  read -p "¿Deseas continuar de todos modos? (s/N): " continue_anyway
+  if [ "$continue_anyway" != "s" ] && [ "$continue_anyway" != "S" ]; then
+    echo "Operación cancelada."
+    exit 1
+  fi
+else
+  echo "✅ Base de datos de producción configurada correctamente."
 fi
 
 # Verificar que el directorio dist no exista o esté vacío
