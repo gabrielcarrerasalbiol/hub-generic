@@ -71,7 +71,7 @@ async function recategorizeVideoUsingNewSummary(video: Video, summary: string): 
         console.log(`Nuevas categorías asignadas para video ${video.id}: ${categoryIds.join(', ')}`);
         
         // Actualizar solo si las categorías son diferentes
-        if (!arraysAreEqual(categoryIds, video.categoryIds)) {
+        if (!arraysAreEqual(categoryIds, video.categoryIds || undefined)) {
           await storage.updateVideo(video.id, {
             categoryIds
           });
@@ -97,7 +97,7 @@ async function recategorizeVideoUsingNewSummary(video: Video, summary: string): 
 /**
  * Compara dos arrays para verificar si tienen los mismos elementos
  */
-function arraysAreEqual(arr1: string[], arr2: string[] | undefined): boolean {
+function arraysAreEqual(arr1: string[], arr2: string[] | undefined | null): boolean {
   if (!arr2) return false;
   if (arr1.length !== arr2.length) return false;
   
