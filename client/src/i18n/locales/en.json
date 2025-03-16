@@ -99,9 +99,10 @@
     "news": "News",
     "fans": "Fans",
     "analysis": "Analysis",
-    "history": "History",
+    "history": "Historic Moments",
     "youth": "Youth",
-    "transfer": "Transfers"
+    "transfer": "Transfers",
+    "institutional": "Institutional"
   },
   "platforms": {
     "all": "All",
