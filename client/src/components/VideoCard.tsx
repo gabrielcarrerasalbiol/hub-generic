@@ -4,7 +4,7 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Video } from '@shared/schema';
 import { cn } from '@/lib/utils';
-import { Heart } from 'lucide-react';
+import { Heart, Star } from 'lucide-react';
 
 interface VideoCardProps {
   video: Video;
@@ -151,6 +151,12 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
             <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded">
               {video.duration || '0:00'}
             </div>
+            {video.featured && (
+              <div className="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1 py-0.5 rounded-full flex items-center">
+                <Star className="w-3 h-3 mr-0.5" />
+                <span className="text-[10px]">Destacado</span>
+              </div>
+            )}
           </div>
           <div className="p-3 w-2/3">
             <h3 className="font-medium text-sm line-clamp-2 dark:text-white">
