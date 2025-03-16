@@ -4,9 +4,10 @@ import { useAuth } from '@/hooks/useAuth';
 import UserManagement from '@/components/admin/UserManagement';
 import VideoManagement from '@/components/admin/VideoManagement';
 import PremiumChannelManagement from '@/components/admin/PremiumChannelManagement';
+import RecommendedChannelManagement from '@/components/admin/RecommendedChannelManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Users, Video, Activity, Star, BarChart2 } from 'lucide-react';
+import { Users, Video, Activity, Star, Award, BarChart2 } from 'lucide-react';
 
 export default function AdminPage() {
   const { isAdmin, checkAuth } = useAuth();
@@ -35,7 +36,7 @@ export default function AdminPage() {
       </div>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-4">
+        <TabsList className="mb-6 grid w-full grid-cols-5">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span>Usuarios</span>
@@ -47,6 +48,10 @@ export default function AdminPage() {
           <TabsTrigger value="premium" className="flex items-center gap-2">
             <Star className="h-4 w-4" />
             <span>Canales Premium</span>
+          </TabsTrigger>
+          <TabsTrigger value="recommended" className="flex items-center gap-2">
+            <Award className="h-4 w-4" />
+            <span>Canales Recomendados</span>
           </TabsTrigger>
           <TabsTrigger value="processes" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -64,6 +69,10 @@ export default function AdminPage() {
         
         <TabsContent value="premium" className="space-y-6">
           <PremiumChannelManagement />
+        </TabsContent>
+        
+        <TabsContent value="recommended" className="space-y-6">
+          <RecommendedChannelManagement />
         </TabsContent>
         
         <TabsContent value="processes" className="space-y-6">
@@ -111,7 +120,7 @@ export default function AdminPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">Importación de Canales Premium</h3>
                   <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 rounded-full text-xs font-medium">
-                    Nuevo
+                    Activo
                   </span>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
@@ -122,6 +131,24 @@ export default function AdminPage() {
                   onClick={() => setActiveTab('premium')}
                 >
                   Ir a canales premium
+                </button>
+              </div>
+              
+              <div className="border rounded-lg p-4 bg-purple-50 dark:bg-purple-950">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Gestión de Canales Recomendados</h3>
+                  <span className="px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 rounded-full text-xs font-medium">
+                    Nuevo
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Configura y administra los canales recomendados que se mostrarán a los usuarios como sugerencias de contenido de calidad.
+                </p>
+                <button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
+                  onClick={() => setActiveTab('recommended')}
+                >
+                  Ir a canales recomendados
                 </button>
               </div>
               
