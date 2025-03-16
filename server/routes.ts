@@ -2867,35 +2867,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Create new poll (admin)
-  app.post("/api/polls", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
-    try {
-      const { title, question, options, status, expiresAt, showInSidebar, featured } = req.body;
-      
-      if (!title || !question || !Array.isArray(options) || options.length < 2) {
-        return res.status(400).json({ 
-          message: "Datos de encuesta inválidos. Se requiere título, pregunta y al menos 2 opciones." 
-        });
-      }
-      
-      const poll = await storage.createPoll(
-        {
-          title,
-          question,
-          status: status || "draft",
-          expiresAt: expiresAt || null,
-          createdById: req.user.id,
-          showInSidebar: !!showInSidebar,
-          featured: !!featured
-        },
-        options.map((text: string, index: number) => ({ text, order: index }))
-      );
-      
-      res.status(201).json(poll);
-    } catch (error) {
-      console.error("Error creando encuesta:", error);
-      res.status(500).json({ message: "Error al crear la encuesta" });
-    }
-  });
+  // La implementación de este endpoint se ha movido a la línea 3402
   
   // Update poll (admin)
   app.put("/api/polls/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
