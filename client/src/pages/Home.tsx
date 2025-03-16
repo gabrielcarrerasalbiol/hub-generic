@@ -29,7 +29,18 @@ export default function Home() {
   const [platform, setPlatform] = useState<PlatformType>("all");
   const [category, setCategory] = useState<CategoryType>("all");
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
+  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
   const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Array de imágenes de fondo para rotación
+  const backgroundImages = [
+    "/images/real-madrid-fans-back.jpg",
+    "/images/real-madrid-fans-stadium.jpg",
+    "/images/real-madrid-fans-singing.jpg",
+    "/images/real-madrid-fans.jpg",
+    "/images/real-madrid-hero.jpg"
+  ];
 
   // Fetch trending videos (limitado a 20)
   const { 
@@ -118,6 +129,23 @@ export default function Home() {
       }
     };
   }, [featuredVideos.length]);
+  
+  // Auto-rotate background images
+  useEffect(() => {
+    if (backgroundImages.length > 1) {
+      backgroundIntervalRef.current = setInterval(() => {
+        setCurrentBackgroundIndex((prevIndex) => 
+          prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 15000); // Rotate every 15 seconds
+    }
+    
+    return () => {
+      if (backgroundIntervalRef.current) {
+        clearInterval(backgroundIntervalRef.current);
+      }
+    };
+  }, [backgroundImages.length]);
 
   const handleNextFeatured = () => {
     if (carouselIntervalRef.current) {
@@ -140,11 +168,12 @@ export default function Home() {
   return (
     <main className="flex-1 bg-gray-100 bg-opacity-90 p-4 md:p-6 overflow-y-auto" 
           style={{
-            backgroundImage: 'url("/images/real-madrid-fans-back.jpg")',
+            backgroundImage: `url("${backgroundImages[currentBackgroundIndex]}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
-            backgroundBlendMode: 'overlay'
+            backgroundBlendMode: 'overlay',
+            transition: 'background-image 1s ease-in-out'
           }}>
       {/* SEO optimizado para la página de inicio */}
       <SEO
@@ -244,12 +273,13 @@ export default function Home() {
         <div 
           className="bg-gradient-to-r from-[#001C58]/5 to-[#FDBE11]/5 rounded-xl p-4 lg:p-6"
           style={{
-            backgroundImage: 'url("/images/real-madrid-fans-stadium.jpg")',
+            backgroundImage: `url("${backgroundImages[(currentBackgroundIndex + 1) % backgroundImages.length]}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundBlendMode: 'overlay',
             minHeight: '450px',
-            position: 'relative'
+            position: 'relative',
+            transition: 'background-image 1s ease-in-out'
           }}>
           {/* Tabs de plataformas */}
           <div className="mb-6 flex justify-center border-b border-[#FDBE11]/20 pb-4">
@@ -533,11 +563,12 @@ export default function Home() {
       <section 
         className="mb-10 p-6 rounded-xl" 
         style={{
-          backgroundImage: 'url("/images/real-madrid-fans-singing.jpg")',
+          backgroundImage: `url("${backgroundImages[(currentBackgroundIndex + 2) % backgroundImages.length]}")`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           position: 'relative',
           backgroundBlendMode: 'overlay',
+          transition: 'background-image 1s ease-in-out'
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 to-transparent rounded-xl"></div>
