@@ -75,14 +75,14 @@ export default function ShareVideoModal({ videoId, videoTitle, isOpen, onClose }
       }
 
       // Enviar la solicitud al servidor
+      // Dejamos que el servidor genere el enlace para compartir
       const response = await apiRequest("/api/share/email", {
         method: "POST",
         body: JSON.stringify({
           videoId,
           videoTitle,
           email,
-          message,
-          shareLink,
+          message
         }),
       });
 

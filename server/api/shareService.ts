@@ -79,7 +79,16 @@ export async function sendShareEmail(
  * @returns Enlace corto para compartir
  */
 export function generateShareLink(videoId: number, baseUrl: string): string {
-  // En un entorno real, aquí se generaría un enlace corto real
-  // Para este ejemplo, simplemente usamos la URL completa
-  return `${baseUrl}/video/${videoId}`;
+  // Asegurarnos de que la URL base no tenga una barra al final
+  const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  
+  // En un entorno de desarrollo, usamos rutas absolutas con el puerto
+  if (process.env.NODE_ENV !== 'production') {
+    // Obtenemos la URL de frontend de las variables de entorno o usamos un valor por defecto
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5000';
+    return `${frontendUrl}/video/${videoId}`;
+  }
+  
+  // En producción, usamos la URL completa
+  return `${cleanBaseUrl}/video/${videoId}`;
 }

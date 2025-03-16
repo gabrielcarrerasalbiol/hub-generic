@@ -2280,14 +2280,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Endpoint para compartir videos por email
   app.post("/api/share/email", async (req: Request, res: Response) => {
     try {
-      const { videoId, videoTitle, email, message, shareLink } = req.body;
+      const { videoId, videoTitle, email, message } = req.body;
       
-      if (!videoId || !videoTitle || !email || !shareLink) {
+      if (!videoId || !videoTitle || !email) {
         return res.status(400).json({ message: "Faltan datos requeridos" });
       }
       
-      // Importar el servicio de envío de emails
-      const { sendShareEmail } = await import("./api/shareService");
+      // Importar los servicios necesarios
+      const { sendShareEmail, generateShareLink } = await import("./api/shareService");
       const { isValidEmail } = await import("./api/emailService");
       
       // Validar el formato del email
@@ -2295,7 +2295,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Formato de email inválido" });
       }
       
-      // Enviar el email
+      // Generar el enlace con la URL base del frontend (desde variables de entorno)
+      const frontendUrl = process.env.FRONTEND_URL || req.get('origin') || 'http://localhost:5000';
+      const shareLink = generateShareLink(videoId, frontendUrl);
+      
+      // Enviar el email con el enlace generado en el servidor
       await sendShareEmail(email, videoTitle, shareLink, message);
       
       // Registrar actividad (futuro: podríamos guardar estadísticas de compartición)
