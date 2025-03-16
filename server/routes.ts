@@ -22,8 +22,10 @@ import {
   insertPollSchema, insertPollOptionSchema, insertPollVoteSchema,
   Poll, PollOption, PollVote,
   insertPlayerSchema, insertPlayerStatsSchema, insertStatsGameSchema, insertStatsGameQuestionSchema,
-  Player, PlayerStats, StatsGame, StatsGameQuestion, StatType, GameDifficulty
+  Player, PlayerStats, StatsGame, StatsGameQuestion, StatType, GameDifficulty,
+  InsertPlayer, InsertPlayerStats, InsertStatsGame, InsertStatsGameQuestion
 } from "../shared/schema";
+import { ZodError } from "zod";
 import { isAuthenticated, isAdmin, isPremium } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';
 import { isValidEmail } from './api/emailService';

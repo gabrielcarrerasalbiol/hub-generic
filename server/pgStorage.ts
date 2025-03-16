@@ -12,9 +12,12 @@ import {
   ViewHistory, InsertViewHistory,
   Comment, InsertComment,
   Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote,
+  Player, InsertPlayer, PlayerStats, InsertPlayerStats,
+  StatsGame, InsertStatsGame, StatsGameQuestion, InsertStatsGameQuestion,
   users, videos, channels, categories, favorites, oauthTokens,
   channelSubscriptions, notifications, premiumChannels, recommendedChannels,
-  viewHistory, comments, polls, pollOptions, pollVotes
+  viewHistory, comments, polls, pollOptions, pollVotes,
+  players, playerStats, statsGames, statsGameQuestions
 } from '@shared/schema';
 
 // PostgreSQL implementation of the storage interface
@@ -1527,6 +1530,520 @@ export class PgStorage implements IStorage {
     } catch (error) {
       console.error('Error al eliminar voto:', error);
       return false;
+    }
+  }
+
+  // Implementación de métodos para el mini-juego de estadísticas de jugadores
+
+  // Players operations
+  async getPlayers(limit = 100, offset = 0): Promise<Player[]> {
+    try {
+      const result = await db.select()
+        .from(players)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(asc(players.name));
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching players:", error);
+      return [];
+    }
+  }
+
+  async getPlayerById(id: number): Promise<Player | undefined> {
+    try {
+      const result = await db.select()
+        .from(players)
+        .where(eq(players.id, id))
+        .limit(1);
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error fetching player by ID:", error);
+      return undefined;
+    }
+  }
+
+  async getPlayerByName(name: string): Promise<Player | undefined> {
+    try {
+      const result = await db.select()
+        .from(players)
+        .where(eq(players.name, name))
+        .limit(1);
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error fetching player by name:", error);
+      return undefined;
+    }
+  }
+
+  async getPlayersByPosition(position: string, limit = 50): Promise<Player[]> {
+    try {
+      const result = await db.select()
+        .from(players)
+        .where(eq(players.position, position))
+        .limit(limit)
+        .orderBy(asc(players.name));
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching players by position:", error);
+      return [];
+    }
+  }
+
+  async getActivePlayers(limit = 50): Promise<Player[]> {
+    try {
+      const result = await db.select()
+        .from(players)
+        .where(eq(players.active, true))
+        .limit(limit)
+        .orderBy(asc(players.name));
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching active players:", error);
+      return [];
+    }
+  }
+
+  async createPlayer(player: InsertPlayer): Promise<Player> {
+    try {
+      const result = await db.insert(players)
+        .values({
+          ...player,
+          createdAt: new Date()
+        })
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error creating player:", error);
+      throw error;
+    }
+  }
+
+  async updatePlayer(id: number, playerData: Partial<InsertPlayer>): Promise<Player | undefined> {
+    try {
+      const result = await db.update(players)
+        .set({
+          ...playerData,
+          updatedAt: new Date()
+        })
+        .where(eq(players.id, id))
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error updating player:", error);
+      return undefined;
+    }
+  }
+
+  async deletePlayer(id: number): Promise<boolean> {
+    try {
+      // Primero eliminar estadísticas asociadas
+      await db.delete(playerStats)
+        .where(eq(playerStats.playerId, id));
+      
+      // Luego eliminar el jugador
+      const result = await db.delete(players)
+        .where(eq(players.id, id))
+        .returning({ id: players.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting player:", error);
+      return false;
+    }
+  }
+
+  // Player Stats operations
+  async getPlayerStats(playerId: number, season?: string): Promise<PlayerStats[]> {
+    try {
+      let query = db.select()
+        .from(playerStats)
+        .where(eq(playerStats.playerId, playerId))
+        .orderBy(desc(playerStats.createdAt));
+      
+      if (season) {
+        query = query.where(eq(playerStats.season, season));
+      }
+      
+      const result = await query;
+      return result;
+    } catch (error) {
+      console.error("Error fetching player stats:", error);
+      return [];
+    }
+  }
+
+  async getPlayerStatById(id: number): Promise<PlayerStats | undefined> {
+    try {
+      const result = await db.select()
+        .from(playerStats)
+        .where(eq(playerStats.id, id))
+        .limit(1);
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error fetching player stat by ID:", error);
+      return undefined;
+    }
+  }
+
+  async getPlayerStatsBySeason(season: string, limit = 30): Promise<PlayerStats[]> {
+    try {
+      const result = await db.select()
+        .from(playerStats)
+        .where(eq(playerStats.season, season))
+        .limit(limit)
+        .orderBy(desc(playerStats.rating));
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching player stats by season:", error);
+      return [];
+    }
+  }
+
+  async createPlayerStats(stats: InsertPlayerStats): Promise<PlayerStats> {
+    try {
+      const result = await db.insert(playerStats)
+        .values({
+          ...stats,
+          createdAt: new Date()
+        })
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error creating player stats:", error);
+      throw error;
+    }
+  }
+
+  async updatePlayerStats(id: number, statsData: Partial<InsertPlayerStats>): Promise<PlayerStats | undefined> {
+    try {
+      const result = await db.update(playerStats)
+        .set({
+          ...statsData,
+          updatedAt: new Date()
+        })
+        .where(eq(playerStats.id, id))
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error updating player stats:", error);
+      return undefined;
+    }
+  }
+
+  async deletePlayerStats(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(playerStats)
+        .where(eq(playerStats.id, id))
+        .returning({ id: playerStats.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting player stats:", error);
+      return false;
+    }
+  }
+
+  async getPlayerComparisonStats(player1Id: number, player2Id: number, statType: string, season?: string): Promise<{
+    player1Value: number | null;
+    player2Value: number | null;
+    winnerId: number;
+  }> {
+    try {
+      // Obtener estadísticas del primer jugador
+      const player1StatsQuery = db.select()
+        .from(playerStats)
+        .where(eq(playerStats.playerId, player1Id))
+        .orderBy(desc(playerStats.createdAt))
+        .limit(1);
+      
+      // Obtener estadísticas del segundo jugador
+      const player2StatsQuery = db.select()
+        .from(playerStats)
+        .where(eq(playerStats.playerId, player2Id))
+        .orderBy(desc(playerStats.createdAt))
+        .limit(1);
+      
+      // Si se especifica una temporada, filtrar por ella
+      if (season) {
+        player1StatsQuery.where(eq(playerStats.season, season));
+        player2StatsQuery.where(eq(playerStats.season, season));
+      }
+      
+      const [player1Stats, player2Stats] = await Promise.all([
+        player1StatsQuery,
+        player2StatsQuery
+      ]);
+      
+      // Extraer valores de la estadística solicitada
+      const player1Value = player1Stats.length > 0 ? 
+        player1Stats[0][statType as keyof PlayerStats] as number || 0 : 0;
+      
+      const player2Value = player2Stats.length > 0 ? 
+        player2Stats[0][statType as keyof PlayerStats] as number || 0 : 0;
+      
+      // Determinar ganador
+      let winnerId = player1Id; // Valor por defecto
+      
+      // Para mayoría de estadísticas, mayor es mejor
+      if (statType === 'yellowCards' || statType === 'redCards') {
+        // Para tarjetas, menor es mejor
+        winnerId = player1Value <= player2Value ? player1Id : player2Id;
+      } else {
+        // Para el resto, mayor es mejor
+        winnerId = player1Value >= player2Value ? player1Id : player2Id;
+      }
+      
+      return {
+        player1Value: player1Value,
+        player2Value: player2Value,
+        winnerId
+      };
+    } catch (error) {
+      console.error("Error comparing player stats:", error);
+      // En caso de error, devolver un valor por defecto
+      return {
+        player1Value: null,
+        player2Value: null,
+        winnerId: player1Id
+      };
+    }
+  }
+
+  // Stats Game operations
+  async getStatsGames(userId: number, limit = 10): Promise<StatsGame[]> {
+    try {
+      const result = await db.select()
+        .from(statsGames)
+        .where(eq(statsGames.userId, userId))
+        .orderBy(desc(statsGames.createdAt))
+        .limit(limit);
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching stats games:", error);
+      return [];
+    }
+  }
+
+  async getStatsGameById(id: number): Promise<StatsGame | undefined> {
+    try {
+      const result = await db.select()
+        .from(statsGames)
+        .where(eq(statsGames.id, id))
+        .limit(1);
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error fetching stats game by ID:", error);
+      return undefined;
+    }
+  }
+
+  async getStatsGameWithQuestions(gameId: number): Promise<(StatsGame & { questions: StatsGameQuestion[] }) | undefined> {
+    try {
+      // Obtener el juego
+      const gameResult = await db.select()
+        .from(statsGames)
+        .where(eq(statsGames.id, gameId))
+        .limit(1);
+      
+      if (gameResult.length === 0) {
+        return undefined;
+      }
+      
+      // Obtener las preguntas asociadas
+      const questionsResult = await db.select()
+        .from(statsGameQuestions)
+        .where(eq(statsGameQuestions.gameId, gameId))
+        .orderBy(asc(statsGameQuestions.id));
+      
+      return {
+        ...gameResult[0],
+        questions: questionsResult
+      };
+    } catch (error) {
+      console.error("Error fetching stats game with questions:", error);
+      return undefined;
+    }
+  }
+
+  async getUserTopScores(userId: number, limit = 5): Promise<StatsGame[]> {
+    try {
+      const result = await db.select()
+        .from(statsGames)
+        .where(eq(statsGames.userId, userId))
+        .where(eq(statsGames.completed, true))
+        .orderBy(desc(statsGames.score))
+        .limit(limit);
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching user top scores:", error);
+      return [];
+    }
+  }
+
+  async createStatsGame(game: InsertStatsGame): Promise<StatsGame> {
+    try {
+      const result = await db.insert(statsGames)
+        .values({
+          ...game,
+          createdAt: new Date()
+        })
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error creating stats game:", error);
+      throw error;
+    }
+  }
+
+  async updateStatsGame(id: number, gameData: Partial<InsertStatsGame>): Promise<StatsGame | undefined> {
+    try {
+      const result = await db.update(statsGames)
+        .set({
+          ...gameData,
+          updatedAt: new Date()
+        })
+        .where(eq(statsGames.id, id))
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error updating stats game:", error);
+      return undefined;
+    }
+  }
+
+  async completeStatsGame(id: number, score: number, correctAnswers: number): Promise<StatsGame | undefined> {
+    try {
+      const result = await db.update(statsGames)
+        .set({
+          score,
+          correctAnswers,
+          completed: true,
+          completedAt: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(statsGames.id, id))
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error completing stats game:", error);
+      return undefined;
+    }
+  }
+
+  async deleteStatsGame(id: number): Promise<boolean> {
+    try {
+      // Primero eliminar preguntas asociadas
+      await db.delete(statsGameQuestions)
+        .where(eq(statsGameQuestions.gameId, id));
+      
+      // Luego eliminar el juego
+      const result = await db.delete(statsGames)
+        .where(eq(statsGames.id, id))
+        .returning({ id: statsGames.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting stats game:", error);
+      return false;
+    }
+  }
+
+  // Stats Game Question operations
+  async getStatsGameQuestions(gameId: number): Promise<StatsGameQuestion[]> {
+    try {
+      const result = await db.select()
+        .from(statsGameQuestions)
+        .where(eq(statsGameQuestions.gameId, gameId))
+        .orderBy(asc(statsGameQuestions.id));
+      
+      return result;
+    } catch (error) {
+      console.error("Error fetching stats game questions:", error);
+      return [];
+    }
+  }
+
+  async getStatsGameQuestionById(id: number): Promise<StatsGameQuestion | undefined> {
+    try {
+      const result = await db.select()
+        .from(statsGameQuestions)
+        .where(eq(statsGameQuestions.id, id))
+        .limit(1);
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error fetching stats game question by ID:", error);
+      return undefined;
+    }
+  }
+
+  async createStatsGameQuestion(question: InsertStatsGameQuestion): Promise<StatsGameQuestion> {
+    try {
+      const result = await db.insert(statsGameQuestions)
+        .values({
+          ...question,
+          createdAt: new Date()
+        })
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error creating stats game question:", error);
+      throw error;
+    }
+  }
+
+  async updateStatsGameQuestion(id: number, questionData: Partial<InsertStatsGameQuestion>): Promise<StatsGameQuestion | undefined> {
+    try {
+      const result = await db.update(statsGameQuestions)
+        .set({
+          ...questionData,
+          updatedAt: new Date()
+        })
+        .where(eq(statsGameQuestions.id, id))
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error updating stats game question:", error);
+      return undefined;
+    }
+  }
+
+  async answerStatsGameQuestion(id: number, userSelection: number, isCorrect: boolean): Promise<StatsGameQuestion | undefined> {
+    try {
+      const result = await db.update(statsGameQuestions)
+        .set({
+          userAnswerId: userSelection,
+          isCorrect,
+          answeredAt: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(statsGameQuestions.id, id))
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error answering stats game question:", error);
+      return undefined;
     }
   }
 }
