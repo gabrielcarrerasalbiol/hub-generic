@@ -3280,8 +3280,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.use((_req: Request, res: Response) => {
-    res.status(404).json({ message: "Ruta no encontrada" });
+  // Solo aplicar el catch-all 404 a las rutas de API
+  app.use('/api/*', (_req: Request, res: Response) => {
+    res.status(404).json({ message: "Ruta de API no encontrada" });
   });
 
   const httpServer = createServer(app);
