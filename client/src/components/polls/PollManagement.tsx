@@ -181,7 +181,7 @@ export default function PollManagement() {
       method: 'PUT',
       data
     }),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/polls'] });
       toast({
         title: 'Encuesta actualizada',
@@ -189,6 +189,18 @@ export default function PollManagement() {
       });
       setIsDialogOpen(false);
       setEditingPoll(null);
+      form.reset({
+        title: '',
+        titleEs: '',
+        question: '',
+        questionEs: '',
+        status: 'draft',
+        showInSidebar: false,
+        options: [
+          { text: '', textEs: '', order: 0 },
+          { text: '', textEs: '', order: 1 }
+        ]
+      });
     },
     onError: (error) => {
       toast({
@@ -300,6 +312,20 @@ export default function PollManagement() {
 
   // Abrir dialog para editar encuesta
   const handleEdit = (poll: Poll) => {
+    form.reset({
+      title: poll.title || '',
+      titleEs: poll.titleEs || '',
+      question: poll.question || '',
+      questionEs: poll.questionEs || '',
+      status: poll.status,
+      showInSidebar: poll.showInSidebar,
+      options: poll.options.map(opt => ({
+        id: opt.id,
+        text: opt.text || '',
+        textEs: opt.textEs || '',
+        order: opt.order
+      }))
+    });
     setEditingPoll(poll);
     setIsDialogOpen(true);
   };
@@ -434,7 +460,25 @@ export default function PollManagement() {
       )}
 
       {/* Dialog para crear/editar encuesta */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          // Si se está cerrando el diálogo, limpiamos el estado
+          setEditingPoll(null);
+          form.reset({
+            title: '',
+            titleEs: '',
+            question: '',
+            questionEs: '',
+            status: 'draft',
+            showInSidebar: false,
+            options: [
+              { text: '', textEs: '', order: 0 },
+              { text: '', textEs: '', order: 1 }
+            ]
+          });
+        }
+        setIsDialogOpen(open);
+      }}>
         <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingPoll ? 'Editar Encuesta' : 'Nueva Encuesta'}</DialogTitle>
@@ -454,7 +498,7 @@ export default function PollManagement() {
                     <FormItem>
                       <FormLabel>Título (inglés)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Título en inglés" {...field} />
+                        <Input placeholder="Título en inglés" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -468,7 +512,7 @@ export default function PollManagement() {
                     <FormItem>
                       <FormLabel>Título (español)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Título en español" {...field} />
+                        <Input placeholder="Título en español" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -583,6 +627,7 @@ export default function PollManagement() {
                             <Input
                               placeholder={`Opción ${index + 1} en inglés`}
                               {...field}
+                              value={field.value || ''}
                             />
                           </FormControl>
                           <FormMessage />
@@ -600,6 +645,7 @@ export default function PollManagement() {
                               <Input
                                 placeholder={`Opción ${index + 1} en español`}
                                 {...field}
+                                value={field.value || ''}
                               />
                             </FormControl>
                             <FormMessage />
