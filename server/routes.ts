@@ -2869,39 +2869,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new poll (admin)
   // La implementación de este endpoint se ha movido a la línea 3402
   
-  // Update poll (admin)
-  app.put("/api/polls/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
-    try {
-      const pollId = parseInt(req.params.id);
-      
-      if (isNaN(pollId)) {
-        return res.status(400).json({ message: "ID de encuesta inválido" });
-      }
-      
-      const { title, question, status, expiresAt, showInSidebar, featured } = req.body;
-      
-      const poll = await storage.getPollById(pollId);
-      
-      if (!poll) {
-        return res.status(404).json({ message: "Encuesta no encontrada" });
-      }
-      
-      const updatedPoll = await storage.updatePoll(pollId, {
-        title,
-        question,
-        status,
-        expiresAt: expiresAt || null,
-        showInSidebar: !!showInSidebar,
-        featured: !!featured,
-        updatedAt: new Date()
-      });
-      
-      res.json(updatedPoll);
-    } catch (error) {
-      console.error("Error actualizando encuesta:", error);
-      res.status(500).json({ message: "Error al actualizar la encuesta" });
-    }
-  });
+  // Update poll (admin) - Ver implementación completa en línea 3437
   
   // Delete poll (admin)
   app.delete("/api/polls/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
@@ -3521,7 +3489,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               // Crear objeto de datos para la actualización
               const updateData = {
                 text: option.text || (currentOption ? currentOption.text : ''),
-                textEs: option.textEs !== undefined && option.textEs !== null ? option.textEs : (currentOption ? currentOption.textEs : ''),
+                // IMPORTANTE: Aseguramos que los campos de texto en español se guarden correctamente
+                // Incluso si son cadenas vacías o nulos, los tratamos adecuadamente 
+                textEs: option.textEs !== undefined ? option.textEs : (currentOption && currentOption.textEs !== null ? currentOption.textEs : ''),
                 order: option.order !== undefined ? option.order : (currentOption ? currentOption.order : 0)
               };
               
@@ -3540,7 +3510,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               const newOption = {
                 pollId,
                 text: option.text || '',
-                textEs: option.textEs || '',
+                textEs: option.textEs !== undefined ? option.textEs : '',
                 order: option.order !== undefined ? option.order : 0
               };
               
@@ -3676,9 +3646,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Preparar los datos con valores por defecto
       const optionData = {
         text: req.body.text || '',
-        textEs: req.body.textEs,
+        textEs: req.body.textEs !== undefined ? req.body.textEs : '',
         order: req.body.order || 0
       };
+      
+      console.log("Datos de opción a crear:", JSON.stringify(optionData, null, 2));
       
       // Validar la nueva opción
       const validatedOptionData = insertPollOptionSchema.omit({ pollId: true }).parse(optionData);
