@@ -33,13 +33,13 @@ export default function Home() {
   const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Array de imágenes de fondo para rotación
+  // Array de imágenes de fondo para rotación usando URLs directas
   const backgroundImages = [
-    "/images/real-madrid-fans-back.jpg",
-    "/images/real-madrid-fans-stadium.jpg",
-    "/images/real-madrid-fans-singing.jpg",
-    "/images/jlyIqXxWaWqjqekk-generated_image.jpg",
-    "/images/real-madrid-ultimate-fan.jpg"
+    "https://wallpapers.com/images/hd/real-madrid-victorian-era-logo-7h0xj47j2kd9k639.jpg",
+    "https://e00-marca.uecdn.es/assets/multimedia/imagenes/2022/05/27/16536534055004.jpg",
+    "https://www.realmadrid.com/img/horizontal_940px/comunicado-oficial_20231204035757.jpg",
+    "https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt10eb97f591bcf624/64e8a94fb3d7c75fcfa3bf37/GOAL_-_Blank_WEB_-_Facebook_-_2023-08-25T084641.939.jpg",
+    "https://www.realmadrid.com/img/horizontal_940px/benzema_20230828032423.jpg"
   ];
 
   // Fetch trending videos (limitado a 20)
