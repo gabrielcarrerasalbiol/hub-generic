@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +8,8 @@ import VideoCard from "@/components/VideoCard";
 import SubscribeButton from "@/components/SubscribeButton";
 import ShareVideoModal from "@/components/ShareVideoModal";
 import CommentSection from "@/components/CommentSection";
+import SEO from "@/components/SEO";
+import { videoSchema } from "@/lib/schemaData";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";

@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import SEO from './SEO'; // Importamos el componente SEO
+import { websiteSchema } from '@/lib/schemaData'; // Importamos datos estructurados
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from "@/hooks/useAuth";
@@ -45,6 +47,8 @@ export default function Layout({ children, fullWidth = false }: LayoutProps) {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-background">
+      {/* SEO básico para todas las páginas */}
+      <SEO structuredData={websiteSchema()} />
       <Header onToggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 relative">
