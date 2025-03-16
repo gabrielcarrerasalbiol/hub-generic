@@ -7,9 +7,9 @@ import {
   PieChart,
   Film
 } from "lucide-react";
-import TikTokIcon from "./icons/TikTokIcon";
-import TwitchIcon from "./icons/TwitchIcon";
-import InstagramIcon from "./icons/InstagramIcon";
+import TikTokIcon from "@/components/icons/TikTokIcon";
+import TwitchIcon from "@/components/icons/TwitchIcon";
+import InstagramIcon from "@/components/icons/InstagramIcon";
 
 interface PlatformFiltersProps {
   selectedPlatform: string;
