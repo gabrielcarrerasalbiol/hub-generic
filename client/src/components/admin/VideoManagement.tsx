@@ -532,7 +532,16 @@ export default function VideoManagement() {
   // Renderizado del componente
   return (
     <div className="bg-white dark:bg-slate-800 rounded-md shadow-sm p-6">
-      <h2 className="text-2xl font-bold mb-6">Gestión de Vídeos</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold flex items-center">
+          Gestión de Vídeos 
+          {!isLoadingVideos && (
+            <Badge variant="outline" className="ml-3 text-sm font-normal bg-blue-50 text-blue-700 border-blue-200">
+              {Array.isArray(videos) ? videos.length : 0} videos totales
+            </Badge>
+          )}
+        </h2>
+      </div>
 
       <div className="flex flex-col space-y-4 mb-6">
         {/* Filtros de búsqueda y plataforma */}
