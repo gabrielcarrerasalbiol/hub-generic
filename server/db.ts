@@ -36,6 +36,7 @@ console.log(`Usando el schema ${schemaName} de la base de datos`);
 
 // Crea una instancia de Drizzle ORM
 export const db = drizzle(pool, { schema });
+export { pool };
 
 // Configura el schema en tiempo de ejecución (siempre que se defina un schema distinto a public)
 if (schemaName !== 'public') {

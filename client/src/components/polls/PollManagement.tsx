@@ -222,7 +222,8 @@ export default function PollManagement() {
   const updatePoll = useMutation({
     mutationFn: async ({ id, data }: { id: number, data: PollFormValues }) => {
       // Para depuración
-      console.log(`Iniciando actualización de encuesta ${id} con datos:`, data);
+      console.log(`Iniciando actualización de encuesta ${id}`);
+      console.log('Datos recibidos del formulario:', JSON.stringify(data, null, 2));
       
       // Obtener la encuesta actual para verificar qué opciones existen
       const currentPollResponse = await fetch(`/api/polls/${id}`, {
@@ -237,9 +238,9 @@ export default function PollManagement() {
       }
       
       const currentPoll = await currentPollResponse.json();
-      console.log('Encuesta actual obtenida:', currentPoll);
+      console.log('Encuesta actual obtenida:', JSON.stringify(currentPoll, null, 2));
       
-      // Construcción del payload
+      // Construcción del payload mejorado con mejor manejo de datos en español
       const payload = {
         title: data.title || 'Encuesta Actualizada',
         titleEs: data.titleEs || 'Encuesta Actualizada (ES)', 
@@ -247,12 +248,21 @@ export default function PollManagement() {
         questionEs: data.questionEs || '¿Cuál es tu opinión? (ES)',
         status: data.status || 'draft',
         showInSidebar: !!data.showInSidebar,
-        // Procesar opciones con información mejorada
+        // Procesamiento mejorado de opciones
         options: data.options.map(option => {
+          console.log('Procesando opción:', JSON.stringify(option));
+          
           const isExistingOption = option.id !== undefined;
-          const result: any = {
+          // Usamos una tipado más específico
+          const result: {
+            id?: number;
+            text: string;
+            textEs: string; // Aseguramos que textEs siempre esté presente
+            order: number;
+          } = {
             text: option.text || '',
-            textEs: option.textEs || '',
+            // ATENCIÓN: Aquí garantizamos que textEs siempre tenga un valor, incluso vacío
+            textEs: option.textEs !== undefined ? option.textEs : '',
             order: typeof option.order === 'number' ? option.order : 0
           };
           

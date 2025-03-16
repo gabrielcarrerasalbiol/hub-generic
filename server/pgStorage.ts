@@ -1,5 +1,5 @@
 import { eq, and, desc, like, sql, asc, inArray, count, not, gte } from 'drizzle-orm';
-import { db } from './db';
+import { db, pool } from './db';
 import { IStorage } from './storage';
 import {
   User, InsertUser, Video, InsertVideo, Channel,
@@ -1317,7 +1317,7 @@ export class PgStorage implements IStorage {
 
   async updatePollOption(id: number, optionData: Partial<InsertPollOption>): Promise<PollOption | undefined> {
     try {
-      console.log(`Actualizando opción ${id} con datos:`, optionData);
+      console.log(`[DEBUG] Actualizando opción ${id} con datos COMPLETOS:`, JSON.stringify(optionData));
       
       // Verificar si la opción existe
       const existingOption = await db.select()
@@ -1330,35 +1330,79 @@ export class PgStorage implements IStorage {
         return undefined;
       }
       
-      // Crear un objeto tipado seguro para la actualización
+      // ENFOQUE DIRECTO: Para evitar problemas con undefined, null y valores vacíos
+      // Vamos a realizar una actualización SQL directa que asegure que textEs se actualice correctamente
+      
+      if (optionData.textEs === undefined && optionData.textEs === null && optionData.textEs === '') {
+        console.warn(`[ADVERTENCIA] textEs indefinido o nulo para opción ${id}`);
+      }
+      
+      // Actualización explícita usando SQL en bruto para evitar problemas tipo
+      const query = `
+        UPDATE poll_options
+        SET text = $1, 
+            text_es = $2,
+            "order" = $3
+        WHERE id = $4
+        RETURNING *
+      `;
+      
+      const queryParams = [
+        optionData.text || existingOption[0].text,
+        // Para textEs, si se proporciona incluso un valor vacío, lo usamos; si no, mantenemos el existente
+        optionData.textEs !== undefined ? optionData.textEs : existingOption[0].textEs,
+        optionData.order !== undefined ? optionData.order : existingOption[0].order,
+        id
+      ];
+      
+      console.log(`[DEBUG] Ejecutando actualización directa para opción ${id} con parámetros:`, JSON.stringify(queryParams));
+      
+      // Creamos un enfoque más sencillo usando la API de Drizzle
+      // Evitamos la consulta directa que estaba causando problemas
+      console.log(`[NUEVO ENFOQUE] Actualizando opción ${id} utilizando Drizzle directamente`);
+      
+      // Preparamos los datos para la actualización
       const updateData: {
         text?: string;
         textEs?: string | null;
         order?: number;
       } = {};
       
-      // Solo incluir campos que están definidos
+      // Rellenamos solo los campos proporcionados
       if (optionData.text !== undefined) {
         updateData.text = optionData.text;
       }
       
-      // CORREGIDO: La propiedad textEs siempre debe incluirse en la actualización
-      // para asegurar que se guardan las opciones en ambos idiomas
-      updateData.textEs = optionData.textEs || null;
+      if (optionData.textEs !== undefined) {
+        updateData.textEs = optionData.textEs;
+      }
       
       if (optionData.order !== undefined) {
         updateData.order = optionData.order;
       }
       
-      console.log(`Datos tipados para actualizar opción ${id}:`, updateData);
+      console.log(`[DEBUG] Datos finales para actualización:`, JSON.stringify(updateData));
       
+      // Usamos la API de Drizzle para la actualización
       const result = await db.update(pollOptions)
         .set(updateData)
         .where(eq(pollOptions.id, id))
         .returning();
       
-      console.log(`Resultado de actualización para opción ${id}:`, result.length > 0 ? 'Exitoso' : 'Fallido');
-      return result.length > 0 ? result[0] : undefined;
+      console.log(`[DEBUG] Resultado de actualización con Drizzle:`, JSON.stringify(result));
+      
+      // Procesamos el resultado
+      if (result && result.length > 0) {
+        const updated = result[0];
+        // Ya está en formato correcto, no necesitamos conversión
+        const formattedResult: PollOption = updated;
+        
+        console.log(`[DEBUG] Resultado formateado para opción ${id}:`, JSON.stringify(formattedResult));
+        return formattedResult;
+      }
+      
+      console.log(`Resultado de actualización para opción ${id}: Fallido - No se obtuvo respuesta`);
+      return undefined;
     } catch (error) {
       console.error(`Error actualizando opción ${id}:`, error);
       return undefined;
