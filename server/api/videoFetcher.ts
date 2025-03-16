@@ -194,17 +194,22 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
           summary,
           language,
           categoryIds: categories.map(id => id.toString()),
-          featured: false
+          featured: false,
+          isNotified: false // Por defecto, no ha sido notificado aún
         };
         
         // Crear video y obtener el objeto con ID asignado
         const createdVideo = await storage.createVideo(newVideo);
         addedCount++;
         
-        // Enviar notificaciones a los suscriptores del canal
+        // Enviar notificaciones a los suscriptores del canal (solo si no se enviaron previamente)
         try {
           const notificationResult = await processVideoNotifications(createdVideo.id);
-          console.log(`Notificaciones enviadas para el video ${createdVideo.title}: ${notificationResult.total} suscriptores, ${notificationResult.emailsSent} emails enviados`);
+          if (notificationResult.alreadyNotified) {
+            console.log(`El video ${createdVideo.title} ya había sido notificado anteriormente. Se omiten notificaciones duplicadas.`);
+          } else {
+            console.log(`Notificaciones enviadas para el video ${createdVideo.title}: ${notificationResult.total} suscriptores, ${notificationResult.emailsSent} emails enviados`);
+          }
         } catch (notificationError) {
           console.error(`Error enviando notificaciones para el video ${createdVideo.id}:`, notificationError);
         }
@@ -229,10 +234,6 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
   }
 }
 
-/**
- * Importa videos de todos los canales premium
- * @returns Estadísticas de la importación
- */
 /**
  * Importa videos de canales recomendados
  * @param maxPerChannel Número máximo de videos a importar por canal
@@ -316,6 +317,7 @@ export async function importRecommendedChannelsVideos(maxPerChannel = 20): Promi
                     
                     // Convertir al formato de nuestro esquema
                     const videoData = convertTwitchVideoToSchema(video);
+                    videoData.isNotified = false; // Asegurarse de que el video no ha sido notificado
                     
                     // Guardar en la base de datos
                     const savedVideo = await storage.createVideo(videoData);
@@ -323,6 +325,18 @@ export async function importRecommendedChannelsVideos(maxPerChannel = 20): Promi
                     
                     // Generar resumen
                     await AIService.generateVideoSummary(savedVideo.id);
+                    
+                    // Procesar notificaciones
+                    try {
+                      const notificationResult = await processVideoNotifications(savedVideo.id);
+                      if (notificationResult.alreadyNotified) {
+                        console.log(`El video ${savedVideo.title} ya había sido notificado. Se omiten notificaciones.`);
+                      } else {
+                        console.log(`Notificaciones enviadas para el video ${savedVideo.title}: ${notificationResult.total} suscriptores, ${notificationResult.emailsSent} emails`);
+                      }
+                    } catch (notifError) {
+                      console.error(`Error notificando video ${savedVideo.id}:`, notifError);
+                    }
                   } catch (videoError) {
                     console.error(`Error procesando video de Twitch: ${videoError}`);
                   }
@@ -459,6 +473,7 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
                     
                     // Convertir al formato de nuestro esquema
                     const videoData = convertTwitchVideoToSchema(video);
+                    videoData.isNotified = false; // Asegurarse de que el video no ha sido notificado
                     
                     // Guardar en la base de datos
                     const savedVideo = await storage.createVideo(videoData);
@@ -467,287 +482,212 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
                     // Generar resumen
                     await AIService.generateVideoSummary(savedVideo.id);
                     
-                  } catch (error) {
-                    console.error(`Error procesando video alternativo de Twitch: ${error}`);
+                    // Procesar notificaciones
+                    try {
+                      const notificationResult = await processVideoNotifications(savedVideo.id);
+                      if (notificationResult.alreadyNotified) {
+                        console.log(`El video ${savedVideo.title} ya había sido notificado. Se omiten notificaciones.`);
+                      } else {
+                        console.log(`Notificaciones enviadas para el video ${savedVideo.title}: ${notificationResult.total} suscriptores, ${notificationResult.emailsSent} emails`);
+                      }
+                    } catch (notifError) {
+                      console.error(`Error notificando video ${savedVideo.id}:`, notifError);
+                    }
+                  } catch (videoError) {
+                    console.error(`Error procesando video de Twitch: ${videoError}`);
                   }
                 }
                 
+                // Actualizar resultado con los videos encontrados por búsqueda alternativa
                 importResult = {
                   total: videos.length,
                   added: addedCount,
                   skipped: skippedCount,
-                  error: importResult.error + " (se aplicó método alternativo)"
+                  error: null
                 };
               }
             } catch (twitchError) {
-              console.error("Error en búsqueda alternativa de Twitch:", twitchError);
+              console.error(`Error en búsqueda alternativa de Twitch: ${twitchError}`);
             }
           }
         }
+        // Añadir soporte para otras plataformas según sea necesario
         else {
-          result.errors.push(`Plataforma ${channel.platform} no soportada para importación automática`);
-          continue;
+          importResult = {
+            total: 0,
+            added: 0,
+            skipped: 0,
+            error: `Plataforma '${channel.platform}' no soportada para importación automática`
+          };
         }
-        
-        if (!importResult) {
-          importResult = { total: 0, added: 0, skipped: 0, error: "Resultado de importación indefinido" };
-        }
-        
+
         // Actualizar estadísticas
-        result.processedChannels++;
-        result.totalVideos += importResult.total;
-        result.addedVideos += importResult.added;
-        result.skippedVideos += importResult.skipped || 0;
-        
-        // Registrar errores si los hay
-        if (importResult.error) {
-          result.errors.push(`Error en canal ${channel.title}: ${importResult.error}`);
+        if (importResult) {
+          result.totalVideos += importResult.total;
+          result.addedVideos += importResult.added;
+          result.skippedVideos += (importResult.skipped || 0);
+          result.processedChannels++;
+          
+          if (importResult.error) {
+            result.errors.push(`Error en canal ${channel.title}: ${importResult.error}`);
+          }
         }
-        
-        // Registrar información detallada en consola
-        console.log(`Canal ${channel.title}: Total ${importResult.total}, Agregados ${importResult.added}, Omitidos ${importResult.skipped || 0}`);
-        
-        // Actualizar tiempo de última sincronización
+      } catch (channelError: any) {
+        console.error(`Error procesando canal premium #${premiumChannel.id}:`, channelError);
+        result.errors.push(`Error en canal premium #${premiumChannel.id}: ${channelError.message || 'Error desconocido'}`);
+      }
+    }
+
+    // Actualizar la fecha de última sincronización para todos los canales premium procesados
+    for (const premiumChannel of premiumChannels) {
+      try {
         await storage.updatePremiumChannelSyncTime(premiumChannel.id);
-        
-      } catch (error: any) {
-        result.errors.push(`Error procesando canal ${premiumChannel.channelId}: ${error.message}`);
+      } catch (updateError) {
+        console.error(`Error actualizando fecha de sincronización del canal #${premiumChannel.id}:`, updateError);
       }
     }
 
     return result;
   } catch (error: any) {
-    result.errors.push(`Error general: ${error.message}`);
+    console.error("Error importando videos de canales premium:", error);
+    result.errors.push(`Error general: ${error.message || 'Error desconocido'}`);
     return result;
   }
 }
 
+/**
+ * Importa videos de un canal específico de YouTube
+ * @param channelId ID externo del canal en YouTube
+ * @param maxResults Número máximo de videos a importar
+ * @returns Estadísticas de la importación
+ */
 export async function importChannelVideos(
   channelId: string,
-  maxResults = 50,
-  setAsFeatured = false
-): Promise<{total: number, added: number, skipped?: number, channelInfo?: any, error?: string}> {
+  maxResults = 50
+): Promise<{
+  total: number;
+  added: number;
+  skipped: number;
+  error: string | null;
+}> {
   try {
-    // Validar entrada
-    if (!channelId) {
-      return { total: 0, added: 0, skipped: 0, error: "Se requiere el ID o URL del canal" };
-    }
-    
-    // Obtener información del canal primero para agregar a nuestra base de datos
-    let normalizedChannelId = channelId;
-    
-    // Si es una URL de YouTube, extraer el ID del canal
-    if (channelId.includes('youtube.com')) {
-      const match = channelId.match(/\/channel\/([^\/\?]+)|\/c\/([^\/\?]+)|\/user\/([^\/\?]+)/);
-      if (match) {
-        normalizedChannelId = match[1] || match[2] || match[3];
-      }
-    }
-    
-    console.log(`Buscando canal con ID: ${normalizedChannelId}`);
-    
-    // Buscar el canal en YouTube
-    const channelDetails = await getYouTubeChannelDetails([normalizedChannelId]);
-    if (!channelDetails.items || channelDetails.items.length === 0) {
-      return { 
-        total: 0, 
-        added: 0, 
-        skipped: 0,
-        error: "No se encontró el canal especificado. Verifica el ID o URL del canal." 
-      };
-    }
-    
-    const channelInfo = channelDetails.items[0];
-    console.log(`Encontrado canal: ${channelInfo.snippet.title}`);
-    
-    // Verificar si el canal ya existe en nuestra base de datos, si no, agregarlo
-    let channelInDb = await storage.getChannelByExternalId(channelInfo.id);
-    if (!channelInDb) {
-      const channelData = convertYouTubeChannelToSchema(channelInfo);
-      channelInDb = await storage.createChannel(channelData);
-      console.log(`Canal agregado a la base de datos: ${channelData.title}`);
-    } else {
-      console.log(`Canal ya existe en la base de datos: ${channelInDb.title}`);
-    }
+    console.log(`Importando hasta ${maxResults} videos del canal ${channelId}`);
     
     // Obtener videos del canal
-    const channelVideos = await getChannelVideos(channelInfo.id, maxResults);
-    if (!channelVideos.items || channelVideos.items.length === 0) {
-      return { 
-        total: 0, 
-        added: 0, 
-        skipped: 0,
-        channelInfo: channelInDb,
-        error: "No se encontraron videos en este canal" 
-      };
+    const videos = await getChannelVideos(channelId, maxResults);
+    if (!videos || !videos.items || videos.items.length === 0) {
+      return { total: 0, added: 0, skipped: 0, error: "No se encontraron videos en el canal" };
     }
     
-    // Extraer los IDs de los videos
-    const videoIds = channelVideos.items
-      .filter(item => item.id.videoId)
-      .map(item => item.id.videoId as string);
-    
-    if (videoIds.length === 0) {
-      return { 
-        total: 0, 
-        added: 0, 
-        skipped: 0,
-        channelInfo: channelInDb,
-        error: "No se encontraron IDs de videos válidos" 
-      };
-    }
-    
-    // Obtener detalles completos de los videos
-    const videoDetails = await getYouTubeVideoDetails(videoIds);
-    if (!videoDetails.items || videoDetails.items.length === 0) {
-      return { 
-        total: videoIds.length, 
-        added: 0,
-        skipped: 0,
-        channelInfo: channelInDb,
-        error: "No se pudieron obtener detalles de los videos" 
-      };
-    }
+    console.log(`Se encontraron ${videos.items.length} videos en el canal`);
     
     let addedCount = 0;
     let skippedCount = 0;
-    const existingIds: string[] = [];
     
-    // Obtener categorías una sola vez para todas las clasificaciones
+    // Obtener categorías para clasificación
     const availableCategories = await storage.getCategories();
     
-    // Definir umbral mínimo de visualizaciones para considerar un video de calidad
-    const MIN_VIEW_COUNT = 500; // Videos con menos de 500 visualizaciones serán ignorados
-    
-    // Obtenemos primero todos los IDs existentes para hacer una comprobación más eficiente
-    // en lugar de hacer una consulta por cada video
-    const existingVideos = await Promise.all(
-      videoDetails.items.map(video => storage.getVideoByExternalId(video.id))
-    );
-    
-    // Crear un mapa de videos existentes por su ID para consulta rápida
-    const existingVideoMap = new Map();
-    existingVideos.forEach(video => {
-      if (video) {
-        existingVideoMap.set(video.externalId, video);
-        existingIds.push(video.externalId);
-      }
-    });
-    
-    console.log(`Se encontraron ${existingIds.length} videos ya existentes de ${videoDetails.items.length} totales`);
-    
     // Procesar cada video
-    for (const video of videoDetails.items) {
+    for (const video of videos.items) {
       try {
-        // Verificar si el video ya existe en la base de datos usando el mapa
-        if (existingVideoMap.has(video.id)) {
+        // Verificar si el video ya existe en la base de datos
+        const existingVideo = await storage.getVideoByExternalId(video.id.videoId);
+        if (existingVideo) {
           skippedCount++;
           continue;
         }
         
-        // Filtrar videos con pocas visualizaciones
-        const viewCount = parseInt(video.statistics.viewCount, 10) || 0;
-        if (viewCount < MIN_VIEW_COUNT) {
-          console.log(`Ignorando video ${video.id} con solo ${viewCount} visualizaciones`);
+        // Obtener detalles completos del video
+        const videoDetails = await getYouTubeVideoDetails([video.id.videoId]);
+        if (!videoDetails.items || videoDetails.items.length === 0) {
+          console.log(`No se pudieron obtener detalles del video ${video.id.videoId}, saltando...`);
+          skippedCount++;
           continue;
         }
         
-        // Convertir al formato de nuestro esquema
-        const videoData = convertYouTubeVideoToSchema(video);
+        const videoDetail = videoDetails.items[0];
         
-        // Clasificar el contenido con IA utilizando OpenAI, Claude o Gemini
+        // Convertir al formato de nuestro esquema
+        const videoData = convertYouTubeVideoToSchema(videoDetail);
+        
+        // Clasificar el contenido utilizando IA
         let categories: number[] = [];
+        let summary = "";
+        let language = "es"; // Por defecto español para contenido de Real Madrid
         
         try {
-          // Intentar con OpenAI primero
-          const result = await classifyContent(
+          console.log(`Clasificando video ${videoData.title}`);
+          // Intentar clasificar con el servicio unificado de IA
+          const result = await AIService.classifyContent(
             videoData.title,
             videoData.description || "",
             availableCategories
           );
           categories = result.categories;
-        } catch (openaiError) {
-          console.error("Error con OpenAI, intentando con Claude:", openaiError);
+          
+          // Generar resumen automáticamente
+          console.log(`Generando resumen para el video ${videoData.title}`);
           try {
-            // Fallback a Anthropic Claude
-            const result = await classifyContentWithAnthropicClaude(
-              videoData.title,
-              videoData.description || "",
-              availableCategories
-            );
-            categories = result.categories;
-          } catch (claudeError) {
-            console.error("Error con Claude, intentando con Gemini:", claudeError);
-            try {
-              // Fallback a Google Gemini
-              const result = await classifyContentWithGemini(
-                videoData.title,
-                videoData.description || "",
-                availableCategories
-              );
-              categories = result.categories;
-            } catch (geminiError) {
-              console.error("Error con Gemini, usando categorización básica:", geminiError);
-              // Fallback a categorización básica
-              categories = [1]; // Categoría general por defecto
-            }
+            const summaryResult = await generateVideoSummary(videoData.title, videoData.description || "");
+            summary = summaryResult.summary;
+            language = summaryResult.language;
+            console.log(`Resumen generado: ${summary.substring(0, 100)}...`);
+          } catch (summaryError) {
+            console.error(`Error generando resumen: ${summaryError}`);
+            summary = `Contenido sobre Real Madrid: ${videoData.title}`;
           }
+        } catch (classificationError) {
+          console.error(`Error clasificando video: ${classificationError}`);
+          // Si falla la clasificación, usar categoría general por defecto
+          categories = [1];
         }
         
-        // Generar un resumen del video con Gemini y detectar idioma
-        let summary = "";
-        let language = "es"; // Idioma por defecto para contenido de Real Madrid
-        try {
-          const summaryResult = await generateVideoSummary(videoData.title, videoData.description || "");
-          summary = summaryResult.summary;
-          language = summaryResult.language;
-          console.log(`Resumen generado: ${summary}`);
-          console.log(`Idioma detectado: ${language}`);
-        } catch (summaryError) {
-          console.error("Error generando resumen con Gemini:", summaryError);
-          summary = `Contenido sobre Real Madrid: ${videoData.title}`;
-        }
-        
-        // Crear el video en la base de datos con todos los datos
+        // Crear el video en la base de datos con las categorías asignadas y el resumen
         const newVideo: InsertVideo = {
           ...videoData,
           summary,
           language,
           categoryIds: categories.map(id => id.toString()),
-          featured: setAsFeatured // Los videos se marcan como destacados según el parámetro
+          featured: false,
+          isNotified: false // Por defecto, no ha sido notificado aún
         };
         
         // Crear video y obtener el objeto con ID asignado
         const createdVideo = await storage.createVideo(newVideo);
         addedCount++;
         
-        // Enviar notificaciones a los suscriptores del canal
+        // Enviar notificaciones a los suscriptores del canal (solo si no se enviaron previamente)
         try {
           const notificationResult = await processVideoNotifications(createdVideo.id);
-          console.log(`Notificaciones enviadas para el video ${createdVideo.title}: ${notificationResult.total} suscriptores, ${notificationResult.emailsSent} emails enviados`);
+          if (notificationResult.alreadyNotified) {
+            console.log(`El video ${createdVideo.title} ya había sido notificado anteriormente. Se omiten notificaciones duplicadas.`);
+          } else {
+            console.log(`Notificaciones enviadas para el video ${createdVideo.title}: ${notificationResult.total} suscriptores, ${notificationResult.emailsSent} emails enviados`);
+          }
         } catch (notificationError) {
           console.error(`Error enviando notificaciones para el video ${createdVideo.id}:`, notificationError);
         }
         
       } catch (error) {
-        console.error(`Error procesando video ${video.id}:`, error);
+        console.error(`Error procesando video: ${error}`);
+        skippedCount++;
       }
     }
     
     return {
-      total: videoDetails.items.length,
+      total: videos.items.length,
       added: addedCount,
       skipped: skippedCount,
-      channelInfo: channelInDb
+      error: null
     };
     
   } catch (error: any) {
-    console.error("Error en importChannelVideos:", error);
-    return { 
-      total: 0, 
-      added: 0, 
+    console.error(`Error importando videos del canal ${channelId}:`, error);
+    return {
+      total: 0,
+      added: 0,
       skipped: 0,
-      error: error.message || "Error desconocido al importar videos del canal"
+      error: error.message || "Error desconocido al importar videos"
     };
   }
 }
