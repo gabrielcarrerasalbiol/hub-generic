@@ -29,18 +29,11 @@ export default function Home() {
   const [platform, setPlatform] = useState<PlatformType>("all");
   const [category, setCategory] = useState<CategoryType>("all");
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
-  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
   const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Array de imágenes de banner con URLs directas
-  const bannerImages = [
-    "https://www.realmadrid.com/img/cc_1920px/sala-dde-trofeos_20220316033347.jpg",
-    "https://www.realmadrid.com/img/cc_1920px/vinicius-jr-y-rodrygo-celebrando-el-1-0-ante-el-manchester-city_20220505022807.jpg",
-    "https://www.realmadrid.com/img/cc_1920px/estadio-santiago-bernabeu_rm_20231102085307.jpg",
-    "https://www.realmadrid.com/img/cc_1920px/celebracion-14-champions-cibeles_20220530010107.jpg",
-    "https://www.realmadrid.com/img/cc_1920px/bale-gol-final-champions-kyiv_20210806124308.jpg"
-  ];
+  // Ya no necesitamos hacer rotar las imágenes, usaremos una estática
+  const currentImage = "/images/real-madrid-fans-back.jpg";
+  
 
   // Fetch trending videos (limitado a 20)
   const { 
@@ -130,22 +123,7 @@ export default function Home() {
     };
   }, [featuredVideos.length]);
   
-  // Auto-rotate banner images
-  useEffect(() => {
-    if (bannerImages.length > 1) {
-      backgroundIntervalRef.current = setInterval(() => {
-        setCurrentBackgroundIndex((prevIndex) => 
-          prevIndex === bannerImages.length - 1 ? 0 : prevIndex + 1
-        );
-      }, 15000); // Rotate every 15 seconds
-    }
-    
-    return () => {
-      if (backgroundIntervalRef.current) {
-        clearInterval(backgroundIntervalRef.current);
-      }
-    };
-  }, [bannerImages.length]);
+  // Ya no es necesario el efecto para rotar imágenes, usamos una imagen estática
 
   const handleNextFeatured = () => {
     if (carouselIntervalRef.current) {
@@ -167,37 +145,25 @@ export default function Home() {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
-      {/* Hero Banner con imágenes de fondo rotativas */}
+      {/* Hero Banner con imagen estática como en login/register */}
       <div className="relative w-full h-96 mb-8 overflow-hidden rounded-xl shadow-lg">
-        <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000"
-          style={{
-            backgroundImage: `url("${bannerImages[currentBackgroundIndex]}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        ></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/70 to-transparent flex items-center">
-          <div className="text-white p-8 md:p-12 max-w-lg">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Hub Madridista</h1>
-            <p className="text-lg md:text-xl mb-6">{t('home.heroSubtitle')}</p>
-            <Link href="/videos">
-              <Button className="bg-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/90 font-semibold">
-                {t('home.discoverVideos')}
-              </Button>
-            </Link>
+        <div className="relative rounded-lg overflow-hidden h-full">
+          <img 
+            src={currentImage} 
+            alt="Real Madrid" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 to-transparent flex items-center">
+            <div className="text-white p-8 md:p-12 max-w-lg">
+              <h1 className="text-3xl md:text-4xl font-bold mb-4">Hub Madridista</h1>
+              <p className="text-lg md:text-xl mb-6">{t('home.heroSubtitle')}</p>
+              <Link href="/videos">
+                <Button className="bg-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/90 font-semibold">
+                  {t('home.discoverVideos')}
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
-        {/* Indicadores de imagen actual */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {bannerImages.map((_, idx) => (
-            <span 
-              key={idx} 
-              className={`block h-2 w-2 rounded-full ${
-                idx === currentBackgroundIndex ? 'bg-[#FDBE11]' : 'bg-white/50'
-              }`}
-            />
-          ))}
         </div>
       </div>
       {/* SEO optimizado para la página de inicio */}
