@@ -3483,19 +3483,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Manejar la actualización de opciones si se incluyen
       if (options && Array.isArray(options)) {
         try {
-          console.log("Procesando opciones:", options);
+          console.log("Procesando opciones:", JSON.stringify(options));
           
           // Obtener las opciones actuales
           const currentOptions = await storage.getPollOptions(pollId);
-          console.log("Opciones actuales:", currentOptions);
+          console.log("Opciones actuales:", JSON.stringify(currentOptions));
           
           // Crear un mapa de IDs de opciones actuales para verificación rápida
           const currentOptionIds = new Set(currentOptions.map(opt => opt.id));
+          console.log("IDs de opciones actuales:", Array.from(currentOptionIds));
           
           // Primero identificar opciones a eliminar
           const optionsToDelete = currentOptions.filter(
             current => !options.some((opt: any) => opt.id === current.id)
           );
+          
+          console.log("Opciones a eliminar:", optionsToDelete.map(o => o.id));
           
           // Eliminar opciones que ya no están presentes
           for (const optionToDelete of optionsToDelete) {
@@ -3505,28 +3508,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Procesar opciones enviadas en la solicitud
           for (const option of options) {
+            // Verificar estructura de cada opción
+            console.log(`Procesando opción:`, JSON.stringify(option));
+            
             // Si tiene ID, es una actualización
             if (option.id && currentOptionIds.has(option.id)) {
-              console.log(`Actualizando opción: ${option.id}`);
+              console.log(`Actualizando opción existente: ${option.id}`);
               
               // Encontrar la opción actual para usar sus valores como fallback
               const currentOption = currentOptions.find(curr => curr.id === option.id);
               
-              await storage.updatePollOption(option.id, {
+              // Crear objeto de datos para la actualización
+              const updateData = {
                 text: option.text || (currentOption ? currentOption.text : ''),
                 textEs: option.textEs !== undefined ? option.textEs : (currentOption ? currentOption.textEs : ''),
                 order: option.order !== undefined ? option.order : (currentOption ? currentOption.order : 0)
-              });
+              };
+              
+              console.log(`Datos de actualización para opción ${option.id}:`, updateData);
+              
+              // Realizar la actualización
+              const result = await storage.updatePollOption(option.id, updateData);
+              console.log(`Resultado de actualización para opción ${option.id}:`, result ? "Exitoso" : "Fallido");
             } 
             // Si no tiene ID, es una nueva opción
             else if (!option.id) {
               console.log("Añadiendo nueva opción");
-              await storage.createPollOption({
+              const newOption = {
                 pollId,
                 text: option.text || '',
                 textEs: option.textEs || '',
                 order: option.order !== undefined ? option.order : 0
-              });
+              };
+              
+              console.log("Datos de nueva opción:", newOption);
+              const result = await storage.createPollOption(newOption);
+              console.log("Nueva opción creada:", result);
             }
             // Si tiene ID pero no está en las opciones actuales, es un error o inconsistencia
             else {
@@ -3535,8 +3552,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         } catch (error) {
           console.error("Error procesando opciones:", error);
-          throw new Error("Error al procesar las opciones de la encuesta");
+          throw new Error(`Error al procesar las opciones de la encuesta: ${error instanceof Error ? error.message : String(error)}`);
         }
+      } else {
+        console.log("No se proporcionaron opciones para actualizar");
       }
       
       // Obtener la encuesta actualizada con sus opciones
