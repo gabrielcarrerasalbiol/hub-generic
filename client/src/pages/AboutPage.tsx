@@ -42,7 +42,7 @@ export default function AboutPage() {
       subtitle: t("about.heroSlider.home.subtitle"),
       bgColor: "bg-[#1E3A8A]",
       textColor: "text-white",
-      icon: <Trophy className="inline-block mr-3 h-8 w-8 text-[#FDBE11]" />
+      icon: <Trophy className="inline-block mr-3 h-10 w-10 text-[#FDBE11]" />
     },
     {
       title: t("about.heroSlider.passion.title"),
