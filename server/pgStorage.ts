@@ -553,10 +553,11 @@ export class PgStorage implements IStorage {
       .where(eq(channelSubscriptions.userId, userId));
   }
 
-  async getSubscribedChannelsByUserId(userId: number): Promise<Channel[]> {
+  async getSubscribedChannelsByUserId(userId: number): Promise<(Channel & { notificationsEnabled: boolean })[]> {
     const subscriptions = await db
       .select({
-        channelId: channelSubscriptions.channelId
+        channelId: channelSubscriptions.channelId,
+        notificationsEnabled: channelSubscriptions.notificationsEnabled
       })
       .from(channelSubscriptions)
       .where(eq(channelSubscriptions.userId, userId));
@@ -567,10 +568,19 @@ export class PgStorage implements IStorage {
     
     const channelIds = subscriptions.map(sub => sub.channelId);
     
-    return db
+    const channelsList = await db
       .select()
       .from(channels)
       .where(inArray(channels.id, channelIds));
+    
+    // Combinar canales con sus preferencias de notificación
+    return channelsList.map(channel => {
+      const subscription = subscriptions.find(sub => sub.channelId === channel.id);
+      return {
+        ...channel,
+        notificationsEnabled: subscription ? subscription.notificationsEnabled : false
+      };
+    });
   }
   
   async getSubscriptionsByChannelId(channelId: number): Promise<ChannelSubscription[]> {
