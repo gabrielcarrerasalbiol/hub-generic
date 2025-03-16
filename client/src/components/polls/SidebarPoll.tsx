@@ -6,8 +6,14 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronDown, ChevronUp, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 type PollOption = {
   id: number;
@@ -148,93 +154,122 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
     return null;
   }
 
+  // Crear el título para mostrar (bilingüe)
+  const pollTitle = isSpanish && poll.titleEs ? poll.titleEs : poll.title;
+  const pollQuestion = isSpanish && poll.questionEs ? poll.questionEs : poll.question;
+
   return (
     <Card className="mt-4 overflow-hidden">
       <CardHeader className="bg-primary text-primary-foreground p-3">
-        <CardTitle className="text-base font-medium">
+        <CardTitle className="text-base font-medium flex justify-between items-center">
           {t("poll.fanPoll")}
+          {!isAuthenticated && (
+            <div className="flex items-center text-xs text-primary-foreground/80 gap-1">
+              <AlertCircle className="h-3 w-3" />
+              <span>{t("poll.loginToVote")}</span>
+            </div>
+          )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
-        <h3 className="text-sm font-semibold mb-3">
-          {/* Mostrar texto en español si está disponible y el idioma es español */}
-          {isSpanish && poll.questionEs ? poll.questionEs : poll.question}
-        </h3>
+      
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-0">
+          <AccordionTrigger className="px-4 py-2 hover:no-underline">
+            <span className="text-sm font-medium">
+              {pollTitle}
+            </span>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <h3 className="text-sm font-semibold mb-3">
+              {pollQuestion}
+            </h3>
 
-        {showResults ? (
-          <div className="space-y-3">
-            {results.map((option) => (
-              <div key={option.id} className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span>{option.text}</span>
-                  <span className="font-medium">{option.percentage}%</span>
-                </div>
-                <motion.div
-                  className="h-2 bg-accent rounded-full overflow-hidden"
-                  initial={{ width: 0 }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <motion.div
-                    className="h-full bg-primary"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${option.percentage}%` }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                  />
-                </motion.div>
-                <div className="text-xs text-muted-foreground">
-                  {option.voteCount} {t("poll.votes")}
+            {showResults ? (
+              <div className="space-y-3">
+                {results.map((option) => (
+                  <div key={option.id} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span>{option.text}</span>
+                      <span className="font-medium">{option.percentage}%</span>
+                    </div>
+                    <motion.div
+                      className="h-2 bg-accent rounded-full overflow-hidden"
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <motion.div
+                        className="h-full bg-primary"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${option.percentage}%` }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                      />
+                    </motion.div>
+                    <div className="text-xs text-muted-foreground">
+                      {option.voteCount} {t("poll.votes")}
+                    </div>
+                  </div>
+                ))}
+                <div className="mt-4 text-center">
+                  <Badge variant="outline" className="text-xs">
+                    {t("poll.resultsLive")}
+                  </Badge>
                 </div>
               </div>
-            ))}
-            <div className="mt-4 text-center">
-              <Badge variant="outline" className="text-xs">
-                {t("poll.resultsLive")}
-              </Badge>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="space-y-2">
-              {poll.options.map((option) => (
-                <Button
-                  key={option.id}
-                  variant={selectedOption === option.id ? "default" : "outline"}
-                  className="w-full justify-start text-left font-normal"
-                  onClick={() => setSelectedOption(option.id)}
-                >
-                  {/* Mostrar texto en español si está disponible y el idioma es español */}
-                  {isSpanish && option.textEs ? option.textEs : option.text}
-                </Button>
-              ))}
-            </div>
-            <div className="mt-4 flex justify-between items-center">
-              <Button
-                size="sm"
-                variant="link"
-                className="text-xs px-0"
-                onClick={() => {
-                  if (poll) {
-                    fetchResults(poll.id);
-                  }
-                }}
-              >
-                {t("poll.viewResults")}
-              </Button>
-              <Button
-                size="sm"
-                disabled={!selectedOption || voting}
-                onClick={handleVote}
-              >
-                {voting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <div className="space-y-2">
+                  {poll.options.map((option) => (
+                    <Button
+                      key={option.id}
+                      variant={selectedOption === option.id ? "default" : "outline"}
+                      className="w-full justify-start text-left font-normal"
+                      onClick={() => setSelectedOption(option.id)}
+                    >
+                      {/* Mostrar texto en español si está disponible y el idioma es español */}
+                      {isSpanish && option.textEs ? option.textEs : option.text}
+                    </Button>
+                  ))}
+                </div>
+                <div className="mt-4 flex justify-between items-center">
+                  <Button
+                    size="sm"
+                    variant="link"
+                    className="text-xs px-0"
+                    onClick={() => {
+                      if (poll) {
+                        fetchResults(poll.id);
+                      }
+                    }}
+                  >
+                    {t("poll.viewResults")}
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={!selectedOption || voting || !isAuthenticated}
+                    onClick={handleVote}
+                  >
+                    {voting && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    {t("poll.vote")}
+                  </Button>
+                </div>
+                {!isAuthenticated && (
+                  <div className="mt-3 text-xs text-center text-muted-foreground">
+                    <button 
+                      className="text-primary underline hover:text-primary/80"
+                      onClick={() => openLoginDialog()}
+                    >
+                      {t("poll.loginToVote")}
+                    </button>
+                  </div>
                 )}
-                {t("poll.vote")}
-              </Button>
-            </div>
-          </>
-        )}
-      </CardContent>
+              </>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Card>
   );
 }

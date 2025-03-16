@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import {
   Table,
   TableBody,
@@ -345,8 +348,18 @@ export default function PollManagement() {
             </TableHeader>
             <TableBody>
               {polls.map((poll: Poll) => (
-                <TableRow key={poll.id}>
-                  <TableCell className="font-medium">{poll.title}</TableCell>
+                <TableRow 
+                  key={poll.id} 
+                  className={poll.showInSidebar ? 'bg-primary/5' : ''}
+                >
+                  <TableCell className="font-medium">
+                    {poll.title}
+                    {poll.showInSidebar && (
+                      <Badge variant="outline" className="ml-2 bg-primary/10">
+                        Sidebar
+                      </Badge>
+                    )}
+                  </TableCell>
                   <TableCell>
                     {poll.status === 'published' ? (
                       <span className="flex items-center text-green-500">
@@ -357,7 +370,14 @@ export default function PollManagement() {
                       <span className="text-orange-500">Borrador</span>
                     )}
                   </TableCell>
-                  <TableCell>{poll.showInSidebar ? 'Sí' : 'No'}</TableCell>
+                  <TableCell>
+                    {poll.showInSidebar ? (
+                      <span className="flex items-center text-primary">
+                        <CheckCircle className="mr-1 h-4 w-4" />
+                        Activa
+                      </span>
+                    ) : 'No'}
+                  </TableCell>
                   <TableCell>{poll.options.length}</TableCell>
                   <TableCell>{new Date(poll.createdAt).toLocaleString()}</TableCell>
                   <TableCell className="text-right space-x-2">
@@ -514,13 +534,23 @@ export default function PollManagement() {
                     <FormControl>
                       <Checkbox
                         checked={field.value}
-                        onCheckedChange={field.onChange}
+                        onCheckedChange={(checked) => {
+                          // Si está marcando la casilla y ya existe una encuesta en el sidebar, advertimos
+                          if (checked && polls?.some(p => p.showInSidebar && (!editingPoll || p.id !== editingPoll.id))) {
+                            if (window.confirm('Ya hay otra encuesta configurada para mostrarse en el sidebar. ¿Desea reemplazarla con esta?')) {
+                              field.onChange(checked);
+                            }
+                          } else {
+                            field.onChange(checked);
+                          }
+                        }}
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel>Mostrar en Sidebar</FormLabel>
                       <FormDescription>
-                        Muestra esta encuesta en el sidebar como encuesta destacada
+                        Muestra esta encuesta en el sidebar como encuesta destacada.
+                        Solo una encuesta puede mostrarse en el sidebar a la vez.
                       </FormDescription>
                     </div>
                   </FormItem>
