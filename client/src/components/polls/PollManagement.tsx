@@ -153,19 +153,23 @@ export default function PollManagement() {
   // Mutación para crear encuesta
   const createPoll = useMutation({
     mutationFn: (data: PollFormValues) => {
-      // Asegurarnos de que las opciones tienen el formato correcto
-      // y excluimos campos de ID opcionales para nuevas opciones
+      // Extraemos las opciones del formulario
+      const { options, ...pollData } = data;
+      
+      // Construimos el payload separando los datos de la encuesta y las opciones
       const payload = {
-        title: data.title,
-        titleEs: data.titleEs, 
-        question: data.question,
-        questionEs: data.questionEs,
-        status: data.status,
-        showInSidebar: data.showInSidebar,
-        options: data.options.map(option => ({
-          text: option.text,
-          textEs: option.textEs,
-          order: option.order
+        // Datos de la encuesta con valores por defecto para asegurar que no sean undefined
+        title: pollData.title || '',
+        titleEs: pollData.titleEs || '', 
+        question: pollData.question || '',
+        questionEs: pollData.questionEs || '',
+        status: pollData.status || 'draft',
+        showInSidebar: !!pollData.showInSidebar,
+        // Las opciones necesitan ser enviadas por separado
+        options: options.map(option => ({
+          text: option.text || '',
+          textEs: option.textEs || '',
+          order: option.order || 0
         }))
       };
       
@@ -209,20 +213,24 @@ export default function PollManagement() {
   // Mutación para actualizar encuesta
   const updatePoll = useMutation({
     mutationFn: ({ id, data }: { id: number, data: PollFormValues }) => {
-      // Asegurarnos de que las opciones tienen el formato correcto
-      // para actualización
+      // Extraemos las opciones del formulario
+      const { options, ...pollData } = data;
+      
+      // Construimos el payload separando los datos de la encuesta y las opciones
       const payload = {
-        title: data.title,
-        titleEs: data.titleEs, 
-        question: data.question,
-        questionEs: data.questionEs,
-        status: data.status,
-        showInSidebar: data.showInSidebar,
-        options: data.options.map(option => ({
+        // Datos de la encuesta con valores por defecto para asegurar que no sean undefined
+        title: pollData.title || '',
+        titleEs: pollData.titleEs || '', 
+        question: pollData.question || '',
+        questionEs: pollData.questionEs || '',
+        status: pollData.status || 'draft',
+        showInSidebar: !!pollData.showInSidebar,
+        // Las opciones necesitan incluir el ID para la actualización
+        options: options.map(option => ({
           id: option.id,
-          text: option.text,
-          textEs: option.textEs,
-          order: option.order
+          text: option.text || '',
+          textEs: option.textEs || '',
+          order: option.order || 0
         }))
       };
       
