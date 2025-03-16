@@ -2057,6 +2057,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Error al eliminar canal recomendado: " + error.message });
     }
   });
+
+  // Endpoint para importar videos de todos los canales recomendados
+  app.post("/api/recommended-channels/import-videos", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { maxPerChannel = 20 } = req.body;
+      const limit = Math.min(Math.max(parseInt(String(maxPerChannel)) || 20, 5), 50); // Limitar entre 5 y 50
+      
+      const { importRecommendedChannelsVideos } = await import("./api/videoFetcher");
+      const result = await importRecommendedChannelsVideos(limit);
+      
+      res.json({
+        message: `Importación completada: ${result.addedVideos} videos añadidos, ${result.skippedVideos} omitidos de ${result.totalVideos} encontrados en ${result.processedChannels} de ${result.totalChannels} canales`,
+        ...result
+      });
+    } catch (error: any) {
+      console.error("Error importing recommended channel videos:", error);
+      res.status(500).json({ 
+        error: "Error al importar videos de canales recomendados",
+        details: error.message
+      });
+    }
+  });
   
   // Importar videos por plataforma específica
   app.post("/api/videos/import-by-platform", isAuthenticated, isAdmin, async (req: Request, res: Response) => {

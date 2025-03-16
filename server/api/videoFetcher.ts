@@ -233,6 +233,154 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
  * Importa videos de todos los canales premium
  * @returns Estadísticas de la importación
  */
+/**
+ * Importa videos de canales recomendados
+ * @param maxPerChannel Número máximo de videos a importar por canal
+ * @returns Estadísticas de la importación
+ */
+export async function importRecommendedChannelsVideos(maxPerChannel = 20): Promise<{
+  totalChannels: number;
+  processedChannels: number;
+  totalVideos: number;
+  addedVideos: number;
+  skippedVideos: number;
+  errors: string[];
+}> {
+  const result = {
+    totalChannels: 0,
+    processedChannels: 0,
+    totalVideos: 0,
+    addedVideos: 0,
+    skippedVideos: 0,
+    errors: [] as string[]
+  };
+
+  try {
+    // Obtener todos los canales recomendados
+    const recommendedChannelsList = await storage.getRecommendedChannelsList();
+    result.totalChannels = recommendedChannelsList.length;
+
+    if (recommendedChannelsList.length === 0) {
+      result.errors.push("No hay canales recomendados configurados");
+      return result;
+    }
+
+    // Procesar cada canal recomendado
+    for (const recommendedChannel of recommendedChannelsList) {
+      try {
+        // Obtener información del canal
+        const channel = await storage.getChannelById(recommendedChannel.channelId);
+        if (!channel) {
+          result.errors.push(`Canal con ID ${recommendedChannel.channelId} no encontrado`);
+          continue;
+        }
+
+        console.log(`Importando videos del canal recomendado: ${channel.title} (${channel.platform})`);
+        
+        // Importar videos del canal según su plataforma
+        let importResult;
+        
+        if (channel.platform.toLowerCase() === 'youtube') {
+          // Para YouTube, usamos el ID externo directamente
+          importResult = await importChannelVideos(channel.externalId, maxPerChannel);
+        } 
+        else if (channel.platform.toLowerCase() === 'twitch') {
+          // Para Twitch, usamos la función especializada de importación
+          importResult = await importTwitchChannelVideos(channel.externalId, maxPerChannel);
+          
+          // Si hay error, intentamos completar la importación usando búsqueda alternativa
+          if (importResult.error) {
+            try {
+              console.log(`Intentando método alternativo para canal Twitch: ${channel.title}`);
+              // Usamos el handle (nombre de usuario) o título del canal para buscar
+              const searchQuery = channel.handle || channel.title;
+              const videos = await searchTwitchVideos(`${searchQuery} real madrid`, maxPerChannel);
+              
+              if (videos && videos.length > 0) {
+                console.log(`Se encontraron ${videos.length} videos mediante búsqueda alternativa`);
+                
+                let addedCount = 0;
+                let skippedCount = 0;
+                
+                // Obtener categorías para clasificación
+                const availableCategories = await storage.getCategories();
+                
+                for (const video of videos) {
+                  try {
+                    // Verificar si el video ya existe en la base de datos
+                    const existingVideo = await storage.getVideoByExternalId(video.id);
+                    if (existingVideo) {
+                      skippedCount++;
+                      continue;
+                    }
+                    
+                    // Convertir al formato de nuestro esquema
+                    const videoData = convertTwitchVideoToSchema(video);
+                    
+                    // Guardar en la base de datos
+                    const savedVideo = await storage.createVideo(videoData);
+                    addedCount++;
+                    
+                    // Generar resumen
+                    await AIService.generateVideoSummary(savedVideo.id);
+                  } catch (videoError) {
+                    console.error(`Error procesando video de Twitch: ${videoError}`);
+                  }
+                }
+                
+                // Actualizar resultado con los videos encontrados por búsqueda alternativa
+                importResult = {
+                  total: videos.length,
+                  added: addedCount,
+                  skipped: skippedCount,
+                  error: null
+                };
+              }
+            } catch (twitchError) {
+              console.error(`Error en búsqueda alternativa de Twitch: ${twitchError}`);
+            }
+          }
+        }
+        // Añadir soporte para otras plataformas según sea necesario
+        else {
+          importResult = {
+            total: 0,
+            added: 0,
+            skipped: 0,
+            error: `Plataforma '${channel.platform}' no soportada para importación automática`
+          };
+        }
+
+        // Actualizar estadísticas
+        if (importResult) {
+          result.totalVideos += importResult.total;
+          result.addedVideos += importResult.added;
+          result.skippedVideos += (importResult.skipped || 0);
+          result.processedChannels++;
+          
+          if (importResult.error) {
+            result.errors.push(`Error en canal ${channel.title}: ${importResult.error}`);
+          }
+        }
+      } catch (channelError: any) {
+        console.error(`Error procesando canal recomendado #${recommendedChannel.channelId}:`, channelError);
+        result.errors.push(`Error en canal #${recommendedChannel.channelId}: ${channelError.message || 'Error desconocido'}`);
+      }
+    }
+
+    return result;
+  } catch (error: any) {
+    console.error("Error importando videos de canales recomendados:", error);
+    result.errors.push(`Error general: ${error.message || 'Error desconocido'}`);
+    return result;
+  }
+}
+
+/**
+ * Importa videos de canales premium
+ * @param maxPerChannel Número máximo de videos a importar por canal
+ * @returns Estadísticas de la importación
+ */
 export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
   totalChannels: number;
   processedChannels: number;
