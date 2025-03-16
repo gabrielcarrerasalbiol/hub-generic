@@ -1915,8 +1915,7 @@ export class PgStorage implements IStorage {
     try {
       const result = await db.update(statsGames)
         .set({
-          ...gameData,
-          updatedAt: new Date()
+          ...gameData
         })
         .where(eq(statsGames.id, id))
         .returning();
@@ -1934,9 +1933,7 @@ export class PgStorage implements IStorage {
         .set({
           score,
           correctAnswers,
-          completed: true,
-          completedAt: new Date(),
-          updatedAt: new Date()
+          completedAt: new Date()
         })
         .where(eq(statsGames.id, id))
         .returning();
@@ -2015,8 +2012,7 @@ export class PgStorage implements IStorage {
     try {
       const result = await db.update(statsGameQuestions)
         .set({
-          ...questionData,
-          updatedAt: new Date()
+          ...questionData
         })
         .where(eq(statsGameQuestions.id, id))
         .returning();

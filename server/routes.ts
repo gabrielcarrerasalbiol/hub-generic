@@ -4035,10 +4035,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             updatedGame.difficulty
           );
           
-          await storage.updateStatsGame(gameId, {
-            score: finalScore,
-            completedAt: new Date()
-          });
+          await storage.completeStatsGame(gameId, finalScore, updatedGame.correctAnswers || 0);
         }
       }
       

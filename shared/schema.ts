@@ -403,7 +403,7 @@ export const statsGames = pgTable("stats_games", {
   totalQuestions: integer("total_questions").default(0),
   correctAnswers: integer("correct_answers").default(0),
   difficulty: text("difficulty", { enum: ["easy", "medium", "hard"] }).default("medium"),
-  completedAt: timestamp("completed_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
