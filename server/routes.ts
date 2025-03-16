@@ -1910,10 +1910,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const recommendedChannels = await storage.getRecommendedChannelsList();
       
-      // Obtener los detalles completos de cada canal
+      // Preparar para importar si es necesario
+      const { getYouTubeChannelDetails, convertYouTubeChannelToSchema } = await import("./api/youtube");
+      
+      // Obtener los detalles completos de cada canal y actualizarlos si es necesario
       const channels = await Promise.all(
         recommendedChannels.map(async (rc) => {
-          return await storage.getChannelById(rc.channelId);
+          const channel = await storage.getChannelById(rc.channelId);
+          if (!channel) return null;
+          
+          // Intentar actualizar la información del canal si es de YouTube y no tiene banner
+          if (channel.platform === "YouTube" && channel.externalId && !channel.bannerUrl) {
+            console.log(`Intentando actualizar información del canal ${channel.title} (ID: ${channel.id})`);
+            try {
+              const channelDetails = await getYouTubeChannelDetails([channel.externalId]);
+              if (channelDetails.items && channelDetails.items.length > 0) {
+                const updatedData = convertYouTubeChannelToSchema(channelDetails.items[0]);
+                await storage.updateChannel(channel.id, {
+                  bannerUrl: updatedData.bannerUrl,
+                  thumbnailUrl: updatedData.thumbnailUrl,
+                  subscriberCount: updatedData.subscriberCount,
+                  videoCount: updatedData.videoCount
+                });
+                // Actualizar los datos locales con la nueva información
+                channel.bannerUrl = updatedData.bannerUrl;
+              }
+            } catch (error) {
+              console.error(`Error al actualizar información del canal ${channel.title}:`, error);
+            }
+          }
+          
+          return channel;
         })
       );
       
