@@ -20,28 +20,29 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-const registerSchema = z.object({
-  username: z.string().min(3, {
-    message: 'El nombre de usuario debe tener al menos 3 caracteres',
-  }),
-  password: z.string().min(6, {
-    message: 'La contraseña debe tener al menos 6 caracteres',
-  }),
-  confirmPassword: z.string(),
-  email: z.string().email({
-    message: 'Introduce un correo electrónico válido',
-  }).optional().or(z.literal('')),
-  name: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Las contraseñas no coinciden',
-  path: ['confirmPassword'],
-});
-
 export default function RegisterForm() {
   const { register, error } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { t } = useTranslation();
+  
+  // Schema with translated validation messages
+  const registerSchema = z.object({
+    username: z.string().min(3, {
+      message: t('validation.usernameMinLength'),
+    }),
+    password: z.string().min(6, {
+      message: t('validation.passwordMinLength'),
+    }),
+    confirmPassword: z.string(),
+    email: z.string().email({
+      message: t('validation.emailValid'),
+    }).optional().or(z.literal('')),
+    name: z.string().optional(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('validation.passwordsMatch'),
+    path: ['confirmPassword'],
+  });
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -67,22 +68,22 @@ export default function RegisterForm() {
       
       if (success) {
         toast({
-          title: 'Registro exitoso',
-          description: 'Tu cuenta ha sido creada correctamente.',
+          title: t('auth.registerPage.successTitle'),
+          description: t('auth.registerPage.successMessage'),
         });
       } else {
         toast({
           variant: 'destructive',
-          title: 'Error en el registro',
-          description: error || 'No se pudo crear la cuenta. Intenta nuevamente.',
+          title: t('auth.registerPage.errorTitle'),
+          description: error || t('auth.registerPage.errorMessage'),
         });
       }
     } catch (err: any) {
       console.error('Error durante el registro:', err);
       toast({
         variant: 'destructive',
-        title: 'Error en el registro',
-        description: err.message || 'No se pudo crear la cuenta. Intenta nuevamente.',
+        title: t('auth.registerPage.errorTitle'),
+        description: err.message || t('auth.registerPage.errorMessage'),
       });
     } finally {
       setIsSubmitting(false);
@@ -105,7 +106,7 @@ export default function RegisterForm() {
                   <FormItem className="compact-form-item">
                     <FormLabel>{t('auth.registerPage.usernameField')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="madridista123" {...field} className="h-9" />
+                      <Input placeholder={t('auth.registerPage.usernamePlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,7 +120,7 @@ export default function RegisterForm() {
                   <FormItem className="compact-form-item">
                     <FormLabel>{t('auth.registerPage.emailField')}</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="tu@email.com" {...field} className="h-9" />
+                      <Input type="email" placeholder={t('auth.registerPage.emailPlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,9 +133,9 @@ export default function RegisterForm() {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>Nombre completo</FormLabel>
+                    <FormLabel>{t('auth.registerPage.nameField')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Tu nombre" {...field} className="h-9" />
+                      <Input placeholder={t('auth.registerPage.namePlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -147,9 +148,9 @@ export default function RegisterForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>Contraseña*</FormLabel>
+                    <FormLabel>{t('auth.registerPage.passwordField')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Contraseña" {...field} className="h-9" />
+                      <Input type="password" placeholder={t('auth.registerPage.passwordPlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,9 +162,9 @@ export default function RegisterForm() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>Confirmar contraseña*</FormLabel>
+                    <FormLabel>{t('auth.registerPage.confirmPasswordField')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Confirma contraseña" {...field} className="h-9" />
+                      <Input type="password" placeholder={t('auth.registerPage.confirmPasswordPlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -172,7 +173,7 @@ export default function RegisterForm() {
             </div>
             
             <Button type="submit" className="w-full mt-4" disabled={isSubmitting}>
-              {isSubmitting ? 'Registrando...' : 'Crear cuenta'}
+              {isSubmitting ? t('auth.registerPage.submitting') : t('auth.registerPage.submitButton')}
             </Button>
           </form>
         </Form>
@@ -181,9 +182,9 @@ export default function RegisterForm() {
         {/* SSO buttons temporarily hidden */}
         <div className="text-center w-full">
           <p className="text-sm">
-            ¿Ya tienes cuenta?{' '}
+            {t('auth.registerPage.alreadyHaveAccount')}{' '}
             <Link href="/login" className="text-primary underline">
-              Inicia sesión
+              {t('auth.registerPage.loginLink')}
             </Link>
           </p>
         </div>
