@@ -49,7 +49,14 @@
     "viewAllVideos": "View all videos",
     "filterByCategory": "Filter by category:",
     "noFeaturedContent": "No featured content available at this time.",
-    "all": "All"
+    "all": "All",
+    "latestVideos": "Latest Videos",
+    "popularVideosThisWeek": "Popular Videos This Week",
+    "exploreAllVideos": "Explore all videos",
+    "viewMoreVideos": "View more videos",
+    "noRecentVideosAvailable": "No recent videos available at this time.",
+    "noPopularVideosAvailable": "No popular videos available at this time.",
+    "noRecommendedChannelsAvailable": "No recommended channels available at this time."
   },
   "video": {
     "views": "views",

@@ -535,7 +535,7 @@ export default function Home() {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58] dark:text-white">No hay canales recomendados disponibles en este momento.</p>
+            <p className="text-[#001C58] dark:text-white">{t('home.noRecommendedChannelsAvailable')}</p>
           </div>
         )}
       </section>
