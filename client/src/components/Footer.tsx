@@ -16,18 +16,21 @@ export default function Footer() {
   const { t } = useLanguage();
   
   return (
-    <footer className="bg-white dark:bg-[#2A2040] border-t border-gray-200 dark:border-gray-700 mt-auto pt-10 pb-6">
+    <footer className="bg-gradient-to-b from-gray-50 to-white dark:from-[#2A2040] dark:to-[#221A34] border-t border-gray-200 dark:border-gray-700 mt-auto pt-10 pb-6">
       <div className="container mx-auto px-4">
         {/* Tres bloques principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           {/* Bloque 1: Información y logo */}
           <div className="space-y-4">
             <div className="flex items-center mb-4">
-              <img 
-                src="/hubmadridista.png" 
-                alt={t('app.name') + ' Logo'} 
-                className="h-12 mr-2" 
-              />
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full blur-[2px] bg-gradient-to-r from-yellow-100 to-purple-100 dark:from-yellow-900/20 dark:to-purple-900/30 opacity-70"></div>
+                <img 
+                  src="/hubmadridista.png" 
+                  alt={t('app.name') + ' Logo'} 
+                  className="h-12 mr-2 relative z-10" 
+                />
+              </div>
               <span className="font-bold text-xl">
                 <span className="text-[#362C5A] dark:text-[#9D8FDD]">Hub</span>
                 <span className="text-[#FFD700] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Madridista</span>
@@ -56,11 +59,37 @@ export default function Footer() {
             </div>
             
             <div className="flex space-x-4 pt-2">
-              <a href="https://x.com/HubMadridistax" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
-                <Twitter className="h-5 w-5" />
+              <a 
+                href="https://x.com/HubMadridistax" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-[#001C58] dark:hover:bg-[#FDBE11] hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
+              >
+                <Twitter className="h-4 w-4" />
               </a>
-              <a href="https://www.facebook.com/hubmadridista" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors duration-200">
-                <Facebook className="h-5 w-5" />
+              <a 
+                href="https://www.facebook.com/hubmadridista" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-[#001C58] dark:hover:bg-[#FDBE11] hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a 
+                href="https://www.instagram.com/hubmadridista" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-[#001C58] dark:hover:bg-[#FDBE11] hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a 
+                href="https://www.youtube.com/hubmadridista" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-[#001C58] dark:hover:bg-[#FDBE11] hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
+              >
+                <Youtube className="h-4 w-4" />
               </a>
             </div>
           </div>
@@ -143,11 +172,13 @@ export default function Footer() {
         <Separator className="my-6 bg-gray-200 dark:bg-gray-700" />
         
         {/* Copyright y créditos */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-          <p>{t('footer.rights')}</p>
-          <p className="mt-2 md:mt-0">
-            {t('footer.disclaimer')}
-          </p>
+        <div className="mt-8 py-5 px-4 rounded-lg bg-gradient-to-r from-gray-100 to-gray-50 dark:from-[#251E36] dark:to-[#2A2040] shadow-inner">
+          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+            <p>{t('footer.rights')}</p>
+            <p className="mt-2 md:mt-0">
+              {t('footer.disclaimer')}
+            </p>
+          </div>
         </div>
       </div>
     </footer>
