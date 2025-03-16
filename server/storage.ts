@@ -5,7 +5,7 @@ import {
   ChannelSubscription, InsertChannelSubscription,
   Notification, InsertNotification, PremiumChannel,
   InsertPremiumChannel, ViewHistory, InsertViewHistory,
-  Comment, InsertComment
+  Comment, InsertComment, RecommendedChannel, InsertRecommendedChannel
 } from "../shared/schema";
 
 // Storage interface defining all operations
@@ -89,6 +89,14 @@ export interface IStorage {
   updatePremiumChannel(id: number, data: Partial<InsertPremiumChannel>): Promise<PremiumChannel | undefined>;
   removePremiumChannel(id: number): Promise<boolean>;
   updatePremiumChannelSyncTime(id: number): Promise<boolean>;
+  
+  // Recommended Channels operations
+  getRecommendedChannelsList(limit?: number, offset?: number): Promise<RecommendedChannel[]>;
+  getRecommendedChannelById(id: number): Promise<RecommendedChannel | undefined>;
+  isRecommendedChannel(channelId: number): Promise<boolean>;
+  addRecommendedChannel(recommendedChannel: InsertRecommendedChannel): Promise<RecommendedChannel>;
+  updateRecommendedChannel(id: number, data: Partial<InsertRecommendedChannel>): Promise<RecommendedChannel | undefined>;
+  removeRecommendedChannel(id: number): Promise<boolean>;
   
   // View History operations
   getViewHistory(userId: number, limit?: number): Promise<ViewHistory[]>;

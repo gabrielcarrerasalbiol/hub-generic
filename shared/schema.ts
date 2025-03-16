@@ -223,6 +223,24 @@ export type Notification = typeof notifications.$inferSelect;
 export type InsertPremiumChannel = z.infer<typeof insertPremiumChannelSchema>;
 export type PremiumChannel = typeof premiumChannels.$inferSelect;
 
+// Tabla de canales recomendados (seleccionados por el administrador para mostrar en la página principal)
+export const recommendedChannels = pgTable("recommended_channels", {
+  id: serial("id").primaryKey(),
+  channelId: integer("channel_id").references(() => channels.id).notNull().unique(),
+  addedById: integer("added_by_id").references(() => users.id).notNull(),
+  notes: text("notes"),
+  priority: integer("priority").default(0), // Mayor número = mayor prioridad
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertRecommendedChannelSchema = createInsertSchema(recommendedChannels).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertRecommendedChannel = z.infer<typeof insertRecommendedChannelSchema>;
+export type RecommendedChannel = typeof recommendedChannels.$inferSelect;
+
 export type InsertViewHistory = z.infer<typeof insertViewHistorySchema>;
 export type ViewHistory = typeof viewHistory.$inferSelect;
 

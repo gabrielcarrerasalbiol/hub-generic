@@ -1607,6 +1607,252 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // === RECOMMENDED CHANNELS ENDPOINTS ===
+
+  // Obtener todos los canales recomendados (solo para administradores)
+  app.get("/api/recommended-channels", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const recommendedChannels = await storage.getRecommendedChannelsList();
+      
+      // Enriquecer con información adicional del canal
+      const enrichedChannels = await Promise.all(
+        recommendedChannels.map(async (recommendedChannel) => {
+          const channel = await storage.getChannelById(recommendedChannel.channelId);
+          return {
+            ...recommendedChannel,
+            channelDetails: channel
+          };
+        })
+      );
+      
+      res.json(enrichedChannels);
+    } catch (error: any) {
+      console.error("Error fetching recommended channels:", error);
+      res.status(500).json({ error: "Error al obtener los canales recomendados: " + error.message });
+    }
+  });
+
+  // Listado público de canales recomendados
+  app.get("/api/recommended-channels/list", async (req: Request, res: Response) => {
+    try {
+      const recommendedChannels = await storage.getRecommendedChannelsList();
+      
+      // Obtener los detalles completos de cada canal
+      const channels = await Promise.all(
+        recommendedChannels.map(async (rc) => {
+          return await storage.getChannelById(rc.channelId);
+        })
+      );
+      
+      // Filtrar canales que no existan
+      const validChannels = channels.filter(Boolean);
+      
+      res.json(validChannels);
+    } catch (error: any) {
+      console.error("Error fetching recommended channels list:", error);
+      res.status(500).json({ error: "Error al obtener la lista de canales recomendados: " + error.message });
+    }
+  });
+
+  // Añadir un canal recomendado mediante URL
+  app.post("/api/recommended-channels/add-by-url", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { url, description = "" } = req.body;
+      
+      if (!url) {
+        return res.status(400).json({ error: "Se requiere la URL del canal" });
+      }
+      
+      // Extraer el ID del canal de la URL
+      let channelId = "";
+      let channelPlatform = "";
+      
+      if (url.includes("youtube.com") || url.includes("youtu.be")) {
+        // Extraer ID de canal de YouTube
+        const matches = url.match(/(?:channel\/|c\/|@)([^\/\?]+)/);
+        channelId = matches ? matches[1] : "";
+        channelPlatform = "youtube";
+      } else if (url.includes("twitch.tv")) {
+        // Extraer ID de canal de Twitch
+        const matches = url.match(/twitch\.tv\/([^\/\?]+)/);
+        channelId = matches ? matches[1] : "";
+        channelPlatform = "twitch";
+      } else if (url.includes("twitter.com") || url.includes("x.com")) {
+        // Extraer ID de canal de Twitter
+        const matches = url.match(/(?:twitter\.com|x\.com)\/([^\/\?]+)/);
+        channelId = matches ? matches[1] : "";
+        channelPlatform = "twitter";
+      } else if (url.includes("tiktok.com")) {
+        // Extraer ID de canal de TikTok
+        const matches = url.match(/tiktok\.com\/@([^\/\?]+)/);
+        channelId = matches ? matches[1] : "";
+        channelPlatform = "tiktok";
+      } else if (url.includes("instagram.com")) {
+        // Extraer ID de canal de Instagram
+        const matches = url.match(/instagram\.com\/([^\/\?]+)/);
+        channelId = matches ? matches[1] : "";
+        channelPlatform = "instagram";
+      }
+      
+      if (!channelId || !channelPlatform) {
+        return res.status(400).json({ error: "No se pudo extraer el ID del canal de la URL proporcionada" });
+      }
+      
+      // Buscar si el canal ya existe en la base de datos
+      let channel = await storage.getChannelByExternalId(channelId);
+      
+      // Si el canal no existe, crear un nuevo canal
+      if (!channel) {
+        // Aquí se podría implementar la lógica para obtener detalles del canal desde la API correspondiente
+        // Por simplicidad, creamos un canal básico
+        const newChannel: InsertChannel = {
+          externalId: channelId,
+          title: channelId, // Usar ID como título temporal
+          description: description || "Canal añadido desde URL",
+          platform: channelPlatform,
+          thumbnailUrl: "", // Se actualizará cuando se importen videos
+          subscriberCount: 0,
+          bannerUrl: ""
+        };
+        
+        channel = await storage.createChannel(newChannel);
+      }
+      
+      // Verificar si ya es un canal recomendado
+      const isAlreadyRecommended = await storage.isRecommendedChannel(channel.id);
+      
+      if (isAlreadyRecommended) {
+        return res.status(400).json({ error: "Este canal ya está en la lista de recomendados" });
+      }
+      
+      // Añadir a canales recomendados
+      const recommendedChannel: InsertRecommendedChannel = {
+        channelId: channel.id,
+        addedAt: new Date(),
+        notes: description || "",
+        displayOrder: 0 // Se actualizará más tarde si es necesario
+      };
+      
+      const result = await storage.addRecommendedChannel(recommendedChannel);
+      
+      res.status(201).json({
+        success: true,
+        message: "Canal recomendado añadido correctamente",
+        recommendedChannel: result,
+        channelDetails: channel
+      });
+    } catch (error: any) {
+      console.error("Error adding recommended channel by URL:", error);
+      res.status(500).json({ error: "Error al añadir canal recomendado: " + error.message });
+    }
+  });
+
+  // Añadir un canal recomendado por ID
+  app.post("/api/recommended-channels", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { channelId, notes = "", displayOrder = 0 } = req.body;
+      
+      if (!channelId) {
+        return res.status(400).json({ error: "Se requiere el ID del canal" });
+      }
+      
+      // Verificar que el canal existe
+      const channel = await storage.getChannelById(channelId);
+      if (!channel) {
+        return res.status(404).json({ error: "Canal no encontrado" });
+      }
+      
+      // Verificar si ya es un canal recomendado
+      const isAlreadyRecommended = await storage.isRecommendedChannel(channelId);
+      
+      if (isAlreadyRecommended) {
+        return res.status(400).json({ error: "Este canal ya está en la lista de recomendados" });
+      }
+      
+      // Añadir a canales recomendados
+      const recommendedChannel: InsertRecommendedChannel = {
+        channelId,
+        addedAt: new Date(),
+        notes: notes || "",
+        displayOrder
+      };
+      
+      const result = await storage.addRecommendedChannel(recommendedChannel);
+      
+      res.status(201).json({
+        success: true,
+        message: "Canal recomendado añadido correctamente",
+        recommendedChannel: result
+      });
+    } catch (error: any) {
+      console.error("Error adding recommended channel:", error);
+      res.status(500).json({ error: "Error al añadir canal recomendado: " + error.message });
+    }
+  });
+
+  // Actualizar un canal recomendado
+  app.put("/api/recommended-channels/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { notes, displayOrder } = req.body;
+      
+      // Verificar si el canal recomendado existe
+      const recommendedChannel = await storage.getRecommendedChannelById(id);
+      if (!recommendedChannel) {
+        return res.status(404).json({ error: "Canal recomendado no encontrado" });
+      }
+      
+      // Actualizar los datos
+      const updatedData: Partial<InsertRecommendedChannel> = {};
+      
+      if (notes !== undefined) {
+        updatedData.notes = notes;
+      }
+      
+      if (displayOrder !== undefined) {
+        updatedData.displayOrder = displayOrder;
+      }
+      
+      const result = await storage.updateRecommendedChannel(id, updatedData);
+      
+      res.json({
+        success: true,
+        message: "Canal recomendado actualizado correctamente",
+        recommendedChannel: result
+      });
+    } catch (error: any) {
+      console.error("Error updating recommended channel:", error);
+      res.status(500).json({ error: "Error al actualizar canal recomendado: " + error.message });
+    }
+  });
+
+  // Eliminar un canal recomendado
+  app.delete("/api/recommended-channels/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Verificar si el canal recomendado existe
+      const recommendedChannel = await storage.getRecommendedChannelById(id);
+      if (!recommendedChannel) {
+        return res.status(404).json({ error: "Canal recomendado no encontrado" });
+      }
+      
+      const result = await storage.removeRecommendedChannel(id);
+      
+      if (result) {
+        res.json({
+          success: true,
+          message: "Canal recomendado eliminado correctamente"
+        });
+      } else {
+        res.status(500).json({ error: "No se pudo eliminar el canal recomendado" });
+      }
+    } catch (error: any) {
+      console.error("Error removing recommended channel:", error);
+      res.status(500).json({ error: "Error al eliminar canal recomendado: " + error.message });
+    }
+  });
+  
   // Importar videos por plataforma específica
   app.post("/api/videos/import-by-platform", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {

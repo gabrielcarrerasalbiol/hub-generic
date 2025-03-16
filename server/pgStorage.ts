@@ -8,10 +8,11 @@ import {
   ChannelSubscription, InsertChannelSubscription,
   Notification, InsertNotification,
   PremiumChannel, InsertPremiumChannel,
+  RecommendedChannel, InsertRecommendedChannel,
   ViewHistory, InsertViewHistory,
   Comment, InsertComment,
   users, videos, channels, categories, favorites, oauthTokens,
-  channelSubscriptions, notifications, premiumChannels,
+  channelSubscriptions, notifications, premiumChannels, recommendedChannels,
   viewHistory, comments
 } from '@shared/schema';
 
@@ -359,11 +360,36 @@ export class PgStorage implements IStorage {
       .limit(limit);
   }
 
-  async getRecommendedChannels(limit = 4): Promise<Channel[]> {
-    return db.select()
+  async getRecommendedChannels(limit = 8): Promise<Channel[]> {
+    // Buscar canales en la tabla recommended_channels y traer sus detalles
+    const recommendedChannelsData = await db.select({
+      channelId: recommendedChannels.channelId,
+      priority: recommendedChannels.priority
+    })
+    .from(recommendedChannels)
+    .orderBy(desc(recommendedChannels.priority))
+    .limit(limit);
+    
+    if (recommendedChannelsData.length === 0) {
+      // Si no hay canales recomendados, devolver los más populares basado en suscriptores
+      return db.select()
+        .from(channels)
+        .orderBy(desc(channels.subscriberCount))
+        .limit(limit);
+    }
+    
+    // Obtener detalles completos de los canales recomendados
+    const channelIds = recommendedChannelsData.map(rc => rc.channelId);
+    const recommendedChannelsDetails = await db.select()
       .from(channels)
-      .orderBy(desc(channels.subscriberCount))
-      .limit(limit);
+      .where(inArray(channels.id, channelIds));
+    
+    // Ordenar por prioridad (la misma que tenían en recommendedChannelsData)
+    return recommendedChannelsDetails.sort((a, b) => {
+      const aPriority = recommendedChannelsData.find(rc => rc.channelId === a.id)?.priority || 0;
+      const bPriority = recommendedChannelsData.find(rc => rc.channelId === b.id)?.priority || 0;
+      return bPriority - aPriority;
+    });
   }
 
   async searchChannels(query: string, limit = 50): Promise<Channel[]> {
@@ -690,6 +716,60 @@ export class PgStorage implements IStorage {
     const result = await db.update(premiumChannels)
       .set({ lastSyncAt: new Date() })
       .where(eq(premiumChannels.id, id))
+      .returning();
+    return result.length > 0;
+  }
+  
+  // Recommended Channels operations
+  async getRecommendedChannelsList(limit = 100, offset = 0): Promise<RecommendedChannel[]> {
+    const results = await db.select({
+        id: recommendedChannels.id,
+        channelId: recommendedChannels.channelId,
+        addedById: recommendedChannels.addedById,
+        notes: recommendedChannels.notes,
+        priority: recommendedChannels.priority,
+        createdAt: recommendedChannels.createdAt
+      })
+      .from(recommendedChannels)
+      .orderBy(desc(recommendedChannels.priority))
+      .limit(limit)
+      .offset(offset);
+    
+    return results;
+  }
+  
+  async getRecommendedChannelById(id: number): Promise<RecommendedChannel | undefined> {
+    const result = await db.select()
+      .from(recommendedChannels)
+      .where(eq(recommendedChannels.id, id));
+    return result.length > 0 ? result[0] : undefined;
+  }
+  
+  async isRecommendedChannel(channelId: number): Promise<boolean> {
+    const result = await db.select({ id: recommendedChannels.id })
+      .from(recommendedChannels)
+      .where(eq(recommendedChannels.channelId, channelId));
+    return result.length > 0;
+  }
+  
+  async addRecommendedChannel(recommendedChannel: InsertRecommendedChannel): Promise<RecommendedChannel> {
+    const result = await db.insert(recommendedChannels)
+      .values(recommendedChannel)
+      .returning();
+    return result[0];
+  }
+  
+  async updateRecommendedChannel(id: number, data: Partial<InsertRecommendedChannel>): Promise<RecommendedChannel | undefined> {
+    const result = await db.update(recommendedChannels)
+      .set(data)
+      .where(eq(recommendedChannels.id, id))
+      .returning();
+    return result.length > 0 ? result[0] : undefined;
+  }
+  
+  async removeRecommendedChannel(id: number): Promise<boolean> {
+    const result = await db.delete(recommendedChannels)
+      .where(eq(recommendedChannels.id, id))
       .returning();
     return result.length > 0;
   }
