@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 type PollOption = {
   id: number;
   text: string;
+  textEs?: string;
   order: number;
 };
 
@@ -19,6 +20,9 @@ type Poll = {
   id: number;
   title: string;
   question: string;
+  titleEs?: string;
+  questionEs?: string;
+  language: string;
   status: string;
   options: PollOption[];
   isVoted?: boolean;
@@ -29,7 +33,7 @@ type SidebarPollProps = {
 };
 
 export function SidebarPoll({ onVote }: SidebarPollProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const { isAuthenticated, openLoginDialog } = useAuth();
   const [poll, setPoll] = useState<Poll | null>(null);
@@ -43,6 +47,9 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
     percentage: number;
   }[]>([]);
   const [showResults, setShowResults] = useState(false);
+  
+  // Determinar si usamos texto en español o inglés según el idioma actual
+  const isSpanish = i18n.language === 'es';
 
   const fetchActivePoll = async () => {
     try {
@@ -67,11 +74,20 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
         results: {
           id: number;
           text: string;
+          textEs?: string;
           voteCount: number;
           percentage: number;
         }[];
       }>(`/api/polls/${pollId}/results`);
-      setResults(response.results);
+      
+      // Si hay texto en español disponible y el idioma es español, lo preferimos
+      const processedResults = response.results.map(result => ({
+        ...result,
+        // Mostrar texto en español si está disponible y el idioma es español
+        text: isSpanish && result.textEs ? result.textEs : result.text
+      }));
+      
+      setResults(processedResults);
       setShowResults(true);
     } catch (error) {
       console.error("Error fetching poll results:", error);
@@ -140,7 +156,10 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <h3 className="text-sm font-semibold mb-3">{poll.question}</h3>
+        <h3 className="text-sm font-semibold mb-3">
+          {/* Mostrar texto en español si está disponible y el idioma es español */}
+          {isSpanish && poll.questionEs ? poll.questionEs : poll.question}
+        </h3>
 
         {showResults ? (
           <div className="space-y-3">
@@ -184,7 +203,8 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
                   className="w-full justify-start text-left font-normal"
                   onClick={() => setSelectedOption(option.id)}
                 >
-                  {option.text}
+                  {/* Mostrar texto en español si está disponible y el idioma es español */}
+                  {isSpanish && option.textEs ? option.textEs : option.text}
                 </Button>
               ))}
             </div>
