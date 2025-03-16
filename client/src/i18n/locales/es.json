@@ -103,6 +103,13 @@
     "showTrending": "Mostrar tendencias",
     "saveSettings": "Guardar toda la configuración"
   },
+  "language": {
+    "select": "Seleccionar idioma",
+    "english": "Inglés",
+    "spanish": "Español",
+    "switchToEnglish": "Cambiar a inglés",
+    "switchToSpanish": "Cambiar a español"
+  },
   "profile": {
     "title": "Perfil de Usuario",
     "editProfile": "Editar Perfil",

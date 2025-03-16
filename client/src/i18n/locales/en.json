@@ -103,6 +103,13 @@
     "showTrending": "Show trending",
     "saveSettings": "Save all settings"
   },
+  "language": {
+    "select": "Select language",
+    "english": "English",
+    "spanish": "Spanish",
+    "switchToEnglish": "Switch to English",
+    "switchToSpanish": "Switch to Spanish"
+  },
   "profile": {
     "title": "User Profile",
     "editProfile": "Edit Profile",

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth, resetAuthStorage } from '@/hooks/useAuth';
 import NotificationBell from '@/components/NotificationBell';
+import LanguageSelector from '@/components/LanguageSelector';
 import { useLanguage } from '@/hooks/use-language';
 import {
   DropdownMenu,
@@ -148,6 +149,9 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           
           {/* User Menu */}
           <div className="flex items-center space-x-4">
+            {/* Language Selector */}
+            <LanguageSelector />
+            
             {isAuthenticated ? (
               <>
                 <NotificationBell />

@@ -3,8 +3,29 @@ import { useState, useEffect } from 'react';
 
 export const useLanguage = () => {
   const { i18n, t } = useTranslation();
-  // Estado para almacenar el idioma actual
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'es');
+  
+  // Inicializar con el idioma almacenado en localStorage o detectado del navegador
+  const [currentLanguage, setCurrentLanguage] = useState(() => {
+    // Intentar obtener el idioma guardado en localStorage
+    const savedLanguage = localStorage.getItem('hubmadridista-language');
+    
+    if (savedLanguage) {
+      return savedLanguage;
+    }
+    
+    // Si no hay idioma guardado, detectar el del navegador
+    const browserLanguage = navigator.language.split('-')[0];
+    // Solo aceptamos español e inglés (por defecto español)
+    return browserLanguage === 'en' ? 'en' : 'es';
+  });
+  
+  // Establecer el idioma al inicio
+  useEffect(() => {
+    if (i18n.language !== currentLanguage) {
+      i18n.changeLanguage(currentLanguage);
+      localStorage.setItem('hubmadridista-language', currentLanguage);
+    }
+  }, [currentLanguage, i18n]);
   
   // Efecto para actualizar el estado cuando cambia el idioma
   useEffect(() => {
