@@ -501,6 +501,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch video" });
     }
   });
+  
+  // Endpoint para actualizar un video
+  app.put("/api/videos/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid video ID" });
+      }
+      
+      const video = await storage.getVideoById(id);
+      if (!video) {
+        return res.status(404).json({ message: "Video not found" });
+      }
+      
+      // Obtener datos a actualizar del cuerpo de la solicitud
+      const { featured } = req.body;
+      
+      // Si featured es booleano, actualizar featuredOrder también
+      let updateData: Partial<InsertVideo> = {};
+      
+      if (typeof featured === 'boolean') {
+        updateData = {
+          featured,
+          featuredOrder: featured ? (video.featuredOrder || 0) : null
+        };
+      } else {
+        // Otros campos que podrían actualizarse en el futuro
+        updateData = req.body;
+      }
+      
+      // Actualizar el video
+      await storage.updateVideo(id, updateData);
+      
+      res.json({ success: true, message: "Video updated successfully" });
+    } catch (error) {
+      console.error("Error updating video:", error);
+      res.status(500).json({ message: "Failed to update video" });
+    }
+  });
 
   app.get("/api/channels", async (req: Request, res: Response) => {
     try {
