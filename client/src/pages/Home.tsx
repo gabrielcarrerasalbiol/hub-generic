@@ -159,13 +159,8 @@ export default function Home() {
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
       {/* Hero Banner personalizado */}
-      <div className="relative w-full h-96 overflow-hidden rounded-xl shadow-lg mb-8">
-        {/* Imagen de fondo */}
-        <img 
-          src="/images/real-madrid-fans-stadium.jpg" 
-          alt="Real Madrid Fans" 
-          className="absolute w-full h-full object-cover"
-        />
+      <div className="relative w-full h-96 overflow-hidden rounded-xl shadow-lg mb-8" style={{background: '#FDBE11'}}>
+        {/* Fondo amarillo sólido sin imagen */}
         
         {/* Overlay de gradiente */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 via-[#001C58]/60 to-transparent"></div>
