@@ -41,7 +41,7 @@ type SidebarPollProps = {
 export function SidebarPoll({ onVote }: SidebarPollProps) {
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
-  const { isAuthenticated, openLoginDialog } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [poll, setPoll] = useState<Poll | null>(null);
   const [loadingPoll, setLoadingPoll] = useState(true);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -102,7 +102,10 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
 
   const handleVote = async () => {
     if (!isAuthenticated) {
-      openLoginDialog();
+      toast({
+        title: t("poll.loginRequired"),
+        description: t("poll.loginToVoteMessage"),
+      });
       return;
     }
 
