@@ -16,8 +16,8 @@ export default function Footer() {
   const { t } = useLanguage();
   
   return (
-    <footer className="bg-gradient-to-b from-gray-50 to-white dark:from-[#2A2040] dark:to-[#221A34] border-t border-gray-200 dark:border-gray-700 mt-auto pt-10 pb-6">
-      <div className="container mx-auto px-4">
+    <footer className="bg-gradient-to-b from-gray-50 to-white dark:from-[#2A2040] dark:to-[#221A34] border-t border-gray-200 dark:border-gray-700 mt-auto pt-10 pb-6 w-full">
+      <div className="w-full px-4 mx-auto">
         {/* Tres bloques principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           {/* Bloque 1: Información y logo */}
