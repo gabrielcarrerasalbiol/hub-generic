@@ -1578,6 +1578,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Importar videos de canales destacados (featured)
+  app.post("/api/videos/import-featured", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { maxPerChannel = 20 } = req.body;
+      const limit = Math.min(Math.max(parseInt(String(maxPerChannel)) || 20, 5), 50); // Limitar entre 5 y 50
+      
+      // Obtener canales con videos destacados
+      const featuredVideos = await storage.getFeaturedVideos();
+      const channelIdsSet = new Set(featuredVideos.map(video => video.channelId));
+      const channelIds = Array.from(channelIdsSet);
+      
+      let totalVideos = 0;
+      let addedVideos = 0;
+      let skippedVideos = 0;
+      let processedChannels = 0;
+      let totalChannels = channelIds.length;
+      let errors: string[] = [];
+      
+      // Para cada canal con videos destacados, importar nuevos videos
+      for (const channelId of channelIds) {
+        try {
+          if (!channelId) continue;
+          
+          const channel = await storage.getChannelByExternalId(channelId);
+          if (!channel) {
+            errors.push(`Canal con ID externo ${channelId} no encontrado`);
+            continue;
+          }
+          
+          console.log(`Importando videos del canal destacado: ${channel.title} (${channel.platform})`);
+          
+          // Importar videos según la plataforma
+          const { importChannelVideos } = await import("./api/videoFetcher");
+          const result = await importChannelVideos(channelId, limit);
+          
+          processedChannels++;
+          totalVideos += result.total;
+          addedVideos += result.added;
+          skippedVideos += result.skipped || 0;
+          
+          if (result.error) {
+            errors.push(`Error en canal ${channel.title}: ${result.error}`);
+          }
+        } catch (error: any) {
+          errors.push(`Error procesando canal ${channelId}: ${error.message}`);
+        }
+      }
+      
+      res.json({
+        message: `Importación de canales destacados completada: ${addedVideos} videos añadidos, ${skippedVideos} omitidos de ${totalVideos} encontrados en ${processedChannels} de ${totalChannels} canales`,
+        totalChannels,
+        processedChannels,
+        totalVideos,
+        addedVideos,
+        skippedVideos,
+        errors
+      });
+    } catch (error: any) {
+      console.error("Error importing featured channel videos:", error);
+      res.status(500).json({ 
+        error: "Error al importar videos de canales destacados",
+        details: error.message
+      });
+    }
+  });
 
   // Importar videos de un canal específico
   app.post("/api/channels/:channelId/import-videos", isAuthenticated, isAdmin, async (req: Request, res: Response) => {

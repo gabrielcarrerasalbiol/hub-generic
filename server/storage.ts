@@ -34,6 +34,7 @@ export interface IStorage {
   getVideosByPlatform(platform: string, limit?: number): Promise<Video[]>;
   getVideosByCategory(categoryId: number, limit?: number): Promise<Video[]>;
   getVideosByChannel(channelId: string, limit?: number): Promise<Video[]>;
+  getFeaturedVideos(limit?: number): Promise<Video[]>;
   getTrendingVideos(limit?: number): Promise<Video[]>;
   getLatestVideos(limit?: number): Promise<Video[]>;
   searchVideos(query: string, limit?: number): Promise<Video[]>;

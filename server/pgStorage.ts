@@ -207,6 +207,15 @@ export class PgStorage implements IStorage {
       .orderBy(desc(videos.publishedAt));
   }
 
+  async getFeaturedVideos(limit = 100): Promise<Video[]> {
+    // Obtenemos los videos marcados como destacados, ordenados por fecha de publicación
+    return db.select()
+      .from(videos)
+      .where(eq(videos.featured, true))
+      .orderBy(desc(videos.publishedAt))
+      .limit(limit);
+  }
+
   async getTrendingVideos(limit = 200): Promise<Video[]> {
     // Obtenemos la fecha de hace 45 días para considerar videos más recientes
     const fortyfiveDaysAgo = new Date();
