@@ -259,7 +259,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "mr-3 h-4 w-4",
                   location.includes("/videos?category=Partidos") ? "text-[#FDBE11]" : "text-[#FDBE11]"
                 )} />
-                Partidos
+                {t('sidebar.matches')}
               </Link>
             </li>
             <li>
@@ -276,7 +276,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "mr-3 h-4 w-4",
                   location.includes("/videos?category=Análisis") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
-                Análisis
+                {t('sidebar.analysis')}
               </Link>
             </li>
             <li>
@@ -293,7 +293,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "mr-3 h-4 w-4",
                   location.includes("/videos?category=Histórico") ? "text-[#FDBE11]" : "text-[#FDBE11]"
                 )} />
-                Momentos Históricos
+                {t('sidebar.historic_moments')}
               </Link>
             </li>
             <li>
@@ -310,7 +310,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "mr-3 h-4 w-4",
                   location.includes("/videos?category=Jugadores") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
-                Jugadores
+                {t('sidebar.players')}
               </Link>
             </li>
             <li>
@@ -327,7 +327,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "mr-3 h-4 w-4",
                   location.includes("/videos?category=Noticias") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
-                Noticias
+                {t('sidebar.news')}
               </Link>
             </li>
           </ul>
@@ -341,7 +341,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               href="/featured-channels"
               className="text-xs text-[#001C58] dark:text-[#FDBE11] hover:underline"
             >
-              Ver todos
+              {t('sidebar.view_all')}
             </Link>
           </div>
           
@@ -401,7 +401,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
                 <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide mr-2">
-                  Canales Premium
+                  {t('sidebar.premium_channels')}
                 </h3>
                 <Crown className="w-4 h-4 text-[#FDBE11]" />
               </div>
@@ -409,7 +409,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 href="/premium-channels"
                 className="text-xs text-[#001C58] dark:text-[#FDBE11] hover:underline"
               >
-                Ver todos
+                {t('sidebar.view_all')}
               </Link>
             </div>
             

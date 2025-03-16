@@ -26,7 +26,8 @@
     "premium_access": "Acceso Premium",
     "premium_description": "Actualiza a premium para acceder a canales exclusivos con el mejor contenido del Real Madrid.",
     "view_all": "Ver todos",
-    "no_premium_channels": "No hay canales premium disponibles"
+    "no_premium_channels": "No hay canales premium disponibles",
+    "premium_channels": "Canales Premium"
   },
   "nav": {
     "home": "Inicio",
