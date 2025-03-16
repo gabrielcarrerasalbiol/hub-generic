@@ -3,36 +3,15 @@
  * Utiliza DeepSeek para mejorar la experiencia de juego
  */
 
-import fetch from "node-fetch";
+import OpenAI from 'openai';
 import { Player, PlayerStats, StatType } from "../../shared/schema";
 import { storage } from "../storage";
 
-// Constantes y configuración
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || process.env.DEEPSEEK_API_KEY;
-const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
-
-/**
- * Interfaz para la respuesta de DeepSeek
- */
-interface DeepSeekResponse {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  choices: {
-    index: number;
-    message: {
-      role: string;
-      content: string;
-    };
-    finish_reason: string;
-  }[];
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}
+// Configuración del cliente DeepSeek que usa la misma interfaz que OpenAI
+const deepseek = new OpenAI({
+  apiKey: process.env.DEEPSEEK_API_KEY,
+  baseURL: 'https://api.deepseek.com/v1',
+});
 
 /**
  * Genera una pregunta para el mini-juego basada en las estadísticas de los jugadores
@@ -102,53 +81,44 @@ export async function generateStatsQuestion(
     const translatedStatType = statTypeTranslation[statType] || statType;
 
     // Si no hay DeepSeek API disponible, generamos una pregunta básica
-    if (!OPENAI_API_KEY) {
+    if (!deepseek) {
       return {
         question: `¿Qué jugador tiene más ${translatedStatType} en la temporada? ¿${player1.name} o ${player2.name}?`,
         hint: "Analiza el rendimiento de ambos jugadores en esta temporada."
       };
     }
 
-    // Utilizamos DeepSeek para generar una pregunta más natural e interesante
-    const messages = [
-      {
-        role: "system",
-        content: "Eres un asistente especializado en estadísticas del Real Madrid que genera preguntas interesantes para un mini-juego. Genera preguntas en español. Las preguntas deben ser claras, concisas y enfocadas en la comparación de dos jugadores según una estadística específica. También incluye una pista sutil y una explicación que se mostrará después de responder."
-      },
-      {
-        role: "user",
-        content: `Genera una pregunta para comparar a ${player1.name} y ${player2.name} basada en su estadística de "${translatedStatType}". Devuelve un objeto JSON con estos atributos exactos: {question: string, hint: string, explanation: string}. La pregunta debe ser interesante y debe preguntar quién tiene mejor rendimiento en esa estadística. La explicación debe incluir los valores actuales (${p1Value} vs ${p2Value}).`
-      }
-    ];
+    try {
+      // Utilizamos DeepSeek para generar una pregunta más natural e interesante
+      const messages = [
+        {
+          role: "system" as const,
+          content: "Eres un asistente especializado en estadísticas del Real Madrid que genera preguntas interesantes para un mini-juego. Genera preguntas en español. Las preguntas deben ser claras, concisas y enfocadas en la comparación de dos jugadores según una estadística específica. También incluye una pista sutil y una explicación que se mostrará después de responder."
+        },
+        {
+          role: "user" as const,
+          content: `Genera una pregunta para comparar a ${player1.name} y ${player2.name} basada en su estadística de "${translatedStatType}". Devuelve un objeto JSON con estos atributos exactos: {question: string, hint: string, explanation: string}. La pregunta debe ser interesante y debe preguntar quién tiene mejor rendimiento en esa estadística. La explicación debe incluir los valores actuales (${p1Value} vs ${p2Value}).`
+        }
+      ];
 
-    const response = await fetch(DEEPSEEK_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
+      const response = await deepseek.chat.completions.create({
         model: "deepseek-chat",
         messages,
         temperature: 0.7,
         max_tokens: 300,
         response_format: { type: "json_object" }
-      })
-    });
+      });
+      
+      if (!response.choices || response.choices.length === 0) {
+        throw new Error("No se recibió respuesta de DeepSeek");
+      }
 
-    if (!response.ok) {
-      throw new Error(`Error al llamar a DeepSeek API: ${response.statusText}`);
-    }
-
-    const data = await response.json() as DeepSeekResponse;
-    
-    if (!data.choices || data.choices.length === 0) {
-      throw new Error("No se recibió respuesta de DeepSeek");
-    }
-
-    // Parseamos la respuesta de JSON a objeto
-    try {
-      const content = data.choices[0].message.content;
+      // Parseamos la respuesta de JSON a objeto
+      const content = response.choices[0].message.content;
+      if (!content) {
+        throw new Error("Respuesta vacía de DeepSeek");
+      }
+      
       const parsedContent = JSON.parse(content);
       
       return {
@@ -241,7 +211,7 @@ export async function generateGameQuestions(
         question: questionData.question,
         hint: questionData.hint,
         explanation: questionData.explanation,
-        correctAnswerId: comparisonStats.winnerId
+        correctAnswer: comparisonStats.winnerId
       });
     }
     
