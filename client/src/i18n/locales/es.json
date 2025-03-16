@@ -159,7 +159,16 @@
     "privacy": "Política de Privacidad",
     "cookies": "Política de Cookies",
     "contact": "Contacto",
-    "rights": "© 2025 Hub Madridista. Todos los derechos reservados."
+    "rights": "© 2025 Hub Madridista. Todos los derechos reservados.",
+    "description": "Tu plataforma definitiva para todo el contenido relacionado con el Real Madrid. Vídeos, noticias y actualizaciones de tu equipo favorito.",
+    "location": "Madrid, España",
+    "usefulLinks": "Enlaces útiles",
+    "navigation": "Navegación",
+    "information": "Información",
+    "search": "Buscar",
+    "channels": "Canales",
+    "aboutUs": "Sobre Nosotros",
+    "disclaimer": "No estamos afiliados oficialmente con el Real Madrid C.F."
   },
   "general": {
     "loading": "Cargando...",
@@ -172,5 +181,86 @@
     "add": "Añadir",
     "remove": "Eliminar",
     "close": "Cerrar"
+  },
+  "cookies": {
+    "title": "Política de Cookies",
+    "introduction": "Esta Política de Cookies explica el uso de cookies y tecnologías similares en \"Hub Madridista\".",
+    "definition": {
+      "title": "3.1. Definición de cookies",
+      "description": "Las cookies son pequeños archivos que se descargan en el dispositivo del Usuario al visitar ciertas páginas web. Permiten, entre otras cosas, reconocer un dispositivo, recordar preferencias y recopilar información sobre hábitos de navegación."
+    },
+    "types": {
+      "title": "3.2. Tipos de cookies utilizadas",
+      "own": {
+        "title": "Cookies propias",
+        "description": "Para recordar sesiones de usuario y preferencias de idioma."
+      },
+      "third": {
+        "title": "Cookies de terceros",
+        "analytics": "Google Analytics: Recopila datos anónimos de uso y visitas para estadísticas.",
+        "advertising": "Publicidad: Podrían utilizarse redes publicitarias que instalen cookies para mostrar anuncios relevantes.",
+        "social": "Redes sociales o incrustaciones de video (YouTube, TikTok): Pueden instalar cookies al reproducir contenido embebido."
+      }
+    },
+    "purpose": {
+      "title": "3.3. Finalidad",
+      "description": "Las cookies se utilizan para:",
+      "usage1": "Facilitar la navegación y sesión del Usuario.",
+      "usage2": "Analizar el tráfico y rendimiento del Sitio Web.",
+      "usage3": "Personalizar la experiencia, incluyendo publicidad ajustada a los intereses."
+    },
+    "consent": {
+      "title": "3.4. Consentimiento",
+      "description": "Al acceder por primera vez a Hub Madridista, se muestra un aviso de cookies. El Usuario puede aceptar todas, configurarlas o rechazarlas. La instalación de cookies opcionales solo se realiza con consentimiento. El Usuario puede retirar su consentimiento en cualquier momento desde la configuración de cookies del Sitio Web."
+    },
+    "disable": {
+      "title": "3.5. Desactivación",
+      "description": "El Usuario puede configurar el navegador para bloquear o eliminar cookies, aunque esto puede afectar el pleno funcionamiento del Sitio Web."
+    },
+    "jurisdiction": {
+      "title": "4. LEGISLACIÓN APLICABLE Y JURISDICCIÓN",
+      "description": "Estos documentos se rigen por la legislación española. Para la resolución de cualquier controversia, el Usuario y el titular se someten a los Juzgados y Tribunales de Palma de Mallorca (España), salvo que la normativa disponga otro fuero imperativo en favor del consumidor."
+    }
+  },
+  "terms": {
+    "title": "Términos y Condiciones de Uso",
+    "ownerInfo": {
+      "title": "1.1. Información del titular",
+      "owner": "Titular: Gabriel Carreras Albiol",
+      "address": "Domicilio: C/ Sant Rafael 104, 07701, Palma de Mallorca",
+      "id": "DNI: 41496108Z",
+      "email": "Correo electrónico de contacto: contacto@hubmadridista.com"
+    },
+    "purpose": {
+      "title": "1.2. Objeto",
+      "description": "\"Hub Madridista\" (en adelante, \"el Sitio Web\") actúa como un hub de contenidos relacionados con el Real Madrid, permitiendo a los usuarios:",
+      "feature1": "Incrustar (embeder) videos de plataformas como YouTube y TikTok.",
+      "feature2": "Crear perfiles de usuario y gestionar listas de favoritos.",
+      "feature3": "Posiblemente, enlazar a una tienda online en otro dominio.",
+      "feature4": "Acceder a suscripciones con servicios adicionales de pago.",
+      "acceptance": "La utilización del Sitio Web confiere la condición de Usuario y expresa la aceptación plena y sin reservas de todos los puntos recogidos en este documento legal."
+    },
+    "requirements": {
+      "title": "1.3. Requisitos de uso",
+      "description": "Para hacer uso de los servicios ofrecidos, se requiere:",
+      "age": "Ser mayor de edad o contar con autorización de padres/tutores.",
+      "acceptance": "Aceptar la totalidad de estas disposiciones.",
+      "truthful": "Proporcionar información veraz y lícita en el registro."
+    },
+    "embeddedContent": {
+      "title": "1.4. Contenidos incrustados",
+      "description": "Los videos incrustados de YouTube/TikTok se muestran mediante el reproductor oficial de dichas plataformas. El titular no asume responsabilidad por los contenidos de terceros ni por su disponibilidad o licitud. Los usuarios deben respetar las políticas de derechos de autor y el contenido no autorizado será retirado si se notifica su infracción."
+    },
+    "subscriptions": {
+      "title": "1.5. Suscripciones y servicios de pago",
+      "description": "Si el Usuario opta por servicios de membresía, se compromete a:",
+      "payment": "Pagar las cuotas correspondientes en la forma indicada.",
+      "usage": "Usar las funcionalidades de acuerdo con la licencia concedida.",
+      "cancellation": "Cancelar la suscripción cuando así lo desee (los pagos ya efectuados no serán reembolsables, salvo lo exigido por la ley)."
+    },
+    "liability": {
+      "title": "1.6. Responsabilidad",
+      "description": "El titular no garantiza la disponibilidad permanente del Sitio Web ni la ausencia de errores. No será responsable de daños derivados del uso del Sitio Web, salvo que se derive de una actuación dolosa o negligente grave."
+    }
   }
 }

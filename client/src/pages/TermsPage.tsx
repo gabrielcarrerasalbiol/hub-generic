@@ -1,62 +1,65 @@
 import { Helmet } from 'react-helmet';
+import { useLanguage } from '@/hooks/use-language';
 
 export default function TermsPage() {
+  const { t } = useLanguage();
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <Helmet>
-        <title>Términos y Condiciones | Hub Madridista</title>
+        <title>{t('footer.terms')} | {t('app.name')}</title>
       </Helmet>
       
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-sm">
-        <h1 className="text-3xl font-bold mb-6 text-[#001C58] border-b pb-4">Términos y Condiciones de Uso</h1>
+        <h1 className="text-3xl font-bold mb-6 text-[#001C58] border-b pb-4">{t('terms.title')}</h1>
         
         <div className="prose prose-lg max-w-none">
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">1.1. Información del titular</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.ownerInfo.title')}</h2>
           <ul className="list-disc ml-6 mb-4">
-            <li>Titular: Gabriel Carreras Albiol</li>
-            <li>Domicilio: C/ Sant Rafael 104, 07701, Palma de Mallorca</li>
-            <li>DNI: 41496108Z</li>
-            <li>Correo electrónico de contacto: contacto@hubmadridista.com</li>
+            <li>{t('terms.ownerInfo.owner')}</li>
+            <li>{t('terms.ownerInfo.address')}</li>
+            <li>{t('terms.ownerInfo.id')}</li>
+            <li>{t('terms.ownerInfo.email')}</li>
           </ul>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">1.2. Objeto</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.purpose.title')}</h2>
           <p className="mb-4">
-            "Hub Madridista" (en adelante, "el Sitio Web") actúa como un hub de contenidos relacionados con el Real Madrid, permitiendo a los usuarios:
+            {t('terms.purpose.description')}
           </p>
           <ul className="list-disc ml-6 mb-4">
-            <li>Incrustar (embeder) videos de plataformas como YouTube y TikTok.</li>
-            <li>Crear perfiles de usuario y gestionar listas de favoritos.</li>
-            <li>Posiblemente, enlazar a una tienda online en otro dominio.</li>
-            <li>Acceder a suscripciones con servicios adicionales de pago.</li>
+            <li>{t('terms.purpose.feature1')}</li>
+            <li>{t('terms.purpose.feature2')}</li>
+            <li>{t('terms.purpose.feature3')}</li>
+            <li>{t('terms.purpose.feature4')}</li>
           </ul>
           <p className="mb-4">
-            La utilización del Sitio Web confiere la condición de Usuario y expresa la aceptación plena y sin reservas de todos los puntos recogidos en este documento legal.
+            {t('terms.purpose.acceptance')}
           </p>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">1.3. Requisitos de uso</h2>
-          <p className="mb-4">Para hacer uso de los servicios ofrecidos, se requiere:</p>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.requirements.title')}</h2>
+          <p className="mb-4">{t('terms.requirements.description')}</p>
           <ul className="list-disc ml-6 mb-4">
-            <li>Ser mayor de edad o contar con autorización de padres/tutores.</li>
-            <li>Aceptar la totalidad de estas disposiciones.</li>
-            <li>Proporcionar información veraz y lícita en el registro.</li>
+            <li>{t('terms.requirements.age')}</li>
+            <li>{t('terms.requirements.acceptance')}</li>
+            <li>{t('terms.requirements.truthful')}</li>
           </ul>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">1.4. Contenidos incrustados</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.embeddedContent.title')}</h2>
           <p className="mb-4">
-            Los videos incrustados de YouTube/TikTok se muestran mediante el reproductor oficial de dichas plataformas. El titular no asume responsabilidad por los contenidos de terceros ni por su disponibilidad o licitud. Los usuarios deben respetar las políticas de derechos de autor y el contenido no autorizado será retirado si se notifica su infracción.
+            {t('terms.embeddedContent.description')}
           </p>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">1.5. Suscripciones y servicios de pago</h2>
-          <p className="mb-4">Si el Usuario opta por servicios de membresía, se compromete a:</p>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.subscriptions.title')}</h2>
+          <p className="mb-4">{t('terms.subscriptions.description')}</p>
           <ul className="list-disc ml-6 mb-4">
-            <li>Pagar las cuotas correspondientes en la forma indicada.</li>
-            <li>Usar las funcionalidades de acuerdo con la licencia concedida.</li>
-            <li>Cancelar la suscripción cuando así lo desee (los pagos ya efectuados no serán reembolsables, salvo lo exigido por la ley).</li>
+            <li>{t('terms.subscriptions.payment')}</li>
+            <li>{t('terms.subscriptions.usage')}</li>
+            <li>{t('terms.subscriptions.cancellation')}</li>
           </ul>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">1.6. Responsabilidad</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.liability.title')}</h2>
           <p className="mb-4">
-            El titular no garantiza la disponibilidad permanente del Sitio Web ni la ausencia de errores. No será responsable de daños derivados del uso del Sitio Web, salvo que se derive de una actuación dolosa o negligente grave.
+            {t('terms.liability.description')}
           </p>
         </div>
       </div>

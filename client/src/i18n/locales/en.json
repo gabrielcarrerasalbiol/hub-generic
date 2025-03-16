@@ -159,7 +159,16 @@
     "privacy": "Privacy Policy",
     "cookies": "Cookie Policy",
     "contact": "Contact",
-    "rights": "© 2025 Madridista Hub. All rights reserved."
+    "rights": "© 2025 Madridista Hub. All rights reserved.",
+    "description": "Your ultimate platform for all Real Madrid related content. Videos, news, and updates about your favorite team.",
+    "location": "Madrid, Spain",
+    "usefulLinks": "Useful Links",
+    "navigation": "Navigation",
+    "information": "Information",
+    "search": "Search",
+    "channels": "Channels",
+    "aboutUs": "About Us",
+    "disclaimer": "We are not officially affiliated with Real Madrid C.F."
   },
   "general": {
     "loading": "Loading...",
@@ -172,5 +181,46 @@
     "add": "Add",
     "remove": "Remove",
     "close": "Close"
+  },
+  "terms": {
+    "title": "Terms and Conditions of Use",
+    "ownerInfo": {
+      "title": "1.1. Owner Information",
+      "owner": "Owner: Gabriel Carreras Albiol",
+      "address": "Address: C/ Sant Rafael 104, 07701, Palma de Mallorca",
+      "id": "ID: 41496108Z",
+      "email": "Contact email: contacto@hubmadridista.com"
+    },
+    "purpose": {
+      "title": "1.2. Purpose",
+      "description": "\"Madridista Hub\" (hereinafter, \"the Website\") acts as a hub for Real Madrid related content, allowing users to:",
+      "feature1": "Embed videos from platforms such as YouTube and TikTok.",
+      "feature2": "Create user profiles and manage favorites lists.",
+      "feature3": "Possibly link to an online store on another domain.",
+      "feature4": "Access subscription services with additional paid features.",
+      "acceptance": "The use of the Website grants the status of User and expresses full and unreserved acceptance of all the points contained in this legal document."
+    },
+    "requirements": {
+      "title": "1.3. Usage Requirements",
+      "description": "To use the services offered, the following is required:",
+      "age": "Be of legal age or have parental/guardian authorization.",
+      "acceptance": "Accept all these provisions.",
+      "truthful": "Provide truthful and lawful information when registering."
+    },
+    "embeddedContent": {
+      "title": "1.4. Embedded Content",
+      "description": "Embedded videos from YouTube/TikTok are displayed through these platforms' official player. The owner assumes no responsibility for third-party content or its availability or legality. Users must respect copyright policies, and unauthorized content will be removed if its infringement is reported."
+    },
+    "subscriptions": {
+      "title": "1.5. Subscriptions and Paid Services",
+      "description": "If the User opts for membership services, they agree to:",
+      "payment": "Pay the corresponding fees in the manner indicated.",
+      "usage": "Use the features in accordance with the license granted.",
+      "cancellation": "Cancel the subscription whenever desired (payments already made are not refundable, except as required by law)."
+    },
+    "liability": {
+      "title": "1.6. Liability",
+      "description": "The owner does not guarantee the permanent availability of the Website or the absence of errors. It will not be responsible for damages arising from the use of the Website, unless they result from willful misconduct or gross negligence."
+    }
   }
 }

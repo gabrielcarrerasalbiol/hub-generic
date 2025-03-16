@@ -25,7 +25,7 @@ export default function Footer() {
             <div className="flex items-center mb-4">
               <img 
                 src="/hubmadridista.png" 
-                alt="Hub Madridista Logo" 
+                alt={t('app.name') + ' Logo'} 
                 className="h-12 mr-2" 
               />
               <span className="font-bold text-xl">
@@ -35,8 +35,7 @@ export default function Footer() {
             </div>
             
             <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Tu plataforma definitiva para todo el contenido relacionado con el Real Madrid. 
-              Vídeos, noticias y actualizaciones de tu equipo favorito.
+              {t('footer.description')}
             </p>
             
             <div className="space-y-2">
@@ -52,7 +51,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center text-gray-600 dark:text-gray-300">
                 <MapPin className="h-4 w-4 mr-2" />
-                <span className="text-sm">Madrid, España</span>
+                <span className="text-sm">{t('footer.location')}</span>
               </div>
             </div>
             
@@ -68,46 +67,46 @@ export default function Footer() {
           
           {/* Bloque 2: Enlaces útiles */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-900 dark:text-white">Enlaces útiles</h3>
+            <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{t('footer.usefulLinks')}</h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="space-y-2">
-                <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm uppercase">Navegación</h4>
+                <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm uppercase">{t('footer.navigation')}</h4>
                 <ul className="space-y-1.5">
                   <li>
                     <Link href="/" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
-                      Inicio
+                      {t('nav.home')}
                     </Link>
                   </li>
                   <li>
                     <Link href="/tendencias" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
-                      Tendencias
+                      {t('nav.trending')}
                     </Link>
                   </li>
                   <li>
                     <Link href="/buscar" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
-                      Buscar
+                      {t('footer.search')}
                     </Link>
                   </li>
                   <li>
                     <Link href="/categorias" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
-                      Categorías
+                      {t('sidebar.categories')}
                     </Link>
                   </li>
                   <li>
                     <Link href="/canales" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
-                      Canales
+                      {t('footer.channels')}
                     </Link>
                   </li>
                 </ul>
               </div>
               
               <div className="space-y-2">
-                <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm uppercase">Información</h4>
+                <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm uppercase">{t('footer.information')}</h4>
                 <ul className="space-y-1.5">
                   <li>
                     <Link href="/sobre-nosotros" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
-                      Sobre Nosotros
+                      {t('footer.aboutUs')}
                     </Link>
                   </li>
                   <li>
@@ -145,9 +144,9 @@ export default function Footer() {
         
         {/* Copyright y créditos */}
         <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Hub Madridista. Todos los derechos reservados.</p>
+          <p>{t('footer.rights')}</p>
           <p className="mt-2 md:mt-0">
-            No estamos afiliados oficialmente con el Real Madrid C.F.
+            {t('footer.disclaimer')}
           </p>
         </div>
       </div>
