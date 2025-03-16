@@ -208,8 +208,25 @@ export default function VideoPage() {
     }
   };
 
+  // SEO optimizado para videos
+  const videoLang = video.language || 'es';
+  const videoMetaDescription = video.description 
+    ? (video.description.length > 160 ? `${video.description.substring(0, 157)}...` : video.description)
+    : `Video de ${video.channelTitle} sobre el Real Madrid. Ver en Hub Madridista, el agregador de contenido madridista.`;
+  
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
+      {/* SEO optimizado para páginas de video */}
+      <SEO
+        title={`${video.title} | Hub Madridista`}
+        description={videoMetaDescription}
+        keywords={`Real Madrid, videos, ${video.channelTitle}, fútbol, LaLiga`}
+        ogImage={video.thumbnailUrl || ''}
+        ogType="video"
+        twitterCard="summary_large_image"
+        lang={videoLang === 'es' ? 'es' : 'en'}
+        structuredData={videoSchema(video)}
+      />
       <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-6 px-2">
           {/* Información principal del video */}

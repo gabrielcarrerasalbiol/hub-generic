@@ -1,0 +1,55 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /api/
+
+# Permitir a Google indexar todo lo que no esté explícitamente bloqueado
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /api/
+
+# Permitir a Bing indexar todo lo que no esté explícitamente bloqueado
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /api/
+
+# Permitir a Yahoo indexar todo lo que no esté explícitamente bloqueado
+User-agent: Slurp
+Allow: /
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /api/
+
+# Evitar indexación de rutas de administración y contenido privado
+User-agent: *
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://hubmadridista.com/sitemap.xml
