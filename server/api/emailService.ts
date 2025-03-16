@@ -151,7 +151,7 @@ export async function sendWelcomeEmail(
       </ul>
       
       <p style="margin: 20px 0; text-align: center;">
-        <a href="${process.env.FRONTEND_URL || 'https://hubmadridista.com'}" style="background-color: #001C58; color: white; padding: 10px 20px; text-decoration: none; border-radius: 3px; display: inline-block;">
+        <a href="https://hubmadridista.com" style="background-color: #001C58; color: white; padding: 10px 20px; text-decoration: none; border-radius: 3px; display: inline-block;">
           Explorar contenido
         </a>
       </p>
@@ -183,7 +183,7 @@ export async function sendPasswordResetEmail(
   const subject = 'Restablece tu contraseña en Hub Madridista';
   
   // Crear la URL de restablecimiento
-  const resetUrl = `${process.env.FRONTEND_URL || 'https://hubmadridista.com'}/reset-password?token=${resetToken}`;
+  const resetUrl = `https://hubmadridista.com/reset-password?token=${resetToken}`;
   
   // Crear contenido HTML
   const html = `
@@ -245,7 +245,7 @@ export async function sendNewVideoNotificationEmail(
   const subject = `📺 Nuevo video de ${channelName} - Hub Madridista`;
 
   // Crear la URL del video
-  const videoUrl = `${process.env.FRONTEND_URL || 'https://hubmadridista.com'}/video/${videoId}`;
+  const videoUrl = `https://hubmadridista.com/video/${videoId}`;
   
   // Crear contenido HTML
   const html = `
