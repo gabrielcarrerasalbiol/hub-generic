@@ -223,6 +223,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }
 
+  app.get("/api/videos/featured", async (req: Request, res: Response) => {
+    try {
+      // Obtenemos el límite de la solicitud, por defecto 50
+      const limit = parseInt(req.query.limit as string) || 50;
+      
+      // Obtenemos específicamente los videos destacados
+      const videos = await storage.getFeaturedVideos(limit);
+      
+      // Check if any videos are favorites (solo si hay usuario autenticado)
+      let videosWithFavorite = videos;
+      if (req.user && req.user.id) {
+        videosWithFavorite = await Promise.all(
+          videos.map(async (video) => {
+            const isFavorite = await storage.isFavorite(req.user!.id, video.id);
+            return { ...video, isFavorite };
+          })
+        );
+      } else {
+        // Si no hay usuario, ningún video es favorito
+        videosWithFavorite = videos.map(video => ({
+          ...video,
+          isFavorite: false
+        }));
+      }
+      
+      res.json(videosWithFavorite);
+    } catch (error) {
+      console.error("Error fetching featured videos:", error);
+      res.status(500).json({ message: "Failed to fetch featured videos" });
+    }
+  });
+
   app.get("/api/videos/trending", async (req: Request, res: Response) => {
     try {
       // Obtenemos el límite de la solicitud, por defecto 200

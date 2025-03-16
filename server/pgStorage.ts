@@ -381,10 +381,31 @@ export class PgStorage implements IStorage {
     
     if (recommendedChannelsData.length === 0) {
       // Si no hay canales recomendados, devolver los más populares basado en suscriptores
-      return db.select()
+      const popularChannels = await db.select()
         .from(channels)
         .orderBy(desc(channels.subscriberCount))
         .limit(limit);
+        
+      // Validar las URLs de las imágenes
+      return popularChannels.map(channel => {
+        // Fix: Verificamos y evitamos URLs nulas, indefinidas o no válidas para miniaturas
+        let thumbnailUrl = channel.thumbnailUrl;
+        if (!thumbnailUrl || thumbnailUrl === 'null' || thumbnailUrl === 'undefined' || !thumbnailUrl.startsWith('http')) {
+          thumbnailUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`;
+        }
+        
+        // Fix similar para el banner
+        let bannerUrl = channel.bannerUrl;
+        if (!bannerUrl || bannerUrl === 'null' || bannerUrl === 'undefined' || !bannerUrl.startsWith('http')) {
+          bannerUrl = null;
+        }
+        
+        return {
+          ...channel,
+          thumbnailUrl,
+          bannerUrl
+        };
+      });
     }
     
     // Obtener detalles completos de los canales recomendados
@@ -393,12 +414,32 @@ export class PgStorage implements IStorage {
       .from(channels)
       .where(inArray(channels.id, channelIds));
     
-    // Ordenar por prioridad (la misma que tenían en recommendedChannelsData)
-    return recommendedChannelsDetails.sort((a, b) => {
-      const aPriority = recommendedChannelsData.find(rc => rc.channelId === a.id)?.priority || 0;
-      const bPriority = recommendedChannelsData.find(rc => rc.channelId === b.id)?.priority || 0;
-      return bPriority - aPriority;
-    });
+    // Ordenar por prioridad y corregir las URLs de imágenes
+    return recommendedChannelsDetails
+      .map(channel => {
+        // Fix: Verificamos y evitamos URLs nulas, indefinidas o no válidas para miniaturas
+        let thumbnailUrl = channel.thumbnailUrl;
+        if (!thumbnailUrl || thumbnailUrl === 'null' || thumbnailUrl === 'undefined' || !thumbnailUrl.startsWith('http')) {
+          thumbnailUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=128`;
+        }
+        
+        // Fix similar para el banner
+        let bannerUrl = channel.bannerUrl;
+        if (!bannerUrl || bannerUrl === 'null' || bannerUrl === 'undefined' || !bannerUrl.startsWith('http')) {
+          bannerUrl = null;
+        }
+        
+        return {
+          ...channel,
+          thumbnailUrl,
+          bannerUrl
+        };
+      })
+      .sort((a, b) => {
+        const aPriority = recommendedChannelsData.find(rc => rc.channelId === a.id)?.priority || 0;
+        const bPriority = recommendedChannelsData.find(rc => rc.channelId === b.id)?.priority || 0;
+        return bPriority - aPriority;
+      });
   }
 
   async searchChannels(query: string, limit = 50): Promise<Channel[]> {
