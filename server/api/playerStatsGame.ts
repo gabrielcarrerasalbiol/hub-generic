@@ -3,15 +3,12 @@
  * Utiliza DeepSeek para mejorar la experiencia de juego
  */
 
-import OpenAI from 'openai';
 import { Player, PlayerStats, StatType } from "../../shared/schema";
 import { storage } from "../storage";
+import OpenAI from 'openai';
 
-// Configuración del cliente DeepSeek que usa la misma interfaz que OpenAI
-const deepseek = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY,
-  baseURL: 'https://api.deepseek.com/v1',
-});
+// Importamos el cliente DeepSeek ya configurado en deepseek.ts
+import { deepseek } from "./deepseek";
 
 /**
  * Genera una pregunta para el mini-juego basada en las estadísticas de los jugadores
@@ -89,21 +86,27 @@ export async function generateStatsQuestion(
     }
 
     try {
-      // Utilizamos DeepSeek para generar una pregunta más natural e interesante
-      const messages = [
-        {
-          role: "system" as const,
-          content: "Eres un asistente especializado en estadísticas del Real Madrid que genera preguntas interesantes para un mini-juego. Genera preguntas en español. Las preguntas deben ser claras, concisas y enfocadas en la comparación de dos jugadores según una estadística específica. También incluye una pista sutil y una explicación que se mostrará después de responder."
-        },
-        {
-          role: "user" as const,
-          content: `Genera una pregunta para comparar a ${player1.name} y ${player2.name} basada en su estadística de "${translatedStatType}". Devuelve un objeto JSON con estos atributos exactos: {question: string, hint: string, explanation: string}. La pregunta debe ser interesante y debe preguntar quién tiene mejor rendimiento en esa estadística. La explicación debe incluir los valores actuales (${p1Value} vs ${p2Value}).`
-        }
-      ];
+      // Preparamos un prompt para DeepSeek
+      const prompt = `
+        Genera una pregunta para comparar a ${player1.name} y ${player2.name} basada en su estadística de "${translatedStatType}". 
+        Devuelve un objeto JSON con estos atributos exactos: {question: string, hint: string, explanation: string}. 
+        La pregunta debe ser interesante y debe preguntar quién tiene mejor rendimiento en esa estadística. 
+        La explicación debe incluir los valores actuales (${p1Value} vs ${p2Value}).
+      `;
 
+      // Utilizamos DeepSeek para generar una pregunta más natural e interesante
       const response = await deepseek.chat.completions.create({
         model: "deepseek-chat",
-        messages,
+        messages: [
+          {
+            role: "system",
+            content: "Eres un asistente especializado en estadísticas del Real Madrid que genera preguntas interesantes para un mini-juego. Genera preguntas en español. Las preguntas deben ser claras, concisas y enfocadas en la comparación de dos jugadores según una estadística específica. También incluye una pista sutil y una explicación que se mostrará después de responder."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
         temperature: 0.7,
         max_tokens: 300,
         response_format: { type: "json_object" }

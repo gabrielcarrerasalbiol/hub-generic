@@ -14,7 +14,7 @@ interface SummaryResult {
 
 // Initialize DeepSeek client using OpenAI's API interface
 // DeepSeek provides a compatible API endpoint with OpenAI
-const deepseek = new OpenAI({
+export const deepseek = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: 'https://api.deepseek.com/v1',
 });
