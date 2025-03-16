@@ -1,183 +1,174 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLanguage } from '@/hooks/use-language';
+import { useAuth } from '@/hooks/useAuth';
+import { formatDistanceToNow } from 'date-fns';
+import { es, enUS } from 'date-fns/locale';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  SmilePlus,
-  ThumbsUp,
-  Lightbulb,
-  CircleDashed,
-  AlertCircle,
-  XCircle,
-  Frown,
-} from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { HistoryIcon } from 'lucide-react';
 
-interface Mood {
+interface FanMood {
   id: number;
   userId: number;
-  mood: 'ecstatic' | 'happy' | 'hopeful' | 'neutral' | 'concerned' | 'frustrated' | 'disappointed';
-  reason: string | null;
-  relatedToMatch: boolean;
-  matchId: number | null;
+  moodType: string;
+  reason: string;
   createdAt: string;
-  updatedAt: string;
-  user?: {
-    username: string;
-    profilePicture?: string;
-  };
+  username: string;
+  profilePicture?: string;
 }
 
-export default function RecentMoods() {
-  const { t } = useTranslation();
-  
-  // Obtener estados de ánimo recientes
-  const {
-    data: recentMoods,
-    isLoading,
-    error
-  } = useQuery({
-    queryKey: ['/api/fan-moods/recent'],
-    refetchInterval: 30000 // Refrescar cada 30 segundos
+interface RecentMoodsProps {
+  userId?: number;
+  limit?: number;
+  showAvatar?: boolean;
+}
+
+/**
+ * Componente que muestra los estados de ánimo recientes de los fans
+ * Puede filtrar por usuario específico o mostrar todos
+ */
+const RecentMoods: React.FC<RecentMoodsProps> = ({ 
+  userId, 
+  limit = 5,
+  showAvatar = false
+}) => {
+  const { t, currentLanguage } = useLanguage();
+  const user = useAuth((state) => state.user);
+
+  // Emoji para cada tipo de estado de ánimo
+  const moodEmojis: Record<string, string> = {
+    ecstatic: '🤩',
+    happy: '😄',
+    optimistic: '😊',
+    neutral: '😐',
+    concerned: '😕',
+    frustrated: '😠',
+    angry: '😡',
+  };
+
+  // Colores para los badges de cada estado de ánimo
+  const moodColors: Record<string, string> = {
+    ecstatic: 'bg-green-100 text-green-800 border-green-200',
+    happy: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    optimistic: 'bg-teal-100 text-teal-800 border-teal-200',
+    neutral: 'bg-blue-100 text-blue-800 border-blue-200',
+    concerned: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    frustrated: 'bg-orange-100 text-orange-800 border-orange-200',
+    angry: 'bg-red-100 text-red-800 border-red-200',
+  };
+
+  // Seleccionar el endpoint correcto basado en el userId
+  const endpoint = userId
+    ? `/api/fan-moods/user/${userId}?limit=${limit}`
+    : `/api/fan-moods/recent?limit=${limit}`;
+
+  // Obtener los estados de ánimo recientes
+  const { data: moods, isLoading } = useQuery({
+    queryKey: [endpoint],
+    enabled: !!user, // Solo cargar si el usuario está autenticado
   });
 
-  // Iconos para cada estado de ánimo
-  const moodIcons = {
-    ecstatic: <SmilePlus className="h-4 w-4" />,
-    happy: <ThumbsUp className="h-4 w-4" />,
-    hopeful: <Lightbulb className="h-4 w-4" />,
-    neutral: <CircleDashed className="h-4 w-4" />,
-    concerned: <AlertCircle className="h-4 w-4" />,
-    frustrated: <XCircle className="h-4 w-4" />,
-    disappointed: <Frown className="h-4 w-4" />
+  // Formatear la fecha relativa según el idioma actual
+  const formatRelativeDate = (date: string) => {
+    const dateObj = new Date(date);
+    return formatDistanceToNow(dateObj, { 
+      addSuffix: true,
+      locale: currentLanguage === 'es' ? es : enUS
+    });
   };
 
-  // Configuración de colores para cada estado de ánimo
-  const moodColors: Record<string, string> = {
-    ecstatic: 'bg-green-100 border-green-500 text-green-800',
-    happy: 'bg-emerald-100 border-emerald-500 text-emerald-800',
-    hopeful: 'bg-sky-100 border-sky-500 text-sky-800',
-    neutral: 'bg-gray-100 border-gray-500 text-gray-800',
-    concerned: 'bg-amber-100 border-amber-500 text-amber-800',
-    frustrated: 'bg-orange-100 border-orange-500 text-orange-800',
-    disappointed: 'bg-red-100 border-red-500 text-red-800'
-  };
-
-  // Formatear tiempo relativo
-  const formatRelativeTime = (dateString: string): string => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInSecs = Math.floor(diffInMs / 1000);
-    const diffInMins = Math.floor(diffInSecs / 60);
-    const diffInHours = Math.floor(diffInMins / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
-
-    if (diffInSecs < 60) {
-      return t('time.justNow');
-    } else if (diffInMins < 60) {
-      return t('time.minutesAgo', { count: diffInMins });
-    } else if (diffInHours < 24) {
-      return t('time.hoursAgo', { count: diffInHours });
-    } else {
-      return t('time.daysAgo', { count: diffInDays });
-    }
-  };
-
-  // Obtener iniciales desde el ID de usuario
-  const getInitials = (userId: number): string => {
-    return `U${userId.toString().slice(-2)}`;
-  };
-
-  // Generar color basado en userId
-  const getUserColor = (userId: number): string => {
-    const colors = [
-      'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 
-      'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-teal-500'
-    ];
-    return colors[userId % colors.length];
-  };
-
+  // Mostrar un esqueleto durante la carga
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('fanMood.recentMoods')}</CardTitle>
-          <CardDescription>{t('fanMood.recentMoodsDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-start gap-3">
-                <Skeleton className="h-8 w-8 rounded-full" />
-                <div className="space-y-2 flex-1">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-3 w-full" />
-                </div>
+      <div className="space-y-4">
+        {[...Array(limit)].map((_, i) => (
+          <div key={i} className="flex items-start space-x-3">
+            {showAvatar && (
+              <Skeleton className="h-10 w-10 rounded-full" />
+            )}
+            <div className="flex-1 space-y-2">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-5 w-16" />
               </div>
-            ))}
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-4 w-20" />
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        ))}
+      </div>
     );
   }
 
-  if (error) {
+  // Si no hay datos, mostrar mensaje
+  if (!moods || moods.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('fanMood.recentMoods')}</CardTitle>
-          <CardDescription>{t('fanMood.recentMoodsDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-center text-muted-foreground py-4">{t('fanMood.errorLoadingMoods')}</p>
-        </CardContent>
-      </Card>
+      <div className="text-center py-6">
+        <HistoryIcon className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+        <h3 className="text-lg font-medium">
+          {userId === user?.id
+            ? t('fanMood.noMoodHistory')
+            : t('fanMood.noRecentMoods')}
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          {userId === user?.id
+            ? t('fanMood.createYourFirst')
+            : t('fanMood.beFirstCommunity')}
+        </p>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('fanMood.recentMoods')}</CardTitle>
-        <CardDescription>{t('fanMood.recentMoodsDescription')}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {(!recentMoods || recentMoods.length === 0) ? (
-          <p className="text-center text-muted-foreground py-4">{t('fanMood.noRecentMoods')}</p>
-        ) : (
-          <div className="space-y-4">
-            {recentMoods.map((mood: Mood) => (
-              <div key={mood.id} className="flex items-start gap-3">
+    <ScrollArea className={userId ? "h-[400px]" : "max-h-[500px]"}>
+      <div className="space-y-4 pr-4">
+        {moods.map((mood: FanMood) => (
+          <div key={mood.id} className="p-3 border rounded-lg">
+            <div className="flex items-start gap-3">
+              {showAvatar && (
                 <Avatar>
-                  <AvatarImage src={mood.user?.profilePicture} alt={mood.user?.username || `${t('user')} ${mood.userId}`} />
-                  <AvatarFallback className={getUserColor(mood.userId)}>
-                    {mood.user?.username ? mood.user.username.substring(0, 2).toUpperCase() : getInitials(mood.userId)}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge className={`${moodColors[mood.mood]}`}>
-                      {moodIcons[mood.mood]}
-                      <span className="ml-1">{t(`fanMood.moods.${mood.mood}`)}</span>
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {formatRelativeTime(mood.createdAt)}
-                    </span>
-                  </div>
-                  
-                  {mood.reason && (
-                    <p className="mt-1 text-sm">{mood.reason}</p>
+                  {mood.profilePicture ? (
+                    <AvatarImage src={mood.profilePicture} alt={mood.username} />
+                  ) : (
+                    <AvatarFallback>
+                      {mood.username.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
                   )}
+                </Avatar>
+              )}
+              
+              <div className="flex-1">
+                <div className="flex items-center gap-2 flex-wrap mb-2">
+                  {showAvatar && (
+                    <p className="font-medium">{mood.username}</p>
+                  )}
+                  
+                  <Badge 
+                    variant="outline" 
+                    className={`${moodColors[mood.moodType]} px-2 py-0.5`}
+                  >
+                    <span className="mr-1">{moodEmojis[mood.moodType]}</span>
+                    {t(`fanMood.moods.${mood.moodType}`)}
+                  </Badge>
                 </div>
+                
+                <p className="text-sm mb-2">
+                  {mood.reason || t('fanMood.noReason')}
+                </p>
+                
+                <p className="text-xs text-muted-foreground">
+                  {formatRelativeDate(mood.createdAt)}
+                </p>
               </div>
-            ))}
+            </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+        ))}
+      </div>
+    </ScrollArea>
   );
-}
+};
+
+export default RecentMoods;
