@@ -430,7 +430,7 @@ const StatsGame = () => {
       return (
         <Alert variant="destructive" className="max-w-3xl mx-auto">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>{t('common.error')}</AlertTitle>
+          <AlertTitle>{t('errors.somethingWrong')}</AlertTitle>
           <AlertDescription>
             {t('stats_game.results_error')}{" "}
             <Button variant="link" onClick={resetGame} className="p-0 h-auto">
