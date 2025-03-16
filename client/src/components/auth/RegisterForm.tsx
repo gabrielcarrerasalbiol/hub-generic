@@ -68,8 +68,8 @@ export default function RegisterForm() {
       
       if (success) {
         toast({
-          title: t('auth.registerPage.successTitle'),
-          description: t('auth.registerPage.successMessage'),
+          title: t('registerPage.successTitle'),
+          description: t('registerPage.successMessage'),
         });
       } else {
         toast({
