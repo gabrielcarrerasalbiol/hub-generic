@@ -161,12 +161,13 @@ export default function SubscribeButton({
         }
       });
       
-      setNotificationsEnabled(!notificationsEnabled);
+      const newNotificationState = !notificationsEnabled;
+      setNotificationsEnabled(newNotificationState);
       toast({
-        title: notificationsEnabled ? "Notificaciones desactivadas" : "Notificaciones activadas",
-        description: notificationsEnabled 
-          ? "Ya no recibirás alertas de nuevos videos" 
-          : "Recibirás alertas cuando se publiquen nuevos videos",
+        title: newNotificationState ? "Notificaciones activadas" : "Notificaciones desactivadas",
+        description: newNotificationState 
+          ? "Recibirás alertas cuando se publiquen nuevos videos" 
+          : "Ya no recibirás alertas de nuevos videos",
       });
       
       // Invalidar consultas relacionadas para actualizar la UI

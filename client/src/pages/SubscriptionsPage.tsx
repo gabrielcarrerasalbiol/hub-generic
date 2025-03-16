@@ -61,6 +61,7 @@ export default function SubscriptionsPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/subscriptions/channels'] });
       queryClient.invalidateQueries({ queryKey: [`/api/channels/${channelId}/subscription`] });
       
+      // Usar el valor actual ya que enabled contiene el nuevo estado
       toast({
         title: enabled ? "Notificaciones activadas" : "Notificaciones desactivadas",
         description: enabled 
