@@ -13,6 +13,7 @@ import { getQueryFn } from "@/lib/queryClient";
 import { useLanguage } from "@/hooks/use-language";
 import SEO from "@/components/SEO";
 import { homePageSchema } from "@/lib/schemaData";
+import HeroSlider from "@/components/HeroSlider";
 import {
   Carousel,
   CarouselContent,
@@ -31,9 +32,21 @@ export default function Home() {
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
   const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Ya no necesitamos hacer rotar las imágenes, usaremos una estática
-  const currentImage = "/images/real-madrid-fans-back.jpg";
-  
+  // Array de imágenes para el slider
+  const bannerImages = [
+    {
+      src: "/images/real-madrid-fans-back.jpg",
+      alt: "Real Madrid Fans"
+    },
+    {
+      src: "/images/real-madrid-fans-stadium.jpg", 
+      alt: "Real Madrid Stadium"
+    },
+    {
+      src: "/images/real-madrid-hero.jpg",
+      alt: "Real Madrid Hero"
+    }
+  ];
 
   // Fetch trending videos (limitado a 20)
   const { 
@@ -145,27 +158,16 @@ export default function Home() {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
-      {/* Hero Banner con imagen estática como en login/register */}
-      <div className="relative w-full h-96 mb-8 overflow-hidden rounded-xl shadow-lg">
-        <div className="relative rounded-lg overflow-hidden h-full">
-          <img 
-            src={currentImage} 
-            alt="Real Madrid" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 to-transparent flex items-center">
-            <div className="text-white p-8 md:p-12 max-w-lg">
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">Hub Madridista</h1>
-              <p className="text-lg md:text-xl mb-6">{t('home.heroSubtitle')}</p>
-              <Link href="/videos">
-                <Button className="bg-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/90 font-semibold">
-                  {t('home.discoverVideos')}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Hero Banner con slider de imágenes */}
+      <HeroSlider 
+        images={bannerImages}
+        title="Hub Madridista"
+        subtitle={t('home.heroSubtitle')}
+        buttonText={t('home.discoverVideos')}
+        buttonLink="/videos"
+        autoplaySpeed={7000}
+        height="h-96"
+      />
       {/* SEO optimizado para la página de inicio */}
       <SEO
         title="Hub Madridista | Agregador de contenido del Real Madrid"
