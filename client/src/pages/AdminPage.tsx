@@ -6,9 +6,10 @@ import VideoManagement from '@/components/admin/VideoManagement';
 import PremiumChannelManagement from '@/components/admin/PremiumChannelManagement';
 import RecommendedChannelManagement from '@/components/admin/RecommendedChannelManagement';
 import FeaturedVideosManager from '@/components/admin/FeaturedVideosManager';
+import PollManagement from '@/components/polls/PollManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Users, Video, Activity, Star, Award, BarChart2, Sparkles } from 'lucide-react';
+import { Users, Video, Activity, Star, Award, BarChart2, Sparkles, BarChart, Vote } from 'lucide-react';
 
 export default function AdminPage() {
   const { isAdmin, checkAuth } = useAuth();
@@ -37,7 +38,7 @@ export default function AdminPage() {
       </div>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-6">
+        <TabsList className="mb-6 grid w-full grid-cols-7">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span>Usuarios</span>
@@ -57,6 +58,10 @@ export default function AdminPage() {
           <TabsTrigger value="recommended" className="flex items-center gap-2">
             <Award className="h-4 w-4" />
             <span>Canales Recomendados</span>
+          </TabsTrigger>
+          <TabsTrigger value="polls" className="flex items-center gap-2">
+            <BarChart className="h-4 w-4" />
+            <span>Encuestas</span>
           </TabsTrigger>
           <TabsTrigger value="processes" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -82,6 +87,10 @@ export default function AdminPage() {
         
         <TabsContent value="recommended" className="space-y-6">
           <RecommendedChannelManagement />
+        </TabsContent>
+        
+        <TabsContent value="polls" className="space-y-6">
+          <PollManagement />
         </TabsContent>
         
         <TabsContent value="processes" className="space-y-6">
@@ -158,6 +167,25 @@ export default function AdminPage() {
                   onClick={() => setActiveTab('recommended')}
                 >
                   Ir a canales recomendados
+                </button>
+              </div>
+              
+              <div className="border rounded-lg p-4 bg-amber-50 dark:bg-amber-950">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Gestión de Encuestas</h3>
+                  <span className="px-2 py-1 bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 rounded-full text-xs font-medium">
+                    Nuevo
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Administra las encuestas para los aficionados, crea y publica nuevas preguntas y visualiza los resultados en tiempo real.
+                </p>
+                <button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md flex items-center justify-center gap-2"
+                  onClick={() => setActiveTab('polls')}
+                >
+                  <BarChart className="h-4 w-4" />
+                  <span>Ir a encuestas</span>
                 </button>
               </div>
               
