@@ -67,6 +67,7 @@ const StatsGame = () => {
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
   const [, params] = useRoute<{ gameId: string }>('/stats-game/:gameId');
+  const { t } = useTranslation();
   
   const [step, setStep] = useState<'intro' | 'playing' | 'results'>('intro');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
@@ -213,70 +214,58 @@ const StatsGame = () => {
   
   // Formatear tipo de estadística para mostrar
   const formatStatType = (type: string): string => {
-    const statTypes: Record<string, string> = {
-      'goals': 'Goles',
-      'assists': 'Asistencias',
-      'appearances': 'Apariciones',
-      'yellowCards': 'Tarjetas Amarillas',
-      'redCards': 'Tarjetas Rojas',
-      'minutesPlayed': 'Minutos Jugados',
-      'passAccuracy': 'Precisión de Pases (%)',
-      'aerialDuelsWon': 'Duelos Aéreos Ganados',
-      'rating': 'Calificación'
-    };
-    
-    return statTypes[type] || type;
+    return t(`stats_game.stat_types.${type}`) || type;
   };
   
   // Renderizar pantalla de introducción
   const renderIntro = () => (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader className="text-center bg-primary/10 rounded-t-lg">
-        <CardTitle className="text-2xl text-primary">Mini-juego de Estadísticas</CardTitle>
-        <CardDescription>Pon a prueba tus conocimientos sobre los jugadores del Real Madrid</CardDescription>
+        <CardTitle className="text-2xl text-primary">{t('stats_game.title')}</CardTitle>
+        <CardDescription>{t('stats_game.subtitle')}</CardDescription>
       </CardHeader>
       
       <CardContent className="pt-6 space-y-4">
         <p className="text-center mb-4">
-          Compara las estadísticas de los jugadores y demuestra cuánto sabes sobre el mejor equipo del mundo.
+          {t('stats_game.intro_text')}
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Dificultad</label>
+            <label className="text-sm font-medium">{t('stats_game.difficulty')}</label>
             <Select value={difficulty} onValueChange={(value: any) => setDifficulty(value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecciona dificultad" />
+                <SelectValue placeholder={t('stats_game.select_difficulty')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="easy">Fácil</SelectItem>
-                <SelectItem value="medium">Media</SelectItem>
-                <SelectItem value="hard">Difícil</SelectItem>
+                <SelectItem value="easy">{t('stats_game.difficulty_easy')}</SelectItem>
+                <SelectItem value="medium">{t('stats_game.difficulty_medium')}</SelectItem>
+                <SelectItem value="hard">{t('stats_game.difficulty_hard')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium">Número de preguntas</label>
+            <label className="text-sm font-medium">{t('stats_game.question_count')}</label>
             <Select value={questionCount.toString()} onValueChange={(value) => setQuestionCount(parseInt(value))}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecciona número" />
+                <SelectValue placeholder={t('stats_game.select_count')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="3">3 preguntas</SelectItem>
-                <SelectItem value="5">5 preguntas</SelectItem>
-                <SelectItem value="10">10 preguntas</SelectItem>
+                <SelectItem value="3">{t('stats_game.questions', { count: 3 })}</SelectItem>
+                <SelectItem value="5">{t('stats_game.questions', { count: 5 })}</SelectItem>
+                <SelectItem value="10">{t('stats_game.questions', { count: 10 })}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         
         <div className="mt-4 p-4 rounded-md bg-primary/5 text-sm">
-          <h4 className="font-bold mb-1">Niveles de dificultad:</h4>
+          <h4 className="font-bold mb-1">{t('stats_game.difficulty_levels')}:</h4>
           <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Fácil:</strong> Comparaciones básicas sobre goles y asistencias.</li>
-            <li><strong>Media:</strong> Incluye más estadísticas como apariciones y tarjetas.</li>
-            <li><strong>Difícil:</strong> Estadísticas avanzadas y jugadores menos conocidos.</li>
+            <li><strong>{t('stats_game.difficulty_easy')}:</strong> {t('stats_game.difficulty_easy_desc')}</li>
+            <li><strong>{t('stats_game.difficulty_medium')}:</strong> {t('stats_game.difficulty_medium_desc')}</li>
+            <li><strong>{t('stats_game.difficulty_hard')}:</strong> {t('stats_game.difficulty_hard_desc')}</li>
           </ul>
         </div>
       </CardContent>
@@ -291,10 +280,10 @@ const StatsGame = () => {
           {createGameMutation.isPending ? (
             <>
               <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-              Generando preguntas...
+              {t('stats_game.generating_questions')}
             </>
           ) : (
-            'Comenzar Juego'
+            t('stats_game.start_game')
           )}
         </Button>
       </CardFooter>
@@ -317,7 +306,9 @@ const StatsGame = () => {
         <CardHeader className="bg-primary/10 rounded-t-lg">
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle className="text-xl">Pregunta {currentQuestionIndex + 1} de {questions.length}</CardTitle>
+              <CardTitle className="text-xl">
+                {t('stats_game.question_number', { current: currentQuestionIndex + 1, total: questions.length })}
+              </CardTitle>
               <CardDescription>{formatStatType(currentQuestion.statType)}</CardDescription>
             </div>
             <Progress 
@@ -332,7 +323,7 @@ const StatsGame = () => {
             <h3 className="text-center font-medium text-xl mb-4">{currentQuestion.question}</h3>
             {currentQuestion.hint && (
               <div className="text-sm text-muted-foreground text-center italic mb-4">
-                Pista: {currentQuestion.hint}
+                {t('stats_game.hint')}: {currentQuestion.hint}
               </div>
             )}
           </div>
@@ -371,7 +362,7 @@ const StatsGame = () => {
           
           {isAnswered && currentQuestion.explanation && (
             <div className="mt-6 p-4 bg-primary/5 rounded-lg text-sm">
-              <h4 className="font-bold mb-1">Explicación:</h4>
+              <h4 className="font-bold mb-1">{t('stats_game.explanation')}:</h4>
               <p>{currentQuestion.explanation}</p>
             </div>
           )}
@@ -381,10 +372,10 @@ const StatsGame = () => {
           <div className="text-sm">
             {isAnswered ? (
               <span className={currentQuestion.isCorrect ? "text-green-600" : "text-red-600"}>
-                {currentQuestion.isCorrect ? "¡Correcto!" : "Incorrecto"}
+                {currentQuestion.isCorrect ? t('stats_game.correct') : t('stats_game.incorrect')}
               </span>
             ) : (
-              <span>Selecciona un jugador</span>
+              <span>{t('stats_game.select_player')}</span>
             )}
           </div>
           
@@ -396,7 +387,7 @@ const StatsGame = () => {
                 onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
                 disabled={answerQuestionMutation.isPending}
               >
-                Anterior
+                {t('stats_game.previous')}
               </Button>
             )}
             
@@ -407,7 +398,7 @@ const StatsGame = () => {
                 onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
                 disabled={!isAnswered || answerQuestionMutation.isPending}
               >
-                Siguiente
+                {t('stats_game.next')}
               </Button>
             )}
           </div>
@@ -422,7 +413,7 @@ const StatsGame = () => {
       return (
         <Card className="w-full max-w-3xl mx-auto">
           <CardHeader>
-            <CardTitle className="text-center">Cargando resultados...</CardTitle>
+            <CardTitle className="text-center">{t('stats_game.loading_results')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -439,11 +430,11 @@ const StatsGame = () => {
       return (
         <Alert variant="destructive" className="max-w-3xl mx-auto">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
+          <AlertTitle>{t('common.error')}</AlertTitle>
           <AlertDescription>
-            No se pudieron cargar los resultados.{" "}
+            {t('stats_game.results_error')}{" "}
             <Button variant="link" onClick={resetGame} className="p-0 h-auto">
-              Volver al inicio
+              {t('stats_game.back_to_start')}
             </Button>
           </AlertDescription>
         </Alert>
@@ -457,9 +448,9 @@ const StatsGame = () => {
       <Card className="w-full max-w-3xl mx-auto">
         <CardHeader className="text-center bg-primary/10 rounded-t-lg">
           <Trophy className="h-10 w-10 mx-auto mb-2 text-yellow-500" />
-          <CardTitle className="text-2xl">Resultados del juego</CardTitle>
+          <CardTitle className="text-2xl">{t('stats_game.results_title')}</CardTitle>
           <CardDescription>
-            Dificultad: {game.difficulty === 'easy' ? 'Fácil' : game.difficulty === 'medium' ? 'Media' : 'Difícil'}
+            {t('stats_game.difficulty')}: {t(`stats_game.difficulty_${game.difficulty}`)}
           </CardDescription>
         </CardHeader>
         
@@ -467,35 +458,35 @@ const StatsGame = () => {
           <div className="grid grid-cols-3 gap-4 text-center">
             <div className="p-4 bg-primary/5 rounded-lg">
               <div className="text-3xl font-bold text-primary">{summary.score}</div>
-              <div className="text-sm">Puntuación</div>
+              <div className="text-sm">{t('stats_game.score')}</div>
             </div>
             
             <div className="p-4 bg-primary/5 rounded-lg">
               <div className="text-3xl font-bold">{summary.correctAnswers}/{summary.totalQuestions}</div>
-              <div className="text-sm">Respuestas correctas</div>
+              <div className="text-sm">{t('stats_game.correct_answers')}</div>
             </div>
             
             <div className="p-4 bg-primary/5 rounded-lg">
               <div className="text-3xl font-bold">{percentage}%</div>
-              <div className="text-sm">Precisión</div>
+              <div className="text-sm">{t('stats_game.accuracy')}</div>
             </div>
           </div>
           
           <Separator />
           
           <div>
-            <h3 className="font-bold text-lg mb-4">Detalle de preguntas</h3>
+            <h3 className="font-bold text-lg mb-4">{t('stats_game.questions_detail')}</h3>
             
             <div className="space-y-4">
               {questions.map((question, index) => (
                 <div key={question.id} className="p-4 rounded-lg border">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h4 className="font-medium">Pregunta {index + 1}</h4>
+                      <h4 className="font-medium">{t('stats_game.question')} {index + 1}</h4>
                       <p className="text-sm text-muted-foreground">{formatStatType(question.statType)}</p>
                     </div>
                     <div className={`p-1 rounded text-xs ${question.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {question.isCorrect ? 'Correcto' : 'Incorrecto'}
+                      {question.isCorrect ? t('stats_game.correct') : t('stats_game.incorrect')}
                     </div>
                   </div>
                   
@@ -506,11 +497,11 @@ const StatsGame = () => {
                       <>
                         <div className={`p-2 rounded ${question.correctAnswerId === question.player1.id ? 'bg-green-50' : ''}`}>
                           <strong>{question.player1.name}</strong>
-                          {question.correctAnswerId === question.player1.id && ' (Correcto)'}
+                          {question.correctAnswerId === question.player1.id && ` (${t('stats_game.correct')})`}
                         </div>
                         <div className={`p-2 rounded ${question.correctAnswerId === question.player2.id ? 'bg-green-50' : ''}`}>
                           <strong>{question.player2.name}</strong>
-                          {question.correctAnswerId === question.player2.id && ' (Correcto)'}
+                          {question.correctAnswerId === question.player2.id && ` (${t('stats_game.correct')})`}
                         </div>
                       </>
                     )}
@@ -518,7 +509,7 @@ const StatsGame = () => {
                   
                   {question.explanation && (
                     <div className="mt-2 text-xs text-muted-foreground">
-                      <strong>Explicación:</strong> {question.explanation}
+                      <strong>{t('stats_game.explanation')}:</strong> {question.explanation}
                     </div>
                   )}
                 </div>
@@ -533,7 +524,7 @@ const StatsGame = () => {
             className="mr-2"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver al inicio
+            {t('stats_game.back_to_start')}
           </Button>
           
           <Button 
@@ -541,7 +532,7 @@ const StatsGame = () => {
             onClick={() => startGame()}
           >
             <RefreshCw className="mr-2 h-4 w-4" />
-            Jugar de nuevo
+            {t('stats_game.play_again')}
           </Button>
         </CardFooter>
       </Card>
@@ -553,11 +544,11 @@ const StatsGame = () => {
       <div className="container max-w-7xl mx-auto py-10 px-4">
         <Alert className="max-w-3xl mx-auto">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Inicio de sesión requerido</AlertTitle>
+          <AlertTitle>{t('stats_game.login_required')}</AlertTitle>
           <AlertDescription>
-            Debes iniciar sesión para acceder al mini-juego de estadísticas.{" "}
+            {t('stats_game.login_message')}{" "}
             <Link href="/login?redirect=/stats-game" className="font-medium underline">
-              Iniciar sesión
+              {t('auth.login')}
             </Link>
           </AlertDescription>
         </Alert>
@@ -568,8 +559,8 @@ const StatsGame = () => {
   return (
     <div className="container max-w-7xl mx-auto py-10 px-4">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">Mini-juego de Estadísticas del Real Madrid</h1>
-        <p className="text-muted-foreground">Compara jugadores y pon a prueba tus conocimientos</p>
+        <h1 className="text-3xl font-bold mb-2">{t('stats_game.page_title')}</h1>
+        <p className="text-muted-foreground">{t('stats_game.page_subtitle')}</p>
       </div>
       
       {step === 'intro' && renderIntro()}
