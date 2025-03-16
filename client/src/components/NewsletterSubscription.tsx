@@ -7,22 +7,29 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/use-language';
 import { Mail } from 'lucide-react';
-
-// Definir el esquema de validación con Zod
-const subscribeSchema = z.object({
-  email: z.string().email('Por favor, introduce un email válido'),
-  name: z.string().optional(),
-  privacyPolicy: z.boolean().refine(val => val === true, {
-    message: 'Debes aceptar la política de privacidad'
-  })
-});
-
-type SubscribeFormData = z.infer<typeof subscribeSchema>;
 
 export default function NewsletterSubscription() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
+
+  // Definimos el tipo primero (sin usar subscribeSchema)
+  type SubscribeFormData = {
+    email: string;
+    name?: string;
+    privacyPolicy: boolean;
+  };
+
+  // Definir el esquema de validación con Zod y usar textos traducibles
+  const subscribeSchema = z.object({
+    email: z.string().email(t('validation.emailValid')),
+    name: z.string().optional(),
+    privacyPolicy: z.boolean().refine(val => val === true, {
+      message: t('newsletter.privacyConsent')
+    })
+  });
 
   // Inicializar el formulario con react-hook-form
   const form = useForm<SubscribeFormData>({
@@ -55,21 +62,21 @@ export default function NewsletterSubscription() {
       
       if (response.ok && result.success) {
         toast({
-          title: "¡Suscripción exitosa!",
-          description: result.message || "Gracias por suscribirte a nuestra newsletter.",
+          title: t('newsletter.successTitle'),
+          description: result.message || t('newsletter.successMessage'),
           variant: "default",
         });
         
         // Reset del formulario
         form.reset();
       } else {
-        throw new Error(result.message || 'Error desconocido');
+        throw new Error(result.message || t('newsletter.errorMessage'));
       }
     } catch (error: any) {
       console.error('Error al suscribirse:', error);
       toast({
-        title: "Error en la suscripción",
-        description: error.message || "Ha ocurrido un error. Por favor, inténtalo de nuevo.",
+        title: t('newsletter.errorTitle'),
+        description: error.message || t('newsletter.errorMessage'),
         variant: "destructive",
       });
     } finally {
@@ -81,11 +88,11 @@ export default function NewsletterSubscription() {
     <div className="w-full">
       <div className="flex items-center mb-3">
         <Mail className="mr-2 h-5 w-5 text-[#FDBE11]" />
-        <h3 className="font-semibold text-lg">Suscríbete a nuestra newsletter</h3>
+        <h3 className="font-semibold text-lg">{t('newsletter.title')}</h3>
       </div>
       
       <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-        Recibe noticias y actualizaciones del Real Madrid en tu correo
+        {t('newsletter.description')}
       </p>
       
       <Form {...form}>
@@ -97,7 +104,7 @@ export default function NewsletterSubscription() {
               <FormItem>
                 <FormControl>
                   <Input
-                    placeholder="Tu nombre (opcional)"
+                    placeholder={t('newsletter.namePlaceholder')}
                     className="w-full bg-white dark:bg-gray-800"
                     {...field}
                   />
@@ -114,7 +121,7 @@ export default function NewsletterSubscription() {
               <FormItem>
                 <FormControl>
                   <Input
-                    placeholder="Tu email *"
+                    placeholder={t('newsletter.emailPlaceholder')}
                     type="email"
                     required
                     className="w-full bg-white dark:bg-gray-800"
@@ -138,7 +145,7 @@ export default function NewsletterSubscription() {
                   />
                 </FormControl>
                 <div className="text-sm leading-tight">
-                  Acepto la <a href="/privacidad" className="text-[#1E3A8A] dark:text-[#FDBE11] hover:underline">política de privacidad</a> y recibir comunicaciones.
+                  Acepto la <a href="/privacidad" className="text-[#1E3A8A] dark:text-[#FDBE11] hover:underline">{t('footer.privacy')}</a> y recibir comunicaciones.
                 </div>
                 <FormMessage />
               </FormItem>
@@ -150,7 +157,7 @@ export default function NewsletterSubscription() {
             className="w-full bg-[#1E3A8A] hover:bg-[#1E3A8A]/80 text-white"
             disabled={isLoading}
           >
-            {isLoading ? 'Enviando...' : 'Suscribirme'}
+            {isLoading ? t('newsletter.sending') : t('newsletter.subscribeButton')}
           </Button>
         </form>
       </Form>

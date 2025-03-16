@@ -173,9 +173,9 @@ export default function Footer() {
         
         {/* Copyright y créditos */}
         <div className="mt-8 py-5 px-4 rounded-lg bg-gradient-to-r from-gray-100 to-gray-50 dark:from-[#251E36] dark:to-[#2A2040] shadow-inner">
-          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-            <p>{t('footer.rights')}</p>
-            <p className="mt-2 md:mt-0">
+          <div className="flex flex-col md:flex-row justify-between items-center text-sm">
+            <p className="text-[#1E3A8A] dark:text-[#4161AF] font-medium">{t('footer.rights')}</p>
+            <p className="mt-2 md:mt-0 text-[#1E3A8A] dark:text-[#4161AF] font-medium">
               {t('footer.disclaimer')}
             </p>
           </div>
