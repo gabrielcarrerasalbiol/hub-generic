@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
@@ -34,36 +34,69 @@ import { useLanguage } from "@/hooks/use-language";
 export default function AboutPage() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
-  // Texto para el carrusel con colores de Real Madrid
+  // Referencia al carrusel
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const autoplayIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Función para avanzar al siguiente slide automáticamente
+  const autoAdvanceSlide = useCallback(() => {
+    if (carouselRef.current) {
+      const nextIndex = (currentSlideIndex + 1) % heroSlides.length;
+      setCurrentSlideIndex(nextIndex);
+      // El componente Carousel gestiona internamente el cambio visual
+    }
+  }, [currentSlideIndex]);
+  
+  // Efecto para el autoplay del carrusel
+  useEffect(() => {
+    // Iniciar el autoplay
+    autoplayIntervalRef.current = setInterval(() => {
+      autoAdvanceSlide();
+    }, 7000); // Cambiar cada 7 segundos
+    
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => {
+      if (autoplayIntervalRef.current) {
+        clearInterval(autoplayIntervalRef.current);
+      }
+    };
+  }, [autoAdvanceSlide]);
+  
+  // Carrusel mejorado con imágenes reales del Real Madrid
   const heroSlides = [
     {
       title: t("about.heroSlider.home.title"),
       subtitle: t("about.heroSlider.home.subtitle"),
       bgColor: "bg-[#1E3A8A]",
       textColor: "text-white",
-      icon: <Trophy className="inline-block mr-3 h-10 w-10 text-[#FDBE11]" />
+      icon: <Trophy className="inline-block mr-3 h-10 w-10 text-[#FDBE11]" />,
+      image: "/images/real-madrid-hero.jpg"
     },
     {
       title: t("about.heroSlider.passion.title"),
       subtitle: t("about.heroSlider.passion.subtitle"),
-      bgColor: "bg-white",
+      bgColor: "bg-gray-200",
       textColor: "text-[#1E3A8A]",
-      icon: <Flame className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />
+      icon: <Flame className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />,
+      image: "/images/real-madrid-fans-singing.jpg"
     },
     {
       title: t("about.heroSlider.feeling.title"),
       subtitle: t("about.heroSlider.feeling.subtitle"),
       bgColor: "bg-[#FDBE11]",
       textColor: "text-[#1E3A8A]",
-      icon: <Heart className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />
+      icon: <Heart className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />,
+      image: "/images/real-madrid-ultimate-fan.jpg"
     },
     {
       title: t("about.heroSlider.fans.title"),
       subtitle: t("about.heroSlider.fans.subtitle"),
       bgColor: "bg-gradient-to-r from-[#1E3A8A] to-[#2C2152]",
       textColor: "text-white",
-      icon: <Users className="inline-block mr-3 h-8 w-8" />
+      icon: <Users className="inline-block mr-3 h-8 w-8" />,
+      image: "/images/real-madrid-fans-stadium.jpg"
     }
   ];
 
@@ -71,12 +104,25 @@ export default function AboutPage() {
     <main className="flex-1 bg-gray-100 dark:bg-[#2C2152] overflow-y-auto">
       {/* Hero Banner - Simplificado con colores del Real Madrid */}
       <section className="relative w-full overflow-hidden">
-        <Carousel className="w-full" opts={{ loop: true }}>
+        <Carousel 
+          className="w-full" 
+          opts={{ loop: true }}
+          onSelect={(index) => setCurrentSlideIndex(index)}
+        >
           <CarouselContent>
             {heroSlides.map((slide, index) => (
               <CarouselItem key={index} className="w-full">
-                <div className={`w-full py-16 ${slide.bgColor}`}>
-                  <div className="max-w-6xl mx-auto px-4 text-center">
+                <div 
+                  className={`w-full h-96 bg-cover bg-center py-16 relative ${slide.bgColor}`}
+                  style={{ 
+                    backgroundImage: `url(${slide.image})`,
+                    backgroundBlendMode: 'overlay'
+                  }}
+                >
+                  {/* Overlay de color semitransparente */}
+                  <div className={`absolute inset-0 ${slide.bgColor} opacity-50`}></div>
+                  
+                  <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
                     <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${slide.textColor}`}>{slide.icon}{slide.title}</h1>
                     <p className={`text-xl md:text-2xl opacity-90 ${slide.textColor}`}>{slide.subtitle}</p>
                     
@@ -98,12 +144,16 @@ export default function AboutPage() {
             {heroSlides.map((_, index) => (
               <div 
                 key={index} 
-                className="w-3 h-3 rounded-full bg-white/50 transition-all duration-300"
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  currentSlideIndex === index 
+                    ? 'bg-[#FDBE11] scale-125' 
+                    : 'bg-gray-300/70'
+                }`}
               />
             ))}
           </div>
-          <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
-          <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 backdrop-blur border-none" />
+          <CarouselPrevious className="left-4 bg-gray-300/30 hover:bg-gray-300/50 backdrop-blur border-none" />
+          <CarouselNext className="right-4 bg-gray-300/30 hover:bg-gray-300/50 backdrop-blur border-none" />
         </Carousel>
       </section>
       
@@ -118,7 +168,7 @@ export default function AboutPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
+          <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
               <Award className="w-8 h-8 text-white" />
             </div>
@@ -128,7 +178,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
+          <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
               <div className="flex items-center">
                 <Tv className="w-7 h-7 text-white" />
@@ -141,7 +191,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
+          <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center relative">
               <Bell className="w-8 h-8 text-white" />
               <Star className="w-4 h-4 text-white absolute top-2 right-2 animate-ping" />
@@ -251,7 +301,7 @@ export default function AboutPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 hover:shadow-lg transition duration-300">
+          <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 hover:shadow-lg transition duration-300">
             <div className="flex items-center mb-4">
               <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
                 <img src="https://ui-avatars.com/api/?name=Carlos+R&background=random" alt="Avatar" />
@@ -271,7 +321,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 hover:shadow-lg transition duration-300">
+          <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 hover:shadow-lg transition duration-300">
             <div className="flex items-center mb-4">
               <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
                 <img src="https://ui-avatars.com/api/?name=Laura+M&background=random" alt="Avatar" />
@@ -292,7 +342,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md p-6 hover:shadow-lg transition duration-300">
+          <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 hover:shadow-lg transition duration-300">
             <div className="flex items-center mb-4">
               <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
                 <img src="https://ui-avatars.com/api/?name=Miguel+S&background=random" alt="Avatar" />
