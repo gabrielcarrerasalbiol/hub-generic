@@ -11,9 +11,10 @@ import {
   RecommendedChannel, InsertRecommendedChannel,
   ViewHistory, InsertViewHistory,
   Comment, InsertComment,
+  Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote,
   users, videos, channels, categories, favorites, oauthTokens,
   channelSubscriptions, notifications, premiumChannels, recommendedChannels,
-  viewHistory, comments
+  viewHistory, comments, polls, pollOptions, pollVotes
 } from '@shared/schema';
 
 // PostgreSQL implementation of the storage interface

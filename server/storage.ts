@@ -5,7 +5,8 @@ import {
   ChannelSubscription, InsertChannelSubscription,
   Notification, InsertNotification, PremiumChannel,
   InsertPremiumChannel, ViewHistory, InsertViewHistory,
-  Comment, InsertComment, RecommendedChannel, InsertRecommendedChannel
+  Comment, InsertComment, RecommendedChannel, InsertRecommendedChannel,
+  Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote
 } from "../shared/schema";
 
 // Storage interface defining all operations
@@ -124,6 +125,31 @@ export interface IStorage {
   
   // Initialize default data (for testing)
   initializeDefaultData?(): Promise<void>;
+  
+  // Poll operations
+  getPolls(limit?: number, offset?: number): Promise<Poll[]>;
+  getPublishedPolls(limit?: number, offset?: number): Promise<Poll[]>;
+  getActiveSidebarPoll(): Promise<(Poll & { options: PollOption[] }) | undefined>;
+  getPollById(id: number): Promise<(Poll & { options: PollOption[] }) | undefined>;
+  createPoll(poll: InsertPoll, options: Omit<InsertPollOption, "pollId">[]): Promise<Poll>;
+  updatePoll(id: number, pollData: Partial<InsertPoll>): Promise<Poll | undefined>;
+  deletePoll(id: number): Promise<boolean>;
+  publishPoll(id: number): Promise<Poll | undefined>;
+  unpublishPoll(id: number): Promise<Poll | undefined>;
+  
+  // Poll option operations
+  getPollOptions(pollId: number): Promise<PollOption[]>;
+  createPollOption(option: InsertPollOption): Promise<PollOption>;
+  updatePollOption(id: number, optionData: Partial<InsertPollOption>): Promise<PollOption | undefined>;
+  deletePollOption(id: number): Promise<boolean>;
+  
+  // Poll vote operations
+  getPollVotes(pollId: number): Promise<PollVote[]>;
+  getPollVotesByUser(userId: number, pollId?: number): Promise<PollVote[]>;
+  getVoteResultsByPollId(pollId: number): Promise<{optionId: number, optionText: string, votes: number, percentage: number}[]>;
+  createPollVote(vote: InsertPollVote): Promise<PollVote>;
+  hasUserVotedInPoll(userId: number, pollId: number): Promise<boolean>;
+  deletePollVote(id: number): Promise<boolean>;
 }
 
 // Exportar la implementación de PostgreSQL

@@ -288,3 +288,58 @@ export const insertCommentSchema = createInsertSchema(comments).omit({
 
 export type InsertComment = z.infer<typeof insertCommentSchema>;
 export type Comment = typeof comments.$inferSelect;
+
+// Tabla para encuestas
+export const polls = pgTable("polls", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  question: text("question").notNull(),
+  status: text("status", { enum: ["draft", "published"] }).default("draft").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at"), // Fecha opcional de vencimiento
+  createdById: integer("created_by_id").references(() => users.id, { onDelete: "set null" }),
+  showInSidebar: boolean("show_in_sidebar").default(false).notNull(), // Para destacar en el sidebar
+  featured: boolean("featured").default(false).notNull(), // Para destacar en la página principal
+});
+
+export const insertPollSchema = createInsertSchema(polls).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Tabla para opciones de encuestas
+export const pollOptions = pgTable("poll_options", {
+  id: serial("id").primaryKey(),
+  pollId: integer("poll_id").notNull().references(() => polls.id, { onDelete: "cascade" }),
+  text: text("text").notNull(),
+  order: integer("order").default(0).notNull(), // Para ordenar las opciones
+});
+
+export const insertPollOptionSchema = createInsertSchema(pollOptions).omit({
+  id: true,
+});
+
+// Tabla para respuestas a encuestas
+export const pollVotes = pgTable("poll_votes", {
+  id: serial("id").primaryKey(),
+  pollId: integer("poll_id").notNull().references(() => polls.id, { onDelete: "cascade" }),
+  optionId: integer("option_id").notNull().references(() => pollOptions.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertPollVoteSchema = createInsertSchema(pollVotes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertPoll = z.infer<typeof insertPollSchema>;
+export type Poll = typeof polls.$inferSelect;
+
+export type InsertPollOption = z.infer<typeof insertPollOptionSchema>;
+export type PollOption = typeof pollOptions.$inferSelect;
+
+export type InsertPollVote = z.infer<typeof insertPollVoteSchema>;
+export type PollVote = typeof pollVotes.$inferSelect;
