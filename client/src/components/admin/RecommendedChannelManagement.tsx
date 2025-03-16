@@ -422,7 +422,7 @@ export default function RecommendedChannelManagement() {
                     </SelectTrigger>
                     <SelectContent>
                       {filteredChannels.length === 0 ? (
-                        <SelectItem value="" disabled>
+                        <SelectItem value="no-channels" disabled>
                           No hay canales disponibles
                         </SelectItem>
                       ) : (
