@@ -3521,9 +3521,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
               // Crear objeto de datos para la actualización
               const updateData = {
                 text: option.text || (currentOption ? currentOption.text : ''),
-                textEs: option.textEs !== undefined ? option.textEs : (currentOption ? currentOption.textEs : ''),
+                textEs: option.textEs !== undefined && option.textEs !== null ? option.textEs : (currentOption ? currentOption.textEs : ''),
                 order: option.order !== undefined ? option.order : (currentOption ? currentOption.order : 0)
               };
+              
+              // Asegurar que la consola muestre el contenido real
+              console.log(`Campo textEs recibido:`, option.textEs);
               
               console.log(`Datos de actualización para opción ${option.id}:`, updateData);
               
