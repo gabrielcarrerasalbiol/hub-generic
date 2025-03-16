@@ -397,6 +397,7 @@
     "alreadyVotedMessage": "You have already participated in this poll",
     "viewingResults": "You are viewing the poll results",
     "viewResults": "View results",
+    "viewAllResults": "View all polls",
     "resultsLive": "Results updated in real-time",
     "fanPoll": "Fan Poll"
   },

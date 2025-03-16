@@ -231,10 +231,16 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
                     </div>
                   </div>
                 ))}
-                <div className="mt-4 text-center">
+                <div className="mt-4 flex flex-col items-center gap-2">
                   <Badge variant="outline" className="text-xs">
                     {t("poll.resultsLive")}
                   </Badge>
+                  <Link to="/polls/results">
+                    <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1">
+                      <BarChart3 className="h-3.5 w-3.5" />
+                      {t("poll.viewAllResults")}
+                    </Button>
+                  </Link>
                 </div>
               </div>
             ) : (
@@ -296,6 +302,15 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
                     {t("poll.alreadyVotedMessage")}
                   </div>
                 )}
+                
+                <div className="mt-3 pt-2 border-t text-center">
+                  <Link to="/polls/results">
+                    <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 mx-auto">
+                      <BarChart3 className="h-3.5 w-3.5" />
+                      {t("poll.viewAllResults")}
+                    </Button>
+                  </Link>
+                </div>
               </>
             )}
           </AccordionContent>
