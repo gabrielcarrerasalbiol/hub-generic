@@ -3,9 +3,11 @@ import { useLocation } from 'wouter';
 import RegisterForm from '@/components/auth/RegisterForm';
 import { useAuth } from '@/hooks/useAuth';
 import { Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function RegisterPage() {
   const [, setLocation] = useLocation();
+  const { t } = useTranslation();
   // Usar selectores específicos para mejorar el rendimiento
   const user = useAuth((state) => state.user);
   const token = useAuth((state) => state.token);
