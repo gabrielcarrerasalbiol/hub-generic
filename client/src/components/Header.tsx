@@ -119,9 +119,6 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
             <Link href="/home" className="font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300">
               Plataforma
             </Link>
-            <Link href="/fan-mood" className="font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300">
-              {t('fanMood.title')}
-            </Link>
           </div>
           
           {/* Search Bar - Desktop */}
@@ -273,24 +270,17 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
         <div className="md:hidden flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-3 mt-1 pb-2">
           <Link 
             href="/" 
-            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/3"
+            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/2"
           >
             <i className="fas fa-home text-lg mb-1"></i>
             <span>Home</span>
           </Link>
           <Link 
             href="/home" 
-            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/3"
+            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/2"
           >
             <i className="fas fa-tv text-lg mb-1"></i>
             <span>Plataforma</span>
-          </Link>
-          <Link 
-            href="/fan-mood" 
-            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/3"
-          >
-            <i className="fas fa-chart-bar text-lg mb-1"></i>
-            <span>{t('fanMood.title')}</span>
           </Link>
         </div>
         

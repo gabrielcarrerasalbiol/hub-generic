@@ -31,7 +31,6 @@ import SearchPage from "@/pages/SearchPage";
 import FeaturedChannelsPage from "@/pages/FeaturedChannelsPage";
 import PremiumChannelsPage from "@/pages/PremiumChannelsPage";
 import FeaturedVideosPage from "@/pages/FeaturedVideosPage";
-import FanMoodPage from "@/pages/FanMoodPage";
 import Layout from "@/components/Layout";
 import CookieConsent from "@/components/CookieConsent";
 import { useAuth } from '@/hooks/useAuth';
@@ -88,7 +87,6 @@ const Routes = () => {
             <Route path="/featured-channels" component={FeaturedChannelsPage} />
             <Route path="/premium-channels" component={PremiumChannelsPage} />
             <Route path="/featured-videos" component={FeaturedVideosPage} />
-            <Route path="/fan-mood" component={FanMoodPage} />
             <Route component={NotFound} />
           </Switch>
         </Layout>

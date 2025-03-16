@@ -5,8 +5,7 @@ import {
   ChannelSubscription, InsertChannelSubscription,
   Notification, InsertNotification, PremiumChannel,
   InsertPremiumChannel, ViewHistory, InsertViewHistory,
-  Comment, InsertComment, RecommendedChannel, InsertRecommendedChannel,
-  FanMood, InsertFanMood, MoodStat, InsertMoodStat
+  Comment, InsertComment, RecommendedChannel, InsertRecommendedChannel
 } from "../shared/schema";
 
 // Storage interface defining all operations
@@ -125,24 +124,6 @@ export interface IStorage {
   
   // Initialize default data (for testing)
   initializeDefaultData?(): Promise<void>;
-  
-  // Fan Mood operations
-  getFanMoods(limit?: number, offset?: number): Promise<FanMood[]>;
-  getFanMoodById(id: number): Promise<FanMood | undefined>;
-  getFanMoodsByUserId(userId: number, limit?: number): Promise<FanMood[]>;
-  getRecentFanMoods(limit?: number): Promise<FanMood[]>;
-  getUserCurrentMood(userId: number): Promise<FanMood | undefined>;
-  createFanMood(mood: InsertFanMood): Promise<FanMood>;
-  updateFanMood(id: number, moodData: Partial<InsertFanMood>): Promise<FanMood | undefined>;
-  deleteFanMood(id: number): Promise<boolean>;
-  
-  // Mood Statistics operations
-  getMoodStats(limit?: number): Promise<MoodStat[]>;
-  getMoodStatsByDate(date: Date): Promise<MoodStat | undefined>;
-  getMoodStatsForDateRange(startDate: Date, endDate: Date): Promise<MoodStat[]>;
-  getCurrentDayMoodStats(): Promise<MoodStat | undefined>;
-  updateMoodStats(date: Date, moodType: string): Promise<MoodStat>;
-  getMoodTrend(days?: number): Promise<{date: string, overallMood: string, totalCount: number}[]>;
 }
 
 // Exportar la implementación de PostgreSQL
