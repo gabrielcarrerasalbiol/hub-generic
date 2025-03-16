@@ -1330,18 +1330,30 @@ export class PgStorage implements IStorage {
         return undefined;
       }
       
-      // Filtrar campos vacíos o undefined
-      const cleanedData: Record<string, any> = {};
-      for (const key in optionData) {
-        if (optionData[key] !== undefined) {
-          cleanedData[key] = optionData[key];
-        }
+      // Crear un objeto tipado seguro para la actualización
+      const updateData: {
+        text?: string;
+        textEs?: string | null;
+        order?: number;
+      } = {};
+      
+      // Solo incluir campos que están definidos
+      if (optionData.text !== undefined) {
+        updateData.text = optionData.text;
       }
       
-      console.log(`Datos filtrados para actualizar opción ${id}:`, cleanedData);
+      if ('textEs' in optionData) {
+        updateData.textEs = optionData.textEs;
+      }
+      
+      if (optionData.order !== undefined) {
+        updateData.order = optionData.order;
+      }
+      
+      console.log(`Datos tipados para actualizar opción ${id}:`, updateData);
       
       const result = await db.update(pollOptions)
-        .set(cleanedData)
+        .set(updateData)
         .where(eq(pollOptions.id, id))
         .returning();
       
