@@ -88,7 +88,7 @@ export default function AboutPage() {
       bgColor: "bg-[#FDBE11]",
       textColor: "text-[#1E3A8A]",
       icon: <Heart className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />,
-      image: "/images/real-madrid-ultimate-fan.jpg"
+      image: "/images/real-madrid-fans-stadium-view.jpg"
     },
     {
       title: t("about.heroSlider.fans.title"),
