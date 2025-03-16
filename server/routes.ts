@@ -1773,9 +1773,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Añadir a canales recomendados
       const recommendedChannel: InsertRecommendedChannel = {
         channelId,
-        addedAt: new Date(),
+        addedById: req.user!.id, // Añadimos el ID del usuario autenticado
         notes: notes || "",
-        displayOrder
+        priority: displayOrder // Usando priority en lugar de displayOrder
       };
       
       const result = await storage.addRecommendedChannel(recommendedChannel);
@@ -1811,7 +1811,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       if (displayOrder !== undefined) {
-        updatedData.displayOrder = displayOrder;
+        updatedData.priority = displayOrder; // Usando priority en lugar de displayOrder
       }
       
       const result = await storage.updateRecommendedChannel(id, updatedData);
