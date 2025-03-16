@@ -1316,12 +1316,41 @@ export class PgStorage implements IStorage {
   }
 
   async updatePollOption(id: number, optionData: Partial<InsertPollOption>): Promise<PollOption | undefined> {
-    const result = await db.update(pollOptions)
-      .set(optionData)
-      .where(eq(pollOptions.id, id))
-      .returning();
-    
-    return result.length > 0 ? result[0] : undefined;
+    try {
+      console.log(`Actualizando opción ${id} con datos:`, optionData);
+      
+      // Verificar si la opción existe
+      const existingOption = await db.select()
+        .from(pollOptions)
+        .where(eq(pollOptions.id, id))
+        .execute();
+      
+      if (existingOption.length === 0) {
+        console.error(`La opción con ID ${id} no existe`);
+        return undefined;
+      }
+      
+      // Filtrar campos vacíos o undefined
+      const cleanedData: Record<string, any> = {};
+      for (const key in optionData) {
+        if (optionData[key] !== undefined) {
+          cleanedData[key] = optionData[key];
+        }
+      }
+      
+      console.log(`Datos filtrados para actualizar opción ${id}:`, cleanedData);
+      
+      const result = await db.update(pollOptions)
+        .set(cleanedData)
+        .where(eq(pollOptions.id, id))
+        .returning();
+      
+      console.log(`Resultado de actualización para opción ${id}:`, result.length > 0 ? 'Exitoso' : 'Fallido');
+      return result.length > 0 ? result[0] : undefined;
+    } catch (error) {
+      console.error(`Error actualizando opción ${id}:`, error);
+      return undefined;
+    }
   }
 
   async deletePollOption(id: number): Promise<boolean> {
