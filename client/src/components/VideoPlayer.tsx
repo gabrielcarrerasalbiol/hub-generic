@@ -96,8 +96,21 @@ export default function VideoPlayer({ embedUrl, title, videoId }: VideoPlayerPro
     } 
     else if (url.includes('player.twitch.tv')) {
       // Ensure Twitch player has proper configuration
+      // Make sure parent domain parameter is preserved and add autoplay
       const separator = url.includes('?') ? '&' : '?';
-      return `${url}${separator}autoplay=false`;
+      let finalUrl = url;
+      
+      // Add autoplay=false if not already present
+      if (!url.includes('autoplay=')) {
+        finalUrl = `${finalUrl}${separator}autoplay=false`;
+      }
+      
+      // Handle parent domain if not in the URL
+      if (!url.includes('parent=')) {
+        finalUrl = `${finalUrl}&parent=${window.location.hostname}`;
+      }
+      
+      return finalUrl;
     }
     return url;
   };

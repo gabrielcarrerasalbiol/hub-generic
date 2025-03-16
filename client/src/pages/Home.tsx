@@ -17,7 +17,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, Layers, Youtube, Twitter, Instagram } from "lucide-react";
+import { TikTokIcon } from "@/components/icons/TikTokIcon";
+import { TwitchIcon } from "@/components/icons/TwitchIcon";
 
 export default function Home() {
   const [platform, setPlatform] = useState<PlatformType>("all");
@@ -65,6 +67,24 @@ export default function Home() {
   // Verificar si la plataforma seleccionada está disponible
   // Consideramos "twitch" como una plataforma disponible
   const isPlatformAvailable = platform === "all" || platform === "youtube" || platform === "twitch";
+  
+  // Función para obtener el icono de la plataforma
+  const getPlatformIcon = (platform: string): string => {
+    switch (platform.toLowerCase()) {
+      case 'youtube':
+        return 'fab fa-youtube';
+      case 'tiktok':
+        return 'fab fa-tiktok';
+      case 'twitter':
+        return 'fab fa-twitter';
+      case 'instagram':
+        return 'fab fa-instagram';
+      case 'twitch':
+        return 'fab fa-twitch';
+      default:
+        return 'fas fa-play';
+    }
+  };
 
   // Get featured videos (top 5 trending videos)
   const featuredVideos = trendingVideos.length > 0 
@@ -184,105 +204,192 @@ export default function Home() {
         )}
       </section>
       
-      {/* Videos Filtrables Section */}
-      <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Explorar Videos</h2>
-        
-        {/* Filters Container */}
-        <div className="bg-[#F8F8FA] border border-[#FDBE11]/30 rounded-lg p-4 mb-6">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <div className="flex-1">
-              <h3 className="text-sm font-medium mb-2 text-[#001C58]">Plataforma</h3>
-              <PlatformFilters 
-                selectedPlatform={platform} 
-                onSelectPlatform={(newPlatform) => setPlatform(newPlatform)} 
-              />
-            </div>
-            
-            <div className="flex-1">
-              <h3 className="text-sm font-medium mb-2 text-[#001C58]">Categoría</h3>
-              <CategoryFilters 
-                selectedCategory={category} 
-                onSelectCategory={(newCategory) => setCategory(newCategory)} 
-              />
-            </div>
+      {/* Videos por Plataforma - Nueva sección interactiva */}
+      <section className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-[#001C58] border-l-4 border-[#FDBE11] pl-3">
+            Descubre Contenido
+          </h2>
+          <div className="hidden md:flex space-x-1">
+            <CategoryFilters 
+              selectedCategory={category} 
+              onSelectCategory={(newCategory) => setCategory(newCategory)} 
+            />
           </div>
         </div>
         
-        {/* Videos Grid */}
-        {!isPlatformAvailable ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center border border-amber-200">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
-                <i className={`fab fa-${platform} text-3xl ${
-                  platform === 'tiktok' ? 'text-black' : 
-                  platform === 'twitter' ? 'text-blue-400' : 
-                  platform === 'instagram' ? 'text-pink-500' : ''
-                }`}></i>
-              </div>
-              <h3 className="text-xl font-semibold text-[#001C58] mb-2">Plataforma en desarrollo</h3>
-              <p className="text-gray-600 mb-4">
-                Estamos trabajando para incorporar contenido de <span className="font-semibold capitalize">{platform}</span> a nuestro Hub Madridista.
-              </p>
-              <p className="text-sm text-gray-500 mb-6">
-                Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.
-              </p>
-              <Button 
-                variant="outline" 
-                className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+        {/* Contenedor de tabs y filtros */}
+        <div className="bg-gradient-to-r from-[#001C58]/5 to-[#FDBE11]/5 rounded-xl p-4 lg:p-6">
+          {/* Tabs de plataformas */}
+          <div className="mb-6 flex justify-center border-b border-[#FDBE11]/20 pb-4">
+            <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 max-w-3xl">
+              <Button
+                variant={platform === "all" ? "default" : "ghost"}
+                className={`${platform === "all" 
+                  ? "bg-[#001C58] text-white border-[#FDBE11]" 
+                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
                 onClick={() => setPlatform("all")}
               >
-                Volver a todos los videos
+                <Layers className="h-4 w-4 mr-2" /> Todos
+              </Button>
+              
+              <Button
+                variant={platform === "youtube" ? "default" : "ghost"}
+                className={`${platform === "youtube" 
+                  ? "bg-red-600 text-white hover:bg-red-700" 
+                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+                onClick={() => setPlatform("youtube")}
+              >
+                <Youtube className="h-4 w-4 mr-2" /> YouTube
+              </Button>
+              
+              <Button
+                variant={platform === "twitch" ? "default" : "ghost"}
+                className={`${platform === "twitch" 
+                  ? "bg-purple-600 text-white hover:bg-purple-700" 
+                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+                onClick={() => setPlatform("twitch")}
+              >
+                <TwitchIcon className="h-4 w-4 mr-2" /> Twitch
+              </Button>
+              
+              <Button
+                variant={platform === "twitter" ? "default" : "ghost"}
+                className={`${platform === "twitter" 
+                  ? "bg-blue-500 text-white hover:bg-blue-600" 
+                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+                onClick={() => setPlatform("twitter")}
+                disabled={true}
+              >
+                <Twitter className="h-4 w-4 mr-2" /> Twitter
+              </Button>
+              
+              <Button
+                variant={platform === "instagram" ? "default" : "ghost"}
+                className={`${platform === "instagram" 
+                  ? "bg-pink-500 text-white hover:bg-pink-600" 
+                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+                onClick={() => setPlatform("instagram")}
+                disabled={true}
+              >
+                <Instagram className="h-4 w-4 mr-2" /> Instagram
+              </Button>
+              
+              <Button
+                variant={platform === "tiktok" ? "default" : "ghost"}
+                className={`${platform === "tiktok" 
+                  ? "bg-black text-white hover:bg-gray-900" 
+                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+                onClick={() => setPlatform("tiktok")}
+                disabled={true}
+              >
+                <TikTokIcon className="h-4 w-4 mr-2" /> TikTok
               </Button>
             </div>
           </div>
-        ) : isFilteredLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {[...Array(12)].map((_, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <Skeleton className="w-full aspect-video" />
-                <div className="p-3">
-                  <Skeleton className="h-5 w-full mb-3" />
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <Skeleton className="w-6 h-6 rounded-full" />
-                      <Skeleton className="h-4 w-24 ml-2" />
-                    </div>
-                    <Skeleton className="h-4 w-4" />
-                  </div>
-                  <Skeleton className="h-3 w-40 mt-2" />
+          
+          {/* Categorías en mobile */}
+          <div className="block md:hidden mb-6">
+            <h3 className="text-sm font-medium mb-2 text-[#001C58]">Filtrar por categoría:</h3>
+            <CategoryFilters 
+              selectedCategory={category} 
+              onSelectCategory={(newCategory) => setCategory(newCategory)} 
+            />
+          </div>
+          
+          {/* Contenido por plataforma */}
+          {!isPlatformAvailable ? (
+            <div className="bg-white rounded-lg shadow-md p-8 text-center border border-amber-200">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
+                  <i className={`fab fa-${platform} text-3xl ${
+                    platform === 'tiktok' ? 'text-black' : 
+                    platform === 'twitter' ? 'text-blue-400' : 
+                    platform === 'instagram' ? 'text-pink-500' : ''
+                  }`}></i>
                 </div>
+                <h3 className="text-xl font-semibold text-[#001C58] mb-2">Próximamente</h3>
+                <p className="text-gray-600 mb-4 max-w-xl mx-auto">
+                  Estamos trabajando para incorporar contenido de <span className="font-semibold capitalize">{platform}</span> a nuestro Hub Madridista.
+                </p>
+                <p className="text-sm text-gray-500 mb-6">
+                  Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                  onClick={() => setPlatform("all")}
+                >
+                  Ver todos los videos
+                </Button>
               </div>
-            ))}
-          </div>
-        ) : (platform !== "all" || category !== "all") && filteredVideos.length > 0 ? (
-          // Mostrar videos filtrados cuando se ha aplicado algún filtro
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredVideos.slice(0, 12).map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
-          </div>
-        ) : trendingVideos.length > 0 ? (
-          // Mostrar videos en tendencia cuando no hay filtros aplicados
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {trendingVideos.slice(0, 12).map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58]">No se encontraron videos disponibles.</p>
-          </div>
-        )}
+            </div>
+          ) : isFilteredLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+              {[...Array(12)].map((_, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <Skeleton className="w-full aspect-video" />
+                  <div className="p-3">
+                    <Skeleton className="h-5 w-full mb-3" />
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <Skeleton className="w-6 h-6 rounded-full" />
+                        <Skeleton className="h-4 w-24 ml-2" />
+                      </div>
+                      <Skeleton className="h-4 w-4" />
+                    </div>
+                    <Skeleton className="h-3 w-40 mt-2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (platform !== "all" || category !== "all") && filteredVideos.length > 0 ? (
+            // Videos filtrados con título y badge
+            <div>
+              <div className="flex items-center mb-4">
+                <h3 className="text-lg font-semibold text-[#001C58]">
+                  {platform !== "all" ? (
+                    <span className="flex items-center">
+                      <i className={`${getPlatformIcon(platform)} mr-2 ${
+                        platform === 'youtube' ? 'text-red-500' : 
+                        platform === 'twitch' ? 'text-purple-500' : ''
+                      }`}></i>
+                      Videos de {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                    </span>
+                  ) : (
+                    <span>Videos seleccionados</span>
+                  )}
+                </h3>
+                {category !== "all" && (
+                  <span className="ml-3 px-2 py-1 bg-[#FDBE11]/20 text-[#001C58] text-xs font-medium rounded-full">
+                    {category}
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+                {filteredVideos.slice(0, 12).map((video) => (
+                  <VideoCard key={video.id} video={video} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            // Videos trending por defecto
+            <div>
+              <h3 className="text-lg font-semibold text-[#001C58] mb-4">Videos destacados</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+                {trendingVideos.slice(0, 12).map((video) => (
+                  <VideoCard key={video.id} video={video} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
         
-        {/* Botón de ver más */}
-        <div className="mt-6 text-center">
+        {/* Botón de explorar más */}
+        <div className="mt-6 flex justify-center">
           <Link href="/videos">
-            <Button 
-              variant="outline" 
-              className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
-            >
-              Ver todos los videos
+            <Button className="bg-[#001C58] text-white hover:bg-[#001C58]/90 flex items-center gap-2">
+              Explorar más videos <ExternalLink className="h-4 w-4 ml-1" />
             </Button>
           </Link>
         </div>
