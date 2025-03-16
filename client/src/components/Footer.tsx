@@ -21,7 +21,7 @@ export default function Footer() {
         {/* Tres bloques principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           {/* Bloque 1: Información y logo */}
-          <div className="space-y-4">
+          <div className="p-6 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-[#2D2243] dark:to-[#251E36] shadow-sm space-y-4">
             <div className="flex items-center mb-4">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full blur-[2px] bg-gradient-to-r from-yellow-100 to-purple-100 dark:from-yellow-900/20 dark:to-purple-900/30 opacity-70"></div>
@@ -95,7 +95,7 @@ export default function Footer() {
           </div>
           
           {/* Bloque 2: Enlaces útiles */}
-          <div className="space-y-4">
+          <div className="p-6 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-[#2D2243] dark:to-[#251E36] shadow-sm space-y-4">
             <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{t('footer.usefulLinks')}</h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -164,7 +164,7 @@ export default function Footer() {
           </div>
           
           {/* Bloque 3: Newsletter */}
-          <div className="space-y-4">
+          <div className="p-6 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-[#2D2243] dark:to-[#251E36] shadow-sm space-y-4">
             <NewsletterSubscription />
           </div>
         </div>
