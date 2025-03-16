@@ -90,38 +90,50 @@ export async function sendNewVideoNotifications(
 
 /**
  * Verifica si hay suscripciones a un canal y envía notificaciones
- * para un nuevo video
+ * para un nuevo video. Comprueba y actualiza el estado de notificación
+ * para evitar notificaciones duplicadas
  * 
  * @param videoId ID interno del video en la base de datos
  * @returns Estadísticas de las notificaciones enviadas
  */
 export async function processVideoNotifications(
   videoId: number
-): Promise<{ total: number, emailsSent: number, errors: number, success: boolean }> {
+): Promise<{ total: number, emailsSent: number, errors: number, success: boolean, alreadyNotified: boolean }> {
   try {
     // Obtener información del video
     const video = await storage.getVideoById(videoId);
     if (!video) {
       console.error(`No se encontró video con ID ${videoId}`);
-      return { total: 0, emailsSent: 0, errors: 0, success: false };
+      return { total: 0, emailsSent: 0, errors: 0, success: false, alreadyNotified: false };
+    }
+    
+    // Verificar si el video ya ha sido notificado
+    if (video.isNotified) {
+      console.log(`El video ${video.title} (ID: ${video.id}) ya ha sido notificado anteriormente. Omitiendo notificaciones.`);
+      return { total: 0, emailsSent: 0, errors: 0, success: true, alreadyNotified: true };
     }
     
     // Obtener información del canal
     const channel = await storage.getChannelByExternalId(video.channelId);
     if (!channel) {
       console.error(`No se encontró canal con ID externo ${video.channelId}`);
-      return { total: 0, emailsSent: 0, errors: 0, success: false };
+      return { total: 0, emailsSent: 0, errors: 0, success: false, alreadyNotified: false };
     }
     
     // Enviar notificaciones
     const result = await sendNewVideoNotifications(video, channel);
     
+    // Marcar el video como notificado para evitar envíos duplicados en futuras importaciones
+    await storage.updateVideo(video.id, { isNotified: true });
+    console.log(`Video ${video.title} (ID: ${video.id}) marcado como notificado.`);
+    
     return {
       ...result,
-      success: true
+      success: true,
+      alreadyNotified: false
     };
   } catch (error) {
     console.error('Error en processVideoNotifications:', error);
-    return { total: 0, emailsSent: 0, errors: 0, success: false };
+    return { total: 0, emailsSent: 0, errors: 0, success: false, alreadyNotified: false };
   }
 }
