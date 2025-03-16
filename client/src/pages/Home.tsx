@@ -33,13 +33,13 @@ export default function Home() {
   const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const backgroundIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Array de imágenes de fondo para rotación usando URLs directas
-  const backgroundImages = [
-    "https://wallpapers.com/images/hd/real-madrid-victorian-era-logo-7h0xj47j2kd9k639.jpg",
-    "https://e00-marca.uecdn.es/assets/multimedia/imagenes/2022/05/27/16536534055004.jpg",
-    "https://www.realmadrid.com/img/horizontal_940px/comunicado-oficial_20231204035757.jpg",
-    "https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt10eb97f591bcf624/64e8a94fb3d7c75fcfa3bf37/GOAL_-_Blank_WEB_-_Facebook_-_2023-08-25T084641.939.jpg",
-    "https://www.realmadrid.com/img/horizontal_940px/benzema_20230828032423.jpg"
+  // Array de imágenes de banner con URLs directas
+  const bannerImages = [
+    "https://www.realmadrid.com/img/cc_1920px/sala-dde-trofeos_20220316033347.jpg",
+    "https://www.realmadrid.com/img/cc_1920px/vinicius-jr-y-rodrygo-celebrando-el-1-0-ante-el-manchester-city_20220505022807.jpg",
+    "https://www.realmadrid.com/img/cc_1920px/estadio-santiago-bernabeu_rm_20231102085307.jpg",
+    "https://www.realmadrid.com/img/cc_1920px/celebracion-14-champions-cibeles_20220530010107.jpg",
+    "https://www.realmadrid.com/img/cc_1920px/bale-gol-final-champions-kyiv_20210806124308.jpg"
   ];
 
   // Fetch trending videos (limitado a 20)
@@ -130,12 +130,12 @@ export default function Home() {
     };
   }, [featuredVideos.length]);
   
-  // Auto-rotate background images
+  // Auto-rotate banner images
   useEffect(() => {
-    if (backgroundImages.length > 1) {
+    if (bannerImages.length > 1) {
       backgroundIntervalRef.current = setInterval(() => {
         setCurrentBackgroundIndex((prevIndex) => 
-          prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+          prevIndex === bannerImages.length - 1 ? 0 : prevIndex + 1
         );
       }, 15000); // Rotate every 15 seconds
     }
@@ -145,7 +145,7 @@ export default function Home() {
         clearInterval(backgroundIntervalRef.current);
       }
     };
-  }, [backgroundImages.length]);
+  }, [bannerImages.length]);
 
   const handleNextFeatured = () => {
     if (carouselIntervalRef.current) {
@@ -166,15 +166,40 @@ export default function Home() {
   };
 
   return (
-    <main className="flex-1 bg-gray-100 bg-opacity-90 p-4 md:p-6 overflow-y-auto" 
+    <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
+      {/* Hero Banner con imágenes de fondo rotativas */}
+      <div className="relative w-full h-96 mb-8 overflow-hidden rounded-xl shadow-lg">
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000"
           style={{
-            backgroundImage: `url("${backgroundImages[currentBackgroundIndex]}")`,
+            backgroundImage: `url("${bannerImages[currentBackgroundIndex]}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            backgroundBlendMode: 'overlay',
-            transition: 'background-image 1s ease-in-out'
-          }}>
+          }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/70 to-transparent flex items-center">
+          <div className="text-white p-8 md:p-12 max-w-lg">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">Hub Madridista</h1>
+            <p className="text-lg md:text-xl mb-6">{t('home.heroSubtitle')}</p>
+            <Link href="/videos">
+              <Button className="bg-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/90 font-semibold">
+                {t('home.discoverVideos')}
+              </Button>
+            </Link>
+          </div>
+        </div>
+        {/* Indicadores de imagen actual */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {bannerImages.map((_, idx) => (
+            <span 
+              key={idx} 
+              className={`block h-2 w-2 rounded-full ${
+                idx === currentBackgroundIndex ? 'bg-[#FDBE11]' : 'bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
       {/* SEO optimizado para la página de inicio */}
       <SEO
         title="Hub Madridista | Agregador de contenido del Real Madrid"
@@ -273,13 +298,13 @@ export default function Home() {
         <div 
           className="bg-gradient-to-r from-[#001C58]/5 to-[#FDBE11]/5 rounded-xl p-4 lg:p-6"
           style={{
-            backgroundImage: `url("${backgroundImages[(currentBackgroundIndex + 1) % backgroundImages.length]}")`,
+            backgroundColor: '#f8f9fa',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundBlendMode: 'overlay',
             minHeight: '450px',
             position: 'relative',
-            transition: 'background-image 1s ease-in-out'
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
           }}>
           {/* Tabs de plataformas */}
           <div className="mb-6 flex justify-center border-b border-[#FDBE11]/20 pb-4">
@@ -561,14 +586,12 @@ export default function Home() {
       
       {/* Top Channels Section */}
       <section 
-        className="mb-10 p-6 rounded-xl" 
+        className="mb-10 p-6 rounded-xl bg-gradient-to-r from-[#001C58] to-[#0a337d]" 
         style={{
-          backgroundImage: `url("${backgroundImages[(currentBackgroundIndex + 2) % backgroundImages.length]}")`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           position: 'relative',
-          backgroundBlendMode: 'overlay',
-          transition: 'background-image 1s ease-in-out'
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 to-transparent rounded-xl"></div>
