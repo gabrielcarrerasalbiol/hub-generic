@@ -9,9 +9,10 @@ import { Heart, Star } from 'lucide-react';
 interface VideoCardProps {
   video: Video;
   compact?: boolean;
+  showFeaturedBadge?: boolean;
 }
 
-export default function VideoCard({ video, compact = false }: VideoCardProps) {
+export default function VideoCard({ video, compact = false, showFeaturedBadge = false }: VideoCardProps) {
   const { toast } = useToast();
   const [isFavorite, setIsFavorite] = useState(video.isFavorite || false);
   

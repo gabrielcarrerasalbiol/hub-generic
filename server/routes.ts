@@ -1611,6 +1611,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Endpoint para actualizar videos destacados en lote
+  app.post("/api/videos/featured/batch", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { videoIds, featured } = req.body;
+      
+      if (!Array.isArray(videoIds) || videoIds.length === 0) {
+        return res.status(400).json({ message: "Se requiere un array de IDs de videos" });
+      }
+      
+      // Verificar que featured sea un booleano
+      if (typeof featured !== 'boolean') {
+        return res.status(400).json({ message: "El valor de 'featured' debe ser un booleano" });
+      }
+      
+      // Actualizar cada video
+      const results = await Promise.all(
+        videoIds.map(async (videoId) => {
+          try {
+            const video = await storage.getVideoById(videoId);
+            if (!video) {
+              return { videoId, success: false, message: "Video no encontrado" };
+            }
+            
+            await storage.updateVideo(videoId, { 
+              featured,
+              featuredOrder: featured ? (video.featuredOrder || 0) : null
+            });
+            
+            return { videoId, success: true };
+          } catch (error) {
+            console.error(`Error al actualizar el video ${videoId}:`, error);
+            return { videoId, success: false, message: "Error al actualizar" };
+          }
+        })
+      );
+      
+      // Contar éxitos y fallos
+      const successCount = results.filter(r => r.success).length;
+      const failureCount = results.filter(r => !r.success).length;
+      
+      res.json({
+        message: `${successCount} videos han sido ${featured ? 'destacados' : 'quitados de destacados'} correctamente`,
+        results,
+        stats: { total: videoIds.length, success: successCount, failures: failureCount }
+      });
+    } catch (error) {
+      console.error("Error al actualizar videos destacados en lote:", error);
+      res.status(500).json({ message: "Error al procesar la solicitud" });
+    }
+  });
+
   // Importar videos de canales con videos destacados
   app.post("/api/videos/import-featured", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {

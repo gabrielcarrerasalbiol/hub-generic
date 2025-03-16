@@ -5,9 +5,10 @@ import UserManagement from '@/components/admin/UserManagement';
 import VideoManagement from '@/components/admin/VideoManagement';
 import PremiumChannelManagement from '@/components/admin/PremiumChannelManagement';
 import RecommendedChannelManagement from '@/components/admin/RecommendedChannelManagement';
+import FeaturedVideosManager from '@/components/admin/FeaturedVideosManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Users, Video, Activity, Star, Award, BarChart2 } from 'lucide-react';
+import { Users, Video, Activity, Star, Award, BarChart2, Sparkles } from 'lucide-react';
 
 export default function AdminPage() {
   const { isAdmin, checkAuth } = useAuth();
@@ -36,7 +37,7 @@ export default function AdminPage() {
       </div>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-5">
+        <TabsList className="mb-6 grid w-full grid-cols-6">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span>Usuarios</span>
@@ -44,6 +45,10 @@ export default function AdminPage() {
           <TabsTrigger value="videos" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
             <span>Vídeos</span>
+          </TabsTrigger>
+          <TabsTrigger value="featured" className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            <span>Destacados</span>
           </TabsTrigger>
           <TabsTrigger value="premium" className="flex items-center gap-2">
             <Star className="h-4 w-4" />
@@ -65,6 +70,10 @@ export default function AdminPage() {
         
         <TabsContent value="videos" className="space-y-6">
           <VideoManagement />
+        </TabsContent>
+        
+        <TabsContent value="featured" className="space-y-6">
+          <FeaturedVideosManager />
         </TabsContent>
         
         <TabsContent value="premium" className="space-y-6">
