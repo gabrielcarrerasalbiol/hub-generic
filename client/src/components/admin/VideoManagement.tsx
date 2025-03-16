@@ -88,21 +88,32 @@ export default function VideoManagement() {
   const VIDEOS_PER_PAGE = 20;
   
   // Obtener todos los videos con Header para indicar que es una solicitud admin
+  // Límite para la carga inicial y bloques adicionales
+  const [videosLimit, setVideosLimit] = useState(50);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  
   const {
     data: videos = [],
     isLoading: isLoadingVideos,
-    refetch: refetchVideos
+    refetch: refetchVideos,
+    isFetching
   } = useQuery({
-    queryKey: ['/api/videos'],
+    queryKey: ['/api/videos', videosLimit],
     staleTime: 1000 * 60 * 5, // 5 minutos
     queryFn: async () => {
-      return await apiRequest('/api/videos', {
+      return await apiRequest(`/api/videos?limit=${videosLimit}`, {
         headers: {
           'X-Admin-Request': 'true'
         }
       });
     }
   });
+  
+  // Función para cargar más videos
+  const loadMoreVideos = () => {
+    setIsLoadingMore(true);
+    setVideosLimit(prev => prev + 50);
+  };
 
   // Obtener todas las categorías
   const {
@@ -408,6 +419,13 @@ export default function VideoManagement() {
     }
   });
 
+  // Actualizar estado de carga cuando se completa la petición
+  useEffect(() => {
+    if (!isFetching && isLoadingMore) {
+      setIsLoadingMore(false);
+    }
+  }, [isFetching, isLoadingMore]);
+  
   // Preparar datos para edición
   useEffect(() => {
     if (editingVideo) {
@@ -934,7 +952,7 @@ export default function VideoManagement() {
             <div className="flex justify-between items-center mt-6">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
-                  Mostrando {Math.min((currentPage * itemsPerPage), sortedVideos.length) - ((currentPage - 1) * itemsPerPage)} de {sortedVideos.length} videos
+                  Mostrando {Math.min((currentPage * itemsPerPage), sortedVideos.length) - ((currentPage - 1) * itemsPerPage)} de {sortedVideos.length} videos filtrados
                 </span>
                 <Select
                   value={itemsPerPage.toString()}
@@ -992,6 +1010,30 @@ export default function VideoManagement() {
                   Última
                 </Button>
               </div>
+            </div>
+          )}
+          
+          {/* Botón de cargar más videos */}
+          {videos.length >= videosLimit && (
+            <div className="flex justify-center mt-6">
+              <Button 
+                variant="outline"
+                onClick={loadMoreVideos}
+                disabled={isFetching || isLoadingMore}
+                className="flex items-center gap-2"
+              >
+                {isFetching || isLoadingMore ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Cargando más videos...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4" />
+                    Cargar más videos
+                  </>
+                )}
+              </Button>
             </div>
           )}
         </>
