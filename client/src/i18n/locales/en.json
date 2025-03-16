@@ -253,6 +253,19 @@
     "aboutUs": "About Us",
     "disclaimer": "We are not officially affiliated with Real Madrid C.F."
   },
+  "newsletter": {
+    "title": "Subscribe to our newsletter",
+    "description": "Receive Real Madrid news and updates in your inbox",
+    "namePlaceholder": "Your name (optional)",
+    "emailPlaceholder": "Your email *",
+    "privacyConsent": "I accept the privacy policy and to receive communications.",
+    "subscribeButton": "Subscribe",
+    "sending": "Sending...",
+    "successTitle": "Subscription successful!",
+    "successMessage": "Thank you for subscribing to our newsletter.",
+    "errorTitle": "Subscription error",
+    "errorMessage": "An error has occurred. Please try again."
+  },
   "about": {
     "heroSlider": {
       "home": {
