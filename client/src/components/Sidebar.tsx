@@ -335,6 +335,39 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           </ul>
         </div>
         
+        {/* Interactive Games Section - Only for premium users */}
+        {isPremium && (
+          <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide mr-2">
+                  {t('sidebar.games')}
+                </h3>
+                <Crown className="w-4 h-4 text-[#FDBE11]" />
+              </div>
+            </div>
+            <ul className="mt-2 space-y-1">
+              <li>
+                <Link 
+                  href="/stats-game" 
+                  className={cn(
+                    "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                    isLinkActive("/stats-game") 
+                      ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
+                      : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                  )}
+                >
+                  <BarChart2 className={cn(
+                    "mr-3 h-4 w-4",
+                    isLinkActive("/stats-game") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  )} />
+                  {t('sidebar.stats_game')}
+                </Link>
+              </li>
+            </ul>
+          </div>
+        )}
+        
         {/* Polls Section */}
         <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
           <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">Encuestas</h3>
