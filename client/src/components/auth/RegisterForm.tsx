@@ -29,18 +29,18 @@ export default function RegisterForm() {
   // Schema with translated validation messages
   const registerSchema = z.object({
     username: z.string().min(3, {
-      message: t('validation.usernameMinLength'),
+      message: t('auth.validation.usernameMinLength'),
     }),
     password: z.string().min(6, {
-      message: t('validation.passwordMinLength'),
+      message: t('auth.validation.passwordMinLength'),
     }),
     confirmPassword: z.string(),
     email: z.string().email({
-      message: t('validation.emailValid'),
+      message: t('auth.validation.emailValid'),
     }).optional().or(z.literal('')),
     name: z.string().optional(),
   }).refine((data) => data.password === data.confirmPassword, {
-    message: t('validation.passwordsMatch'),
+    message: t('auth.validation.passwordsMatch'),
     path: ['confirmPassword'],
   });
 
@@ -68,22 +68,22 @@ export default function RegisterForm() {
       
       if (success) {
         toast({
-          title: t('registerPage.successTitle'),
-          description: t('registerPage.successMessage'),
+          title: t('auth.registerPage.successTitle'),
+          description: t('auth.registerPage.successMessage'),
         });
       } else {
         toast({
           variant: 'destructive',
-          title: t('registerPage.errorTitle'),
-          description: error || t('registerPage.errorMessage'),
+          title: t('auth.registerPage.errorTitle'),
+          description: error || t('auth.registerPage.errorMessage'),
         });
       }
     } catch (err: any) {
       console.error('Error durante el registro:', err);
       toast({
         variant: 'destructive',
-        title: t('registerPage.errorTitle'),
-        description: err.message || t('registerPage.errorMessage'),
+        title: t('auth.registerPage.errorTitle'),
+        description: err.message || t('auth.registerPage.errorMessage'),
       });
     } finally {
       setIsSubmitting(false);
