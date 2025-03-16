@@ -59,6 +59,7 @@ export default function SubscriptionsPage() {
       
       // Invalidar consultas para actualizar la UI
       queryClient.invalidateQueries({ queryKey: ['/api/subscriptions/channels'] });
+      queryClient.invalidateQueries({ queryKey: [`/api/channels/${channelId}/subscription`] });
       
       toast({
         title: enabled ? "Notificaciones activadas" : "Notificaciones desactivadas",

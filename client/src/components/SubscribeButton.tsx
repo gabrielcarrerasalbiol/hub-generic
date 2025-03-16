@@ -31,6 +31,12 @@ export default function SubscribeButton({
     }
   }, [channelId, user]);
 
+  // Inicializar estado desde props cuando se reciben nuevos valores
+  useEffect(() => {
+    setIsSubscribed(initialSubscribed);
+    setNotificationsEnabled(initialNotificationsEnabled);
+  }, [initialSubscribed, initialNotificationsEnabled]);
+
   // Verificar el estado actual de suscripción al canal
   const checkSubscriptionStatus = async () => {
     if (!checkAuth() || !channelId || channelId === 'undefined') return;
@@ -162,6 +168,12 @@ export default function SubscribeButton({
           ? "Ya no recibirás alertas de nuevos videos" 
           : "Recibirás alertas cuando se publiquen nuevos videos",
       });
+      
+      // Invalidar consultas relacionadas para actualizar la UI
+      queryClient.invalidateQueries({ queryKey: ['/api/subscriptions/channels'] });
+      if (channelId && channelId !== 'undefined') {
+        queryClient.invalidateQueries({ queryKey: [`/api/channels/${channelId}/subscription`] });
+      }
     } catch (error) {
       console.error("Error updating notification preferences:", error);
       toast({
