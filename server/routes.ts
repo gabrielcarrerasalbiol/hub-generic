@@ -2915,6 +2915,426 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Newsletter subscription endpoint
   app.post("/api/newsletter/subscribe", handleNewsletterSubscription);
 
+  // ========== ENCUESTAS ==========
+
+  // Obtener todas las encuestas (admin)
+  app.get("/api/polls", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 100;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const polls = await storage.getPolls(limit, offset);
+      res.json(polls);
+    } catch (error) {
+      console.error("Error obteniendo encuestas:", error);
+      res.status(500).json({ message: "Error al obtener las encuestas" });
+    }
+  });
+
+  // Obtener encuestas publicadas (públicas)
+  app.get("/api/polls/published", async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 100;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const polls = await storage.getPublishedPolls(limit, offset);
+      res.json(polls);
+    } catch (error) {
+      console.error("Error obteniendo encuestas publicadas:", error);
+      res.status(500).json({ message: "Error al obtener las encuestas publicadas" });
+    }
+  });
+
+  // Obtener la encuesta activa para el sidebar
+  app.get("/api/polls/active-sidebar", async (req: Request, res: Response) => {
+    try {
+      const activePoll = await storage.getActiveSidebarPoll();
+      
+      if (!activePoll) {
+        return res.status(404).json({ message: "No hay encuesta activa para mostrar en el sidebar" });
+      }
+      
+      // Verificar si el usuario ha votado
+      let hasVoted = false;
+      
+      if (req.user) {
+        hasVoted = await storage.hasUserVotedInPoll(req.user.id, activePoll.id);
+      }
+      
+      // Si el usuario ha votado o no está autenticado, enviar también los resultados
+      let results = [];
+      if (hasVoted || !req.user) {
+        results = await storage.getVoteResultsByPollId(activePoll.id);
+      }
+      
+      res.json({
+        poll: activePoll,
+        hasVoted,
+        results: hasVoted ? results : null
+      });
+    } catch (error) {
+      console.error("Error obteniendo encuesta activa:", error);
+      res.status(500).json({ message: "Error al obtener la encuesta activa" });
+    }
+  });
+
+  // Obtener una encuesta específica por ID
+  app.get("/api/polls/:id", async (req: Request, res: Response) => {
+    try {
+      const pollId = parseInt(req.params.id);
+      const poll = await storage.getPollById(pollId);
+      
+      if (!poll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      // Si la encuesta es borrador y el usuario no es admin, no permitir acceso
+      if (poll.status === "draft" && (!req.user || req.user.role !== "admin")) {
+        return res.status(403).json({ message: "No tienes permiso para ver esta encuesta" });
+      }
+      
+      // Verificar si el usuario ha votado
+      let hasVoted = false;
+      let results = [];
+      
+      if (req.user) {
+        hasVoted = await storage.hasUserVotedInPoll(req.user.id, poll.id);
+      }
+      
+      // Si el usuario ha votado o no está autenticado, enviar también los resultados
+      if (hasVoted || !req.user) {
+        results = await storage.getVoteResultsByPollId(poll.id);
+      }
+      
+      res.json({
+        poll,
+        hasVoted,
+        results: hasVoted ? results : null
+      });
+    } catch (error) {
+      console.error("Error obteniendo detalles de encuesta:", error);
+      res.status(500).json({ message: "Error al obtener los detalles de la encuesta" });
+    }
+  });
+
+  // Crear una nueva encuesta (admin)
+  app.post("/api/polls", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const pollData = insertPollSchema.parse(req.body);
+      const options = req.body.options || [];
+      
+      if (!options || options.length < 2) {
+        return res.status(400).json({ 
+          message: "La encuesta debe tener al menos 2 opciones de respuesta" 
+        });
+      }
+      
+      // Crear la encuesta
+      const poll = await storage.createPoll(pollData, options);
+      
+      // Obtener la encuesta con sus opciones
+      const pollWithOptions = await storage.getPollById(poll.id);
+      
+      res.status(201).json(pollWithOptions);
+    } catch (error) {
+      console.error("Error creando encuesta:", error);
+      
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Datos de encuesta inválidos", 
+          errors: error.errors 
+        });
+      }
+      
+      res.status(500).json({ message: "Error al crear la encuesta" });
+    }
+  });
+
+  // Actualizar una encuesta (admin)
+  app.put("/api/polls/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const pollId = parseInt(req.params.id);
+      
+      // Verificar que la encuesta existe
+      const existingPoll = await storage.getPollById(pollId);
+      if (!existingPoll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      // Validar y actualizar la encuesta
+      const pollData = insertPollSchema.partial().parse(req.body);
+      const updatedPoll = await storage.updatePoll(pollId, pollData);
+      
+      if (!updatedPoll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      // Manejar la actualización de opciones si se incluyen
+      if (req.body.options) {
+        const options = req.body.options;
+        
+        // Obtener las opciones actuales
+        const currentOptions = await storage.getPollOptions(pollId);
+        
+        // Para las opciones existentes, actualizar o eliminar
+        for (const currentOption of currentOptions) {
+          const matchingOption = options.find((opt: any) => opt.id === currentOption.id);
+          
+          if (matchingOption) {
+            // Actualizar la opción existente
+            await storage.updatePollOption(currentOption.id, {
+              text: matchingOption.text,
+              order: matchingOption.order || currentOption.order
+            });
+          } else {
+            // Eliminar la opción si ya no existe
+            await storage.deletePollOption(currentOption.id);
+          }
+        }
+        
+        // Añadir nuevas opciones
+        for (const option of options) {
+          if (!option.id) {
+            // Es una nueva opción
+            await storage.createPollOption({
+              pollId,
+              text: option.text,
+              order: option.order || 0
+            });
+          }
+        }
+      }
+      
+      // Obtener la encuesta actualizada con sus opciones
+      const pollWithOptions = await storage.getPollById(pollId);
+      
+      res.json(pollWithOptions);
+    } catch (error) {
+      console.error("Error actualizando encuesta:", error);
+      
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Datos de encuesta inválidos", 
+          errors: error.errors 
+        });
+      }
+      
+      res.status(500).json({ message: "Error al actualizar la encuesta" });
+    }
+  });
+
+  // Eliminar una encuesta (admin)
+  app.delete("/api/polls/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const pollId = parseInt(req.params.id);
+      
+      // Verificar que la encuesta existe
+      const existingPoll = await storage.getPollById(pollId);
+      if (!existingPoll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      // Eliminar la encuesta (las opciones y votos se eliminarán en cascada)
+      const deleted = await storage.deletePoll(pollId);
+      
+      if (!deleted) {
+        return res.status(500).json({ message: "Error al eliminar la encuesta" });
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error eliminando encuesta:", error);
+      res.status(500).json({ message: "Error al eliminar la encuesta" });
+    }
+  });
+
+  // Publicar una encuesta (admin)
+  app.post("/api/polls/:id/publish", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const pollId = parseInt(req.params.id);
+      
+      // Verificar que la encuesta existe
+      const existingPoll = await storage.getPollById(pollId);
+      if (!existingPoll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      // Publicar la encuesta
+      const updatedPoll = await storage.publishPoll(pollId);
+      
+      if (!updatedPoll) {
+        return res.status(500).json({ message: "Error al publicar la encuesta" });
+      }
+      
+      // Obtener la encuesta actualizada con sus opciones
+      const pollWithOptions = await storage.getPollById(pollId);
+      
+      res.json(pollWithOptions);
+    } catch (error) {
+      console.error("Error publicando encuesta:", error);
+      res.status(500).json({ message: "Error al publicar la encuesta" });
+    }
+  });
+
+  // Convertir una encuesta a borrador (admin)
+  app.post("/api/polls/:id/unpublish", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const pollId = parseInt(req.params.id);
+      
+      // Verificar que la encuesta existe
+      const existingPoll = await storage.getPollById(pollId);
+      if (!existingPoll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      // Despublicar la encuesta
+      const updatedPoll = await storage.unpublishPoll(pollId);
+      
+      if (!updatedPoll) {
+        return res.status(500).json({ message: "Error al despublicar la encuesta" });
+      }
+      
+      // Obtener la encuesta actualizada con sus opciones
+      const pollWithOptions = await storage.getPollById(pollId);
+      
+      res.json(pollWithOptions);
+    } catch (error) {
+      console.error("Error despublicando encuesta:", error);
+      res.status(500).json({ message: "Error al despublicar la encuesta" });
+    }
+  });
+
+  // Añadir una opción a una encuesta (admin)
+  app.post("/api/polls/:id/options", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const pollId = parseInt(req.params.id);
+      
+      // Verificar que la encuesta existe
+      const existingPoll = await storage.getPollById(pollId);
+      if (!existingPoll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      // Validar la nueva opción
+      const optionData = insertPollOptionSchema.omit({ pollId: true }).parse(req.body);
+      
+      // Crear la opción
+      const option = await storage.createPollOption({
+        pollId,
+        text: optionData.text,
+        order: optionData.order || 0
+      });
+      
+      res.status(201).json(option);
+    } catch (error) {
+      console.error("Error añadiendo opción a encuesta:", error);
+      
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Datos de opción inválidos", 
+          errors: error.errors 
+        });
+      }
+      
+      res.status(500).json({ message: "Error al añadir la opción a la encuesta" });
+    }
+  });
+
+  // Votar en una encuesta (usuario autenticado)
+  app.post("/api/polls/:id/vote", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const pollId = parseInt(req.params.id);
+      const optionId = parseInt(req.body.optionId);
+      
+      if (!optionId) {
+        return res.status(400).json({ message: "Se requiere una opción de voto" });
+      }
+      
+      // Verificar que la encuesta existe y está publicada
+      const existingPoll = await storage.getPollById(pollId);
+      if (!existingPoll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      if (existingPoll.status !== "published") {
+        return res.status(403).json({ message: "Esta encuesta no está disponible para votar" });
+      }
+      
+      // Verificar que la opción pertenece a la encuesta
+      const optionBelongsToPoll = existingPoll.options.some(opt => opt.id === optionId);
+      if (!optionBelongsToPoll) {
+        return res.status(400).json({ message: "La opción seleccionada no pertenece a esta encuesta" });
+      }
+      
+      // Verificar si el usuario ya ha votado
+      const hasVoted = await storage.hasUserVotedInPoll(req.user.id, pollId);
+      if (hasVoted) {
+        return res.status(400).json({ message: "Ya has votado en esta encuesta" });
+      }
+      
+      // Crear el voto
+      const vote = await storage.createPollVote({
+        pollId,
+        optionId,
+        userId: req.user.id
+      });
+      
+      // Obtener los resultados actualizados
+      const results = await storage.getVoteResultsByPollId(pollId);
+      
+      res.status(201).json({
+        success: true,
+        vote,
+        results
+      });
+    } catch (error) {
+      console.error("Error votando en encuesta:", error);
+      
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Datos de voto inválidos", 
+          errors: error.errors 
+        });
+      }
+      
+      // Manejar el error específico de voto duplicado
+      if (error instanceof Error && error.message === 'El usuario ya ha votado en esta encuesta') {
+        return res.status(400).json({ message: error.message });
+      }
+      
+      res.status(500).json({ message: "Error al votar en la encuesta" });
+    }
+  });
+
+  // Obtener resultados de una encuesta
+  app.get("/api/polls/:id/results", async (req: Request, res: Response) => {
+    try {
+      const pollId = parseInt(req.params.id);
+      
+      // Verificar que la encuesta existe
+      const existingPoll = await storage.getPollById(pollId);
+      if (!existingPoll) {
+        return res.status(404).json({ message: "Encuesta no encontrada" });
+      }
+      
+      // Si la encuesta es borrador y el usuario no es admin, no permitir acceso
+      if (existingPoll.status === "draft" && (!req.user || req.user.role !== "admin")) {
+        return res.status(403).json({ message: "No tienes permiso para ver los resultados de esta encuesta" });
+      }
+      
+      // Obtener los resultados
+      const results = await storage.getVoteResultsByPollId(pollId);
+      
+      res.json({
+        poll: existingPoll,
+        results
+      });
+    } catch (error) {
+      console.error("Error obteniendo resultados de encuesta:", error);
+      res.status(500).json({ message: "Error al obtener los resultados de la encuesta" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
