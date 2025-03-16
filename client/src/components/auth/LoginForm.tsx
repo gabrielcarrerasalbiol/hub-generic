@@ -54,24 +54,24 @@ export default function LoginForm() {
       
       if (success) {
         toast({
-          title: t('auth.loginPage.loginSuccess'),
-          description: t('auth.loginPage.loginSuccessMessage'),
+          title: t('loginPage.successTitle'),
+          description: t('loginPage.successMessage'),
         });
         // Use navigate instead of window.location
         navigate('/');
       } else {
         toast({
           variant: 'destructive',
-          title: t('auth.loginPage.loginError'),
-          description: error || t('auth.loginPage.loginErrorMessage'),
+          title: t('loginPage.errorTitle'),
+          description: error || t('loginPage.errorMessage'),
         });
       }
     } catch (err: any) {
       console.error('Error during login:', err);
       toast({
         variant: 'destructive',
-        title: t('auth.loginPage.loginError'),
-        description: err.message || t('auth.loginPage.loginErrorMessage'),
+        title: t('loginPage.errorTitle'),
+        description: err.message || t('loginPage.errorMessage'),
       });
     } finally {
       setIsSubmitting(false);

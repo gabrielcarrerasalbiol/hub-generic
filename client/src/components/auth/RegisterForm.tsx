@@ -173,7 +173,7 @@ export default function RegisterForm() {
             </div>
             
             <Button type="submit" className="w-full mt-4" disabled={isSubmitting}>
-              {isSubmitting ? t('auth.registerPage.submitting') : t('auth.registerPage.submitButton')}
+              {isSubmitting ? t('registerPage.submitting') : t('registerPage.submitButton')}
             </Button>
           </form>
         </Form>
@@ -182,9 +182,9 @@ export default function RegisterForm() {
         {/* SSO buttons temporarily hidden */}
         <div className="text-center w-full">
           <p className="text-sm">
-            {t('auth.registerPage.alreadyHaveAccount')}{' '}
+            {t('registerPage.alreadyHaveAccount')}{' '}
             <Link href="/login" className="text-primary underline">
-              {t('auth.registerPage.loginLink')}
+              {t('registerPage.loginLink')}
             </Link>
           </p>
         </div>
