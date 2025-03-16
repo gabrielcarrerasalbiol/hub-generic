@@ -18,7 +18,7 @@ import {
   CategoryType, PlatformType, insertFavoriteSchema, Video, User, 
   insertChannelSubscriptionSchema, insertNotificationSchema, 
   ChannelSubscription, Notification, ViewHistory,
-  InsertChannel, InsertRecommendedChannel
+  InsertChannel, InsertRecommendedChannel, InsertVideo
 } from "../shared/schema";
 import { isAuthenticated, isAdmin, isPremium } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';
@@ -510,25 +510,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid video ID" });
       }
       
+      console.log("PUT /api/videos/:id - Request body:", req.body);
+      
       const video = await storage.getVideoById(id);
       if (!video) {
         return res.status(404).json({ message: "Video not found" });
       }
       
+      // Verificar si hay datos en el cuerpo
+      if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ message: "No data provided for update" });
+      }
+      
       // Obtener datos a actualizar del cuerpo de la solicitud
       const { featured } = req.body;
+      console.log("Featured value:", featured, "Type:", typeof featured);
       
       // Si featured es booleano, actualizar featuredOrder también
       let updateData: Partial<InsertVideo> = {};
       
       if (typeof featured === 'boolean') {
         updateData = {
-          featured,
+          featured: featured,
           featuredOrder: featured ? (video.featuredOrder || 0) : null
         };
       } else {
         // Otros campos que podrían actualizarse en el futuro
-        updateData = req.body;
+        // Asegurarnos de que updateData no esté vacío
+        Object.keys(req.body).forEach(key => {
+          if (req.body[key] !== undefined) {
+            (updateData as any)[key] = req.body[key];
+          }
+        });
+      }
+      
+      console.log("Update data:", updateData);
+      
+      // Verificar que updateData no esté vacío
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({ message: "No valid fields to update" });
       }
       
       // Actualizar el video
