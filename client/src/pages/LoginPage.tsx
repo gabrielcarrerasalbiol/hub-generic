@@ -63,8 +63,6 @@ export default function LoginPage() {
               <span className="text-[#FDBE11]">{t('app.name').split(' ')[1] || ''}</span>
             </h1>
             <div className="h-1 w-24 bg-gradient-to-r from-[#001C58] to-[#FDBE11] mx-auto mb-6"></div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">{t('auth.loginPage.title')}</h2>
-            <p className="text-gray-600">{t('auth.loginPage.subtitle')}</p>
           </div>
           <LoginForm />
         </div>

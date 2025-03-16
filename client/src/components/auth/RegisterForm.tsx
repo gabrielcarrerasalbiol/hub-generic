@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import './FormStyle.css';
 
 import {
@@ -40,6 +41,7 @@ export default function RegisterForm() {
   const { register, error } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -90,10 +92,7 @@ export default function RegisterForm() {
   return (
     <Card className="w-full max-w-xl mx-auto">
       <CardHeader className="pb-4">
-        <CardTitle>Crear cuenta</CardTitle>
-        <CardDescription>
-          Regístrate para acceder a Hub Madridista
-        </CardDescription>
+        <CardTitle>{t('auth.registerPage.title')}</CardTitle>
       </CardHeader>
       <CardContent className="pt-2 pb-2">
         <Form {...form}>
@@ -104,7 +103,7 @@ export default function RegisterForm() {
                 name="username"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>Nombre de usuario*</FormLabel>
+                    <FormLabel>{t('auth.registerPage.usernameField')}</FormLabel>
                     <FormControl>
                       <Input placeholder="madridista123" {...field} className="h-9" />
                     </FormControl>
@@ -118,7 +117,7 @@ export default function RegisterForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>Correo electrónico</FormLabel>
+                    <FormLabel>{t('auth.registerPage.emailField')}</FormLabel>
                     <FormControl>
                       <Input type="email" placeholder="tu@email.com" {...field} className="h-9" />
                     </FormControl>

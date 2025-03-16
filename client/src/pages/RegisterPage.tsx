@@ -54,8 +54,6 @@ export default function RegisterPage() {
               <span className="text-[#FDBE11]">Madridista</span>
             </h1>
             <div className="h-1 w-24 bg-gradient-to-r from-[#001C58] to-[#FDBE11] mx-auto mb-6"></div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">Crear cuenta</h2>
-            <p className="text-gray-600">Únete para acceder a todo el contenido exclusivo</p>
           </div>
           <RegisterForm />
         </div>

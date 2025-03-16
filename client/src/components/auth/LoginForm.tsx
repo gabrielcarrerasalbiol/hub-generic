@@ -82,9 +82,6 @@ export default function LoginForm() {
     <Card className="w-full max-w-xl mx-auto">
       <CardHeader className="pb-4">
         <CardTitle>{t('auth.loginPage.title')}</CardTitle>
-        <CardDescription>
-          {t('auth.loginPage.subtitle')}
-        </CardDescription>
       </CardHeader>
       <CardContent className="pt-2 pb-2">
         <Form {...form}>
