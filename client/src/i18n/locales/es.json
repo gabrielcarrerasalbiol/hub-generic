@@ -27,7 +27,10 @@
     "register": "Registrarse",
     "notifications": "Notificaciones",
     "admin": "Administración",
-    "dashboard": "Panel de Control"
+    "dashboard": "Panel de Control",
+    "platform": "Plataforma",
+    "resetAuth": "Reiniciar sesión",
+    "resetAuthTitle": "Reiniciar autenticación si hay problemas con la sesión"
   },
   "home": {
     "featured": "Video Destacado",

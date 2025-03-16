@@ -27,7 +27,10 @@
     "register": "Register",
     "notifications": "Notifications",
     "admin": "Admin",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "platform": "Platform",
+    "resetAuth": "Reset session",
+    "resetAuthTitle": "Reset authentication if there are session issues"
   },
   "home": {
     "featured": "Featured Video",

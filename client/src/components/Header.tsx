@@ -114,10 +114,10 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           {/* Menú de Navegación Principal - Desktop */}
           <div className="hidden md:flex items-center space-x-6 mx-6">
             <Link href="/" className="font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300">
-              Home
+              {t('nav.home')}
             </Link>
             <Link href="/home" className="font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300">
-              Plataforma
+              {t('nav.platform')}
             </Link>
           </div>
           
@@ -204,7 +204,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                       <Link href="/notifications" className="w-full cursor-pointer">
                         <span className="flex items-center">
                           <Bell className="h-4 w-4 mr-2 text-blue-500" />
-                          Notificaciones
+                          {t('nav.notifications')}
                         </span>
                       </Link>
                     </DropdownMenuItem>
@@ -212,7 +212,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                       <Link href="/settings" className="w-full cursor-pointer">
                         <span className="flex items-center">
                           <Settings className="h-4 w-4 mr-2 text-gray-500" />
-                          Ajustes
+                          {t('nav.settings')}
                         </span>
                       </Link>
                     </DropdownMenuItem>
@@ -223,7 +223,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                           <Link href="/admin" className="w-full cursor-pointer">
                             <span className="flex items-center text-red-600">
                               <Shield className="h-4 w-4 mr-2" />
-                              Panel de Admin
+                              {t('nav.admin')}
                             </span>
                           </Link>
                         </DropdownMenuItem>
@@ -257,10 +257,10 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                 size="sm" 
                 className="ml-2 text-yellow-600 border-yellow-600 hover:bg-yellow-50"
                 onClick={handleResetAuth}
-                title="Reiniciar autenticación si hay problemas con la sesión"
+                title={t('nav.resetAuthTitle')}
               >
                 <RefreshCw className="h-4 w-4 mr-1" />
-                <span className="hidden md:inline">Reiniciar sesión</span>
+                <span className="hidden md:inline">{t('nav.resetAuth')}</span>
               </Button>
             )}
           </div>
@@ -273,14 +273,14 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
             className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/2"
           >
             <i className="fas fa-home text-lg mb-1"></i>
-            <span>Home</span>
+            <span>{t('nav.home')}</span>
           </Link>
           <Link 
             href="/home" 
             className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/2"
           >
             <i className="fas fa-tv text-lg mb-1"></i>
-            <span>Plataforma</span>
+            <span>{t('nav.platform')}</span>
           </Link>
         </div>
         
@@ -289,7 +289,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           <form onSubmit={handleSearch} className="relative w-full">
             <Input
               type="text"
-              placeholder="Buscar..."
+              placeholder={t('general.search')}
               className="w-full py-2 px-4 pr-10 rounded-full border border-[#FDBE11] focus:ring-[#001C58] focus:border-[#001C58]"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
