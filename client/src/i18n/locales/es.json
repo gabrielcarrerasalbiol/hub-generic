@@ -107,7 +107,49 @@
     "resetPassword": "Restablecer Contraseña",
     "newPassword": "Nueva Contraseña",
     "confirmPassword": "Confirmar Contraseña",
-    "currentPassword": "Contraseña Actual"
+    "currentPassword": "Contraseña Actual",
+    "loginPage": {
+      "title": "Iniciar Sesión",
+      "subtitle": "Accede a todo el contenido de tu equipo favorito",
+      "logging": "Iniciando sesión...",
+      "loginSuccess": "Inicio de sesión exitoso",
+      "loginSuccessMessage": "Has iniciado sesión correctamente.",
+      "loginError": "Error en el inicio de sesión",
+      "loginErrorMessage": "Usuario o contraseña incorrectos.",
+      "noAccount": "¿No tienes cuenta?",
+      "benefits": {
+        "title1": "Todo el contenido en un lugar",
+        "desc1": "Videos, noticias y contenido de todas las plataformas",
+        "title2": "Contenido personalizado",
+        "desc2": "Descubre contenido relevante para ti",
+        "title3": "Mantente al día",
+        "desc3": "No te pierdas ninguna actualización de tu equipo favorito"
+      }
+    },
+    "registerPage": {
+      "title": "Crear cuenta",
+      "subtitle": "Únete para acceder a todo el contenido exclusivo",
+      "registering": "Registrando...",
+      "createAccount": "Crear cuenta",
+      "registerSuccess": "Registro exitoso",
+      "registerSuccessMessage": "Tu cuenta ha sido creada correctamente.",
+      "registerError": "Error en el registro",
+      "registerErrorMessage": "No se pudo crear la cuenta. Intenta nuevamente.",
+      "alreadyAccount": "¿Ya tienes cuenta?",
+      "usernameField": "Nombre de usuario*",
+      "emailField": "Correo electrónico",
+      "nameField": "Nombre completo",
+      "passwordField": "Contraseña*",
+      "confirmPasswordField": "Confirmar contraseña*",
+      "benefits": {
+        "title1": "Contenido exclusivo",
+        "desc1": "Accede a contenido premium y guarda tus favoritos",
+        "title2": "Comunidad madridista",
+        "desc2": "Únete a la comunidad de aficionados",
+        "title3": "Beneficios premium",
+        "desc3": "Disfruta de todos los beneficios como miembro"
+      }
+    }
   },
   "settings": {
     "title": "Configuración",

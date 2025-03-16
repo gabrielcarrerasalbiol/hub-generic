@@ -107,7 +107,49 @@
     "resetPassword": "Reset Password",
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
-    "currentPassword": "Current Password"
+    "currentPassword": "Current Password",
+    "loginPage": {
+      "title": "Login",
+      "subtitle": "Access all the content of your favorite team",
+      "logging": "Logging in...",
+      "loginSuccess": "Login successful",
+      "loginSuccessMessage": "You have successfully logged in.",
+      "loginError": "Login error",
+      "loginErrorMessage": "Incorrect username or password.",
+      "noAccount": "Don't have an account?",
+      "benefits": {
+        "title1": "All content in one place",
+        "desc1": "Videos, news and content from all platforms",
+        "title2": "Personalized content",
+        "desc2": "Discover relevant content for you",
+        "title3": "Stay up to date",
+        "desc3": "Don't miss any updates from your favorite team"
+      }
+    },
+    "registerPage": {
+      "title": "Create account",
+      "subtitle": "Join to access all exclusive content",
+      "registering": "Registering...",
+      "createAccount": "Create account",
+      "registerSuccess": "Registration successful",
+      "registerSuccessMessage": "Your account has been created successfully.",
+      "registerError": "Registration error",
+      "registerErrorMessage": "Could not create the account. Please try again.",
+      "alreadyAccount": "Already have an account?",
+      "usernameField": "Username*",
+      "emailField": "Email",
+      "nameField": "Full name",
+      "passwordField": "Password*",
+      "confirmPasswordField": "Confirm password*",
+      "benefits": {
+        "title1": "Exclusive content",
+        "desc1": "Access premium content and save your favorites",
+        "title2": "Madridista community",
+        "desc2": "Join the fan community",
+        "title3": "Premium benefits",
+        "desc3": "Enjoy all benefits as a member"
+      }
+    }
   },
   "settings": {
     "title": "Settings",
