@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Trash2, Star, ArrowUpDown } from "lucide-react";
+import { PlusCircle, Trash2, Star, ArrowUpDown, Download } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Channel } from "../../../../shared/schema";
@@ -176,6 +176,33 @@ export default function RecommendedChannelManagement() {
       });
     },
   });
+  
+  // Importar videos de todos los canales recomendados
+  const importRecommendedChannelsVideosMutation = useMutation({
+    mutationFn: async (maxPerChannel: number = 20) => {
+      return apiRequest("/api/recommended-channels/import-videos", {
+        method: "POST",
+        body: JSON.stringify({ maxPerChannel }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Videos importados correctamente",
+        description: `${data.addedVideos} videos añadidos de ${data.totalVideos} encontrados en ${data.processedChannels} canales.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/videos"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error al importar videos",
+        description: error.message || "No se pudieron importar los videos de los canales recomendados",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleAddRecommendedChannel = () => {
     if (!selectedChannelId) {
@@ -224,6 +251,13 @@ export default function RecommendedChannelManagement() {
       id,
       data: { displayOrder: orderValue }
     });
+  };
+  
+  // Manejador para importar videos de canales recomendados
+  const handleImportRecommendedChannelsVideos = () => {
+    if (window.confirm("¿Estás seguro de que deseas importar videos de todos los canales recomendados? Esta operación puede tardar varios minutos dependiendo del número de canales.")) {
+      importRecommendedChannelsVideosMutation.mutate(20); // Importar 20 videos por canal por defecto
+    }
   };
 
   // Filter channels based on selected platform
@@ -335,6 +369,22 @@ export default function RecommendedChannelManagement() {
               </Table>
             )}
           </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button 
+              variant="default"
+              onClick={handleImportRecommendedChannelsVideos}
+              disabled={!sortedRecommendedChannels?.length || importRecommendedChannelsVideosMutation.isPending}
+            >
+              {importRecommendedChannelsVideosMutation.isPending 
+                ? "Importando videos..." 
+                : (
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Importar Videos de Canales Recomendados
+                  </>
+                )}
+            </Button>
+          </CardFooter>
         </Card>
       </TabsContent>
 
