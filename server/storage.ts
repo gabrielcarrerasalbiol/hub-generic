@@ -151,6 +151,40 @@ export interface IStorage {
   createPollVote(vote: InsertPollVote): Promise<PollVote>;
   hasUserVotedInPoll(userId: number, pollId: number): Promise<boolean>;
   deletePollVote(id: number): Promise<boolean>;
+  
+  // Players operations
+  getPlayers(limit?: number, offset?: number): Promise<Player[]>;
+  getPlayerById(id: number): Promise<Player | undefined>;
+  getPlayerByName(name: string): Promise<Player | undefined>;
+  getPlayersByPosition(position: string): Promise<Player[]>;
+  getActivePlayers(limit?: number): Promise<Player[]>;
+  createPlayer(player: InsertPlayer): Promise<Player>;
+  updatePlayer(id: number, playerData: Partial<InsertPlayer>): Promise<Player | undefined>;
+  deletePlayer(id: number): Promise<boolean>;
+  
+  // Player Stats operations
+  getPlayerStats(playerId: number, season?: string): Promise<PlayerStats[]>;
+  getPlayerStatById(id: number): Promise<PlayerStats | undefined>;
+  createPlayerStats(stats: InsertPlayerStats): Promise<PlayerStats>;
+  updatePlayerStats(id: number, statsData: Partial<InsertPlayerStats>): Promise<PlayerStats | undefined>;
+  deletePlayerStats(id: number): Promise<boolean>;
+  
+  // Stats Game operations
+  getStatsGames(userId: number, limit?: number): Promise<StatsGame[]>;
+  getStatsGameById(id: number): Promise<StatsGame | undefined>;
+  getStatsGameWithQuestions(gameId: number): Promise<(StatsGame & { questions: StatsGameQuestion[] }) | undefined>;
+  getUserTopScores(userId: number, limit?: number): Promise<StatsGame[]>;
+  createStatsGame(game: InsertStatsGame): Promise<StatsGame>;
+  updateStatsGame(id: number, gameData: Partial<InsertStatsGame>): Promise<StatsGame | undefined>;
+  completeStatsGame(id: number, score: number, correctAnswers: number): Promise<StatsGame | undefined>;
+  deleteStatsGame(id: number): Promise<boolean>;
+  
+  // Stats Game Question operations
+  getStatsGameQuestions(gameId: number): Promise<StatsGameQuestion[]>;
+  createStatsGameQuestion(question: InsertStatsGameQuestion): Promise<StatsGameQuestion>;
+  updateStatsGameQuestion(id: number, questionData: Partial<InsertStatsGameQuestion>): Promise<StatsGameQuestion | undefined>;
+  answerStatsGameQuestion(id: number, userSelection: number, isCorrect: boolean): Promise<StatsGameQuestion | undefined>;
+  getPlayerComparisonStats(player1Id: number, player2Id: number, statType: string, season?: string): Promise<{player1Value: number | null, player2Value: number | null, winnerId: number}>;
 }
 
 // Exportar la implementación de PostgreSQL

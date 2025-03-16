@@ -348,3 +348,112 @@ export type PollOption = typeof pollOptions.$inferSelect;
 
 export type InsertPollVote = z.infer<typeof insertPollVoteSchema>;
 export type PollVote = typeof pollVotes.$inferSelect;
+
+// Esquema para los jugadores del Real Madrid
+export const players = pgTable("players", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  position: text("position").notNull(),
+  number: integer("number"),
+  country: text("country").notNull(),
+  birthDate: text("birth_date"),
+  height: integer("height"), // en cm
+  weight: integer("weight"), // en kg
+  photo: text("photo"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertPlayerSchema = createInsertSchema(players).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Esquema para las estadísticas de los jugadores
+export const playerStats = pgTable("player_stats", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").references(() => players.id).notNull(),
+  season: text("season").notNull(), // Ejemplo: "2024/2025"
+  goals: integer("goals").default(0),
+  assists: integer("assists").default(0),
+  appearances: integer("appearances").default(0),
+  yellowCards: integer("yellow_cards").default(0),
+  redCards: integer("red_cards").default(0),
+  minutesPlayed: integer("minutes_played").default(0),
+  passAccuracy: integer("pass_accuracy"), // porcentaje
+  aerialDuelsWon: integer("aerial_duels_won").default(0),
+  rating: integer("rating"), // calificación del 1-100
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertPlayerStatsSchema = createInsertSchema(playerStats).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Esquema para registrar las rondas del mini-juego de estadísticas
+export const statsGames = pgTable("stats_games", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  score: integer("score").default(0),
+  totalQuestions: integer("total_questions").default(0),
+  correctAnswers: integer("correct_answers").default(0),
+  difficulty: text("difficulty", { enum: ["easy", "medium", "hard"] }).default("medium"),
+  completedAt: timestamp("completed_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertStatsGameSchema = createInsertSchema(statsGames).omit({
+  id: true,
+  completedAt: true,
+  createdAt: true,
+});
+
+// Esquema para las preguntas individuales del juego de estadísticas
+export const statsGameQuestions = pgTable("stats_game_questions", {
+  id: serial("id").primaryKey(),
+  gameId: integer("game_id").references(() => statsGames.id).notNull(),
+  player1Id: integer("player1_id").references(() => players.id).notNull(),
+  player2Id: integer("player2_id").references(() => players.id).notNull(),
+  statType: text("stat_type", { 
+    enum: ["goals", "assists", "appearances", "yellowCards", "redCards", 
+           "minutesPlayed", "passAccuracy", "aerialDuelsWon", "rating"] 
+  }).notNull(),
+  userSelection: integer("user_selection").references(() => players.id),
+  correctAnswer: integer("correct_answer").references(() => players.id).notNull(),
+  isCorrect: boolean("is_correct"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertStatsGameQuestionSchema = createInsertSchema(statsGameQuestions).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Tipos para los esquemas
+export type InsertPlayer = z.infer<typeof insertPlayerSchema>;
+export type Player = typeof players.$inferSelect;
+
+export type InsertPlayerStats = z.infer<typeof insertPlayerStatsSchema>;
+export type PlayerStats = typeof playerStats.$inferSelect;
+
+export type InsertStatsGame = z.infer<typeof insertStatsGameSchema>;
+export type StatsGame = typeof statsGames.$inferSelect;
+
+export type InsertStatsGameQuestion = z.infer<typeof insertStatsGameQuestionSchema>;
+export type StatsGameQuestion = typeof statsGameQuestions.$inferSelect;
+
+// Enum para los tipos de estadísticas
+export const StatType = z.enum([
+  "goals", "assists", "appearances", "yellowCards", "redCards", 
+  "minutesPlayed", "passAccuracy", "aerialDuelsWon", "rating"
+]);
+export type StatType = z.infer<typeof StatType>;
+
+// Enum para las dificultades del juego
+export const GameDifficulty = z.enum(["easy", "medium", "hard"]);
+export type GameDifficulty = z.infer<typeof GameDifficulty>;
