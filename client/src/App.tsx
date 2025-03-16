@@ -31,6 +31,7 @@ import SearchPage from "@/pages/SearchPage";
 import FeaturedChannelsPage from "@/pages/FeaturedChannelsPage";
 import PremiumChannelsPage from "@/pages/PremiumChannelsPage";
 import FeaturedVideosPage from "@/pages/FeaturedVideosPage";
+import FanMoodPage from "@/pages/FanMoodPage";
 import Layout from "@/components/Layout";
 import CookieConsent from "@/components/CookieConsent";
 import { useAuth } from '@/hooks/useAuth';

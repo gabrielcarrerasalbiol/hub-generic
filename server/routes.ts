@@ -2913,6 +2913,215 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Newsletter subscription endpoint
   app.post("/api/newsletter/subscribe", handleNewsletterSubscription);
 
+  // =========== FAN MOOD METER ROUTES ===========
+
+  // Get recent moods (public)
+  app.get("/api/fan-moods/recent", async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const moods = await storage.getRecentFanMoods(limit);
+      res.json(moods);
+    } catch (error) {
+      console.error("Error obteniendo estados de ánimo recientes:", error);
+      res.status(500).json({ message: "Error al obtener los estados de ánimo recientes" });
+    }
+  });
+
+  // Get current day mood stats (public)
+  app.get("/api/fan-moods/stats/today", async (req: Request, res: Response) => {
+    try {
+      const stats = await storage.getCurrentDayMoodStats();
+      res.json(stats || { message: "No hay estadísticas disponibles para hoy" });
+    } catch (error) {
+      console.error("Error obteniendo estadísticas de hoy:", error);
+      res.status(500).json({ message: "Error al obtener las estadísticas de hoy" });
+    }
+  });
+
+  // Get mood trend (public)
+  app.get("/api/fan-moods/trend", async (req: Request, res: Response) => {
+    try {
+      const days = parseInt(req.query.days as string) || 7;
+      const trend = await storage.getMoodTrend(days);
+      res.json(trend);
+    } catch (error) {
+      console.error("Error obteniendo tendencia de estados de ánimo:", error);
+      res.status(500).json({ message: "Error al obtener la tendencia de estados de ánimo" });
+    }
+  });
+
+  // Get mood stats for date range (public)
+  app.get("/api/fan-moods/stats/range", async (req: Request, res: Response) => {
+    try {
+      const startDate = req.query.startDate ? new Date(req.query.startDate as string) : new Date();
+      startDate.setDate(startDate.getDate() - 7); // Default to 7 days ago if not specified
+      
+      const endDate = req.query.endDate ? new Date(req.query.endDate as string) : new Date();
+      
+      // Normalizar las fechas
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+      
+      const stats = await storage.getMoodStatsForDateRange(startDate, endDate);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error obteniendo estadísticas por rango:", error);
+      res.status(500).json({ message: "Error al obtener las estadísticas por rango de fechas" });
+    }
+  });
+
+  // === AUTHENTICATED USER ROUTES ===
+
+  // Get current user's mood
+  app.get("/api/fan-moods/me/current", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const mood = await storage.getUserCurrentMood(req.user.id);
+      res.json(mood || { message: "No has registrado tu estado de ánimo aún" });
+    } catch (error) {
+      console.error("Error obteniendo estado de ánimo actual:", error);
+      res.status(500).json({ message: "Error al obtener tu estado de ánimo actual" });
+    }
+  });
+
+  // Get user's mood history
+  app.get("/api/fan-moods/me/history", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const moods = await storage.getFanMoodsByUserId(req.user.id, limit);
+      res.json(moods);
+    } catch (error) {
+      console.error("Error obteniendo historial de estados de ánimo:", error);
+      res.status(500).json({ message: "Error al obtener tu historial de estados de ánimo" });
+    }
+  });
+
+  // Create new mood
+  app.post("/api/fan-moods", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const { mood, reason, relatedToMatch, matchId } = req.body;
+      
+      // Validar que el mood sea uno de los permitidos
+      const validMoods = ['ecstatic', 'happy', 'hopeful', 'neutral', 'concerned', 'frustrated', 'disappointed'];
+      if (!validMoods.includes(mood)) {
+        return res.status(400).json({ message: "Estado de ánimo no válido" });
+      }
+      
+      const newMood = await storage.createFanMood({
+        userId: req.user.id,
+        mood,
+        reason: reason || null,
+        relatedToMatch: relatedToMatch || false,
+        matchId: matchId || null
+      });
+      
+      res.status(201).json(newMood);
+    } catch (error) {
+      console.error("Error creando estado de ánimo:", error);
+      res.status(500).json({ message: "Error al registrar tu estado de ánimo" });
+    }
+  });
+
+  // Update user's mood
+  app.put("/api/fan-moods/:moodId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const moodId = parseInt(req.params.moodId);
+      const { mood, reason, relatedToMatch, matchId } = req.body;
+      
+      // Verificar que el estado de ánimo existe
+      const existingMood = await storage.getFanMoodById(moodId);
+      if (!existingMood) {
+        return res.status(404).json({ message: "Estado de ánimo no encontrado" });
+      }
+      
+      // Verificar que el usuario es el propietario
+      if (existingMood.userId !== req.user.id) {
+        return res.status(403).json({ message: "No tienes permiso para modificar este estado de ánimo" });
+      }
+      
+      // Validar que el mood sea uno de los permitidos (si se está actualizando)
+      if (mood) {
+        const validMoods = ['ecstatic', 'happy', 'hopeful', 'neutral', 'concerned', 'frustrated', 'disappointed'];
+        if (!validMoods.includes(mood)) {
+          return res.status(400).json({ message: "Estado de ánimo no válido" });
+        }
+      }
+      
+      const updatedMood = await storage.updateFanMood(moodId, {
+        mood,
+        reason,
+        relatedToMatch,
+        matchId
+      });
+      
+      res.json(updatedMood);
+    } catch (error) {
+      console.error("Error actualizando estado de ánimo:", error);
+      res.status(500).json({ message: "Error al actualizar tu estado de ánimo" });
+    }
+  });
+
+  // Delete user's mood
+  app.delete("/api/fan-moods/:moodId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const moodId = parseInt(req.params.moodId);
+      
+      // Verificar que el estado de ánimo existe
+      const existingMood = await storage.getFanMoodById(moodId);
+      if (!existingMood) {
+        return res.status(404).json({ message: "Estado de ánimo no encontrado" });
+      }
+      
+      // Verificar que el usuario es el propietario o administrador
+      if (existingMood.userId !== req.user.id && req.user.role !== "admin") {
+        return res.status(403).json({ message: "No tienes permiso para eliminar este estado de ánimo" });
+      }
+      
+      const result = await storage.deleteFanMood(moodId);
+      
+      if (result) {
+        res.json({ success: true });
+      } else {
+        res.status(500).json({ message: "Error al eliminar el estado de ánimo" });
+      }
+    } catch (error) {
+      console.error("Error eliminando estado de ánimo:", error);
+      res.status(500).json({ message: "Error al eliminar el estado de ánimo" });
+    }
+  });
+
+  // === ADMIN ROUTES ===
+
+  // Get all moods (admin only)
+  app.get("/api/fan-moods", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 100;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const moods = await storage.getFanMoods(limit, offset);
+      res.json(moods);
+    } catch (error) {
+      console.error("Error obteniendo todos los estados de ánimo:", error);
+      res.status(500).json({ message: "Error al obtener todos los estados de ánimo" });
+    }
+  });
+
+  // Get all mood stats (admin only)
+  app.get("/api/fan-moods/stats", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 30;
+      
+      const stats = await storage.getMoodStats(limit);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error obteniendo estadísticas de estados de ánimo:", error);
+      res.status(500).json({ message: "Error al obtener las estadísticas de estados de ánimo" });
+    }
+  });
+
+  app.use((_req: Request, res: Response) => {
+    res.status(404).json({ message: "Ruta no encontrada" });
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
