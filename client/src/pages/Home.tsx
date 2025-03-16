@@ -358,10 +358,10 @@ export default function Home() {
                         platform === 'youtube' ? 'text-red-500' : 
                         platform === 'twitch' ? 'text-purple-500' : ''
                       }`}></i>
-                      Videos de {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                      {t('home.videosFrom', { platform: platform.charAt(0).toUpperCase() + platform.slice(1) })}
                     </span>
                   ) : (
-                    <span>Videos seleccionados</span>
+                    <span>{t('home.selectedVideos')}</span>
                   )}
                 </h3>
                 {category !== "all" && (
@@ -388,7 +388,7 @@ export default function Home() {
           ) : (
             // Videos trending por defecto
             <div>
-              <h3 className="text-lg font-semibold text-[#001C58] mb-4">Videos destacados</h3>
+              <h3 className="text-lg font-semibold text-[#001C58] mb-4">{t('home.featuredVideos')}</h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
                 {/* Ordenamos del más reciente al más antiguo basándonos en publishedAt */}
                 {[...trendingVideos]
@@ -411,7 +411,7 @@ export default function Home() {
         <div className="mt-6 flex justify-center">
           <Link href="/videos">
             <Button className="bg-[#001C58] text-white hover:bg-[#001C58]/90 flex items-center gap-2">
-              Explorar todos los videos <ExternalLink className="h-4 w-4 ml-1" />
+              {t('home.exploreAllVideos')} <ExternalLink className="h-4 w-4 ml-1" />
             </Button>
           </Link>
         </div>
@@ -419,7 +419,7 @@ export default function Home() {
 
       {/* Latest Videos Section */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Últimos Videos</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.latestVideos')}</h2>
         
         {isLatestLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -449,14 +449,14 @@ export default function Home() {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58] dark:text-white">No hay videos recientes disponibles en este momento.</p>
+            <p className="text-[#001C58] dark:text-white">{t('home.noRecentVideosAvailable')}</p>
           </div>
         )}
       </section>
       
       {/* Trending Videos Section */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Videos Populares Esta Semana</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.popularVideosThisWeek')}</h2>
         
         {isTrendingLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -486,7 +486,7 @@ export default function Home() {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58] dark:text-white">No hay videos populares disponibles en este momento.</p>
+            <p className="text-[#001C58] dark:text-white">{t('home.noPopularVideosAvailable')}</p>
           </div>
         )}
         
@@ -496,7 +496,7 @@ export default function Home() {
               variant="outline" 
               className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
             >
-              Ver más videos
+              {t('home.viewMoreVideos')}
             </Button>
           </Link>
         </div>
@@ -504,7 +504,7 @@ export default function Home() {
       
       {/* Top Channels Section */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Canales Recomendados</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.recommendedChannels')}</h2>
         
         {isChannelsLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
