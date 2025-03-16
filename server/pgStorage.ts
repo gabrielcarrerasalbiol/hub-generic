@@ -1362,9 +1362,10 @@ export class PgStorage implements IStorage {
   }
 
   async getVoteResultsByPollId(pollId: number): Promise<{
-    optionId: number,
-    optionText: string,
-    votes: number,
+    id: number,
+    text: string,
+    textEs?: string,
+    voteCount: number,
     percentage: number
   }[]> {
     try {
@@ -1389,9 +1390,10 @@ export class PgStorage implements IStorage {
         const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
         
         return {
-          optionId: option.id,
-          optionText: option.text,
-          votes,
+          id: option.id,
+          text: option.text,
+          textEs: option.textEs,
+          voteCount: votes,
           percentage
         };
       });
