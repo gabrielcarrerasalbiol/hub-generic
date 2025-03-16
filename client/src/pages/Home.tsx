@@ -35,11 +35,11 @@ export default function Home() {
   
   // Array de imágenes de fondo para rotación
   const backgroundImages = [
-    "/images/real-madrid-fans-back.jpg",
-    "/images/real-madrid-fans-stadium.jpg",
-    "/images/real-madrid-fans-singing.jpg",
-    "/images/real-madrid-fans.jpg",
-    "/images/real-madrid-hero.jpg"
+    "images/real-madrid-fans-back.jpg",
+    "images/real-madrid-fans-stadium.jpg",
+    "images/real-madrid-fans-singing.jpg",
+    "images/jlyIqXxWaWqjqekk-generated_image.jpg",
+    "images/real-madrid-ultimate-fan.jpg"
   ];
 
   // Fetch trending videos (limitado a 20)
