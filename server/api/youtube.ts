@@ -369,11 +369,17 @@ export function convertYouTubeVideoToSchema(
  * Convert YouTube channel to our schema format
  */
 export function convertYouTubeChannelToSchema(channel: YouTubeChannelResult['items'][0]): InsertChannel {
+  // Verificar si el canal tiene banner configurado
+  const hasBanner = channel.brandingSettings?.image?.bannerExternalUrl;
+  if (!hasBanner) {
+    console.log(`El canal ${channel.snippet.title} no tiene banner configurado en YouTube`);
+  }
+
   return {
     title: channel.snippet.title,
     description: channel.snippet.description,
     thumbnailUrl: channel.snippet.thumbnails.high.url,
-    bannerUrl: channel.brandingSettings?.image?.bannerExternalUrl || '',
+    bannerUrl: hasBanner || null, // Usar null explícitamente cuando no hay banner
     platform: 'YouTube',
     externalId: channel.id,
     subscriberCount: parseInt(channel.statistics.subscriberCount, 10) || 0,

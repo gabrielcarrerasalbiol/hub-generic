@@ -1443,11 +1443,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const channel = await storage.getChannelById(premiumChannel.channelId);
           if (!channel) return null;
           
+          // Intentar actualizar la información del canal si es de YouTube y no tiene banner
+          if (channel.platform === "YouTube" && channel.externalId && !channel.bannerUrl) {
+            console.log(`Intentando actualizar información del canal ${channel.title} (ID: ${channel.id})`);
+            try {
+              const channelDetails = await getYouTubeChannelDetails([channel.externalId]);
+              if (channelDetails.items && channelDetails.items.length > 0) {
+                const updatedData = convertYouTubeChannelToSchema(channelDetails.items[0]);
+                await storage.updateChannel(channel.id, {
+                  bannerUrl: updatedData.bannerUrl,
+                  thumbnailUrl: updatedData.thumbnailUrl,
+                  subscriberCount: updatedData.subscriberCount,
+                  videoCount: updatedData.videoCount
+                });
+                // Actualizar los datos locales con la nueva información
+                channel.bannerUrl = updatedData.bannerUrl;
+              }
+            } catch (error) {
+              console.error(`Error al actualizar información del canal ${channel.title}:`, error);
+            }
+          }
+          
           return {
             id: channel.id,
             title: channel.title,
             description: channel.description,
             thumbnailUrl: channel.thumbnailUrl,
+            bannerUrl: channel.bannerUrl, // Incluir bannerUrl en la respuesta
             platform: channel.platform,
             externalId: channel.externalId,
             priority: premiumChannel.priority
