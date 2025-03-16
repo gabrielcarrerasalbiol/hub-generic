@@ -109,6 +109,16 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
       return;
     }
 
+    // Si el usuario ya votó, simplemente mostrar los resultados
+    if (poll?.isVoted) {
+      fetchResults(poll.id);
+      toast({
+        title: t("poll.alreadyVoted"),
+        description: t("poll.viewingResults"),
+      });
+      return;
+    }
+
     if (!selectedOption || !poll) return;
 
     try {
@@ -142,6 +152,13 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
   useEffect(() => {
     fetchActivePoll();
   }, []);
+  
+  // Si ya votó, mostrar resultados automáticamente
+  useEffect(() => {
+    if (poll?.isVoted && !showResults) {
+      fetchResults(poll.id);
+    }
+  }, [poll]);
 
   if (loadingPoll) {
     return (
@@ -262,7 +279,12 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
                   <div className="mt-3 text-xs text-center text-muted-foreground">
                     <button 
                       className="text-primary underline hover:text-primary/80"
-                      onClick={() => openLoginDialog()}
+                      onClick={() => {
+                        toast({
+                          title: t("poll.loginRequired"),
+                          description: t("poll.loginToVoteMessage"),
+                        });
+                      }}
                     >
                       {t("poll.loginToVote")}
                     </button>
