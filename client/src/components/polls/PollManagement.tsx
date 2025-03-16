@@ -152,10 +152,24 @@ export default function PollManagement() {
 
   // Mutación para crear encuesta
   const createPoll = useMutation({
-    mutationFn: (data: PollFormValues) => apiRequest('/api/polls', {
-      method: 'POST',
-      data
-    }),
+    mutationFn: (data: PollFormValues) => {
+      // Asegurarnos de que las opciones tienen el formato correcto
+      const payload = {
+        ...data,
+        options: data.options.map(option => ({
+          text: option.text,
+          textEs: option.textEs,
+          order: option.order
+        }))
+      };
+      
+      console.log('Enviando datos de encuesta:', payload);
+      
+      return apiRequest('/api/polls', {
+        method: 'POST',
+        data: payload
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/polls'] });
       toast({
