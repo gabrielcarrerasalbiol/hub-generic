@@ -79,6 +79,7 @@ export default function VideoManagement() {
   const [isGeneratingSummaries, setIsGeneratingSummaries] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<string>("youtube");
   const [isImportingByPlatform, setIsImportingByPlatform] = useState(false);
+  const [isImportingFeatured, setIsImportingFeatured] = useState(false);
   const [platformFilter, setPlatformFilter] = useState<string>("all");
   
   // Estado para paginación
@@ -377,6 +378,34 @@ export default function VideoManagement() {
       setIsImportingByPlatform(false);
     }
   });
+  
+  // Mutación para importar videos de canales destacados
+  const importFeaturedVideosMutation = useMutation({
+    mutationFn: (maxPerChannel: number) => {
+      setIsImportingFeatured(true);
+      return apiRequest('/api/videos/import-featured', {
+        method: 'POST',
+        body: JSON.stringify({ maxPerChannel })
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
+      toast({
+        title: "Importación de canales destacados completada",
+        description: `${data.addedVideos} nuevos vídeos añadidos de ${data.totalVideos} encontrados en ${data.processedChannels} de ${data.totalChannels} canales`,
+      });
+      setIsImportingFeatured(false);
+    },
+    onError: (error: any) => {
+      console.error("Error importing featured channel videos:", error);
+      toast({
+        title: "Error",
+        description: error?.details || "No se pudieron importar videos de canales destacados. Verifica las claves de API.",
+        variant: "destructive",
+      });
+      setIsImportingFeatured(false);
+    }
+  });
 
   // Preparar datos para edición
   useEffect(() => {
@@ -534,6 +563,7 @@ export default function VideoManagement() {
             isFetchingNewVideos={isFetchingNewVideos}
             isGeneratingSummaries={isGeneratingSummaries}
             isImportingByPlatform={isImportingByPlatform}
+            isImportingFeatured={isImportingFeatured}
             selectedVideos={selectedVideos}
             selectedPlatform={selectedPlatform}
             fetchVideoCount={fetchVideoCount}
@@ -546,6 +576,7 @@ export default function VideoManagement() {
             fetchNewVideosMutation={fetchNewVideosMutation}
             fetchAllNewContentMutation={fetchAllNewContentMutation}
             importByPlatformMutation={importByPlatformMutation}
+            importFeaturedVideosMutation={importFeaturedVideosMutation}
             deleteMultipleVideosMutation={deleteMultipleVideosMutation}
           />
         </div>

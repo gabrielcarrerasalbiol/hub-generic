@@ -28,7 +28,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, RefreshCcw, FileText, Download, MoreHorizontal, PlayCircle, FileWarning, Loader2 } from 'lucide-react';
+import { Search, RefreshCcw, FileText, Download, MoreHorizontal, PlayCircle, FileWarning, Loader2, Star } from 'lucide-react';
 
 interface AdminActionMenusProps {
   // Estados
@@ -36,6 +36,7 @@ interface AdminActionMenusProps {
   isFetchingNewVideos: boolean;
   isGeneratingSummaries: boolean;
   isImportingByPlatform: boolean;
+  isImportingFeatured?: boolean;
   selectedVideos: number[];
   selectedPlatform: string;
   fetchVideoCount: number;
@@ -64,6 +65,9 @@ interface AdminActionMenusProps {
   importByPlatformMutation: {
     mutate: (params: {platform: string, maxResults: number}) => void;
   };
+  importFeaturedVideosMutation?: {
+    mutate: (count: number) => void;
+  };
   deleteMultipleVideosMutation: {
     mutate: (videoIds: number[]) => void;
   };
@@ -74,6 +78,7 @@ export function AdminActionMenus({
   isFetchingNewVideos,
   isGeneratingSummaries,
   isImportingByPlatform,
+  isImportingFeatured,
   selectedVideos,
   selectedPlatform,
   fetchVideoCount,
@@ -86,6 +91,7 @@ export function AdminActionMenus({
   fetchNewVideosMutation,
   fetchAllNewContentMutation,
   importByPlatformMutation,
+  importFeaturedVideosMutation,
   deleteMultipleVideosMutation,
 }: AdminActionMenusProps) {
   return (
@@ -328,6 +334,54 @@ export function AdminActionMenus({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          
+          {/* Importar videos de canales destacados */}
+          {importFeaturedVideosMutation && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={isImportingFeatured}>
+                  <Star className="mr-2 h-4 w-4" />
+                  {isImportingFeatured ? "Importando destacados..." : "Importar de Destacados"}
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Importar más videos de canales destacados</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta acción importará videos adicionales de los canales que ya tienen videos destacados en la plataforma.
+                    Esto te permitirá mantener actualizada la sección de destacados con el contenido más reciente.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="py-4">
+                  <div className="flex items-center space-x-4">
+                    <Label htmlFor="featuredImportCount">Máximo videos por canal:</Label>
+                    <div className="flex-1">
+                      <Slider
+                        id="featuredImportCount"
+                        min={5}
+                        max={30}
+                        step={5}
+                        value={[fetchVideoCount]}
+                        onValueChange={(values: number[]) => setFetchVideoCount(values[0])}
+                      />
+                    </div>
+                    <div className="w-12 text-center">
+                      <span className="text-lg font-medium">{fetchVideoCount}</span>
+                    </div>
+                  </div>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={() => importFeaturedVideosMutation.mutate(fetchVideoCount)}
+                    className="bg-yellow-600 hover:bg-yellow-700"
+                  >
+                    Importar Videos Destacados
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
           
           {/* Importar por plataforma específica */}
           <AlertDialog>
