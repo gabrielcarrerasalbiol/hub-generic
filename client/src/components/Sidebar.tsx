@@ -100,6 +100,20 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               </Link>
             </li>
             <li>
+              <Link href="/featured-videos" className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/featured-videos") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                )}>
+                <Crown className={cn(
+                  "mr-3 h-4 w-4",
+                  isLinkActive("/featured-videos") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                )} />
+                Destacados
+              </Link>
+            </li>
+            <li>
               <Link href="/favorites" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/favorites") 
