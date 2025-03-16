@@ -20,12 +20,15 @@ import {
   ChannelSubscription, Notification, ViewHistory,
   InsertChannel, InsertRecommendedChannel, InsertVideo,
   insertPollSchema, insertPollOptionSchema, insertPollVoteSchema,
-  Poll, PollOption, PollVote
+  Poll, PollOption, PollVote,
+  insertPlayerSchema, insertPlayerStatsSchema, insertStatsGameSchema, insertStatsGameQuestionSchema,
+  Player, PlayerStats, StatsGame, StatsGameQuestion, StatType, GameDifficulty
 } from "../shared/schema";
 import { isAuthenticated, isAdmin, isPremium } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';
 import { isValidEmail } from './api/emailService';
 import { sendShareEmail } from './api/shareService';
+import { generateGameQuestions, evaluateAnswer, calculateScore } from './api/playerStatsGame';
 
 // Demo user ID - el ID actual puede variar si se elimina y se vuelve a crear
 // Se debe recuperar dinámicamente cada vez que se necesita
@@ -3774,5 +3777,321 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  // Mini-juego de estadísticas de jugadores
+  
+  // Obtener todos los jugadores
+  app.get("/api/players", async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const players = await storage.getPlayers(limit);
+      res.json(players);
+    } catch (error) {
+      console.error("Error fetching players:", error);
+      res.status(500).json({ message: "Failed to fetch players" });
+    }
+  });
+
+  // Obtener un jugador por ID
+  app.get("/api/players/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const player = await storage.getPlayerById(id);
+      
+      if (!player) {
+        return res.status(404).json({ message: "Player not found" });
+      }
+      
+      res.json(player);
+    } catch (error) {
+      console.error("Error fetching player:", error);
+      res.status(500).json({ message: "Failed to fetch player" });
+    }
+  });
+
+  // Crear un nuevo jugador (solo admin)
+  app.post("/api/players", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const playerData = insertPlayerSchema.parse(req.body);
+      const player = await storage.createPlayer(playerData);
+      res.status(201).json(player);
+    } catch (error) {
+      console.error("Error creating player:", error);
+      if (error instanceof ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid player data",
+          errors: error.errors
+        });
+      }
+      res.status(500).json({ message: "Failed to create player" });
+    }
+  });
+
+  // Actualizar un jugador (solo admin)
+  app.put("/api/players/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const playerData = req.body;
+      
+      const player = await storage.updatePlayer(id, playerData);
+      
+      if (!player) {
+        return res.status(404).json({ message: "Player not found" });
+      }
+      
+      res.json(player);
+    } catch (error) {
+      console.error("Error updating player:", error);
+      res.status(500).json({ message: "Failed to update player" });
+    }
+  });
+
+  // Eliminar un jugador (solo admin)
+  app.delete("/api/players/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deletePlayer(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Player not found" });
+      }
+      
+      res.json({ message: "Player deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting player:", error);
+      res.status(500).json({ message: "Failed to delete player" });
+    }
+  });
+
+  // Obtener estadísticas de un jugador
+  app.get("/api/players/:id/stats", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const season = req.query.season as string;
+      
+      const stats = await storage.getPlayerStats(id, season);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching player stats:", error);
+      res.status(500).json({ message: "Failed to fetch player stats" });
+    }
+  });
+
+  // Actualizar estadísticas de un jugador (solo admin)
+  app.put("/api/players/:id/stats", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const statsData = req.body;
+      const season = req.query.season as string || "2023-2024";
+      
+      const stats = await storage.updatePlayerStats(id, statsData, season);
+      
+      if (!stats) {
+        return res.status(404).json({ message: "Player or stats not found" });
+      }
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("Error updating player stats:", error);
+      res.status(500).json({ message: "Failed to update player stats" });
+    }
+  });
+
+  // Iniciar un nuevo juego de estadísticas
+  app.post("/api/stats-game", async (req: Request, res: Response) => {
+    try {
+      const { difficulty = "medium", count = 5 } = req.body;
+      
+      if (!GameDifficulty.safeParse(difficulty).success) {
+        return res.status(400).json({ message: "Invalid difficulty level" });
+      }
+      
+      // Generar preguntas para el juego usando DeepSeek AI
+      const questions = await generateGameQuestions(difficulty, count);
+      
+      if (!questions || questions.length === 0) {
+        return res.status(500).json({ message: "Failed to generate game questions" });
+      }
+      
+      // Crear un nuevo juego en la base de datos
+      const newGame: InsertStatsGame = {
+        userId: req.user?.id || null,
+        difficulty: difficulty,
+        totalQuestions: questions.length,
+        correctAnswers: 0,
+        score: 0,
+        completed: false,
+        createdAt: new Date()
+      };
+      
+      const game = await storage.createStatsGame(newGame);
+      
+      // Guardar las preguntas generadas
+      const savedQuestions = [];
+      for (const question of questions) {
+        const newQuestion: InsertStatsGameQuestion = {
+          gameId: game.id,
+          question: question.question,
+          player1Id: question.player1.id,
+          player2Id: question.player2.id,
+          statType: question.statType,
+          correctAnswerId: question.correctAnswerId,
+          hint: question.hint || null,
+          explanation: question.explanation || null,
+          userAnswerId: null,
+          createdAt: new Date()
+        };
+        
+        const savedQuestion = await storage.createStatsGameQuestion(newQuestion);
+        savedQuestions.push(savedQuestion);
+      }
+      
+      res.status(201).json({
+        game,
+        questions: savedQuestions.map(q => ({
+          id: q.id,
+          question: q.question,
+          player1: questions.find(orig => orig.player1.id === q.player1Id)?.player1,
+          player2: questions.find(orig => orig.player2.id === q.player2Id)?.player2,
+          statType: q.statType,
+          hint: q.hint
+        }))
+      });
+    } catch (error) {
+      console.error("Error creating stats game:", error);
+      res.status(500).json({ message: "Failed to create stats game" });
+    }
+  });
+
+  // Responder a una pregunta del juego
+  app.post("/api/stats-game/:gameId/questions/:questionId/answer", async (req: Request, res: Response) => {
+    try {
+      const gameId = parseInt(req.params.gameId);
+      const questionId = parseInt(req.params.questionId);
+      const { playerId } = req.body;
+      
+      if (!playerId) {
+        return res.status(400).json({ message: "Player ID is required" });
+      }
+      
+      // Obtener la pregunta
+      const question = await storage.getStatsGameQuestionById(questionId);
+      
+      if (!question || question.gameId !== gameId) {
+        return res.status(404).json({ message: "Question not found" });
+      }
+      
+      // Verificar si la pregunta ya fue respondida
+      if (question.userAnswerId !== null) {
+        return res.status(400).json({ message: "Question already answered" });
+      }
+      
+      // Evaluar la respuesta
+      const isCorrect = evaluateAnswer(playerId, question.correctAnswerId);
+      
+      // Actualizar la pregunta con la respuesta del usuario
+      const updatedQuestion = await storage.updateStatsGameQuestion(questionId, {
+        userAnswerId: playerId
+      });
+      
+      // Obtener el juego
+      const game = await storage.getStatsGameById(gameId);
+      
+      if (!game) {
+        return res.status(404).json({ message: "Game not found" });
+      }
+      
+      // Actualizar el contador de respuestas correctas si la respuesta es correcta
+      if (isCorrect) {
+        await storage.updateStatsGame(gameId, {
+          correctAnswers: (game.correctAnswers || 0) + 1
+        });
+      }
+      
+      // Verificar si todas las preguntas han sido respondidas
+      const allQuestions = await storage.getStatsGameQuestions(gameId);
+      const allAnswered = allQuestions.every(q => q.userAnswerId !== null);
+      
+      // Si todas las preguntas han sido respondidas, marcar el juego como completado
+      // y calcular la puntuación final
+      if (allAnswered) {
+        const updatedGame = await storage.getStatsGameById(gameId);
+        
+        if (updatedGame) {
+          const finalScore = calculateScore(
+            updatedGame.correctAnswers || 0,
+            updatedGame.totalQuestions,
+            updatedGame.difficulty
+          );
+          
+          await storage.updateStatsGame(gameId, {
+            completed: true,
+            score: finalScore,
+            completedAt: new Date()
+          });
+        }
+      }
+      
+      // Obtener la explicación para esta pregunta
+      const explanation = question.explanation;
+      
+      res.json({
+        isCorrect,
+        correctAnswerId: question.correctAnswerId,
+        explanation,
+        allAnswered
+      });
+    } catch (error) {
+      console.error("Error answering question:", error);
+      res.status(500).json({ message: "Failed to process answer" });
+    }
+  });
+
+  // Obtener resultados del juego
+  app.get("/api/stats-game/:gameId/results", async (req: Request, res: Response) => {
+    try {
+      const gameId = parseInt(req.params.gameId);
+      
+      // Obtener el juego
+      const game = await storage.getStatsGameById(gameId);
+      
+      if (!game) {
+        return res.status(404).json({ message: "Game not found" });
+      }
+      
+      // Obtener todas las preguntas del juego con sus respuestas
+      const questions = await storage.getStatsGameQuestions(gameId);
+      
+      // Preparar los datos de los jugadores para cada pregunta
+      const questionsWithPlayerData = await Promise.all(
+        questions.map(async (question) => {
+          const player1 = await storage.getPlayerById(question.player1Id);
+          const player2 = await storage.getPlayerById(question.player2Id);
+          
+          return {
+            ...question,
+            player1,
+            player2,
+            isCorrect: question.userAnswerId === question.correctAnswerId
+          };
+        })
+      );
+      
+      res.json({
+        game,
+        questions: questionsWithPlayerData,
+        summary: {
+          totalQuestions: game.totalQuestions,
+          correctAnswers: game.correctAnswers,
+          score: game.score,
+          difficulty: game.difficulty,
+          completed: game.completed
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching game results:", error);
+      res.status(500).json({ message: "Failed to fetch game results" });
+    }
+  });
+
   return httpServer;
 }

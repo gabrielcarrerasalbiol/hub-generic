@@ -6,7 +6,9 @@ import {
   Notification, InsertNotification, PremiumChannel,
   InsertPremiumChannel, ViewHistory, InsertViewHistory,
   Comment, InsertComment, RecommendedChannel, InsertRecommendedChannel,
-  Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote
+  Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote,
+  Player, InsertPlayer, PlayerStats, InsertPlayerStats,
+  StatsGame, InsertStatsGame, StatsGameQuestion, InsertStatsGameQuestion
 } from "../shared/schema";
 
 // Storage interface defining all operations
