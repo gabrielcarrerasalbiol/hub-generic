@@ -383,6 +383,31 @@
     "close": "Close",
     "required": " is required"
   },
+  "poll": {
+    "votes": "votes",
+    "vote": "Vote",
+    "loginRequired": "Login Required",
+    "loginToVote": "Login to vote",
+    "loginToVoteMessage": "You need to login to participate in polls",
+    "voteRegistered": "Vote Registered",
+    "thankYouForVoting": "Thank you for participating in the poll",
+    "voteFailed": "Vote Failed",
+    "errorOccurred": "An error occurred while registering your vote",
+    "alreadyVoted": "Already Voted",
+    "viewingResults": "You are viewing the poll results",
+    "viewResults": "View results",
+    "resultsLive": "Results updated in real-time",
+    "fanPoll": "Fan Poll"
+  },
+  "polls": {
+    "title": "Polls",
+    "vote": "Vote",
+    "sending": "Sending...",
+    "noPollsAvailable": "No polls available at this moment",
+    "voted": "You voted",
+    "loginRequired": "You need to login to participate in polls",
+    "resultsLive": "Real-time results"
+  },
   "validation": {
     "usernameMinLength": "Username must be at least 3 characters",
     "passwordMinLength": "Password must be at least 6 characters",

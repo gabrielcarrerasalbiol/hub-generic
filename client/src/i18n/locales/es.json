@@ -383,6 +383,31 @@
     "close": "Cerrar",
     "required": " es requerido"
   },
+  "poll": {
+    "votes": "votos",
+    "vote": "Votar",
+    "loginRequired": "Inicio de Sesión Requerido",
+    "loginToVote": "Inicia sesión para votar",
+    "loginToVoteMessage": "Necesitas iniciar sesión para participar en las encuestas",
+    "voteRegistered": "Voto Registrado",
+    "thankYouForVoting": "Gracias por participar en la encuesta",
+    "voteFailed": "Voto Fallido",
+    "errorOccurred": "Ha ocurrido un error al registrar tu voto",
+    "alreadyVoted": "Ya Votaste",
+    "viewingResults": "Estás viendo los resultados de la encuesta",
+    "viewResults": "Ver resultados",
+    "resultsLive": "Resultados actualizados en tiempo real",
+    "fanPoll": "Encuesta de Aficionados"
+  },
+  "polls": {
+    "title": "Encuestas",
+    "vote": "Votar",
+    "sending": "Enviando...",
+    "noPollsAvailable": "No hay encuestas disponibles en este momento",
+    "voted": "Has votado",
+    "loginRequired": "Necesitas iniciar sesión para participar en las encuestas",
+    "resultsLive": "Resultados en tiempo real"
+  },
   "validation": {
     "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
     "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
