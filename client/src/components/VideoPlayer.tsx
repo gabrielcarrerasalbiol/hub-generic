@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAnalytics } from "../hooks/use-analytics";
 
 interface VideoPlayerProps {
   embedUrl: string;
@@ -12,6 +13,7 @@ interface VideoPlayerProps {
 export default function VideoPlayer({ embedUrl, title, videoId }: VideoPlayerProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { trackVideoEvent } = useAnalytics();
   const [isPlaying, setIsPlaying] = useState(false);
   const [watchStartTime, setWatchStartTime] = useState<number | null>(null);
   const [watchDuration, setWatchDuration] = useState(0);
@@ -79,6 +81,15 @@ export default function VideoPlayer({ embedUrl, title, videoId }: VideoPlayerPro
         body: JSON.stringify(data),
         credentials: 'include'
       });
+      
+      // Registrar eventos con Plausible Analytics
+      if (duration === 0) {
+        // Inicio de reproducción
+        trackVideoEvent('play', videoId, title);
+      } else if (completion >= 90) {
+        // Si se ha visto al menos el 90%, consideramos que se ha completado
+        trackVideoEvent('complete', videoId, title);
+      }
       
       console.log(`Visualización registrada: ${duration}s, ${completion}%`);
     } catch (error) {

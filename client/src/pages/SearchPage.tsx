@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import PlatformFilters from '@/components/PlatformFilters';
 import CategoryFilters from '@/components/CategoryFilters';
 import { PlatformType, CategoryType } from '@shared/schema';
+import { useAnalytics } from '../hooks/use-analytics';
 
 export default function SearchPage() {
   const [, setLocation] = useLocation();
