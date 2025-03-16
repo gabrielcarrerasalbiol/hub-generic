@@ -17,7 +17,8 @@ import {
 import { 
   CategoryType, PlatformType, insertFavoriteSchema, Video, User, 
   insertChannelSubscriptionSchema, insertNotificationSchema, 
-  ChannelSubscription, Notification, ViewHistory
+  ChannelSubscription, Notification, ViewHistory,
+  InsertChannel, InsertRecommendedChannel
 } from "../shared/schema";
 import { isAuthenticated, isAdmin, isPremium } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';
@@ -1728,9 +1729,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Añadir a canales recomendados
       const recommendedChannel: InsertRecommendedChannel = {
         channelId: channel.id,
-        addedAt: new Date(),
+        addedById: req.user!.id, // Añadimos el ID del usuario autenticado
         notes: description || "",
-        displayOrder: 0 // Se actualizará más tarde si es necesario
+        priority: 0 // Usando priority en lugar de displayOrder para coincidir con el esquema
       };
       
       const result = await storage.addRecommendedChannel(recommendedChannel);
