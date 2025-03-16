@@ -158,16 +158,7 @@ export default function Home() {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
-      {/* Encabezado simple sin slider */}
-      <div className="mb-8 bg-white p-6 rounded-xl shadow border-l-4 border-[#FDBE11]">
-        <h1 className="text-3xl font-bold text-[#001C58] mb-2">Hub Madridista</h1>
-        <p className="text-gray-600 mb-4">{t('home.heroSubtitle')}</p>
-        <Link href="/videos">
-          <Button className="bg-[#001C58] text-white hover:bg-[#001C58]/90">
-            {t('home.discoverVideos')}
-          </Button>
-        </Link>
-      </div>
+      {/* Encabezado principal - SEO */}
       {/* SEO optimizado para la página de inicio */}
       <SEO
         title="Hub Madridista | Agregador de contenido del Real Madrid"
