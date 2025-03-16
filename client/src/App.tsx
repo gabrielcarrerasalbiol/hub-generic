@@ -32,6 +32,7 @@ import FeaturedChannelsPage from "@/pages/FeaturedChannelsPage";
 import PremiumChannelsPage from "@/pages/PremiumChannelsPage";
 import FeaturedVideosPage from "@/pages/FeaturedVideosPage";
 import PollsPage from "@/pages/PollsPage";
+import PollsResultsPage from "@/pages/PollsResultsPage";
 import PollManagementPage from "@/pages/PollManagementPage";
 import Layout from "@/components/Layout";
 import CookieConsent from "@/components/CookieConsent";
@@ -90,6 +91,7 @@ const Routes = () => {
             <Route path="/premium-channels" component={PremiumChannelsPage} />
             <Route path="/featured-videos" component={FeaturedVideosPage} />
             <Route path="/polls" component={PollsPage} />
+            <Route path="/polls/results" component={PollsResultsPage} />
             <Route path="/admin/polls" component={PollManagementPage} />
             <Route component={NotFound} />
           </Switch>

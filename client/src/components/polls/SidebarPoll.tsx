@@ -6,8 +6,9 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
-import { Loader2, ChevronDown, ChevronUp, AlertCircle } from "lucide-react";
+import { Loader2, ChevronDown, ChevronUp, AlertCircle, BarChart3 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "wouter";
 import {
   Accordion,
   AccordionContent,

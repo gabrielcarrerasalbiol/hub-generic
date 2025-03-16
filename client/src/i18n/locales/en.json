@@ -407,7 +407,12 @@
     "noPollsAvailable": "No polls available at this moment",
     "voted": "You voted",
     "loginRequired": "You need to login to participate in polls",
-    "resultsLive": "Real-time results"
+    "resultsLive": "Real-time results",
+    "resultsTitle": "Poll Results",
+    "resultsDescription": "Explore the results of Real Madrid fan community polls",
+    "allPolls": "All polls",
+    "popularPolls": "Most voted",
+    "recentPolls": "Most recent"
   },
   "validation": {
     "usernameMinLength": "Username must be at least 3 characters",

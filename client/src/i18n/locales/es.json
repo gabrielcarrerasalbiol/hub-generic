@@ -407,7 +407,12 @@
     "noPollsAvailable": "No hay encuestas disponibles en este momento",
     "voted": "Has votado",
     "loginRequired": "Necesitas iniciar sesión para participar en las encuestas",
-    "resultsLive": "Resultados en tiempo real"
+    "resultsLive": "Resultados en tiempo real",
+    "resultsTitle": "Resultados de Encuestas",
+    "resultsDescription": "Explora los resultados de las encuestas de la comunidad madridista",
+    "allPolls": "Todas las encuestas",
+    "popularPolls": "Más votadas",
+    "recentPolls": "Más recientes"
   },
   "validation": {
     "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
