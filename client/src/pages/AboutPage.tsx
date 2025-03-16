@@ -113,7 +113,7 @@ export default function AboutPage() {
             {heroSlides.map((slide, index) => (
               <CarouselItem key={index} className="w-full">
                 <div 
-                  className={`w-full h-96 bg-cover bg-center py-16 relative ${slide.bgColor}`}
+                  className={`w-full h-[30rem] bg-cover bg-center flex items-center justify-center relative ${slide.bgColor}`}
                   style={{ 
                     backgroundImage: `url(${slide.image})`,
                     backgroundBlendMode: 'overlay'
