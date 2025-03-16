@@ -29,36 +29,38 @@ import {
 } from "@/components/ui/carousel";
 import { useAuth } from "@/hooks/useAuth";
 import { Smartphone } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function AboutPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   // Texto para el carrusel con colores de Real Madrid
   const heroSlides = [
     {
-      title: "Hub Madridista",
-      subtitle: "El hogar digital para todos los madridistas",
+      title: t("about.heroSlider.home.title"),
+      subtitle: t("about.heroSlider.home.subtitle"),
       bgColor: "bg-[#1E3A8A]",
       textColor: "text-white",
       icon: <Home className="inline-block mr-3 h-8 w-8" />
     },
     {
-      title: "La Pasión Blanca",
-      subtitle: "Vive cada momento con la misma intensidad",
+      title: t("about.heroSlider.passion.title"),
+      subtitle: t("about.heroSlider.passion.subtitle"),
       bgColor: "bg-white",
       textColor: "text-[#1E3A8A]",
       icon: <Flame className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />
     },
     {
-      title: "El Sentimiento",
-      subtitle: "Unidos por los colores que nos representan",
+      title: t("about.heroSlider.feeling.title"),
+      subtitle: t("about.heroSlider.feeling.subtitle"),
       bgColor: "bg-[#FDBE11]",
       textColor: "text-[#1E3A8A]",
       icon: <Heart className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />
     },
     {
-      title: "La Afición Madridista",
-      subtitle: "El corazón que late en cada estadio",
+      title: t("about.heroSlider.fans.title"),
+      subtitle: t("about.heroSlider.fans.subtitle"),
       bgColor: "bg-gradient-to-r from-[#1E3A8A] to-[#2C2152]",
       textColor: "text-white",
       icon: <Users className="inline-block mr-3 h-8 w-8" />
