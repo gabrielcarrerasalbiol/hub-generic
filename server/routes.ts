@@ -1869,58 +1869,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Extraer el ID del canal de la URL
-      let channelId = "";
+      let channelIdOrUsername = "";
       let channelPlatform = "";
       
       if (url.includes("youtube.com") || url.includes("youtu.be")) {
-        // Extraer ID de canal de YouTube
-        const matches = url.match(/(?:channel\/|c\/|@)([^\/\?]+)/);
-        channelId = matches ? matches[1] : "";
+        // Plataforma YouTube
         channelPlatform = "youtube";
+        
+        try {
+          const urlObj = new URL(url);
+          const pathParts = urlObj.pathname.split('/').filter(Boolean);
+          
+          if (pathParts.length >= 1) {
+            // Formato: youtube.com/@username
+            if (pathParts[0].startsWith('@')) {
+              channelIdOrUsername = pathParts[0];
+            }
+            // Formato: youtube.com/channel/UC...
+            else if (pathParts[0] === 'channel' && pathParts.length >= 2) {
+              channelIdOrUsername = pathParts[1];
+            } 
+            // Formato: youtube.com/c/nombre o youtube.com/user/nombre
+            else if ((pathParts[0] === 'c' || pathParts[0] === 'user') && pathParts.length >= 2) {
+              channelIdOrUsername = pathParts[1];
+            }
+            // Formato: youtube.com/nombrecanal
+            else {
+              channelIdOrUsername = pathParts[0];
+            }
+          }
+        } catch (error) {
+          return res.status(400).json({ error: "URL de YouTube no válida" });
+        }
       } else if (url.includes("twitch.tv")) {
         // Extraer ID de canal de Twitch
         const matches = url.match(/twitch\.tv\/([^\/\?]+)/);
-        channelId = matches ? matches[1] : "";
+        channelIdOrUsername = matches ? matches[1] : "";
         channelPlatform = "twitch";
       } else if (url.includes("twitter.com") || url.includes("x.com")) {
         // Extraer ID de canal de Twitter
         const matches = url.match(/(?:twitter\.com|x\.com)\/([^\/\?]+)/);
-        channelId = matches ? matches[1] : "";
+        channelIdOrUsername = matches ? matches[1] : "";
         channelPlatform = "twitter";
       } else if (url.includes("tiktok.com")) {
         // Extraer ID de canal de TikTok
         const matches = url.match(/tiktok\.com\/@([^\/\?]+)/);
-        channelId = matches ? matches[1] : "";
+        channelIdOrUsername = matches ? matches[1] : "";
         channelPlatform = "tiktok";
       } else if (url.includes("instagram.com")) {
         // Extraer ID de canal de Instagram
         const matches = url.match(/instagram\.com\/([^\/\?]+)/);
-        channelId = matches ? matches[1] : "";
+        channelIdOrUsername = matches ? matches[1] : "";
         channelPlatform = "instagram";
       }
       
-      if (!channelId || !channelPlatform) {
+      if (!channelIdOrUsername || !channelPlatform) {
         return res.status(400).json({ error: "No se pudo extraer el ID del canal de la URL proporcionada" });
       }
       
-      // Buscar si el canal ya existe en la base de datos
-      let channel = await storage.getChannelByExternalId(channelId);
+      // Procesamiento específico según la plataforma
+      let channel;
       
-      // Si el canal no existe, crear un nuevo canal
-      if (!channel) {
-        // Aquí se podría implementar la lógica para obtener detalles del canal desde la API correspondiente
-        // Por simplicidad, creamos un canal básico
-        const newChannel: InsertChannel = {
-          externalId: channelId,
-          title: channelId, // Usar ID como título temporal
-          description: description || "Canal añadido desde URL",
-          platform: channelPlatform,
-          thumbnailUrl: "", // Se actualizará cuando se importen videos
-          subscriberCount: 0,
-          bannerUrl: ""
-        };
+      if (channelPlatform === "youtube") {
+        // Importar utilidades para obtener datos de YouTube
+        const { getYouTubeChannelDetails, convertYouTubeChannelToSchema } = await import("./api/youtube");
         
-        channel = await storage.createChannel(newChannel);
+        try {
+          console.log(`Buscando canal de YouTube con identificador: "${channelIdOrUsername}"`);
+          
+          // Buscar detalles del canal en la API de YouTube
+          const channelDetails = await getYouTubeChannelDetails([channelIdOrUsername]);
+          
+          if (!channelDetails.items || channelDetails.items.length === 0) {
+            return res.status(404).json({ error: "No se encontró el canal de YouTube" });
+          }
+          
+          const channelInfo = channelDetails.items[0];
+          const externalId = channelInfo.id;
+          
+          // Verificar si el canal ya existe en la base de datos
+          channel = await storage.getChannelByExternalId(externalId);
+          
+          // Si no existe, crearlo con todos los detalles obtenidos
+          if (!channel) {
+            const channelData = convertYouTubeChannelToSchema(channelInfo);
+            channel = await storage.createChannel(channelData);
+          }
+        } catch (error: any) {
+          console.error("Error fetching YouTube channel:", error);
+          return res.status(500).json({ 
+            error: "Error al obtener información del canal de YouTube",
+            details: error.message
+          });
+        }
+      } else if (channelPlatform === "twitch") {
+        // Importar utilidades para obtener datos de Twitch
+        const { getTwitchUserDetails, convertTwitchChannelToSchema } = await import("./api/twitch");
+        
+        try {
+          // Buscar detalles del canal en la API de Twitch
+          const twitchUser = await getTwitchUserDetails(channelIdOrUsername);
+          
+          if (!twitchUser) {
+            return res.status(404).json({ error: "No se encontró el canal de Twitch" });
+          }
+          
+          // Verificar si el canal ya existe
+          channel = await storage.getChannelByExternalId(twitchUser.id);
+          
+          // Si no existe, crearlo
+          if (!channel) {
+            const channelData = convertTwitchChannelToSchema(twitchUser);
+            channel = await storage.createChannel(channelData);
+          }
+        } catch (error: any) {
+          console.error("Error fetching Twitch channel:", error);
+          return res.status(500).json({ 
+            error: "Error al obtener información del canal de Twitch",
+            details: error.message
+          });
+        }
+      } else {
+        // Para otras plataformas que todavía no tienen integración completa
+        // Buscar si el canal ya existe en la base de datos
+        channel = await storage.getChannelByExternalId(channelIdOrUsername);
+        
+        // Si el canal no existe, crear un canal básico
+        if (!channel) {
+          const newChannel: InsertChannel = {
+            externalId: channelIdOrUsername,
+            title: channelIdOrUsername, // Usar ID como título temporal
+            description: description || "Canal añadido desde URL",
+            platform: channelPlatform,
+            thumbnailUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(channelIdOrUsername)}&background=random&color=fff&size=128`,
+            subscriberCount: 0,
+            bannerUrl: ""
+          };
+          
+          channel = await storage.createChannel(newChannel);
+        }
       }
       
       // Verificar si ya es un canal recomendado
