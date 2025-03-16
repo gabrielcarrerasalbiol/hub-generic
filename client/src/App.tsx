@@ -104,6 +104,7 @@ function AppContent() {
   const fetchUser = useAuth((state) => state.fetchUser);
   const { handleTokenFromUrl } = useTokenHandler();
   const initAttemptRef = useRef(false);
+  const [location] = useLocation();
   
   // Este efecto solo se ejecuta una vez al montar el componente
   useEffect(() => {
@@ -171,6 +172,13 @@ function AppContent() {
       }
     };
   }, []);
+  
+  // Efecto para rastrear cambios de página con Plausible
+  useEffect(() => {
+    // Plausible rastrea automáticamente los cambios de página en SPAs
+    // Este log es útil para debugging
+    console.log(`[Analytics] Page changed to: ${location}`);
+  }, [location]);
 
   // Estado de carga inicial
   if (!isInitialized) {

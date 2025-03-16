@@ -16,8 +16,24 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-6HF03VCLJX');
+      gtag('config', 'G-6HF03VCLJX', {
+        'debug_mode': true,
+        'send_page_view': true
+      });
+      
+      // Log a test event to verify tracking is working
+      setTimeout(() => {
+        gtag('event', 'test_event', {
+          'event_category': 'testing',
+          'event_label': 'GA4 test event',
+          'value': 1
+        });
+        console.log('Google Analytics test event sent');
+      }, 3000);
     </script>
+
+    <!-- Plausible Analytics - Privacidad amigable -->
+    <script defer data-domain="hubmadridista.com" src="https://plausible.io/js/script.js"></script>
   </head>
   <body>
     <div id="root"></div>
