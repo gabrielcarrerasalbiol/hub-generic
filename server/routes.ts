@@ -18,7 +18,9 @@ import {
   CategoryType, PlatformType, insertFavoriteSchema, Video, User, 
   insertChannelSubscriptionSchema, insertNotificationSchema, 
   ChannelSubscription, Notification, ViewHistory,
-  InsertChannel, InsertRecommendedChannel, InsertVideo
+  InsertChannel, InsertRecommendedChannel, InsertVideo,
+  insertPollSchema, insertPollOptionSchema, insertPollVoteSchema,
+  Poll, PollOption, PollVote
 } from "../shared/schema";
 import { isAuthenticated, isAdmin, isPremium } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';

@@ -1135,6 +1135,272 @@ export class PgStorage implements IStorage {
     
     return result.length > 0;
   }
+
+  // ========== Implementación de operaciones de encuestas ==========
+
+  // Poll operations
+  async getPolls(limit = 100, offset = 0): Promise<Poll[]> {
+    return db.select()
+      .from(polls)
+      .orderBy(desc(polls.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getPublishedPolls(limit = 100, offset = 0): Promise<Poll[]> {
+    return db.select()
+      .from(polls)
+      .where(eq(polls.status, "published"))
+      .orderBy(desc(polls.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getActiveSidebarPoll(): Promise<(Poll & { options: PollOption[] }) | undefined> {
+    // Buscar la encuesta activa para mostrar en el sidebar
+    const activePoll = await db.select()
+      .from(polls)
+      .where(
+        and(
+          eq(polls.status, "published"),
+          eq(polls.showInSidebar, true)
+        )
+      )
+      .orderBy(desc(polls.createdAt))
+      .limit(1);
+
+    if (activePoll.length === 0) {
+      return undefined;
+    }
+
+    // Obtener las opciones de la encuesta
+    const options = await this.getPollOptions(activePoll[0].id);
+    
+    return {
+      ...activePoll[0],
+      options
+    };
+  }
+
+  async getPollById(id: number): Promise<(Poll & { options: PollOption[] }) | undefined> {
+    const pollResult = await db.select()
+      .from(polls)
+      .where(eq(polls.id, id));
+
+    if (pollResult.length === 0) {
+      return undefined;
+    }
+
+    // Obtener las opciones de la encuesta
+    const options = await this.getPollOptions(id);
+    
+    return {
+      ...pollResult[0],
+      options
+    };
+  }
+
+  async createPoll(poll: InsertPoll, options: Omit<InsertPollOption, "pollId">[]): Promise<Poll> {
+    try {
+      // Crear la encuesta
+      const result = await db.insert(polls).values(poll).returning();
+      const newPoll = result[0];
+      
+      // Crear las opciones asociadas a la encuesta
+      if (options && options.length > 0) {
+        for (let i = 0; i < options.length; i++) {
+          await db.insert(pollOptions).values({
+            pollId: newPoll.id,
+            text: options[i].text,
+            order: options[i].order || i
+          });
+        }
+      }
+      
+      return newPoll;
+    } catch (error) {
+      console.error('Error al crear encuesta:', error);
+      throw error;
+    }
+  }
+
+  async updatePoll(id: number, pollData: Partial<InsertPoll>): Promise<Poll | undefined> {
+    const result = await db.update(polls)
+      .set({
+        ...pollData,
+        updatedAt: new Date()
+      })
+      .where(eq(polls.id, id))
+      .returning();
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async deletePoll(id: number): Promise<boolean> {
+    try {
+      // Nota: Las opciones y votos se eliminarán automáticamente gracias a onDelete: "cascade"
+      const result = await db.delete(polls)
+        .where(eq(polls.id, id))
+        .returning({ id: polls.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error al eliminar encuesta:', error);
+      return false;
+    }
+  }
+
+  async publishPoll(id: number): Promise<Poll | undefined> {
+    return this.updatePoll(id, { status: "published" });
+  }
+
+  async unpublishPoll(id: number): Promise<Poll | undefined> {
+    return this.updatePoll(id, { status: "draft" });
+  }
+  
+  // Poll option operations
+  async getPollOptions(pollId: number): Promise<PollOption[]> {
+    return db.select()
+      .from(pollOptions)
+      .where(eq(pollOptions.pollId, pollId))
+      .orderBy(asc(pollOptions.order));
+  }
+
+  async createPollOption(option: InsertPollOption): Promise<PollOption> {
+    const result = await db.insert(pollOptions)
+      .values(option)
+      .returning();
+    
+    return result[0];
+  }
+
+  async updatePollOption(id: number, optionData: Partial<InsertPollOption>): Promise<PollOption | undefined> {
+    const result = await db.update(pollOptions)
+      .set(optionData)
+      .where(eq(pollOptions.id, id))
+      .returning();
+    
+    return result.length > 0 ? result[0] : undefined;
+  }
+
+  async deletePollOption(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(pollOptions)
+        .where(eq(pollOptions.id, id))
+        .returning({ id: pollOptions.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error al eliminar opción de encuesta:', error);
+      return false;
+    }
+  }
+  
+  // Poll vote operations
+  async getPollVotes(pollId: number): Promise<PollVote[]> {
+    return db.select()
+      .from(pollVotes)
+      .where(eq(pollVotes.pollId, pollId));
+  }
+
+  async getPollVotesByUser(userId: number, pollId?: number): Promise<PollVote[]> {
+    if (pollId) {
+      return db.select()
+        .from(pollVotes)
+        .where(
+          and(
+            eq(pollVotes.userId, userId),
+            eq(pollVotes.pollId, pollId)
+          )
+        );
+    } else {
+      return db.select()
+        .from(pollVotes)
+        .where(eq(pollVotes.userId, userId));
+    }
+  }
+
+  async getVoteResultsByPollId(pollId: number): Promise<{
+    optionId: number,
+    optionText: string,
+    votes: number,
+    percentage: number
+  }[]> {
+    try {
+      // Primero obtenemos todas las opciones de la encuesta
+      const options = await this.getPollOptions(pollId);
+      
+      // Luego contamos los votos para cada opción
+      const voteCounts = await db.select({
+        optionId: pollVotes.optionId,
+        votes: count()
+      })
+      .from(pollVotes)
+      .where(eq(pollVotes.pollId, pollId))
+      .groupBy(pollVotes.optionId);
+      
+      // Mapeamos los resultados y calculamos porcentajes
+      const totalVotes = voteCounts.reduce((sum, option) => sum + Number(option.votes), 0);
+      
+      return options.map(option => {
+        const voteCount = voteCounts.find(vc => vc.optionId === option.id);
+        const votes = voteCount ? Number(voteCount.votes) : 0;
+        const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+        
+        return {
+          optionId: option.id,
+          optionText: option.text,
+          votes,
+          percentage
+        };
+      });
+    } catch (error) {
+      console.error('Error al obtener resultados de encuesta:', error);
+      return [];
+    }
+  }
+
+  async createPollVote(vote: InsertPollVote): Promise<PollVote> {
+    // Verificar si el usuario ya ha votado en esta encuesta
+    const existingVote = await this.hasUserVotedInPoll(vote.userId, vote.pollId);
+    
+    if (existingVote) {
+      throw new Error('El usuario ya ha votado en esta encuesta');
+    }
+    
+    const result = await db.insert(pollVotes)
+      .values(vote)
+      .returning();
+    
+    return result[0];
+  }
+
+  async hasUserVotedInPoll(userId: number, pollId: number): Promise<boolean> {
+    const votes = await db.select()
+      .from(pollVotes)
+      .where(
+        and(
+          eq(pollVotes.userId, userId),
+          eq(pollVotes.pollId, pollId)
+        )
+      )
+      .limit(1);
+    
+    return votes.length > 0;
+  }
+
+  async deletePollVote(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(pollVotes)
+        .where(eq(pollVotes.id, id))
+        .returning({ id: pollVotes.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error al eliminar voto:', error);
+      return false;
+    }
+  }
 }
 
 // Exportar una instancia para su uso en la aplicación
