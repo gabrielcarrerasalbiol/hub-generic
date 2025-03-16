@@ -13,7 +13,7 @@ import { getQueryFn } from "@/lib/queryClient";
 import { useLanguage } from "@/hooks/use-language";
 import SEO from "@/components/SEO";
 import { homePageSchema } from "@/lib/schemaData";
-import HeroSlider from "@/components/HeroSlider";
+
 import {
   Carousel,
   CarouselContent,
@@ -158,25 +158,15 @@ export default function Home() {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
-      {/* Hero Banner personalizado */}
-      <div className="relative w-full h-96 overflow-hidden rounded-xl shadow-lg mb-8" style={{background: '#FDBE11'}}>
-        {/* Fondo amarillo sólido sin imagen */}
-        
-        {/* Overlay de gradiente */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 via-[#001C58]/60 to-transparent"></div>
-        
-        {/* Contenido */}
-        <div className="relative h-full flex flex-col justify-center">
-          <div className="text-white p-8 md:p-12 max-w-xl">
-            <h1 className="text-3xl md:text-5xl font-bold mb-4">Hub Madridista</h1>
-            <p className="text-lg md:text-xl mb-8 max-w-lg">{t('home.heroSubtitle')}</p>
-            <Link href="/videos">
-              <Button className="bg-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/90 font-semibold px-6 py-2 text-lg shadow-lg">
-                {t('home.discoverVideos')}
-              </Button>
-            </Link>
-          </div>
-        </div>
+      {/* Encabezado simple sin slider */}
+      <div className="mb-8 bg-white p-6 rounded-xl shadow border-l-4 border-[#FDBE11]">
+        <h1 className="text-3xl font-bold text-[#001C58] mb-2">Hub Madridista</h1>
+        <p className="text-gray-600 mb-4">{t('home.heroSubtitle')}</p>
+        <Link href="/videos">
+          <Button className="bg-[#001C58] text-white hover:bg-[#001C58]/90">
+            {t('home.discoverVideos')}
+          </Button>
+        </Link>
       </div>
       {/* SEO optimizado para la página de inicio */}
       <SEO
