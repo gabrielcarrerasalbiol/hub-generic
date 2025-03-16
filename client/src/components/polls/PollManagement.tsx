@@ -163,7 +163,18 @@ export default function PollManagement() {
         description: 'La encuesta se ha creado correctamente'
       });
       setIsDialogOpen(false);
-      form.reset();
+      form.reset({
+        title: '',
+        titleEs: '',
+        question: '',
+        questionEs: '',
+        status: 'draft',
+        showInSidebar: false,
+        options: [
+          { text: '', textEs: '', order: 0 },
+          { text: '', textEs: '', order: 1 }
+        ]
+      });
     },
     onError: (error) => {
       toast({
