@@ -1257,6 +1257,47 @@ export class PgStorage implements IStorage {
   async unpublishPoll(id: number): Promise<Poll | undefined> {
     return this.updatePoll(id, { status: "draft" });
   }
+
+  // Poll vote operations
+  async getUserVotesForPoll(pollId: number, userId: number): Promise<number> {
+    const votesCount = await db.select({ count: count() })
+      .from(pollVotes)
+      .where(
+        and(
+          eq(pollVotes.pollId, pollId),
+          eq(pollVotes.userId, userId)
+        )
+      );
+    
+    return votesCount[0].count || 0;
+  }
+
+  async getPollResults(pollId: number): Promise<{id: number, text: string, voteCount: number}[]> {
+    // Obtener las opciones de la encuesta
+    const options = await this.getPollOptions(pollId);
+    
+    // Para cada opción, contar los votos
+    const results = await Promise.all(
+      options.map(async (option) => {
+        const votesCount = await db.select({ count: count() })
+          .from(pollVotes)
+          .where(
+            and(
+              eq(pollVotes.pollId, pollId),
+              eq(pollVotes.optionId, option.id)
+            )
+          );
+        
+        return {
+          id: option.id,
+          text: option.text,
+          voteCount: votesCount[0].count || 0
+        };
+      })
+    );
+    
+    return results;
+  }
   
   // Poll option operations
   async getPollOptions(pollId: number): Promise<PollOption[]> {
