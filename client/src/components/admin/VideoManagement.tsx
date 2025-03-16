@@ -81,6 +81,7 @@ export default function VideoManagement() {
   const [isImportingByPlatform, setIsImportingByPlatform] = useState(false);
   const [isImportingFeatured, setIsImportingFeatured] = useState(false);
   const [platformFilter, setPlatformFilter] = useState<string>("all");
+  const [showFeaturedOnly, setShowFeaturedOnly] = useState<boolean>(false);
   
   // Estado para paginación
   const [visibleVideos, setVisibleVideos] = useState(20);
@@ -446,6 +447,11 @@ export default function VideoManagement() {
       return false;
     }
     
+    // Filtro por videos destacados
+    if (showFeaturedOnly && !video.featured) {
+      return false;
+    }
+    
     // Filtro por texto de búsqueda
     if (!searchQuery) return true;
     return (
@@ -556,6 +562,18 @@ export default function VideoManagement() {
                 <SelectItem value="tiktok">TikTok</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Star className="h-5 w-5 text-yellow-500" />
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="featured-filter" className="text-sm">Destacados</Label>
+              <Switch 
+                id="featured-filter" 
+                checked={showFeaturedOnly}
+                onCheckedChange={setShowFeaturedOnly}
+              />
+            </div>
           </div>
 
           <AdminActionMenus

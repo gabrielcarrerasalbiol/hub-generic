@@ -219,6 +219,12 @@ export default function VideoCard({ video, compact = false }: VideoCardProps) {
         <div className={`absolute top-2 left-2 text-white text-xs px-1.5 py-0.5 rounded flex items-center ${getPlatformColor(video.platform)}`}>
           <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> {video.platform}
         </div>
+        {video.featured && (
+          <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full flex items-center">
+            <Star className="w-3 h-3 mr-1" />
+            <span>Destacado</span>
+          </div>
+        )}
       </div>
       <div className="p-3">
         <h3 className="font-medium text-sm line-clamp-2 h-10 dark:text-white">
