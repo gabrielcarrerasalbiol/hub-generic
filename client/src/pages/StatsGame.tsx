@@ -13,6 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { apiRequest } from '@/lib/queryClient';
 import { useLocation, useRoute, Link } from 'wouter';
 import { GameDifficulty } from '@shared/schema';
+import { useTranslation } from 'react-i18next';
 
 // Tipos
 interface Player {

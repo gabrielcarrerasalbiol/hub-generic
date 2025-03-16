@@ -2,8 +2,8 @@
  * Script para agregar datos de jugadores de muestra para el mini-juego
  */
 
-import { db } from './server/db.js';
-import { players, playerStats } from './shared/schema.js';
+import { db } from './server/db.ts';
+import { players, playerStats } from './shared/schema.ts';
 
 async function seedPlayers() {
   try {
