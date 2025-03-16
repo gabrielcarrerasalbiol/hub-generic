@@ -9,10 +9,10 @@ import {
   Home, TrendingUp, Star, Rss, History, 
   Youtube, Twitter, Instagram, 
   Radio, MessageSquare, Trophy, User, Newspaper,
-  Crown, Shield
+  Crown, Shield, LayoutGrid
 } from "lucide-react";
-import { TikTokIcon } from "./icons/TikTokIcon";
-import { TwitchIcon } from "./icons/TwitchIcon";
+import TikTokIcon from "./icons/TikTokIcon";
+import TwitchIcon from "./icons/TwitchIcon";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -69,6 +69,20 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     isLinkActive("/") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                   )} />
                   {t('nav.home')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/videos" className={cn(
+                  "flex items-center px-2 py-2 text-sm font-medium rounded-md",
+                  isLinkActive("/videos") 
+                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
+                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                )}>
+                <LayoutGrid className={cn(
+                  "mr-3 h-4 w-4",
+                  isLinkActive("/videos") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                )} />
+                Explorador
               </Link>
             </li>
             <li>
@@ -139,10 +153,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           <ul className="mt-2 space-y-1">
             <li>
               <Link 
-                href="/?platform=youtube" 
+                href="/videos?platform=youtube" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  location === "/?platform=youtube" 
+                  location.includes("/videos?platform=youtube") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
@@ -153,10 +167,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             </li>
             <li>
               <Link 
-                href="/?platform=twitch" 
+                href="/videos?platform=twitch" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  location === "/?platform=twitch" 
+                  location.includes("/videos?platform=twitch") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
@@ -167,10 +181,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             </li>
             <li>
               <Link 
-                href="/?platform=tiktok" 
+                href="/videos?platform=tiktok" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  location === "/?platform=tiktok" 
+                  location.includes("/videos?platform=tiktok") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
@@ -182,10 +196,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             </li>
             <li>
               <Link 
-                href="/?platform=twitter" 
+                href="/videos?platform=twitter" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  location === "/?platform=twitter" 
+                  location.includes("/videos?platform=twitter") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
@@ -197,10 +211,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             </li>
             <li>
               <Link 
-                href="/?platform=instagram" 
+                href="/videos?platform=instagram" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  location === "/?platform=instagram" 
+                  location.includes("/videos?platform=instagram") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
@@ -219,85 +233,85 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           <ul className="mt-2 space-y-1">
             <li>
               <Link 
-                href="/category/matches" 
+                href="/videos?category=Partidos" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  isLinkActive("/category/matches") 
+                  location.includes("/videos?category=Partidos") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Radio className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/category/matches") ? "text-[#FDBE11]" : "text-[#FDBE11]"
+                  location.includes("/videos?category=Partidos") ? "text-[#FDBE11]" : "text-[#FDBE11]"
                 )} />
                 Partidos
               </Link>
             </li>
             <li>
               <Link 
-                href="/category/analysis" 
+                href="/videos?category=Análisis" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  isLinkActive("/category/analysis") 
+                  location.includes("/videos?category=Análisis") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <MessageSquare className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/category/analysis") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  location.includes("/videos?category=Análisis") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
                 Análisis
               </Link>
             </li>
             <li>
               <Link 
-                href="/category/historic" 
+                href="/videos?category=Histórico" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  isLinkActive("/category/historic") 
+                  location.includes("/videos?category=Histórico") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Trophy className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/category/historic") ? "text-[#FDBE11]" : "text-[#FDBE11]"
+                  location.includes("/videos?category=Histórico") ? "text-[#FDBE11]" : "text-[#FDBE11]"
                 )} />
                 Momentos Históricos
               </Link>
             </li>
             <li>
               <Link 
-                href="/category/players" 
+                href="/videos?category=Jugadores" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  isLinkActive("/category/players") 
+                  location.includes("/videos?category=Jugadores") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <User className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/category/players") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  location.includes("/videos?category=Jugadores") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
                 Jugadores
               </Link>
             </li>
             <li>
               <Link 
-                href="/category/press" 
+                href="/videos?category=Noticias" 
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                  isLinkActive("/category/press") 
+                  location.includes("/videos?category=Noticias") 
                     ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
                     : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
                 )}
               >
                 <Newspaper className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/category/press") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  location.includes("/videos?category=Noticias") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
                 Noticias
               </Link>

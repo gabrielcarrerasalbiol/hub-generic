@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import ChannelPage from "@/pages/ChannelPage";
 import VideoPage from "@/pages/VideoPage";
+import VideosPage from "@/pages/VideosPage";
 import FavoritesPage from "@/pages/FavoritesPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
@@ -72,6 +73,7 @@ const Routes = () => {
             <Route path="/forgot-password" component={ForgotPasswordPage} />
             <Route path="/reset-password" component={ResetPasswordPage} />
             <Route path="/category/:categorySlug" component={CategoryPage} />
+            <Route path="/videos" component={VideosPage} />
             <Route path="/trending" component={TrendingPage} />
             <Route path="/notifications" component={NotificationsPage} />
             <Route path="/settings" component={SettingsPage} />

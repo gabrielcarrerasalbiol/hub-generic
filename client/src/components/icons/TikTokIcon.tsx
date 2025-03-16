@@ -4,7 +4,7 @@ interface TikTokIconProps {
   className?: string;
 }
 
-export const TikTokIcon: React.FC<TikTokIconProps> = ({ className }) => {
+const TikTokIcon: React.FC<TikTokIconProps> = ({ className }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -18,3 +18,5 @@ export const TikTokIcon: React.FC<TikTokIconProps> = ({ className }) => {
     </svg>
   );
 };
+
+export default TikTokIcon;

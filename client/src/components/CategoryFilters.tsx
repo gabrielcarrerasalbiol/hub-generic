@@ -1,97 +1,55 @@
 import { Button } from "@/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { CategoryType } from "@shared/schema";
+import { cn } from "@/lib/utils";
+import { 
+  Radio, 
+  MessageSquare, 
+  Trophy, 
+  User, 
+  Newspaper,
+  Ticket,
+  ChevronsRight,
+  Users,
+  ShieldCheck,
+  Mic2
+} from "lucide-react";
 
 interface CategoryFiltersProps {
-  selectedCategory: CategoryType;
-  onSelectCategory: (category: CategoryType) => void;
+  selectedCategory: string;
+  onSelectCategory: (category: string) => void;
 }
 
 export default function CategoryFilters({ selectedCategory, onSelectCategory }: CategoryFiltersProps) {
+  const categories = [
+    { id: "all", name: "Todas", icon: <ChevronsRight className="h-4 w-4" /> },
+    { id: "Partidos", name: "Partidos", icon: <Radio className="h-4 w-4 text-[#FDBE11]" /> },
+    { id: "Análisis", name: "Análisis", icon: <MessageSquare className="h-4 w-4" /> },
+    { id: "Histórico", name: "Momentos Históricos", icon: <Trophy className="h-4 w-4 text-[#FDBE11]" /> },
+    { id: "Jugadores", name: "Jugadores", icon: <User className="h-4 w-4" /> },
+    { id: "Noticias", name: "Noticias", icon: <Newspaper className="h-4 w-4" /> },
+    { id: "Entrevistas", name: "Entrevistas", icon: <Mic2 className="h-4 w-4" /> },
+    { id: "Afición", name: "Afición", icon: <Users className="h-4 w-4" /> },
+    { id: "Institucional", name: "Institucional", icon: <ShieldCheck className="h-4 w-4" /> },
+  ];
+
   return (
-    <ScrollArea className="whitespace-nowrap mb-6">
-      <div className="flex gap-2 pb-2">
+    <>
+      {categories.map((category) => (
         <Button
-          variant={selectedCategory === "all" ? "default" : "outline"}
-          className={selectedCategory === "all" 
-            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
-          onClick={() => onSelectCategory("all")}
+          key={category.id}
+          variant={selectedCategory === category.id ? "default" : "outline"}
+          size="sm"
+          className={cn(
+            "flex items-center gap-1 border-slate-300",
+            selectedCategory === category.id
+              ? "bg-[#001C58] text-white hover:bg-[#001C58]/90"
+              : "hover:bg-slate-100"
+          )}
+          onClick={() => onSelectCategory(category.id)}
         >
-          Todas
+          {category.icon}
+          {category.name}
         </Button>
-        
-        <Button
-          variant={selectedCategory === "matches" ? "default" : "outline"}
-          className={selectedCategory === "matches" 
-            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
-          onClick={() => onSelectCategory("matches")}
-        >
-          Partidos
-        </Button>
-        
-        <Button
-          variant={selectedCategory === "transfers" ? "default" : "outline"}
-          className={selectedCategory === "transfers" 
-            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
-          onClick={() => onSelectCategory("transfers")}
-        >
-          Fichajes
-        </Button>
-        
-        <Button
-          variant={selectedCategory === "tactics" ? "default" : "outline"}
-          className={selectedCategory === "tactics" 
-            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
-          onClick={() => onSelectCategory("tactics")}
-        >
-          Tácticas
-        </Button>
-        
-        <Button
-          variant={selectedCategory === "interviews" ? "default" : "outline"}
-          className={selectedCategory === "interviews" 
-            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
-          onClick={() => onSelectCategory("interviews")}
-        >
-          Entrevistas
-        </Button>
-        
-        <Button
-          variant={selectedCategory === "history" ? "default" : "outline"}
-          className={selectedCategory === "history" 
-            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
-          onClick={() => onSelectCategory("history")}
-        >
-          Historia
-        </Button>
-        
-        <Button
-          variant={selectedCategory === "fan_content" ? "default" : "outline"}
-          className={selectedCategory === "fan_content" 
-            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
-          onClick={() => onSelectCategory("fan_content")}
-        >
-          Aficionados
-        </Button>
-        
-        <Button
-          variant={selectedCategory === "news" ? "default" : "outline"}
-          className={selectedCategory === "news" 
-            ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-            : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
-          onClick={() => onSelectCategory("news")}
-        >
-          Noticias
-        </Button>
-      </div>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+      ))}
+    </>
   );
 }

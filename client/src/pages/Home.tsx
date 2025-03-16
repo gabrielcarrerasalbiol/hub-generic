@@ -4,8 +4,8 @@ import { Link } from "wouter";
 import FeaturedVideo from "@/components/FeaturedVideo";
 import VideoCard from "@/components/VideoCard";
 import ChannelCard from "@/components/ChannelCard";
-import PlatformFilters from "@/components/PlatformFilters";
-import CategoryFilters from "@/components/CategoryFilters";
+import PlatformFilters from "../components/PlatformFilters";
+import CategoryFilters from "../components/CategoryFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Video, Channel, PlatformType, CategoryType } from "@shared/schema";
@@ -18,8 +18,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ChevronLeft, ChevronRight, ExternalLink, Layers, Youtube, Twitter, Instagram } from "lucide-react";
-import { TikTokIcon } from "@/components/icons/TikTokIcon";
-import { TwitchIcon } from "@/components/icons/TwitchIcon";
+import TikTokIcon from "@/components/icons/TikTokIcon";
+import TwitchIcon from "@/components/icons/TwitchIcon";
 
 export default function Home() {
   const [platform, setPlatform] = useState<PlatformType>("all");
@@ -391,7 +391,7 @@ export default function Home() {
         <div className="mt-6 flex justify-center">
           <Link href="/videos">
             <Button className="bg-[#001C58] text-white hover:bg-[#001C58]/90 flex items-center gap-2">
-              Explorar más videos <ExternalLink className="h-4 w-4 ml-1" />
+              Explorar todos los videos <ExternalLink className="h-4 w-4 ml-1" />
             </Button>
           </Link>
         </div>

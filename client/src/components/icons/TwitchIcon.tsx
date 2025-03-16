@@ -4,7 +4,7 @@ interface TwitchIconProps {
   className?: string;
 }
 
-export const TwitchIcon: React.FC<TwitchIconProps> = ({ className }) => {
+const TwitchIcon: React.FC<TwitchIconProps> = ({ className }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -20,3 +20,5 @@ export const TwitchIcon: React.FC<TwitchIconProps> = ({ className }) => {
     </svg>
   );
 };
+
+export default TwitchIcon;
