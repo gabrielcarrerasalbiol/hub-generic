@@ -203,7 +203,7 @@ export default function Home() {
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-md border-2 border-[#FDBE11] p-6 text-center">
-            <p className="text-[#001C58]">No hay contenido destacado disponible en este momento.</p>
+            <p className="text-[#001C58]">{t('home.noFeaturedContent')}</p>
           </div>
         )}
       </section>
@@ -212,7 +212,7 @@ export default function Home() {
       <section className="mb-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-[#001C58] border-l-4 border-[#FDBE11] pl-3">
-            Descubre Contenido
+            {t('home.discoverContent')}
           </h2>
           <div className="hidden md:flex space-x-1">
             <CategoryFilters 
@@ -234,7 +234,7 @@ export default function Home() {
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
                 onClick={() => setPlatform("all")}
               >
-                <Layers className="h-4 w-4 mr-2" /> Todos
+                <Layers className="h-4 w-4 mr-2" /> {t('home.all')}
               </Button>
               
               <Button
@@ -294,7 +294,7 @@ export default function Home() {
           
           {/* Categorías en mobile */}
           <div className="block md:hidden mb-6">
-            <h3 className="text-sm font-medium mb-2 text-[#001C58]">Filtrar por categoría:</h3>
+            <h3 className="text-sm font-medium mb-2 text-[#001C58]">{t('home.filterByCategory')}</h3>
             <CategoryFilters 
               selectedCategory={category} 
               onSelectCategory={(newCategory) => setCategory(newCategory as CategoryType)} 
@@ -312,19 +312,19 @@ export default function Home() {
                     platform === 'instagram' ? 'text-pink-500' : ''
                   }`}></i>
                 </div>
-                <h3 className="text-xl font-semibold text-[#001C58] mb-2">Próximamente</h3>
+                <h3 className="text-xl font-semibold text-[#001C58] mb-2">{t('home.comingSoon')}</h3>
                 <p className="text-gray-600 mb-4 max-w-xl mx-auto">
-                  Estamos trabajando para incorporar contenido de <span className="font-semibold capitalize">{platform}</span> a nuestro Hub Madridista.
+                  {t('home.workingToIncorporate', { platform: platform })}
                 </p>
                 <p className="text-sm text-gray-500 mb-6">
-                  Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.
+                  {t('home.soonEnjoyVideos')}
                 </p>
                 <Button 
                   variant="outline" 
                   className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
                   onClick={() => setPlatform("all")}
                 >
-                  Ver todos los videos
+                  {t('home.viewAllVideos')}
                 </Button>
               </div>
             </div>
