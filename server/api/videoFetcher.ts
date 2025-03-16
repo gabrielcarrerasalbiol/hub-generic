@@ -376,7 +376,8 @@ export async function importPremiumChannelsVideos(maxPerChannel = 20): Promise<{
 
 export async function importChannelVideos(
   channelId: string,
-  maxResults = 50
+  maxResults = 50,
+  setAsFeatured = false
 ): Promise<{total: number, added: number, skipped?: number, channelInfo?: any, error?: string}> {
   try {
     // Validar entrada
@@ -565,7 +566,7 @@ export async function importChannelVideos(
           summary,
           language,
           categoryIds: categories.map(id => id.toString()),
-          featured: false // Los videos importados no son featured por defecto
+          featured: setAsFeatured // Los videos se marcan como destacados según el parámetro
         };
         
         // Crear video y obtener el objeto con ID asignado
