@@ -220,8 +220,26 @@ export default function PollManagement() {
 
   // Mutación para actualizar encuesta
   const updatePoll = useMutation({
-    mutationFn: ({ id, data }: { id: number, data: PollFormValues }) => {
-      // Construcción directa del payload
+    mutationFn: async ({ id, data }: { id: number, data: PollFormValues }) => {
+      // Para depuración
+      console.log(`Iniciando actualización de encuesta ${id} con datos:`, data);
+      
+      // Obtener la encuesta actual para verificar qué opciones existen
+      const currentPollResponse = await fetch(`/api/polls/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('hubmadridista_token')}`
+        },
+        credentials: 'include'
+      });
+      
+      if (!currentPollResponse.ok) {
+        throw new Error('No se pudo obtener la encuesta actual para actualización');
+      }
+      
+      const currentPoll = await currentPollResponse.json();
+      console.log('Encuesta actual obtenida:', currentPoll);
+      
+      // Construcción del payload
       const payload = {
         title: data.title || 'Encuesta Actualizada',
         titleEs: data.titleEs || 'Encuesta Actualizada (ES)', 
@@ -229,19 +247,28 @@ export default function PollManagement() {
         questionEs: data.questionEs || '¿Cuál es tu opinión? (ES)',
         status: data.status || 'draft',
         showInSidebar: !!data.showInSidebar,
-        // Asegurarse de que solo se envíen campos esenciales y con los valores correctos
-        options: data.options.map(option => ({
-          id: option.id || undefined, // Solo incluir ID si existe (para opciones existentes)
-          text: option.text || '',
-          textEs: option.textEs || '',
-          order: typeof option.order === 'number' ? option.order : 0
-        }))
+        // Procesar opciones con información mejorada
+        options: data.options.map(option => {
+          const isExistingOption = option.id !== undefined;
+          const result: any = {
+            text: option.text || '',
+            textEs: option.textEs || '',
+            order: typeof option.order === 'number' ? option.order : 0
+          };
+          
+          // Solo incluir ID si es una opción existente
+          if (isExistingOption) {
+            result.id = option.id;
+          }
+          
+          return result;
+        })
       };
       
-      console.log('Actualizando encuesta:', payload);
+      console.log('Enviando payload de actualización:', payload);
       
-      // Usar el método PUT directamente con los datos
-      return fetch(`/api/polls/${id}`, {
+      // Enviar la actualización
+      const response = await fetch(`/api/polls/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -249,25 +276,19 @@ export default function PollManagement() {
         },
         body: JSON.stringify(payload),
         credentials: 'include'
-      }).then(response => {
-        if (!response.ok) {
-          return response.text().then(text => {
-            let errorMessage = 'Error al actualizar la encuesta';
-            try {
-              const errorData = JSON.parse(text);
-              if (errorData.message) {
-                errorMessage = errorData.message;
-              }
-            } catch (e) {
-              console.error('Error parsing error response:', e);
-              // Si no se puede parsear, usar el texto de respuesta completo
-              if (text) errorMessage = text;
-            }
-            throw new Error(errorMessage);
-          });
-        }
-        return response.json();
       });
+      
+      if (!response.ok) {
+        const text = await response.text();
+        try {
+          const errorData = JSON.parse(text);
+          throw new Error(errorData.message || 'Error al actualizar la encuesta');
+        } catch (e) {
+          throw new Error(text || 'Error desconocido al actualizar la encuesta');
+        }
+      }
+      
+      return await response.json();
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/polls'] });
