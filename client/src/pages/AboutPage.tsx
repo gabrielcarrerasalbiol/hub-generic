@@ -29,36 +29,38 @@ import {
 } from "@/components/ui/carousel";
 import { useAuth } from "@/hooks/useAuth";
 import { Smartphone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function AboutPage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
-  // Texto para el carrusel con colores de Real Madrid
+  // Hero slides with Real Madrid colors - using i18n
   const heroSlides = [
     {
-      title: "Hub Madridista",
-      subtitle: "El hogar digital para todos los madridistas",
+      title: t("about.heroSlides.slide1.title"),
+      subtitle: t("about.heroSlides.slide1.subtitle"),
       bgColor: "bg-[#1E3A8A]",
       textColor: "text-white",
       icon: <Home className="inline-block mr-3 h-8 w-8" />
     },
     {
-      title: "La Pasión Blanca",
-      subtitle: "Vive cada momento con la misma intensidad",
+      title: t("about.heroSlides.slide2.title"),
+      subtitle: t("about.heroSlides.slide2.subtitle"),
       bgColor: "bg-white",
       textColor: "text-[#1E3A8A]",
       icon: <Flame className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />
     },
     {
-      title: "El Sentimiento",
-      subtitle: "Unidos por los colores que nos representan",
+      title: t("about.heroSlides.slide3.title"),
+      subtitle: t("about.heroSlides.slide3.subtitle"),
       bgColor: "bg-[#FDBE11]",
       textColor: "text-[#1E3A8A]",
       icon: <Heart className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />
     },
     {
-      title: "La Afición Madridista",
-      subtitle: "El corazón que late en cada estadio",
+      title: t("about.heroSlides.slide4.title"),
+      subtitle: t("about.heroSlides.slide4.subtitle"),
       bgColor: "bg-gradient-to-r from-[#1E3A8A] to-[#2C2152]",
       textColor: "text-white",
       icon: <Users className="inline-block mr-3 h-8 w-8" />
@@ -108,12 +110,10 @@ export default function AboutPage() {
       {/* About Hub Madridista */}
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">¿Qué es Hub Madridista?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">{t('about.whatIs')}</h2>
           <div className="w-20 h-1 bg-[#FDBE11] mx-auto mb-6"></div>
           <p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
-            Hub Madridista es la plataforma definitiva para los aficionados del Real Madrid, 
-            ofreciendo una experiencia inmersiva y personalizada con todo el contenido relacionado 
-            con el club más laureado del mundo.
+            {t('about.description')}
           </p>
         </div>
 
@@ -122,9 +122,9 @@ export default function AboutPage() {
             <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
               <Award className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 dark:text-white">Contenido Curado</h3>
+            <h3 className="text-xl font-semibold mb-3 dark:text-white">{t('about.features.curatedContent.title')}</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Accede a los mejores vídeos, noticias y actualizaciones del Real Madrid, seleccionados y categorizados automáticamente para ti.
+              {t('about.features.curatedContent.description')}
             </p>
           </div>
 
@@ -135,9 +135,9 @@ export default function AboutPage() {
                 <Smartphone className="w-5 h-5 text-white ml-1" />
               </div>
             </div>
-            <h3 className="text-xl font-semibold mb-3 dark:text-white">Multiplataforma</h3>
+            <h3 className="text-xl font-semibold mb-3 dark:text-white">{t('about.features.multiplatform.title')}</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Contenido de YouTube, Twitter, TikTok y más, todo en un solo lugar para que nunca te pierdas nada importante.
+              {t('about.features.multiplatform.description')}
             </p>
           </div>
 
@@ -146,9 +146,9 @@ export default function AboutPage() {
               <Bell className="w-8 h-8 text-white" />
               <Star className="w-4 h-4 text-white absolute top-2 right-2 animate-ping" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 dark:text-white">Notificaciones</h3>
+            <h3 className="text-xl font-semibold mb-3 dark:text-white">{t('about.features.notifications.title')}</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Mantente al día con alertas personalizadas sobre nuevos contenidos de tus canales y categorías favoritas.
+              {t('about.features.notifications.description')}
             </p>
           </div>
         </div>
@@ -158,11 +158,10 @@ export default function AboutPage() {
       <section className="bg-[#1E3A8A] dark:bg-[#362C5A] text-white py-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Beneficios Premium</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('about.premiumBenefits.title')}</h2>
             <div className="w-20 h-1 bg-[#FDBE11] mx-auto mb-6"></div>
             <p className="text-lg max-w-3xl mx-auto">
-              Desbloquea todo el potencial de Hub Madridista con nuestra suscripción premium
-              y disfruta de ventajas exclusivas.
+              {t('about.premiumBenefits.description')}
             </p>
           </div>
 
@@ -173,9 +172,9 @@ export default function AboutPage() {
               </div>
               <Star className="w-3 h-3 text-[#FDBE11] absolute top-4 right-4" />
               <Star className="w-3 h-3 text-[#FDBE11] absolute top-4 left-4" />
-              <h3 className="text-xl font-semibold mb-2">Canales Exclusivos</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('about.premiumBenefits.exclusiveChannels.title')}</h3>
               <p className="text-gray-200">
-                Acceso a canales premium con contenido exclusivo y análisis en profundidad.
+                {t('about.premiumBenefits.exclusiveChannels.description')}
               </p>
             </div>
 
@@ -183,9 +182,9 @@ export default function AboutPage() {
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
                 <Ban className="w-6 h-6 text-[#FDBE11]" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Sin Publicidad</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('about.premiumBenefits.noAds.title')}</h3>
               <p className="text-gray-200">
-                Disfruta de una experiencia sin interrupciones publicitarias en toda la plataforma.
+                {t('about.premiumBenefits.noAds.description')}
               </p>
             </div>
 
@@ -195,9 +194,9 @@ export default function AboutPage() {
               </div>
               <History className="w-3 h-3 text-white/30 absolute top-4 right-6" />
               <History className="w-3 h-3 text-white/30 absolute top-6 right-10" />
-              <h3 className="text-xl font-semibold mb-2">Archivo Histórico</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('about.premiumBenefits.historicalArchive.title')}</h3>
               <p className="text-gray-200">
-                Accede a nuestro archivo completo de momentos históricos del Real Madrid.
+                {t('about.premiumBenefits.historicalArchive.description')}
               </p>
             </div>
 
@@ -205,9 +204,9 @@ export default function AboutPage() {
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
                 <LineChart className="w-6 h-6 text-[#FDBE11]" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Análisis Avanzado</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('about.premiumBenefits.advancedAnalysis.title')}</h3>
               <p className="text-gray-200">
-                Estadísticas detalladas y análisis tácticos exclusivos de cada partido.
+                {t('about.premiumBenefits.advancedAnalysis.description')}
               </p>
             </div>
           </div>
@@ -217,12 +216,12 @@ export default function AboutPage() {
               user.role === 'premium' ? (
                 <div className="bg-white/20 backdrop-blur inline-block px-6 py-3 rounded-lg">
                   <CheckCircle className="inline-block text-[#FDBE11] h-5 w-5 mr-2" />
-                  <span className="font-medium">¡Ya disfrutas de los beneficios premium!</span>
+                  <span className="font-medium">{t('about.premiumBenefits.alreadyPremium')}</span>
                 </div>
               ) : (
                 <Link href="/profile">
                   <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-medium text-lg px-8 py-3 rounded-lg">
-                    Actualizar a Premium
+                    {t('about.premiumBenefits.upgradeToPremium')}
                   </Button>
                 </Link>
               )
@@ -230,12 +229,12 @@ export default function AboutPage() {
               <div className="space-x-4">
                 <Link href="/register">
                   <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-medium text-lg px-8 py-3 rounded-lg">
-                    Registrarse
+                    {t('auth.register')}
                   </Button>
                 </Link>
                 <Link href="/login">
                   <Button className="bg-white/20 hover:bg-white/30 backdrop-blur font-medium text-lg px-8 py-3 rounded-lg">
-                    Iniciar Sesión
+                    {t('auth.login')}
                   </Button>
                 </Link>
               </div>
@@ -247,7 +246,7 @@ export default function AboutPage() {
       {/* Testimonials */}
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">Lo que dicen nuestros usuarios</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">{t('about.testimonials.title')}</h2>
           <div className="w-20 h-1 bg-[#FDBE11] mx-auto mb-6"></div>
         </div>
 
@@ -258,12 +257,12 @@ export default function AboutPage() {
                 <img src="https://ui-avatars.com/api/?name=Carlos+R&background=random" alt="Avatar" />
               </div>
               <div>
-                <h4 className="font-semibold dark:text-white">Carlos Rodríguez</h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Usuario Premium</p>
+                <h4 className="font-semibold dark:text-white">{t('about.testimonials.user1.name')}</h4>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('about.testimonials.user1.role')}</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 italic">
-              "Hub Madridista ha cambiado la forma en que sigo al Real Madrid. Toda la información en un solo lugar y categorizada perfectamente. ¡Increíble servicio!"
+              "{t('about.testimonials.user1.testimonial')}"
             </p>
             <div className="mt-4 flex">
               {[...Array(5)].map((_, i) => (
@@ -278,12 +277,12 @@ export default function AboutPage() {
                 <img src="https://ui-avatars.com/api/?name=Laura+M&background=random" alt="Avatar" />
               </div>
               <div>
-                <h4 className="font-semibold dark:text-white">Laura Martínez</h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Usuario Premium</p>
+                <h4 className="font-semibold dark:text-white">{t('about.testimonials.user2.name')}</h4>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('about.testimonials.user2.role')}</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 italic">
-              "Las notificaciones personalizadas son geniales, nunca me pierdo contenido nuevo de mis canales favoritos. La suscripción premium es totalmente recomendable."
+              "{t('about.testimonials.user2.testimonial')}"
             </p>
             <div className="mt-4 flex">
               {[...Array(4)].map((_, i) => (
@@ -299,12 +298,12 @@ export default function AboutPage() {
                 <img src="https://ui-avatars.com/api/?name=Miguel+S&background=random" alt="Avatar" />
               </div>
               <div>
-                <h4 className="font-semibold dark:text-white">Miguel Sánchez</h4>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Usuario Free</p>
+                <h4 className="font-semibold dark:text-white">{t('about.testimonials.user3.name')}</h4>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('about.testimonials.user3.role')}</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 italic">
-              "Incluso la versión gratuita es excepcional. La interfaz es intuitiva y encuentro todo el contenido relevante rápidamente. Definitivamente voy a actualizar a Premium."
+              "{t('about.testimonials.user3.testimonial')}"
             </p>
             <div className="mt-4 flex">
               {[...Array(4)].map((_, i) => (
@@ -320,12 +319,10 @@ export default function AboutPage() {
       <section className="bg-[#FDBE11]/10 dark:bg-[#FDBE11]/5 py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 dark:text-white">
-            Únete a la comunidad madridista
+            {t('about.joinCommunity.title')}
           </h2>
           <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
-            Más de 50,000 aficionados ya disfrutan de la mejor experiencia 
-            para seguir y disfrutar de todo el contenido relacionado con el 
-            Real Madrid. ¡Sé parte de nuestra comunidad hoy mismo!
+            {t('about.joinCommunity.description')}
           </p>
           
           {!user ? (
@@ -334,7 +331,7 @@ export default function AboutPage() {
                 <Link href="/register">
                   <Button className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/80 text-white font-medium text-lg px-8 py-3 rounded-lg">
                     <UserPlus className="mr-2 h-5 w-5" />
-                    Registrarse Ahora
+                    {t('about.joinCommunity.registerNow')}
                   </Button>
                 </Link>
               </div>
@@ -342,7 +339,7 @@ export default function AboutPage() {
           ) : (
             <Link href="/home">
               <Button className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/80 text-white font-medium text-lg px-8 py-3 rounded-lg">
-                Explorar Contenido
+                {t('about.joinCommunity.exploreContent')}
               </Button>
             </Link>
           )}
@@ -353,19 +350,20 @@ export default function AboutPage() {
       <section className="bg-[#1E3A8A] text-white py-12">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Hub Madridista</h2>
-          <p className="text-sm text-white/70 mb-4">La mejor plataforma de contenido para aficionados del Real Madrid</p>
+          <p className="text-sm text-white/70 mb-4">{t('footer.description')}</p>
           <div className="flex justify-center gap-6">
             <Link href="/terminos">
-              <p className="text-sm text-white/70 hover:text-white transition">Términos y Condiciones</p>
+              <p className="text-sm text-white/70 hover:text-white transition">{t('footer.terms')}</p>
             </Link>
             <Link href="/privacidad">
-              <p className="text-sm text-white/70 hover:text-white transition">Política de Privacidad</p>
+              <p className="text-sm text-white/70 hover:text-white transition">{t('footer.privacy')}</p>
             </Link>
             <Link href="/contacto">
-              <p className="text-sm text-white/70 hover:text-white transition">Contacto</p>
+              <p className="text-sm text-white/70 hover:text-white transition">{t('footer.contact')}</p>
             </Link>
           </div>
-          <p className="mt-6 text-xs text-white/50">© 2025 Hub Madridista. Todos los derechos reservados.</p>
+          <p className="mt-6 text-xs text-white/50">{t('footer.rights')}</p>
+          <p className="mt-2 text-xs text-white/30">{t('footer.disclaimer')}</p>
         </div>
       </section>
     </main>
