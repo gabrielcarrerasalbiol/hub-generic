@@ -3938,7 +3938,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           player1Id: question.player1.id,
           player2Id: question.player2.id,
           statType: question.statType,
-          correctAnswer: question.correctAnswerId,
+          correctAnswer: question.correctAnswer, // Campo renombrado de correctAnswerId a correctAnswer
           userSelection: null,
           isCorrect: null
         };

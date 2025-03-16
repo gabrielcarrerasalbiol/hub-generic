@@ -32,7 +32,7 @@ interface Question {
   statType: string;
   question: string;
   hint?: string;
-  correctAnswerId?: number;
+  correctAnswer?: number;
   player1?: Player;
   player2?: Player;
   userSelection?: number;
@@ -138,7 +138,7 @@ const StatsGame = () => {
           ? { 
               ...q, 
               userSelection: variables.playerId,
-              correctAnswerId: data.correctAnswerId,
+              correctAnswer: data.correctAnswer,
               isCorrect: data.isCorrect,
               explanation: data.explanation
             } 
@@ -332,7 +332,7 @@ const StatsGame = () => {
             {[player1, player2].map((player) => (
               <div key={player.id} className="relative">
                 <Button
-                  variant={isAnswered ? (player.id === currentQuestion.correctAnswerId ? "default" : "destructive") : "outline"}
+                  variant={isAnswered ? (player.id === currentQuestion.correctAnswer ? "default" : "destructive") : "outline"}
                   className={`w-full h-auto p-4 flex flex-col items-center hover:shadow-md transition-all ${
                     isAnswered && player.id === currentQuestion.userSelection
                       ? "ring-2 ring-primary"
@@ -495,13 +495,13 @@ const StatsGame = () => {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     {question.player1 && question.player2 && (
                       <>
-                        <div className={`p-2 rounded ${question.correctAnswerId === question.player1.id ? 'bg-green-50' : ''}`}>
+                        <div className={`p-2 rounded ${question.correctAnswer === question.player1.id ? 'bg-green-50' : ''}`}>
                           <strong>{question.player1.name}</strong>
-                          {question.correctAnswerId === question.player1.id && ` (${t('stats_game.correct')})`}
+                          {question.correctAnswer === question.player1.id && ` (${t('stats_game.correct')})`}
                         </div>
-                        <div className={`p-2 rounded ${question.correctAnswerId === question.player2.id ? 'bg-green-50' : ''}`}>
+                        <div className={`p-2 rounded ${question.correctAnswer === question.player2.id ? 'bg-green-50' : ''}`}>
                           <strong>{question.player2.name}</strong>
-                          {question.correctAnswerId === question.player2.id && ` (${t('stats_game.correct')})`}
+                          {question.correctAnswer === question.player2.id && ` (${t('stats_game.correct')})`}
                         </div>
                       </>
                     )}
