@@ -45,7 +45,7 @@ export async function sendShareEmail(
           ` : ''}
           
           <p style="margin: 20px 0;">
-            <a href="${shareLink}" style="background-color: #001C58; color: white; padding: 10px 15px; text-decoration: none; border-radius: 3px; display: inline-block;">
+            <a href="${shareLink}" target="_blank" rel="noopener noreferrer" style="background-color: #001C58; color: white; padding: 10px 15px; text-decoration: none; border-radius: 3px; display: inline-block;">
               Ver Video
             </a>
           </p>
