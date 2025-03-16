@@ -582,7 +582,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const limit = parseInt(req.query.limit as string) || 4;
       const channels = await storage.getRecommendedChannels(limit);
-      res.json(channels);
+      
+      // Intentar actualizar los canales de YouTube que no tienen banner
+      const updatedChannels = [...channels];
+      
+      for (let i = 0; i < updatedChannels.length; i++) {
+        const channel = updatedChannels[i];
+        
+        // Solo intentar actualizar canales de YouTube que no tengan banner
+        if (channel.platform === "YouTube" && (!channel.bannerUrl || channel.bannerUrl === "")) {
+          try {
+            console.log(`Intentando actualizar información del canal ${channel.title} (ID: ${channel.id})`);
+            
+            // Importar utilidades para obtener datos de YouTube
+            const { getYouTubeChannelDetails, convertYouTubeChannelToSchema } = await import("./api/youtube");
+            
+            // Buscar detalles actualizados del canal
+            const channelDetails = await getYouTubeChannelDetails([channel.externalId]);
+            
+            if (channelDetails.items && channelDetails.items.length > 0) {
+              const channelInfo = channelDetails.items[0];
+              
+              // Verificar si tiene información de banner
+              if (channelInfo.brandingSettings?.image?.bannerExternalUrl) {
+                // Actualizar solo el banner
+                await storage.updateChannel(channel.id, {
+                  bannerUrl: channelInfo.brandingSettings.image.bannerExternalUrl
+                });
+                
+                // Actualizar el objeto en la respuesta
+                updatedChannels[i] = {
+                  ...channel,
+                  bannerUrl: channelInfo.brandingSettings.image.bannerExternalUrl
+                };
+                
+                console.log(`Actualizado banner para canal ${channel.title}`);
+              } else {
+                console.log(`El canal ${channel.title} no tiene banner configurado en YouTube`);
+              }
+            }
+          } catch (updateError) {
+            console.error(`Error actualizando canal ${channel.title}:`, updateError);
+            // No fallamos la solicitud completa si hay error actualizando un canal
+          }
+        }
+      }
+      
+      res.json(updatedChannels);
     } catch (error) {
       console.error("Error fetching recommended channels:", error);
       res.status(500).json({ message: "Failed to fetch recommended channels" });
