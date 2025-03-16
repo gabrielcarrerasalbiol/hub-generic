@@ -3482,37 +3482,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Manejar la actualización de opciones si se incluyen
       if (options && Array.isArray(options)) {
-        // Obtener las opciones actuales
-        const currentOptions = await storage.getPollOptions(pollId);
-        
-        // Para las opciones existentes, actualizar o eliminar
-        for (const currentOption of currentOptions) {
-          const matchingOption = options.find((opt: any) => opt.id === currentOption.id);
+        try {
+          console.log("Procesando opciones:", options);
           
-          if (matchingOption) {
-            // Actualizar la opción existente
-            await storage.updatePollOption(currentOption.id, {
-              text: matchingOption.text || currentOption.text,
-              textEs: matchingOption.textEs !== undefined ? matchingOption.textEs : currentOption.textEs,
-              order: matchingOption.order !== undefined ? matchingOption.order : currentOption.order
-            });
-          } else {
-            // Eliminar la opción si ya no existe
-            await storage.deletePollOption(currentOption.id);
+          // Obtener las opciones actuales
+          const currentOptions = await storage.getPollOptions(pollId);
+          console.log("Opciones actuales:", currentOptions);
+          
+          // Crear un mapa de IDs de opciones actuales para verificación rápida
+          const currentOptionIds = new Set(currentOptions.map(opt => opt.id));
+          
+          // Primero identificar opciones a eliminar
+          const optionsToDelete = currentOptions.filter(
+            current => !options.some((opt: any) => opt.id === current.id)
+          );
+          
+          // Eliminar opciones que ya no están presentes
+          for (const optionToDelete of optionsToDelete) {
+            console.log(`Eliminando opción: ${optionToDelete.id}`);
+            await storage.deletePollOption(optionToDelete.id);
           }
-        }
-        
-        // Añadir nuevas opciones
-        for (const option of options) {
-          if (!option.id) {
-            // Es una nueva opción
-            await storage.createPollOption({
-              pollId,
-              text: option.text || '',
-              textEs: option.textEs || '',
-              order: option.order !== undefined ? option.order : 0
-            });
+          
+          // Procesar opciones enviadas en la solicitud
+          for (const option of options) {
+            // Si tiene ID, es una actualización
+            if (option.id && currentOptionIds.has(option.id)) {
+              console.log(`Actualizando opción: ${option.id}`);
+              
+              // Encontrar la opción actual para usar sus valores como fallback
+              const currentOption = currentOptions.find(curr => curr.id === option.id);
+              
+              await storage.updatePollOption(option.id, {
+                text: option.text || (currentOption ? currentOption.text : ''),
+                textEs: option.textEs !== undefined ? option.textEs : (currentOption ? currentOption.textEs : ''),
+                order: option.order !== undefined ? option.order : (currentOption ? currentOption.order : 0)
+              });
+            } 
+            // Si no tiene ID, es una nueva opción
+            else if (!option.id) {
+              console.log("Añadiendo nueva opción");
+              await storage.createPollOption({
+                pollId,
+                text: option.text || '',
+                textEs: option.textEs || '',
+                order: option.order !== undefined ? option.order : 0
+              });
+            }
+            // Si tiene ID pero no está en las opciones actuales, es un error o inconsistencia
+            else {
+              console.warn(`Opción con ID ${option.id} no encontrada en las opciones actuales, se ignorará`);
+            }
           }
+        } catch (error) {
+          console.error("Error procesando opciones:", error);
+          throw new Error("Error al procesar las opciones de la encuesta");
         }
       }
       

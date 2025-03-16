@@ -229,11 +229,12 @@ export default function PollManagement() {
         questionEs: data.questionEs || '¿Cuál es tu opinión? (ES)',
         status: data.status || 'draft',
         showInSidebar: !!data.showInSidebar,
+        // Asegurarse de que solo se envíen campos esenciales y con los valores correctos
         options: data.options.map(option => ({
-          id: option.id,
+          id: option.id || undefined, // Solo incluir ID si existe (para opciones existentes)
           text: option.text || '',
           textEs: option.textEs || '',
-          order: option.order || 0
+          order: typeof option.order === 'number' ? option.order : 0
         }))
       };
       
@@ -250,8 +251,19 @@ export default function PollManagement() {
         credentials: 'include'
       }).then(response => {
         if (!response.ok) {
-          return response.json().then(err => {
-            throw new Error(err.message || 'Error al actualizar la encuesta');
+          return response.text().then(text => {
+            let errorMessage = 'Error al actualizar la encuesta';
+            try {
+              const errorData = JSON.parse(text);
+              if (errorData.message) {
+                errorMessage = errorData.message;
+              }
+            } catch (e) {
+              console.error('Error parsing error response:', e);
+              // Si no se puede parsear, usar el texto de respuesta completo
+              if (text) errorMessage = text;
+            }
+            throw new Error(errorMessage);
           });
         }
         return response.json();
