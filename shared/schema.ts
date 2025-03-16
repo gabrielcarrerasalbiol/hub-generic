@@ -426,6 +426,9 @@ export const statsGameQuestions = pgTable("stats_game_questions", {
   userSelection: integer("user_selection").references(() => players.id),
   correctAnswer: integer("correct_answer").references(() => players.id).notNull(),
   isCorrect: boolean("is_correct"),
+  explanation: text("explanation"),
+  question: text("question"),
+  hint: text("hint"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

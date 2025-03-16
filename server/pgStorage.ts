@@ -2032,10 +2032,8 @@ export class PgStorage implements IStorage {
     try {
       const result = await db.update(statsGameQuestions)
         .set({
-          userAnswerId: userSelection,
-          isCorrect,
-          answeredAt: new Date(),
-          updatedAt: new Date()
+          userSelection: userSelection,
+          isCorrect
         })
         .where(eq(statsGameQuestions.id, id))
         .returning();

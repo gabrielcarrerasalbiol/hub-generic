@@ -3940,7 +3940,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           statType: question.statType,
           correctAnswer: question.correctAnswer, // Campo renombrado de correctAnswerId a correctAnswer
           userSelection: null,
-          isCorrect: null
+          isCorrect: null,
+          question: question.question,
+          hint: question.hint,
+          explanation: question.explanation
         };
         
         const savedQuestion = await storage.createStatsGameQuestion(newQuestion);
