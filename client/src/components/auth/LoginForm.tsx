@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import './FormStyle.css';
 
 import {
@@ -19,21 +20,23 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-const loginSchema = z.object({
-  username: z.string().min(1, {
-    message: 'Introduce tu nombre de usuario',
-  }),
-  password: z.string().min(1, {
-    message: 'Introduce tu contraseña',
-  }),
-});
-
 export default function LoginForm() {
   const login = useAuth((state) => state.login);
   const error = useAuth((state) => state.error);
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
+  
+  // Define validation schema with translations
+  const loginSchema = z.object({
+    username: z.string().min(1, {
+      message: t('auth.username') + t('general.required'),
+    }),
+    password: z.string().min(1, {
+      message: t('auth.password') + t('general.required'),
+    }),
+  });
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -51,24 +54,24 @@ export default function LoginForm() {
       
       if (success) {
         toast({
-          title: 'Inicio de sesión exitoso',
-          description: 'Has iniciado sesión correctamente.',
+          title: t('auth.loginPage.loginSuccess'),
+          description: t('auth.loginPage.loginSuccessMessage'),
         });
-        // Usar navigate en lugar de window.location
+        // Use navigate instead of window.location
         navigate('/');
       } else {
         toast({
           variant: 'destructive',
-          title: 'Error en el inicio de sesión',
-          description: error || 'Usuario o contraseña incorrectos.',
+          title: t('auth.loginPage.loginError'),
+          description: error || t('auth.loginPage.loginErrorMessage'),
         });
       }
     } catch (err: any) {
-      console.error('Error durante el inicio de sesión:', err);
+      console.error('Error during login:', err);
       toast({
         variant: 'destructive',
-        title: 'Error en el inicio de sesión',
-        description: err.message || 'Usuario o contraseña incorrectos.',
+        title: t('auth.loginPage.loginError'),
+        description: err.message || t('auth.loginPage.loginErrorMessage'),
       });
     } finally {
       setIsSubmitting(false);
@@ -78,9 +81,9 @@ export default function LoginForm() {
   return (
     <Card className="w-full max-w-xl mx-auto">
       <CardHeader className="pb-4">
-        <CardTitle>Iniciar sesión</CardTitle>
+        <CardTitle>{t('auth.loginPage.title')}</CardTitle>
         <CardDescription>
-          Accede a Hub Madridista para disfrutar del contenido exclusivo
+          {t('auth.loginPage.subtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-2 pb-2">
@@ -91,10 +94,10 @@ export default function LoginForm() {
               name="username"
               render={({ field }) => (
                 <FormItem className="compact-form-item">
-                  <FormLabel>Nombre de usuario</FormLabel>
+                  <FormLabel>{t('auth.username')}</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Introduce tu usuario" 
+                      placeholder={`${t('auth.username')}...`} 
                       className="h-9" 
                       {...field} 
                     />
@@ -110,15 +113,15 @@ export default function LoginForm() {
               render={({ field }) => (
                 <FormItem className="compact-form-item">
                   <div className="flex justify-between items-center">
-                    <FormLabel>Contraseña</FormLabel>
+                    <FormLabel>{t('auth.password')}</FormLabel>
                     <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-                      ¿Olvidaste tu contraseña?
+                      {t('auth.forgotPassword')}
                     </Link>
                   </div>
                   <FormControl>
                     <Input 
                       type="password" 
-                      placeholder="Introduce tu contraseña" 
+                      placeholder={`${t('auth.password')}...`}
                       className="h-9" 
                       {...field} 
                     />
@@ -133,7 +136,7 @@ export default function LoginForm() {
               className="w-full mt-4" 
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
+              {isSubmitting ? t('auth.loginPage.logging') : t('auth.login')}
             </Button>
           </form>
         </Form>
@@ -142,9 +145,9 @@ export default function LoginForm() {
         {/* SSO buttons temporarily hidden */}
         <div className="text-center w-full">
           <p className="text-sm">
-            ¿No tienes cuenta?{' '}
+            {t('auth.loginPage.noAccount')}{' '}
             <Link href="/register" className="text-primary underline">
-              Regístrate
+              {t('auth.register')}
             </Link>
           </p>
         </div>
