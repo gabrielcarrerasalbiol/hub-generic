@@ -158,16 +158,31 @@ export default function Home() {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
-      {/* Hero Banner con slider de imágenes */}
-      <HeroSlider 
-        images={bannerImages}
-        title="Hub Madridista"
-        subtitle={t('home.heroSubtitle')}
-        buttonText={t('home.discoverVideos')}
-        buttonLink="/videos"
-        autoplaySpeed={7000}
-        height="h-96"
-      />
+      {/* Hero Banner personalizado */}
+      <div className="relative w-full h-96 overflow-hidden rounded-xl shadow-lg mb-8">
+        {/* Imagen de fondo */}
+        <img 
+          src="/images/real-madrid-fans-stadium.jpg" 
+          alt="Real Madrid Fans" 
+          className="absolute w-full h-full object-cover"
+        />
+        
+        {/* Overlay de gradiente */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 via-[#001C58]/60 to-transparent"></div>
+        
+        {/* Contenido */}
+        <div className="relative h-full flex flex-col justify-center">
+          <div className="text-white p-8 md:p-12 max-w-xl">
+            <h1 className="text-3xl md:text-5xl font-bold mb-4">Hub Madridista</h1>
+            <p className="text-lg md:text-xl mb-8 max-w-lg">{t('home.heroSubtitle')}</p>
+            <Link href="/videos">
+              <Button className="bg-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/90 font-semibold px-6 py-2 text-lg shadow-lg">
+                {t('home.discoverVideos')}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
       {/* SEO optimizado para la página de inicio */}
       <SEO
         title="Hub Madridista | Agregador de contenido del Real Madrid"
