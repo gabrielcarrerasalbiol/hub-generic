@@ -3375,30 +3375,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Recibiendo datos de encuesta:", JSON.stringify(req.body, null, 2));
       
-      // Extraer y preparar los datos
-      const { options, ...pollFormData } = req.body;
+      // Si el body está vacío o no tiene las propiedades esperadas, manejarlo explícitamente
+      if (!req.body || Object.keys(req.body).length === 0) {
+        console.error("Body de solicitud vacío o malformado");
+        return res.status(400).json({ 
+          message: "El cuerpo de la solicitud está vacío o malformado. Se esperan datos de encuesta válidos." 
+        });
+      }
       
-      // Esto garantiza que los datos cumplen con el esquema
+      // Extraer y preparar los datos con valores por defecto sólidos
       const pollData = {
-        title: pollFormData.title || "",
-        question: pollFormData.question || "",
-        titleEs: pollFormData.titleEs,
-        questionEs: pollFormData.questionEs,
-        status: pollFormData.status || "draft",
-        showInSidebar: !!pollFormData.showInSidebar,
-        language: pollFormData.language || "es"
+        title: req.body.title || "Nueva Encuesta",
+        question: req.body.question || "¿Cuál es tu opinión?",
+        titleEs: req.body.titleEs || "Nueva Encuesta (ES)",
+        questionEs: req.body.questionEs || "¿Cuál es tu opinión? (ES)",
+        status: req.body.status || "draft",
+        showInSidebar: !!req.body.showInSidebar,
+        language: req.body.language || "es"
       };
+      
+      // Validar opciones con valores por defecto si no existen
+      let optionsArray = req.body.options || [];
+      
+      // Si no hay opciones, crear dos opciones por defecto
+      if (!optionsArray || !Array.isArray(optionsArray) || optionsArray.length < 2) {
+        optionsArray = [
+          { text: "Sí", textEs: "Sí", order: 0 },
+          { text: "No", textEs: "No", order: 1 }
+        ];
+        console.log("Usando opciones por defecto:", optionsArray);
+      }
       
       // Validar el poll data
       const validatedPollData = insertPollSchema.parse(pollData);
       
-      // Validar opciones
-      const optionsArray = options || [];
-      if (!optionsArray || optionsArray.length < 2) {
-        return res.status(400).json({ 
-          message: "La encuesta debe tener al menos 2 opciones de respuesta" 
-        });
-      }
+      console.log("Datos validados:", validatedPollData);
+      console.log("Opciones:", optionsArray);
       
       // Crear la encuesta
       const poll = await storage.createPoll(validatedPollData, optionsArray);
@@ -3434,22 +3446,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Encuesta no encontrada" });
       }
       
-      // Extraer y preparar los datos
-      const { options, ...pollFormData } = req.body;
+      // Si el body está vacío o no tiene las propiedades esperadas, manejarlo explícitamente
+      if (!req.body || Object.keys(req.body).length === 0) {
+        console.error("Body de solicitud vacío o malformado");
+        return res.status(400).json({ 
+          message: "El cuerpo de la solicitud está vacío o malformado. Se esperan datos de encuesta válidos." 
+        });
+      }
       
-      // Esto garantiza que los datos cumplen con el esquema
+      // Extraer los datos con valores por defecto robustos
+      const { options } = req.body;
+      
+      // Preparar datos con valores fallback de la encuesta existente
       const pollData = {
-        title: pollFormData.title || existingPoll.title,
-        question: pollFormData.question || existingPoll.question,
-        titleEs: pollFormData.titleEs,
-        questionEs: pollFormData.questionEs,
-        status: pollFormData.status || existingPoll.status,
-        showInSidebar: typeof pollFormData.showInSidebar === 'boolean' ? pollFormData.showInSidebar : existingPoll.showInSidebar,
-        language: pollFormData.language || existingPoll.language
+        title: req.body.title || existingPoll.title,
+        titleEs: req.body.titleEs !== undefined ? req.body.titleEs : existingPoll.titleEs,
+        question: req.body.question || existingPoll.question,
+        questionEs: req.body.questionEs !== undefined ? req.body.questionEs : existingPoll.questionEs,
+        status: req.body.status || existingPoll.status,
+        showInSidebar: req.body.showInSidebar !== undefined ? !!req.body.showInSidebar : existingPoll.showInSidebar,
+        language: req.body.language || existingPoll.language
       };
       
       // Validar el poll data usando el schema parcial que permite valores opcionales
       const validatedPollData = insertPollSchema.partial().parse(pollData);
+      
+      console.log("Datos validados:", validatedPollData);
       
       // Actualizar la encuesta
       const updatedPoll = await storage.updatePoll(pollId, validatedPollData);
@@ -3459,7 +3481,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Manejar la actualización de opciones si se incluyen
-      if (options) {
+      if (options && Array.isArray(options)) {
         // Obtener las opciones actuales
         const currentOptions = await storage.getPollOptions(pollId);
         
@@ -3471,8 +3493,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Actualizar la opción existente
             await storage.updatePollOption(currentOption.id, {
               text: matchingOption.text || currentOption.text,
-              textEs: matchingOption.textEs,
-              order: matchingOption.order || currentOption.order
+              textEs: matchingOption.textEs !== undefined ? matchingOption.textEs : currentOption.textEs,
+              order: matchingOption.order !== undefined ? matchingOption.order : currentOption.order
             });
           } else {
             // Eliminar la opción si ya no existe
@@ -3487,8 +3509,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             await storage.createPollOption({
               pollId,
               text: option.text || '',
-              textEs: option.textEs,
-              order: option.order || 0
+              textEs: option.textEs || '',
+              order: option.order !== undefined ? option.order : 0
             });
           }
         }

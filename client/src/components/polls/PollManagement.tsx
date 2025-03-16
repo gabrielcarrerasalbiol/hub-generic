@@ -153,20 +153,15 @@ export default function PollManagement() {
   // Mutación para crear encuesta
   const createPoll = useMutation({
     mutationFn: (data: PollFormValues) => {
-      // Extraemos las opciones del formulario
-      const { options, ...pollData } = data;
-      
-      // Construimos el payload separando los datos de la encuesta y las opciones
+      // Construcción directa del payload
       const payload = {
-        // Datos de la encuesta con valores por defecto para asegurar que no sean undefined
-        title: pollData.title || '',
-        titleEs: pollData.titleEs || '', 
-        question: pollData.question || '',
-        questionEs: pollData.questionEs || '',
-        status: pollData.status || 'draft',
-        showInSidebar: !!pollData.showInSidebar,
-        // Las opciones necesitan ser enviadas por separado
-        options: options.map(option => ({
+        title: data.title || 'Nueva Encuesta',
+        titleEs: data.titleEs || 'Nueva Encuesta (ES)', 
+        question: data.question || '¿Cuál es tu opinión?',
+        questionEs: data.questionEs || '¿Cuál es tu opinión? (ES)',
+        status: data.status || 'draft',
+        showInSidebar: !!data.showInSidebar,
+        options: data.options.map(option => ({
           text: option.text || '',
           textEs: option.textEs || '',
           order: option.order || 0
@@ -175,9 +170,22 @@ export default function PollManagement() {
       
       console.log('Enviando datos de encuesta:', payload);
       
-      return apiRequest('/api/polls', {
+      // Usar el método POST directamente con los datos
+      return fetch('/api/polls', {
         method: 'POST',
-        data: payload
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('hubmadridista_token')}`
+        },
+        body: JSON.stringify(payload),
+        credentials: 'include'
+      }).then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(err.message || 'Error al crear la encuesta');
+          });
+        }
+        return response.json();
       });
     },
     onSuccess: () => {
@@ -213,20 +221,15 @@ export default function PollManagement() {
   // Mutación para actualizar encuesta
   const updatePoll = useMutation({
     mutationFn: ({ id, data }: { id: number, data: PollFormValues }) => {
-      // Extraemos las opciones del formulario
-      const { options, ...pollData } = data;
-      
-      // Construimos el payload separando los datos de la encuesta y las opciones
+      // Construcción directa del payload
       const payload = {
-        // Datos de la encuesta con valores por defecto para asegurar que no sean undefined
-        title: pollData.title || '',
-        titleEs: pollData.titleEs || '', 
-        question: pollData.question || '',
-        questionEs: pollData.questionEs || '',
-        status: pollData.status || 'draft',
-        showInSidebar: !!pollData.showInSidebar,
-        // Las opciones necesitan incluir el ID para la actualización
-        options: options.map(option => ({
+        title: data.title || 'Encuesta Actualizada',
+        titleEs: data.titleEs || 'Encuesta Actualizada (ES)', 
+        question: data.question || '¿Cuál es tu opinión?',
+        questionEs: data.questionEs || '¿Cuál es tu opinión? (ES)',
+        status: data.status || 'draft',
+        showInSidebar: !!data.showInSidebar,
+        options: data.options.map(option => ({
           id: option.id,
           text: option.text || '',
           textEs: option.textEs || '',
@@ -236,9 +239,22 @@ export default function PollManagement() {
       
       console.log('Actualizando encuesta:', payload);
       
-      return apiRequest(`/api/polls/${id}`, {
+      // Usar el método PUT directamente con los datos
+      return fetch(`/api/polls/${id}`, {
         method: 'PUT',
-        data: payload
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('hubmadridista_token')}`
+        },
+        body: JSON.stringify(payload),
+        credentials: 'include'
+      }).then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(err.message || 'Error al actualizar la encuesta');
+          });
+        }
+        return response.json();
       });
     },
     onSuccess: (data) => {
