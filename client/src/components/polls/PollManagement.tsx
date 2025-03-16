@@ -435,7 +435,7 @@ export default function PollManagement() {
 
       {/* Dialog para crear/editar encuesta */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingPoll ? 'Editar Encuesta' : 'Nueva Encuesta'}</DialogTitle>
             <DialogDescription>
@@ -536,7 +536,7 @@ export default function PollManagement() {
                         checked={field.value}
                         onCheckedChange={(checked) => {
                           // Si está marcando la casilla y ya existe una encuesta en el sidebar, advertimos
-                          if (checked && polls?.some(p => p.showInSidebar && (!editingPoll || p.id !== editingPoll.id))) {
+                          if (checked && polls?.some((p: Poll) => p.showInSidebar && (!editingPoll || p.id !== editingPoll.id))) {
                             if (window.confirm('Ya hay otra encuesta configurada para mostrarse en el sidebar. ¿Desea reemplazarla con esta?')) {
                               field.onChange(checked);
                             }
@@ -646,7 +646,7 @@ export default function PollManagement() {
 
       {/* Dialog para ver resultados */}
       <Dialog open={viewingResults !== null} onOpenChange={(open) => !open && handleCloseResults()}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Resultados de la Encuesta</DialogTitle>
           </DialogHeader>
