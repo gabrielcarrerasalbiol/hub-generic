@@ -43,7 +43,7 @@ import {
 import { Trash2, Plus, CheckCircle, Edit, EyeOff, Eye } from 'lucide-react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
-import { PollResults } from './PollResults';
+import { PollResults } from '@/components/polls/PollResults';
 
 // Esquema para validación del formulario de encuesta
 const pollFormSchema = z.object({

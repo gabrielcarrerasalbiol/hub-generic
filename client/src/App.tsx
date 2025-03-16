@@ -89,6 +89,8 @@ const Routes = () => {
             <Route path="/featured-channels" component={FeaturedChannelsPage} />
             <Route path="/premium-channels" component={PremiumChannelsPage} />
             <Route path="/featured-videos" component={FeaturedVideosPage} />
+            <Route path="/polls" component={PollsPage} />
+            <Route path="/admin/polls" component={PollManagementPage} />
             <Route component={NotFound} />
           </Switch>
         </Layout>
