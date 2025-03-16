@@ -3373,17 +3373,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Crear una nueva encuesta (admin)
   app.post("/api/polls", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
-      const pollData = insertPollSchema.parse(req.body);
-      const options = req.body.options || [];
+      console.log("Recibiendo datos de encuesta:", JSON.stringify(req.body, null, 2));
       
-      if (!options || options.length < 2) {
+      // Extraer y preparar los datos
+      const { options, ...pollFormData } = req.body;
+      
+      // Esto garantiza que los datos cumplen con el esquema
+      const pollData = {
+        title: pollFormData.title || "",
+        question: pollFormData.question || "",
+        titleEs: pollFormData.titleEs,
+        questionEs: pollFormData.questionEs,
+        status: pollFormData.status || "draft",
+        showInSidebar: !!pollFormData.showInSidebar,
+        language: pollFormData.language || "es"
+      };
+      
+      // Validar el poll data
+      const validatedPollData = insertPollSchema.parse(pollData);
+      
+      // Validar opciones
+      const optionsArray = options || [];
+      if (!optionsArray || optionsArray.length < 2) {
         return res.status(400).json({ 
           message: "La encuesta debe tener al menos 2 opciones de respuesta" 
         });
       }
       
       // Crear la encuesta
-      const poll = await storage.createPoll(pollData, options);
+      const poll = await storage.createPoll(validatedPollData, optionsArray);
       
       // Obtener la encuesta con sus opciones
       const pollWithOptions = await storage.getPollById(poll.id);
@@ -3406,6 +3424,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Actualizar una encuesta (admin)
   app.put("/api/polls/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
+      console.log("Recibiendo datos para actualizar encuesta:", JSON.stringify(req.body, null, 2));
+      
       const pollId = parseInt(req.params.id);
       
       // Verificar que la encuesta existe
@@ -3414,18 +3434,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Encuesta no encontrada" });
       }
       
-      // Validar y actualizar la encuesta
-      const pollData = insertPollSchema.partial().parse(req.body);
-      const updatedPoll = await storage.updatePoll(pollId, pollData);
+      // Extraer y preparar los datos
+      const { options, ...pollFormData } = req.body;
+      
+      // Esto garantiza que los datos cumplen con el esquema
+      const pollData = {
+        title: pollFormData.title || existingPoll.title,
+        question: pollFormData.question || existingPoll.question,
+        titleEs: pollFormData.titleEs,
+        questionEs: pollFormData.questionEs,
+        status: pollFormData.status || existingPoll.status,
+        showInSidebar: typeof pollFormData.showInSidebar === 'boolean' ? pollFormData.showInSidebar : existingPoll.showInSidebar,
+        language: pollFormData.language || existingPoll.language
+      };
+      
+      // Validar el poll data usando el schema parcial que permite valores opcionales
+      const validatedPollData = insertPollSchema.partial().parse(pollData);
+      
+      // Actualizar la encuesta
+      const updatedPoll = await storage.updatePoll(pollId, validatedPollData);
       
       if (!updatedPoll) {
         return res.status(404).json({ message: "Encuesta no encontrada" });
       }
       
       // Manejar la actualización de opciones si se incluyen
-      if (req.body.options) {
-        const options = req.body.options;
-        
+      if (options) {
         // Obtener las opciones actuales
         const currentOptions = await storage.getPollOptions(pollId);
         
@@ -3436,7 +3470,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (matchingOption) {
             // Actualizar la opción existente
             await storage.updatePollOption(currentOption.id, {
-              text: matchingOption.text,
+              text: matchingOption.text || currentOption.text,
+              textEs: matchingOption.textEs,
               order: matchingOption.order || currentOption.order
             });
           } else {
@@ -3451,7 +3486,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Es una nueva opción
             await storage.createPollOption({
               pollId,
-              text: option.text,
+              text: option.text || '',
+              textEs: option.textEs,
               order: option.order || 0
             });
           }
@@ -3560,6 +3596,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Añadir una opción a una encuesta (admin)
   app.post("/api/polls/:id/options", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
+      console.log("Recibiendo datos para añadir opción:", JSON.stringify(req.body, null, 2));
+      
       const pollId = parseInt(req.params.id);
       
       // Verificar que la encuesta existe
@@ -3568,14 +3606,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Encuesta no encontrada" });
       }
       
+      // Preparar los datos con valores por defecto
+      const optionData = {
+        text: req.body.text || '',
+        textEs: req.body.textEs,
+        order: req.body.order || 0
+      };
+      
       // Validar la nueva opción
-      const optionData = insertPollOptionSchema.omit({ pollId: true }).parse(req.body);
+      const validatedOptionData = insertPollOptionSchema.omit({ pollId: true }).parse(optionData);
       
       // Crear la opción
       const option = await storage.createPollOption({
         pollId,
-        text: optionData.text,
-        order: optionData.order || 0
+        text: validatedOptionData.text,
+        textEs: validatedOptionData.textEs,
+        order: validatedOptionData.order || 0
       });
       
       res.status(201).json(option);
