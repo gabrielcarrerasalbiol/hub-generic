@@ -3899,12 +3899,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Iniciar un nuevo juego de estadísticas
-  app.post("/api/stats-game", async (req: Request, res: Response) => {
+  app.post("/api/stats-game", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const { difficulty = "medium", count = 5 } = req.body;
       
       if (!GameDifficulty.safeParse(difficulty).success) {
         return res.status(400).json({ message: "Invalid difficulty level" });
+      }
+      
+      // Verificar que el usuario está autenticado
+      if (!req.user?.id) {
+        return res.status(401).json({ message: "Authentication required to play the stats game" });
       }
       
       // Generar preguntas para el juego usando DeepSeek AI
@@ -3916,13 +3921,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Crear un nuevo juego en la base de datos
       const newGame: InsertStatsGame = {
-        userId: req.user?.id || null,
+        userId: req.user.id,
         difficulty: difficulty,
         totalQuestions: questions.length,
         correctAnswers: 0,
-        score: 0,
-        completed: false,
-        createdAt: new Date()
+        score: 0
       };
       
       const game = await storage.createStatsGame(newGame);
@@ -3932,15 +3935,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const question of questions) {
         const newQuestion: InsertStatsGameQuestion = {
           gameId: game.id,
-          question: question.question,
           player1Id: question.player1.id,
           player2Id: question.player2.id,
           statType: question.statType,
-          correctAnswerId: question.correctAnswerId,
-          hint: question.hint || null,
-          explanation: question.explanation || null,
-          userAnswerId: null,
-          createdAt: new Date()
+          correctAnswer: question.correctAnswerId,
+          userSelection: null,
+          isCorrect: null
         };
         
         const savedQuestion = await storage.createStatsGameQuestion(newQuestion);
@@ -3949,14 +3949,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(201).json({
         game,
-        questions: savedQuestions.map(q => ({
-          id: q.id,
-          question: q.question,
-          player1: questions.find(orig => orig.player1.id === q.player1Id)?.player1,
-          player2: questions.find(orig => orig.player2.id === q.player2Id)?.player2,
-          statType: q.statType,
-          hint: q.hint
-        }))
+        questions: savedQuestions.map(q => {
+          const origQuestion = questions.find(orig => 
+            orig.player1.id === q.player1Id && 
+            orig.player2.id === q.player2Id);
+          
+          return {
+            id: q.id,
+            player1: origQuestion?.player1,
+            player2: origQuestion?.player2,
+            statType: q.statType,
+            question: origQuestion?.question,
+            hint: origQuestion?.hint
+          };
+        })
       });
     } catch (error) {
       console.error("Error creating stats game:", error);
@@ -3983,16 +3989,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Verificar si la pregunta ya fue respondida
-      if (question.userAnswerId !== null) {
+      if (question.userSelection !== null) {
         return res.status(400).json({ message: "Question already answered" });
       }
       
       // Evaluar la respuesta
-      const isCorrect = evaluateAnswer(playerId, question.correctAnswerId);
+      const isCorrect = evaluateAnswer(playerId, question.correctAnswer);
       
       // Actualizar la pregunta con la respuesta del usuario
       const updatedQuestion = await storage.updateStatsGameQuestion(questionId, {
-        userAnswerId: playerId
+        userSelection: playerId,
+        isCorrect: isCorrect
       });
       
       // Obtener el juego
@@ -4011,7 +4018,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Verificar si todas las preguntas han sido respondidas
       const allQuestions = await storage.getStatsGameQuestions(gameId);
-      const allAnswered = allQuestions.every(q => q.userAnswerId !== null);
+      const allAnswered = allQuestions.every(q => q.userSelection !== null);
       
       // Si todas las preguntas han sido respondidas, marcar el juego como completado
       // y calcular la puntuación final
@@ -4026,7 +4033,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           );
           
           await storage.updateStatsGame(gameId, {
-            completed: true,
             score: finalScore,
             completedAt: new Date()
           });
@@ -4036,10 +4042,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Obtener la explicación para esta pregunta
       const explanation = question.explanation;
       
+      // Construir la respuesta con los datos originales de la pregunta
+      const origQuestion = await storage.getStatsGameQuestionById(questionId);
+      
       res.json({
         isCorrect,
-        correctAnswerId: question.correctAnswerId,
-        explanation,
+        correctAnswer: origQuestion.correctAnswer,
+        explanation: origQuestion?.explanation || null,
         allAnswered
       });
     } catch (error) {
@@ -4072,8 +4081,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return {
             ...question,
             player1,
-            player2,
-            isCorrect: question.userAnswerId === question.correctAnswerId
+            player2
           };
         })
       );
@@ -4086,7 +4094,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           correctAnswers: game.correctAnswers,
           score: game.score,
           difficulty: game.difficulty,
-          completed: game.completed
+          completed: game.completedAt !== null
         }
       });
     } catch (error) {
