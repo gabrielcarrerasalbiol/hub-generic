@@ -198,6 +198,95 @@
     "aboutUs": "About Us",
     "disclaimer": "We are not officially affiliated with Real Madrid C.F."
   },
+  "about": {
+    "heroSlider": {
+      "home": {
+        "title": "Madridista Hub",
+        "subtitle": "The digital home for all madridistas"
+      },
+      "passion": {
+        "title": "The White Passion",
+        "subtitle": "Experience every moment with the same intensity"
+      },
+      "feeling": {
+        "title": "The Feeling",
+        "subtitle": "United by the colors that represent us"
+      },
+      "fans": {
+        "title": "The Madridista Fanbase",
+        "subtitle": "The heart that beats in every stadium"
+      }
+    },
+    "registerButton": "Register",
+    "registerNowButton": "Register Now",
+    "loginButton": "Login",
+    "whatIsHub": {
+      "title": "What is Madridista Hub?",
+      "description": "Madridista Hub is the definitive platform for Real Madrid fans, offering an immersive and personalized experience with all content related to the most decorated club in the world."
+    },
+    "features": {
+      "curatedContent": {
+        "title": "Curated Content",
+        "description": "Access the best videos, news, and updates from Real Madrid, automatically selected and categorized for you."
+      },
+      "multiplatform": {
+        "title": "Multiplatform",
+        "description": "Content from YouTube, Twitter, TikTok, and more, all in one place so you never miss anything important."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Stay up to date with personalized alerts about new content from your favorite channels and categories."
+      }
+    },
+    "premium": {
+      "title": "Premium Benefits",
+      "description": "Unlock the full potential of Madridista Hub with our premium subscription and enjoy exclusive advantages.",
+      "benefits": {
+        "exclusiveChannels": {
+          "title": "Exclusive Channels",
+          "description": "Access to premium channels with exclusive content and in-depth analysis."
+        },
+        "noAds": {
+          "title": "Ad-Free",
+          "description": "Enjoy an ad-free experience across the entire platform."
+        },
+        "history": {
+          "title": "Historical Archive",
+          "description": "Access our complete archive of historical Real Madrid moments."
+        },
+        "analysis": {
+          "title": "Advanced Analysis",
+          "description": "Detailed statistics and exclusive tactical analysis of each match."
+        }
+      },
+      "alreadyPremium": "You're already enjoying premium benefits!",
+      "upgradeToPremium": "Upgrade to Premium"
+    },
+    "testimonials": {
+      "title": "What our users say",
+      "users": {
+        "carlos": {
+          "name": "Carlos Rodríguez",
+          "role": "Premium User",
+          "quote": "\"Madridista Hub has changed the way I follow Real Madrid. All information in one place and perfectly categorized. Amazing service!\""
+        },
+        "laura": {
+          "name": "Laura Martínez",
+          "role": "Premium User",
+          "quote": "\"The personalized notifications are great, I never miss new content from my favorite channels. The premium subscription is totally recommended.\""
+        },
+        "miguel": {
+          "name": "Miguel Sánchez",
+          "role": "Free User",
+          "quote": "\"Even the free version is exceptional. The interface is intuitive and I find all relevant content quickly. I'm definitely upgrading to Premium.\""
+        }
+      }
+    },
+    "cta": {
+      "title": "Join the madridista community",
+      "description": "Over 50,000 fans already enjoy the best experience to follow and enjoy all content related to Real Madrid. Join our community today!"
+    }
+  },
   "general": {
     "loading": "Loading...",
     "search": "Search...",
