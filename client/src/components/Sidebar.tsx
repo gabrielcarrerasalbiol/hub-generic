@@ -205,7 +205,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               >
                 <TikTokIcon className="mr-3 h-4 w-4 text-black dark:text-white" />
                 TikTok
-                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 dark:bg-amber-900 text-amber-600 dark:text-amber-300 rounded border border-amber-200 dark:border-amber-700">Próximamente</span>
+                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 dark:bg-amber-900 text-amber-600 dark:text-amber-300 rounded border border-amber-200 dark:border-amber-700">{t('sidebar.coming_soon')}</span>
               </Link>
             </li>
             <li>
@@ -220,7 +220,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               >
                 <Twitter className="mr-3 h-4 w-4 text-blue-400" />
                 Twitter
-                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 dark:bg-amber-900 text-amber-600 dark:text-amber-300 rounded border border-amber-200 dark:border-amber-700">Próximamente</span>
+                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 dark:bg-amber-900 text-amber-600 dark:text-amber-300 rounded border border-amber-200 dark:border-amber-700">{t('sidebar.coming_soon')}</span>
               </Link>
             </li>
             <li>
@@ -235,7 +235,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               >
                 <Instagram className="mr-3 h-4 w-4 text-pink-500" />
                 Instagram
-                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 dark:bg-amber-900 text-amber-600 dark:text-amber-300 rounded border border-amber-200 dark:border-amber-700">Próximamente</span>
+                <span className="ml-2 px-1.5 py-0.5 text-xs bg-amber-50 dark:bg-amber-900 text-amber-600 dark:text-amber-300 rounded border border-amber-200 dark:border-amber-700">{t('sidebar.coming_soon')}</span>
               </Link>
             </li>
           </ul>

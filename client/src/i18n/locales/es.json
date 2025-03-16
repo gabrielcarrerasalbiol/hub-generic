@@ -24,7 +24,9 @@
     "players": "Jugadores",
     "news": "Noticias",
     "premium_access": "Acceso Premium",
-    "premium_description": "Actualiza a premium para acceder a canales exclusivos con el mejor contenido del Real Madrid."
+    "premium_description": "Actualiza a premium para acceder a canales exclusivos con el mejor contenido del Real Madrid.",
+    "view_all": "Ver todos",
+    "no_premium_channels": "No hay canales premium disponibles"
   },
   "nav": {
     "home": "Inicio",
