@@ -3,6 +3,8 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 // Determinar el entorno y cargar el archivo .env correspondiente
 const nodeEnv = process.env.NODE_ENV || 'development';
@@ -88,6 +90,12 @@ app.use((req, res, next) => {
   res.setHeader('X-Hub-Madridista', 'v1.0');
   next();
 });
+
+// Servir archivos estáticos desde la carpeta public
+// En ES modules necesitamos usar import.meta.url para obtener __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Configurar limitadores de tasa (rate limiting)
 // Limitador general para todas las solicitudes API
