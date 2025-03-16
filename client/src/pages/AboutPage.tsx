@@ -120,7 +120,7 @@ export default function AboutPage() {
                   }}
                 >
                   {/* Overlay de color semitransparente */}
-                  <div className={`absolute inset-0 ${slide.bgColor} opacity-30`}></div>
+                  <div className={`absolute inset-0 ${slide.bgColor} opacity-20`}></div>
                   
                   <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
                     <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${slide.textColor}`}>{slide.icon}{slide.title}</h1>
