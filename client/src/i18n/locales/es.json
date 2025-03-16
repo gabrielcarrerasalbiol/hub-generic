@@ -394,6 +394,7 @@
     "voteFailed": "Voto Fallido",
     "errorOccurred": "Ha ocurrido un error al registrar tu voto",
     "alreadyVoted": "Ya Votaste",
+    "alreadyVotedMessage": "Ya has participado en esta encuesta",
     "viewingResults": "Estás viendo los resultados de la encuesta",
     "viewResults": "Ver resultados",
     "resultsLive": "Resultados actualizados en tiempo real",

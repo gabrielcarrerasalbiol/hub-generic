@@ -394,6 +394,7 @@
     "voteFailed": "Vote Failed",
     "errorOccurred": "An error occurred while registering your vote",
     "alreadyVoted": "Already Voted",
+    "alreadyVotedMessage": "You have already participated in this poll",
     "viewingResults": "You are viewing the poll results",
     "viewResults": "View results",
     "resultsLive": "Results updated in real-time",

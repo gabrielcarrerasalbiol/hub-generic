@@ -266,13 +266,13 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
                   </Button>
                   <Button
                     size="sm"
-                    disabled={!selectedOption || voting || !isAuthenticated}
+                    disabled={!selectedOption || voting || !isAuthenticated || poll?.isVoted}
                     onClick={handleVote}
                   >
                     {voting && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    {t("poll.vote")}
+                    {poll?.isVoted ? t("poll.alreadyVoted") : t("poll.vote")}
                   </Button>
                 </div>
                 {!isAuthenticated && (
@@ -288,6 +288,11 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
                     >
                       {t("poll.loginToVote")}
                     </button>
+                  </div>
+                )}
+                {isAuthenticated && poll?.isVoted && (
+                  <div className="mt-3 text-xs text-center text-amber-600">
+                    {t("poll.alreadyVotedMessage")}
                   </div>
                 )}
               </>
