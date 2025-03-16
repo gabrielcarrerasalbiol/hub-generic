@@ -23,6 +23,7 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   error: string | null;
+  isAuthenticated: boolean; // Propiedad calculada basada en token y user
   
   register: (username: string, password: string, email?: string, name?: string) => Promise<boolean>;
   login: (username: string, password: string) => Promise<boolean>;
@@ -128,6 +129,9 @@ export const useAuth = create<AuthState>((set, get) => {
     token: safeGetToken(),
     isLoading: false,
     error: null,
+    get isAuthenticated() {
+      return !!get().token && !!get().user;
+    },
     
     register: async (username: string, password: string, email?: string, name?: string) => {
       set({ isLoading: true, error: null });

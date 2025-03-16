@@ -1,180 +1,203 @@
-import { useState } from 'react';
-import { Link } from 'wouter';
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Loader2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { motion } from 'framer-motion';
+import { Vote, ChevronRight, AlertCircle } from 'lucide-react';
+import { Link } from "wouter";
 
 interface PollOption {
   id: number;
   text: string;
-  order: number;
-  pollId: number;
 }
 
 interface Poll {
   id: number;
   title: string;
   description: string | null;
-  status: 'draft' | 'published';
-  showInSidebar: boolean;
-  createdAt: string;
-  updatedAt: string;
   options: PollOption[];
-}
-
-interface PollResult {
-  optionId: number;
-  optionText: string;
-  votes: number;
-  percentage: number;
-}
-
-interface SidebarPollResponse {
-  poll: Poll;
-  hasVoted: boolean;
-  results: PollResult[] | null;
+  isVoted?: boolean;
 }
 
 export function SidebarPoll() {
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const { toast } = useToast();
-  const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const isAuthenticated = useAuth(state => state.checkAuth());
+  const [hasVoted, setHasVoted] = useState(false);
 
-  // Obtener la encuesta activa para el sidebar
-  const { data, isLoading, isError } = useQuery<SidebarPollResponse>({
-    queryKey: ['/api/polls/active-sidebar'],
-    queryFn: () => apiRequest('/api/polls/active-sidebar'),
-    refetchOnWindowFocus: false
+  // Obtener encuesta activa para el sidebar
+  const { data: activePoll, isLoading, error } = useQuery<Poll>({
+    queryKey: ['/api/polls/active/sidebar'],
+    queryFn: () => apiRequest('/api/polls/active/sidebar'),
   });
 
-  // Mutación para votar
+  useEffect(() => {
+    if (activePoll?.isVoted) {
+      setHasVoted(true);
+    }
+  }, [activePoll]);
+
+  // Mutación para enviar voto
   const voteMutation = useMutation({
-    mutationFn: (optionId: number) => apiRequest(`/api/polls/${data?.poll.id}/vote`, {
-      method: 'POST',
-      data: { optionId }
-    }),
+    mutationFn: (optionId: number) => 
+      apiRequest(`/api/polls/${activePoll?.id}/vote`, {
+        method: 'POST',
+        body: JSON.stringify({ optionId }),
+      }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/polls/active-sidebar'] });
+      setHasVoted(true);
       toast({
-        title: '¡Voto registrado!',
-        description: 'Gracias por participar en la encuesta'
+        title: "Voto registrado",
+        description: "Tu voto ha sido registrado con éxito.",
       });
+      // Invalidar consultas para actualizar datos
+      queryClient.invalidateQueries({ queryKey: ['/api/polls/active/sidebar'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/polls', activePoll?.id, 'results'] });
     },
     onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: error?.response?.data?.message || 'Error al registrar tu voto',
-        variant: 'destructive'
+        title: "Error al votar",
+        description: error.message || "No se pudo registrar tu voto. Inténtalo de nuevo.",
+        variant: "destructive",
       });
     }
   });
 
   const handleVote = () => {
-    if (!selectedOption) {
+    if (!selectedOption) return;
+    if (!isAuthenticated) {
       toast({
-        title: 'Selecciona una opción',
-        description: 'Debes seleccionar una opción para votar',
-        variant: 'destructive'
+        title: "Inicia sesión para votar",
+        description: "Debes iniciar sesión para participar en las encuestas.",
+        variant: "default",
       });
       return;
     }
-
     voteMutation.mutate(selectedOption);
   };
 
-  // Si está cargando, mostrar un esqueleto
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Encuesta</CardTitle>
+      <Card className="mt-4 border border-[#FDBE11]/20">
+        <CardHeader className="py-3">
+          <Skeleton className="h-5 w-full" />
         </CardHeader>
-        <CardContent className="py-4 flex justify-center items-center">
-          <Loader2 className="h-6 w-6 animate-spin" />
+        <CardContent className="pb-3 pt-0">
+          <Skeleton className="h-4 w-full mb-4" />
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+          </div>
         </CardContent>
       </Card>
     );
   }
 
-  // Si hay un error o no hay encuesta activa, no mostrar nada
-  if (isError || !data) {
-    return null;
+  if (error || !activePoll) {
+    return null; // No mostrar nada si hay error o no hay encuesta activa
   }
 
-  const { poll, hasVoted, results } = data;
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        type: "spring",
+        stiffness: 300,
+        damping: 24
+      }
+    }
+  };
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">{poll.title}</CardTitle>
-      </CardHeader>
-      <CardContent className="pb-2">
-        {hasVoted || !isAuthenticated ? (
-          // Mostrar resultados si ya votó o no está autenticado
-          <div className="space-y-3">
-            {results?.map((result) => (
-              <div key={result.optionId} className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span>{result.optionText}</span>
-                  <span className="font-medium">{result.percentage}%</span>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <Card className="mt-4 border border-[#FDBE11]/20 overflow-hidden">
+        <CardHeader className="py-3 bg-gradient-to-r from-[#FDBE11]/10 to-transparent">
+          <CardTitle className="text-sm flex items-center">
+            <Vote className="w-4 h-4 mr-2 text-[#FDBE11]" />
+            Encuesta del día
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pb-3 pt-3">
+          <h4 className="font-medium text-sm mb-2">{activePoll.title}</h4>
+          {activePoll.description && (
+            <p className="text-xs text-muted-foreground mb-3">{activePoll.description}</p>
+          )}
+          
+          {!hasVoted ? (
+            <RadioGroup 
+              value={selectedOption?.toString()}
+              onValueChange={(value) => setSelectedOption(parseInt(value))}
+              className="space-y-2"
+            >
+              {activePoll.options.map((option) => (
+                <div key={option.id} className="flex items-center space-x-2">
+                  <RadioGroupItem 
+                    value={option.id.toString()} 
+                    id={`option-${option.id}`} 
+                    disabled={voteMutation.isPending || !isAuthenticated}
+                  />
+                  <Label 
+                    htmlFor={`option-${option.id}`}
+                    className="text-sm cursor-pointer"
+                  >
+                    {option.text}
+                  </Label>
                 </div>
-                <Progress value={result.percentage} className="h-2" />
-              </div>
-            ))}
-            {!isAuthenticated && (
-              <p className="text-xs text-muted-foreground mt-2">
-                <Link href="/login" className="text-primary underline">
-                  Inicia sesión
-                </Link>{' '}
-                para participar en encuestas
+              ))}
+            </RadioGroup>
+          ) : (
+            <div className="py-2 px-3 bg-[#FDBE11]/5 rounded-md">
+              <p className="text-sm text-center">¡Gracias por participar!</p>
+              <p className="text-xs text-center text-muted-foreground mt-1">
+                Puedes ver los resultados completos en la página de encuestas.
               </p>
-            )}
-          </div>
-        ) : (
-          // Mostrar formulario de votación si no ha votado y está autenticado
-          <RadioGroup
-            value={selectedOption?.toString()}
-            onValueChange={(value) => setSelectedOption(parseInt(value))}
-            className="space-y-2"
-          >
-            {poll.options.map((option) => (
-              <div key={option.id} className="flex items-center space-x-2">
-                <RadioGroupItem value={option.id.toString()} id={`option-${option.id}`} />
-                <Label htmlFor={`option-${option.id}`} className="cursor-pointer">
-                  {option.text}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-        )}
-      </CardContent>
-      {isAuthenticated && !hasVoted && (
-        <CardFooter className="pt-2">
-          <Button
-            onClick={handleVote}
-            disabled={voteMutation.isPending || !selectedOption}
-            className="w-full"
-            size="sm"
-          >
-            {voteMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Enviando...
-              </>
-            ) : (
-              'Votar'
-            )}
-          </Button>
+            </div>
+          )}
+        </CardContent>
+        <CardFooter className="pt-0 flex justify-between">
+          {!hasVoted ? (
+            <>
+              {!isAuthenticated && (
+                <div className="flex items-center text-amber-600 text-xs">
+                  <AlertCircle className="w-3 h-3 mr-1" />
+                  Inicia sesión para votar
+                </div>
+              )}
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={handleVote}
+                disabled={!selectedOption || voteMutation.isPending || !isAuthenticated}
+                className="ml-auto"
+              >
+                {voteMutation.isPending ? "Enviando..." : "Votar"}
+              </Button>
+            </>
+          ) : (
+            <Link 
+              href={`/polls/${activePoll.id}/results`}
+              className="text-xs text-[#001C58] dark:text-[#FDBE11] hover:underline ml-auto flex items-center"
+            >
+              Ver resultados
+              <ChevronRight className="w-3 h-3 ml-1" />
+            </Link>
+          )}
         </CardFooter>
-      )}
-    </Card>
+      </Card>
+    </motion.div>
   );
 }

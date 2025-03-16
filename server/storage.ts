@@ -146,7 +146,8 @@ export interface IStorage {
   // Poll vote operations
   getPollVotes(pollId: number): Promise<PollVote[]>;
   getPollVotesByUser(userId: number, pollId?: number): Promise<PollVote[]>;
-  getVoteResultsByPollId(pollId: number): Promise<{optionId: number, optionText: string, votes: number, percentage: number}[]>;
+  getUserVotesForPoll(pollId: number, userId: number): Promise<number>;
+  getPollResults(pollId: number): Promise<{id: number, text: string, voteCount: number}[]>;
   createPollVote(vote: InsertPollVote): Promise<PollVote>;
   hasUserVotedInPoll(userId: number, pollId: number): Promise<boolean>;
   deletePollVote(id: number): Promise<boolean>;

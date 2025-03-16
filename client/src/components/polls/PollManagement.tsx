@@ -554,7 +554,7 @@ export default function PollManagement() {
           {isLoadingResults ? (
             <div className="text-center py-8">Cargando resultados...</div>
           ) : pollResults ? (
-            <PollResults pollData={pollResults} />
+            <PollResults pollId={viewingResults as number} onClose={handleCloseResults} />
           ) : (
             <p>No hay datos disponibles</p>
           )}
