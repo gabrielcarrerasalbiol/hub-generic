@@ -49,10 +49,7 @@ export default function FeaturedVideosManager() {
   // Actualizar el estado de destacado de un video
   const updateFeaturedMutation = useMutation({
     mutationFn: async ({ videoId, featured }: { videoId: number, featured: boolean }) => {
-      return apiRequest(`/api/videos/${videoId}`, { 
-        method: 'PUT', 
-        data: { featured } 
-      });
+      return apiRequest('PUT', `/api/videos/${videoId}`, { featured });
     },
     onSuccess: () => {
       toast({
@@ -74,10 +71,7 @@ export default function FeaturedVideosManager() {
   // Actualizar múltiples videos como destacados
   const updateMultipleFeaturedMutation = useMutation({
     mutationFn: async ({ videoIds, featured }: { videoIds: number[], featured: boolean }) => {
-      return apiRequest(`/api/videos/featured/batch`, { 
-        method: 'POST', 
-        data: { videoIds, featured } 
-      });
+      return apiRequest('POST', `/api/videos/featured/batch`, { videoIds, featured });
     },
     onSuccess: () => {
       toast({
