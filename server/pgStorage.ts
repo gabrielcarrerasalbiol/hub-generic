@@ -1598,7 +1598,7 @@ export class PgStorage implements IStorage {
     try {
       const result = await db.select()
         .from(players)
-        .where(eq(players.active, true))
+        .where(eq(players.isActive, true))
         .limit(limit)
         .orderBy(asc(players.name));
       
