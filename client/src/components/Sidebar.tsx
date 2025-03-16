@@ -336,8 +336,9 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Interactive Games Section - Only for premium users */}
+        {/* Sección de juegos oculta temporalmente 
         {isPremium && (
-          <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
+          <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25 hidden">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
                 <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide mr-2">
@@ -367,6 +368,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             </ul>
           </div>
         )}
+        */}
         
         {/* Polls Section */}
         <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
