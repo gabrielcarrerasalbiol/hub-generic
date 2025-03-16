@@ -91,7 +91,7 @@
     "noChannels": "No hay canales disponibles"
   },
   "categories": {
-    "all": "Todos",
+    "all": "Todas",
     "matches": "Partidos",
     "highlights": "Resúmenes",
     "interviews": "Entrevistas",
@@ -99,9 +99,10 @@
     "news": "Noticias",
     "fans": "Afición",
     "analysis": "Análisis",
-    "history": "Historia",
+    "history": "Momentos Históricos",
     "youth": "Cantera",
-    "transfer": "Fichajes"
+    "transfer": "Fichajes",
+    "institutional": "Institucional"
   },
   "platforms": {
     "all": "Todas",
