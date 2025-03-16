@@ -65,8 +65,10 @@ export default function Home() {
   });
   
   // Verificar si la plataforma seleccionada está disponible
-  // Consideramos "twitch" como una plataforma disponible
-  const isPlatformAvailable = platform === "all" || platform === "youtube" || platform === "twitch";
+  // Consideramos "youtube" y "twitch" como plataformas disponibles
+  // Las demás plataformas (tiktok, twitter, instagram) están marcadas como no disponibles por ahora
+  const availablePlatforms = ["all", "youtube", "twitch"];
+  const isPlatformAvailable = availablePlatforms.includes(platform);
   
   // Función para obtener el icono de la plataforma
   const getPlatformIcon = (platform: string): string => {
@@ -400,8 +402,8 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Últimos Videos</h2>
         
         {isLatestLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[...Array(12)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="w-full aspect-video" />
                 <div className="p-3">
@@ -419,9 +421,9 @@ export default function Home() {
             ))}
           </div>
         ) : latestVideos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Mostramos solo los primeros 9 videos (3 filas de 3) */}
-            {latestVideos.slice(0, 9).map((video) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {/* Mostramos solo los primeros 12 videos (3 filas de 4 columnas) */}
+            {latestVideos.slice(0, 12).map((video) => (
               <VideoCard key={video.id} video={video} />
             ))}
           </div>
@@ -437,8 +439,8 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Videos Populares Esta Semana</h2>
         
         {isTrendingLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[...Array(12)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="w-full aspect-video" />
                 <div className="p-3">
@@ -456,9 +458,9 @@ export default function Home() {
             ))}
           </div>
         ) : trendingVideosWithoutFeatured.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Mostramos solo los primeros 9 videos (3 filas de 3) */}
-            {trendingVideosWithoutFeatured.slice(0, 9).map((video) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {/* Mostramos solo los primeros 12 videos (3 filas de 4 columnas) */}
+            {trendingVideosWithoutFeatured.slice(0, 12).map((video) => (
               <VideoCard key={video.id} video={video} />
             ))}
           </div>
@@ -485,8 +487,8 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">Canales Recomendados</h2>
         
         {isChannelsLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="h-24 w-full" />
                 <div className="px-4 pt-0 pb-4 relative">
@@ -505,9 +507,9 @@ export default function Home() {
             ))}
           </div>
         ) : recommendedChannels.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Mostramos solo hasta 9 canales (3 filas de 3) */}
-            {recommendedChannels.slice(0, 9).map((channel) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Mostramos solo hasta 8 canales (2 filas de 4) */}
+            {recommendedChannels.slice(0, 8).map((channel) => (
               <ChannelCard key={channel.id} channel={channel} />
             ))}
           </div>
