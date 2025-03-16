@@ -30,6 +30,7 @@ import HistoryPage from "@/pages/HistoryPage";
 import SearchPage from "@/pages/SearchPage";
 import FeaturedChannelsPage from "@/pages/FeaturedChannelsPage";
 import PremiumChannelsPage from "@/pages/PremiumChannelsPage";
+import FeaturedVideosPage from "@/pages/FeaturedVideosPage";
 import Layout from "@/components/Layout";
 import CookieConsent from "@/components/CookieConsent";
 import { useAuth } from '@/hooks/useAuth';
@@ -85,6 +86,7 @@ const Routes = () => {
             <Route path="/contacto" component={ContactPage} />
             <Route path="/featured-channels" component={FeaturedChannelsPage} />
             <Route path="/premium-channels" component={PremiumChannelsPage} />
+            <Route path="/featured-videos" component={FeaturedVideosPage} />
             <Route component={NotFound} />
           </Switch>
         </Layout>
