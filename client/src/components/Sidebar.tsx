@@ -466,7 +466,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               // No premium channels available
               <div className="mt-3 p-2 text-center">
                 <p className="text-sm text-[#001C58]/70 dark:text-gray-400">
-                  No hay canales premium disponibles
+                  {t('sidebar.no_premium_channels')}
                 </p>
               </div>
             )}
@@ -475,10 +475,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <div className="mt-4 p-3 bg-[#FDBE11]/10 dark:bg-[#FDBE11]/5 rounded-md border border-[#FDBE11]/30">
                 <p className="text-sm text-[#001C58] dark:text-white flex items-center mb-2">
                   <Crown className="w-4 h-4 text-[#FDBE11] mr-2" />
-                  Acceso Premium
+                  {t('sidebar.premium_access')}
                 </p>
                 <p className="text-xs text-[#001C58]/80 dark:text-gray-300">
-                  Actualiza a premium para acceder a canales exclusivos con el mejor contenido del Real Madrid.
+                  {t('sidebar.premium_description')}
                 </p>
               </div>
             )}
