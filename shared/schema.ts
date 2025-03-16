@@ -292,15 +292,18 @@ export type Comment = typeof comments.$inferSelect;
 // Tabla para encuestas
 export const polls = pgTable("polls", {
   id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  question: text("question").notNull(),
+  title: text("title").notNull(),          // Título principal (inglés)
+  question: text("question").notNull(),    // Pregunta principal (inglés)
   status: text("status", { enum: ["draft", "published"] }).default("draft").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  expiresAt: timestamp("expires_at"), // Fecha opcional de vencimiento
+  expiresAt: timestamp("expires_at"),      // Fecha opcional de vencimiento
   createdById: integer("created_by_id").references(() => users.id, { onDelete: "set null" }),
   showInSidebar: boolean("show_in_sidebar").default(false).notNull(), // Para destacar en el sidebar
   featured: boolean("featured").default(false).notNull(), // Para destacar en la página principal
+  titleEs: text("title_es"),               // Título en español
+  questionEs: text("question_es"),         // Pregunta en español 
+  language: text("language").default("es").notNull(), // Idioma predeterminado de la encuesta
 });
 
 export const insertPollSchema = createInsertSchema(polls).omit({
@@ -313,7 +316,8 @@ export const insertPollSchema = createInsertSchema(polls).omit({
 export const pollOptions = pgTable("poll_options", {
   id: serial("id").primaryKey(),
   pollId: integer("poll_id").notNull().references(() => polls.id, { onDelete: "cascade" }),
-  text: text("text").notNull(),
+  text: text("text").notNull(),       // Texto principal (inglés)
+  textEs: text("text_es"),            // Texto en español
   order: integer("order").default(0).notNull(), // Para ordenar las opciones
 });
 
