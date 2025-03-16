@@ -1342,9 +1342,9 @@ export class PgStorage implements IStorage {
         updateData.text = optionData.text;
       }
       
-      if ('textEs' in optionData) {
-        updateData.textEs = optionData.textEs;
-      }
+      // CORREGIDO: La propiedad textEs siempre debe incluirse en la actualización
+      // para asegurar que se guardan las opciones en ambos idiomas
+      updateData.textEs = optionData.textEs || null;
       
       if (optionData.order !== undefined) {
         updateData.order = optionData.order;
