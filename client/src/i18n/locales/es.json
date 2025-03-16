@@ -7,6 +7,7 @@
     "explore": "Explorar",
     "platforms": "Plataformas",
     "categories": "Categorías",
+    "games": "Juegos Interactivos",
     "featured": "Canales Destacados",
     "history": "Historial",
     "youtube_channel": "Canal de YouTube",
@@ -27,7 +28,9 @@
     "premium_description": "Actualiza a premium para acceder a canales exclusivos con el mejor contenido del Real Madrid.",
     "view_all": "Ver todos",
     "no_premium_channels": "No hay canales premium disponibles",
-    "premium_channels": "Canales Premium"
+    "premium_channels": "Canales Premium",
+    "stats_game": "Juego de Estadísticas",
+    "premium_only": "Solo Premium"
   },
   "nav": {
     "home": "Inicio",
