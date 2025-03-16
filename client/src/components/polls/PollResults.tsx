@@ -5,10 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface PollResult {
   optionId: number;
   optionText: string;
+  optionTextEs?: string;
   votes: number;
   percentage: number;
 }
@@ -16,6 +18,9 @@ interface PollResult {
 interface PollData {
   id: number;
   title: string;
+  titleEs?: string;
+  question?: string;
+  questionEs?: string;
   totalVotes: number;
   results: PollResult[];
 }
@@ -53,6 +58,10 @@ const barVariants = {
 
 export function PollResults({ pollId, onClose }: { pollId: number; onClose: () => void }) {
   const [pollData, setPollData] = useState<PollData | null>(null);
+  const { i18n, t } = useTranslation();
+  
+  // Determinar si usamos texto en español o inglés según el idioma actual
+  const isSpanish = i18n.language === 'es';
 
   // Consulta para obtener resultados de una encuesta
   const { data, isLoading, error } = useQuery({
@@ -110,7 +119,10 @@ export function PollResults({ pollId, onClose }: { pollId: number; onClose: () =
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <CardTitle>{pollData.title}</CardTitle>
+            <CardTitle>
+              {/* Mostrar título en español si está disponible y el idioma es español */}
+              {isSpanish && pollData.titleEs ? pollData.titleEs : pollData.title}
+            </CardTitle>
           </motion.div>
         </CardHeader>
         <CardContent>
@@ -121,7 +133,7 @@ export function PollResults({ pollId, onClose }: { pollId: number; onClose: () =
               animate={{ opacity: 1 }}
               transition={{ duration: 0.7, delay: 0.2 }}
             >
-              Total de votos: <span className="font-medium">{pollData.totalVotes}</span>
+              {isSpanish ? 'Total de votos:' : 'Total votes:'} <span className="font-medium">{pollData.totalVotes}</span>
             </motion.div>
 
             {pollData.results.map((result, index) => (
@@ -136,7 +148,8 @@ export function PollResults({ pollId, onClose }: { pollId: number; onClose: () =
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
                   >
-                    {result.optionText}
+                    {/* Mostrar texto en español si está disponible y el idioma es español */}
+                    {isSpanish && result.optionTextEs ? result.optionTextEs : result.optionText}
                   </motion.span>
                   <motion.span 
                     className="font-medium"
