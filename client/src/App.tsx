@@ -34,6 +34,7 @@ import FeaturedVideosPage from "@/pages/FeaturedVideosPage";
 import PollsPage from "@/pages/PollsPage";
 import PollsResultsPage from "@/pages/PollsResultsPage";
 import PollManagementPage from "@/pages/PollManagementPage";
+import StatsGame from "@/pages/StatsGame";
 import Layout from "@/components/Layout";
 import CookieConsent from "@/components/CookieConsent";
 import { useAuth } from '@/hooks/useAuth';
@@ -93,6 +94,8 @@ const Routes = () => {
             <Route path="/polls" component={PollsPage} />
             <Route path="/polls/results" component={PollsResultsPage} />
             <Route path="/admin/polls" component={PollManagementPage} />
+            <Route path="/stats-game" component={StatsGame} />
+            <Route path="/stats-game/:gameId" component={StatsGame} />
             <Route component={NotFound} />
           </Switch>
         </Layout>
