@@ -138,7 +138,14 @@ export default function Home() {
   };
 
   return (
-    <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
+    <main className="flex-1 bg-gray-100 bg-opacity-90 p-4 md:p-6 overflow-y-auto" 
+          style={{
+            backgroundImage: 'url("/images/real-madrid-fans-back.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+            backgroundBlendMode: 'overlay'
+          }}>
       {/* SEO optimizado para la página de inicio */}
       <SEO
         title="Hub Madridista | Agregador de contenido del Real Madrid"
@@ -234,7 +241,16 @@ export default function Home() {
         </div>
         
         {/* Contenedor de tabs y filtros */}
-        <div className="bg-gradient-to-r from-[#001C58]/5 to-[#FDBE11]/5 rounded-xl p-4 lg:p-6">
+        <div 
+          className="bg-gradient-to-r from-[#001C58]/5 to-[#FDBE11]/5 rounded-xl p-4 lg:p-6"
+          style={{
+            backgroundImage: 'url("/images/real-madrid-fans-stadium.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundBlendMode: 'overlay',
+            minHeight: '450px',
+            position: 'relative'
+          }}>
           {/* Tabs de plataformas */}
           <div className="mb-6 flex justify-center border-b border-[#FDBE11]/20 pb-4">
             <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 max-w-3xl">
@@ -514,8 +530,18 @@ export default function Home() {
       </section>
       
       {/* Top Channels Section */}
-      <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.recommendedChannels')}</h2>
+      <section 
+        className="mb-10 p-6 rounded-xl" 
+        style={{
+          backgroundImage: 'url("/images/real-madrid-fans-singing.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          position: 'relative',
+          backgroundBlendMode: 'overlay',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 to-transparent rounded-xl"></div>
+        <h2 className="text-xl font-bold mb-4 text-white border-l-4 border-[#FDBE11] pl-3 relative z-10">{t('home.recommendedChannels')}</h2>
         
         {isChannelsLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
