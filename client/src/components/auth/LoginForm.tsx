@@ -6,6 +6,7 @@ import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { useAnalytics } from '../../hooks/use-analytics';
 import './FormStyle.css';
 
 import {
@@ -27,6 +28,7 @@ export default function LoginForm() {
   const [, navigate] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { t } = useTranslation();
+  const { trackLogin } = useAnalytics();
   
   // Define validation schema with translations
   const loginSchema = z.object({
@@ -50,9 +52,15 @@ export default function LoginForm() {
     setIsSubmitting(true);
     
     try {
+      // Rastrear intento de inicio de sesión
+      trackLogin('username_password', false);
+      
       const success = await login(values.username, values.password);
       
       if (success) {
+        // Rastrear inicio de sesión exitoso
+        trackLogin('username_password', true);
+        
         toast({
           title: t('auth.loginPage.successTitle'),
           description: t('auth.loginPage.successMessage'),
@@ -60,6 +68,7 @@ export default function LoginForm() {
         // Use navigate instead of window.location
         navigate('/');
       } else {
+        // Ya se rastreó el intento de inicio de sesión más arriba (con éxito=false)
         toast({
           variant: 'destructive',
           title: t('auth.loginPage.errorTitle'),
@@ -68,6 +77,7 @@ export default function LoginForm() {
       }
     } catch (err: any) {
       console.error('Error during login:', err);
+      // Ya se rastreó el intento de inicio de sesión más arriba (con éxito=false)
       toast({
         variant: 'destructive',
         title: t('auth.loginPage.errorTitle'),

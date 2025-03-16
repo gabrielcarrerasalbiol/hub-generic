@@ -18,6 +18,7 @@ export default function SearchPage() {
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformType>('all');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('all');
   const [visibleVideos, setVisibleVideos] = useState(12);
+  const { trackSearch } = useAnalytics();
   
   // Parse query params from URL
   useEffect(() => {
@@ -115,6 +116,10 @@ export default function SearchPage() {
     // Solo ejecutar la búsqueda cuando se hace submit del formulario
     if (searchQuery.trim().length > 1) {
       setShouldSearch(true); // Activar la búsqueda solo al enviar el formulario
+      
+      // Rastrear evento de búsqueda con Plausible Analytics
+      // El número de resultados se actualizará después cuando obtengamos los datos
+      trackSearch(searchQuery, 0);
     }
   };
 
@@ -168,6 +173,14 @@ export default function SearchPage() {
     
     return matchesPlatform && matchesCategory;
   });
+  
+  // Rastrear resultados de búsqueda una vez que se han cargado
+  useEffect(() => {
+    if (!isLoading && !isFetching && !isSearching && searchQuery && videos.length > 0) {
+      // Actualizar el evento de búsqueda con el número correcto de resultados
+      trackSearch(searchQuery, videos.length);
+    }
+  }, [isLoading, isFetching, isSearching, searchQuery, videos, trackSearch]);
 
   // Load more results
   const handleLoadMore = () => {
