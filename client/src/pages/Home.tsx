@@ -215,7 +215,7 @@ export default function Home() {
           <div className="hidden md:flex space-x-1">
             <CategoryFilters 
               selectedCategory={category} 
-              onSelectCategory={(newCategory) => setCategory(newCategory)} 
+              onSelectCategory={(newCategory) => setCategory(newCategory as CategoryType)} 
             />
           </div>
         </div>
@@ -295,7 +295,7 @@ export default function Home() {
             <h3 className="text-sm font-medium mb-2 text-[#001C58]">Filtrar por categoría:</h3>
             <CategoryFilters 
               selectedCategory={category} 
-              onSelectCategory={(newCategory) => setCategory(newCategory)} 
+              onSelectCategory={(newCategory) => setCategory(newCategory as CategoryType)} 
             />
           </div>
           
@@ -369,9 +369,18 @@ export default function Home() {
                 )}
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-                {filteredVideos.slice(0, 12).map((video) => (
-                  <VideoCard key={video.id} video={video} />
-                ))}
+                {/* Ordenamos del más reciente al más antiguo basándonos en publishedAt */}
+                {[...filteredVideos]
+                  .sort((a, b) => {
+                    // Si no hay fechas de publicación, mantenemos el orden original
+                    if (!a.publishedAt || !b.publishedAt) return 0;
+                    // Ordenamos del más reciente (fecha mayor) al más antiguo (fecha menor)
+                    return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+                  })
+                  .slice(0, 12)
+                  .map((video) => (
+                    <VideoCard key={video.id} video={video} />
+                  ))}
               </div>
             </div>
           ) : (
@@ -379,9 +388,18 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-semibold text-[#001C58] mb-4">Videos destacados</h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-                {trendingVideos.slice(0, 12).map((video) => (
-                  <VideoCard key={video.id} video={video} />
-                ))}
+                {/* Ordenamos del más reciente al más antiguo basándonos en publishedAt */}
+                {[...trendingVideos]
+                  .sort((a, b) => {
+                    // Si no hay fechas de publicación, mantenemos el orden original
+                    if (!a.publishedAt || !b.publishedAt) return 0;
+                    // Ordenamos del más reciente (fecha mayor) al más antiguo (fecha menor)
+                    return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+                  })
+                  .slice(0, 12)
+                  .map((video) => (
+                    <VideoCard key={video.id} video={video} />
+                  ))}
               </div>
             </div>
           )}
