@@ -52,11 +52,24 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://ui-avatars.com"],
+      scriptSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        "'unsafe-eval'", 
+        "https://ui-avatars.com",
+        "https://plausible.io",
+        "https://*.googletagmanager.com"
+      ],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      connectSrc: ["'self'", "https://api.openai.com", "https://claude-api.anthropic.com"],
+      connectSrc: [
+        "'self'", 
+        "https://api.openai.com", 
+        "https://claude-api.anthropic.com",
+        "https://plausible.io",
+        "https://*.google-analytics.com"
+      ],
       frameSrc: ["'self'", "https://www.youtube.com", "https://player.vimeo.com", "https://www.tiktok.com"]
     }
   },

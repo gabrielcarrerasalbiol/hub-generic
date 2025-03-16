@@ -28,7 +28,7 @@ export default function LoginForm() {
   const [, navigate] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { t } = useTranslation();
-  const { trackLogin } = useAnalytics();
+  const { trackEvent } = useAnalytics();
   
   // Define validation schema with translations
   const loginSchema = z.object({
@@ -52,14 +52,15 @@ export default function LoginForm() {
     setIsSubmitting(true);
     
     try {
-      // Rastrear intento de inicio de sesión
-      trackLogin('username_password', false);
-      
+      // Intentamos iniciar sesión (tracking de éxito/fracaso se hace después)
       const success = await login(values.username, values.password);
       
       if (success) {
         // Rastrear inicio de sesión exitoso
-        trackLogin('username_password', true);
+        trackEvent({
+          name: 'login_success',
+          data: { method: 'username_password' }
+        });
         
         toast({
           title: t('auth.loginPage.successTitle'),
@@ -68,7 +69,15 @@ export default function LoginForm() {
         // Use navigate instead of window.location
         navigate('/');
       } else {
-        // Ya se rastreó el intento de inicio de sesión más arriba (con éxito=false)
+        // Rastrear fallo de inicio de sesión
+        trackEvent({
+          name: 'login_failure',
+          data: { 
+            method: 'username_password',
+            reason: error || 'invalid_credentials'
+          }
+        });
+        
         toast({
           variant: 'destructive',
           title: t('auth.loginPage.errorTitle'),
@@ -77,7 +86,16 @@ export default function LoginForm() {
       }
     } catch (err: any) {
       console.error('Error during login:', err);
-      // Ya se rastreó el intento de inicio de sesión más arriba (con éxito=false)
+      
+      // Rastrear error técnico durante el inicio de sesión
+      trackEvent({
+        name: 'login_error',
+        data: { 
+          method: 'username_password',
+          error: err.message || 'unknown_error'
+        }
+      });
+      
       toast({
         variant: 'destructive',
         title: t('auth.loginPage.errorTitle'),

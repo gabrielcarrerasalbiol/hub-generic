@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) - GA4 Implementación mejorada para SPA -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6HF03VCLJX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -20,43 +20,51 @@
 
       gtag('config', 'G-6HF03VCLJX', {
         'debug_mode': true,
-        'send_page_view': true
+        'send_page_view': false // Desactivamos el pageview automático para controlarlo manualmente
       });
       
-      // Log a test event to verify tracking is working
+      // Sistema de tracking manual para aplicaciones SPA
+      let lastPath = location.pathname;
+      const observeSPARouteChanges = function() {
+        const observer = new MutationObserver(function() {
+          if (lastPath !== location.pathname) {
+            console.log('[GA4] Página vista:', location.pathname);
+            gtag('event', 'page_view', {
+              page_title: document.title,
+              page_location: window.location.href,
+              page_path: location.pathname
+            });
+            lastPath = location.pathname;
+          }
+        });
+        
+        // Observar cambios en el DOM que podrían indicar navegación SPA
+        if (document.body) {
+          observer.observe(document.body, { childList: true, subtree: true });
+        } else {
+          window.addEventListener('DOMContentLoaded', function() {
+            observer.observe(document.body, { childList: true, subtree: true });
+          });
+        }
+      };
+      
+      // Iniciar observación de cambios de ruta y enviar la primera vista de página
+      observeSPARouteChanges();
+      gtag('event', 'page_view', {
+        page_title: document.title,
+        page_location: window.location.href,
+        page_path: location.pathname
+      });
+      
+      // Evento de prueba - se eliminará en producción
       setTimeout(() => {
         gtag('event', 'test_event', {
           'event_category': 'testing',
           'event_label': 'GA4 test event',
           'value': 1
         });
-        console.log('Google Analytics test event sent');
+        console.log('[GA4] Evento de prueba enviado');
       }, 3000);
-    </script>
-
-    <!-- Plausible Analytics - implementación manual para evitar problemas de CSP -->
-    <script>
-      // Definición de la función global plausible para tracking manual
-      window.plausible = window.plausible || function() {
-        console.log('[Analytics] Event:', arguments[0], arguments[1] || {});
-        // En un entorno de producción, aquí enviaríamos los datos a Plausible
-        // Actualmente solo registramos los eventos en la consola para pruebas
-      };
-      
-      // Inicialización del rastreador de páginas basado en cambios de URL
-      let lastPage = location.pathname;
-      const observer = new MutationObserver(function() {
-        if (lastPage !== location.pathname) {
-          console.log('[Analytics] Page changed to:', location.pathname);
-          plausible('pageview');
-          lastPage = location.pathname;
-        }
-      });
-      
-      // Observar cambios en el DOM que podrían indicar navegación SPA
-      document.addEventListener('DOMContentLoaded', function() {
-        observer.observe(document.body, { childList: true, subtree: true });
-      });
     </script>
   </head>
   <body>
