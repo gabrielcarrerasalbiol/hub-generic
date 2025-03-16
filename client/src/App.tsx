@@ -40,7 +40,6 @@ import { ThemeProvider } from '@/hooks/use-theme';
 
 // Definición de rutas en un único lugar para evitar re-renders innecesarios
 const Routes = () => {
-  // La ruta fullWidth ya está integrada en el componente AboutPage y se usa directamente
   return (
     <Switch>
       <Route path="/">
@@ -55,42 +54,171 @@ const Routes = () => {
         </Layout>
       </Route>
       
-      <Route path="*">
+      <Route path="/sobre-nosotros">
+        <Layout fullWidth={true}>
+          <AboutPage />
+        </Layout>
+      </Route>
+      
+      <Route path="/channel/:id">
         <Layout>
-          <Switch>
-            <Route path="/sobre-nosotros">
-              <Layout fullWidth={true}>
-                <AboutPage />
-              </Layout>
-            </Route>
-            <Route path="/channel/:id" component={ChannelPage} />
-            <Route path="/video/:id" component={VideoPage} />
-            <Route path="/favorites" component={FavoritesPage} />
-            <Route path="/login" component={LoginPage} />
-            <Route path="/register" component={RegisterPage} />
-            <Route path="/profile" component={ProfilePage} />
-            <Route path="/admin" component={AdminPage} />
-            <Route path="/dashboard" component={DashboardPage} />
-            <Route path="/subscriptions" component={SubscriptionsPage} />
-            <Route path="/forgot-password" component={ForgotPasswordPage} />
-            <Route path="/reset-password" component={ResetPasswordPage} />
-            <Route path="/category/:categorySlug" component={CategoryPage} />
-            <Route path="/videos" component={VideosPage} />
-            <Route path="/trending" component={TrendingPage} />
-            <Route path="/notifications" component={NotificationsPage} />
-            <Route path="/settings" component={SettingsPage} />
-            <Route path="/history" component={HistoryPage} />
-            <Route path="/search" component={SearchPage} />
-            <Route path="/terminos" component={TermsPage} />
-            <Route path="/privacidad" component={PrivacyPage} />
-            <Route path="/cookies" component={CookiesPage} />
-            <Route path="/contacto" component={ContactPage} />
-            <Route path="/featured-channels" component={FeaturedChannelsPage} />
-            <Route path="/premium-channels" component={PremiumChannelsPage} />
-            <Route path="/featured-videos" component={FeaturedVideosPage} />
-            <Route path="/fan-mood" component={FanMoodPage} />
-            <Route component={NotFound} />
-          </Switch>
+          <ChannelPage />
+        </Layout>
+      </Route>
+      
+      <Route path="/video/:id">
+        <Layout>
+          <VideoPage />
+        </Layout>
+      </Route>
+
+      <Route path="/favorites">
+        <Layout>
+          <FavoritesPage />
+        </Layout>
+      </Route>
+
+      <Route path="/login">
+        <Layout>
+          <LoginPage />
+        </Layout>
+      </Route>
+
+      <Route path="/register">
+        <Layout>
+          <RegisterPage />
+        </Layout>
+      </Route>
+
+      <Route path="/profile">
+        <Layout>
+          <ProfilePage />
+        </Layout>
+      </Route>
+
+      <Route path="/admin">
+        <Layout>
+          <AdminPage />
+        </Layout>
+      </Route>
+
+      <Route path="/dashboard">
+        <Layout>
+          <DashboardPage />
+        </Layout>
+      </Route>
+
+      <Route path="/subscriptions">
+        <Layout>
+          <SubscriptionsPage />
+        </Layout>
+      </Route>
+
+      <Route path="/forgot-password">
+        <Layout>
+          <ForgotPasswordPage />
+        </Layout>
+      </Route>
+
+      <Route path="/reset-password">
+        <Layout>
+          <ResetPasswordPage />
+        </Layout>
+      </Route>
+
+      <Route path="/category/:categorySlug">
+        <Layout>
+          <CategoryPage />
+        </Layout>
+      </Route>
+
+      <Route path="/videos">
+        <Layout>
+          <VideosPage />
+        </Layout>
+      </Route>
+
+      <Route path="/trending">
+        <Layout>
+          <TrendingPage />
+        </Layout>
+      </Route>
+
+      <Route path="/notifications">
+        <Layout>
+          <NotificationsPage />
+        </Layout>
+      </Route>
+
+      <Route path="/settings">
+        <Layout>
+          <SettingsPage />
+        </Layout>
+      </Route>
+
+      <Route path="/history">
+        <Layout>
+          <HistoryPage />
+        </Layout>
+      </Route>
+
+      <Route path="/search">
+        <Layout>
+          <SearchPage />
+        </Layout>
+      </Route>
+
+      <Route path="/terminos">
+        <Layout>
+          <TermsPage />
+        </Layout>
+      </Route>
+
+      <Route path="/privacidad">
+        <Layout>
+          <PrivacyPage />
+        </Layout>
+      </Route>
+
+      <Route path="/cookies">
+        <Layout>
+          <CookiesPage />
+        </Layout>
+      </Route>
+
+      <Route path="/contacto">
+        <Layout>
+          <ContactPage />
+        </Layout>
+      </Route>
+
+      <Route path="/featured-channels">
+        <Layout>
+          <FeaturedChannelsPage />
+        </Layout>
+      </Route>
+
+      <Route path="/premium-channels">
+        <Layout>
+          <PremiumChannelsPage />
+        </Layout>
+      </Route>
+
+      <Route path="/featured-videos">
+        <Layout>
+          <FeaturedVideosPage />
+        </Layout>
+      </Route>
+
+      <Route path="/fan-mood">
+        <Layout>
+          <FanMoodPage />
+        </Layout>
+      </Route>
+      
+      <Route>
+        <Layout>
+          <NotFound />
         </Layout>
       </Route>
     </Switch>
