@@ -108,8 +108,8 @@ export default function SubscribeButton({
       } catch (error) {
         console.error("Error subscribing to channel:", error);
         toast({
-          title: "Error al suscribirse",
-          description: "No se pudo completar la suscripción, intenta nuevamente",
+          title: t('errors.subscriptionError'),
+          description: t('errors.subscriptionErrorMessage'),
           variant: "destructive",
         });
       }
