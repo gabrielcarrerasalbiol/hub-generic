@@ -82,7 +82,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "mr-3 h-4 w-4",
                   isLinkActive("/videos") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
-                Explorador
+                {t('sidebar.explorer')}
               </Link>
             </li>
             <li>
@@ -110,7 +110,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   "mr-3 h-4 w-4",
                   isLinkActive("/featured-videos") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                 )} />
-                Destacados
+                {t('sidebar.featured_videos')}
               </Link>
             </li>
             <li>
@@ -138,7 +138,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                     "mr-3 h-4 w-4",
                     isLinkActive("/subscriptions") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
                   )} />
-                  Mis canales
+                  {t('sidebar.my_channels')}
               </Link>
             </li>
             <li>

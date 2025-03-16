@@ -13,7 +13,18 @@
     "tiktok_channel": "TikTok Channel",
     "twitter_account": "Twitter Account",
     "instagram_account": "Instagram Account",
-    "no_featured": "No featured channels"
+    "no_featured": "No featured channels",
+    "explorer": "Explorer",
+    "featured_videos": "Featured",
+    "my_channels": "My Channels",
+    "coming_soon": "Coming Soon",
+    "matches": "Matches",
+    "analysis": "Analysis",
+    "historic_moments": "Historic Moments",
+    "players": "Players",
+    "news": "News",
+    "premium_access": "Premium Access",
+    "premium_description": "Upgrade to premium to access exclusive channels with the best Real Madrid content."
   },
   "nav": {
     "home": "Home",
