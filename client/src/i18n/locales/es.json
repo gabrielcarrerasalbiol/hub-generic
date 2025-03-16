@@ -35,7 +35,21 @@
     "latest": "Últimos Videos",
     "recommended": "Canales Recomendados",
     "viewAll": "Ver Todo",
-    "viewMore": "Ver Más"
+    "viewMore": "Ver Más",
+    "featuredContent": "Contenido Destacado",
+    "discoverContent": "Descubre Contenido",
+    "recommendedChannels": "Canales Recomendados",
+    "popularThisWeek": "Videos Populares Esta Semana",
+    "featuredVideos": "Videos destacados",
+    "selectedVideos": "Videos seleccionados",
+    "videosFrom": "Videos de {platform}",
+    "comingSoon": "Próximamente",
+    "workingToIncorporate": "Estamos trabajando para incorporar contenido de {platform} a nuestro Hub Madridista.",
+    "soonEnjoy": "Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.",
+    "viewAllVideos": "Ver todos los videos",
+    "filterByCategory": "Filtrar por categoría:",
+    "noFeaturedContent": "No hay contenido destacado disponible en este momento.",
+    "all": "Todos"
   },
   "video": {
     "views": "visualizaciones",

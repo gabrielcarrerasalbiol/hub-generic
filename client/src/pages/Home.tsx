@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Video, Channel, PlatformType, CategoryType } from "@shared/schema";
 import { getQueryFn } from "@/lib/queryClient";
+import { useLanguage } from "@/hooks/use-language";
 import {
   Carousel,
   CarouselContent,
@@ -22,6 +23,7 @@ import TikTokIcon from "@/components/icons/TikTokIcon";
 import TwitchIcon from "@/components/icons/TwitchIcon";
 
 export default function Home() {
+  const { t } = useLanguage();
   const [platform, setPlatform] = useState<PlatformType>("all");
   const [category, setCategory] = useState<CategoryType>("all");
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
@@ -138,7 +140,7 @@ export default function Home() {
       {/* Featured Content Section */}
       <section className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Contenido Destacado</h2>
+          <h2 className="text-2xl font-bold">{t('home.featuredContent')}</h2>
           {featuredVideos.length > 1 && (
             <div className="flex space-x-2">
               <Button 
