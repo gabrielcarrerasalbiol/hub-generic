@@ -5,6 +5,8 @@ import { Video, Category, Channel } from "@shared/schema";
 import VideoCard from "@/components/VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect, useMemo } from "react";
+import SEO from "@/components/SEO";
+import { categorySchema } from "@/lib/schemaData";
 import { 
   Select, 
   SelectContent, 
@@ -151,8 +153,42 @@ export default function CategoryPage() {
     { id: "twitch", name: "Twitch" }
   ];
 
+  // Descripciones SEO personalizadas para cada categoría
+  let seoDescription = `Los mejores videos de Real Madrid en la categoría ${categoryTitle}. Contenido actualizado diariamente.`;
+  
+  switch(categorySlug) {
+    case "matches":
+      seoDescription = "Videos de partidos completos y resúmenes del Real Madrid. Revive los mejores momentos, goles y jugadas de LaLiga, Champions League y todas las competiciones.";
+      break;
+    case "analysis":
+      seoDescription = "Análisis tácticos y técnicos de los partidos del Real Madrid. Comentarios de expertos sobre estrategias, jugadas y rendimiento del equipo.";
+      break;
+    case "historic":
+      seoDescription = "Revive los momentos históricos del Real Madrid. Finales, títulos, jugadas memorables y la historia del club blanco en video.";
+      break;
+    case "players":
+      seoDescription = "Videos sobre los jugadores del Real Madrid. Perfiles, entrevistas, mejores jugadas y evolución de las estrellas madridistas.";
+      break;
+    case "press":
+      seoDescription = "Ruedas de prensa, entrevistas y declaraciones oficiales del Real Madrid. Mantente informado con las últimas noticias del club.";
+      break;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* SEO optimizado para categorías */}
+      <SEO
+        title={`${categoryTitle} - Videos de Real Madrid | Hub Madridista`}
+        description={seoDescription}
+        keywords={`Real Madrid, ${categoryTitle.toLowerCase()}, videos, fútbol, LaLiga, Champions League`}
+        ogType="website"
+        twitterCard="summary_large_image"
+        structuredData={categorySchema(
+          categoryTitle, 
+          seoDescription, 
+          filteredVideos.length
+        )}
+      />
       {/* Encabezado con título de categoría */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 border-b border-[#FDBE11] pb-4">
         <div className="flex items-center mb-4 sm:mb-0">

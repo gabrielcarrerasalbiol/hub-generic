@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Video, Channel, PlatformType, CategoryType } from "@shared/schema";
 import { getQueryFn } from "@/lib/queryClient";
 import { useLanguage } from "@/hooks/use-language";
+import SEO from "@/components/SEO";
+import { homePageSchema } from "@/lib/schemaData";
 import {
   Carousel,
   CarouselContent,
@@ -137,6 +139,15 @@ export default function Home() {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
+      {/* SEO optimizado para la página de inicio */}
+      <SEO
+        title="Hub Madridista | Agregador de contenido del Real Madrid"
+        description="Descubre los mejores videos y contenido del Real Madrid, seleccionados de todas las plataformas: YouTube, Twitter, Twitch y más."
+        keywords="Real Madrid, videos, mejores, fútbol, LaLiga, Champions League, YouTube, Twitch, aficionados"
+        ogType="website"
+        twitterCard="summary_large_image"
+        structuredData={homePageSchema()}
+      />
       {/* Featured Content Section */}
       <section className="mb-8">
         <div className="flex justify-between items-center mb-4">
