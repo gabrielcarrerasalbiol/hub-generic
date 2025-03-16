@@ -342,7 +342,8 @@
     "delete": "Eliminar",
     "add": "Añadir",
     "remove": "Eliminar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "required": " es requerido"
   },
   "cookies": {
     "title": "Política de Cookies",

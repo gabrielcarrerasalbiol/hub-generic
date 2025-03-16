@@ -342,7 +342,8 @@
     "delete": "Delete",
     "add": "Add",
     "remove": "Remove",
-    "close": "Close"
+    "close": "Close",
+    "required": " is required"
   },
   "terms": {
     "title": "Terms and Conditions of Use",
