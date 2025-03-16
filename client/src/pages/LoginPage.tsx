@@ -31,20 +31,19 @@ export default function LoginPage() {
     <div className="min-h-screen flex bg-white">
       <div className="w-1/3 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
         <div className="mb-8">
-          <div className="relative mb-8 overflow-hidden rounded-lg shadow-md h-64 bg-[#001C58]">
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <Trophy className="w-28 h-28 text-[#FDBE11]" />
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58] to-transparent p-4 text-center">
-              <p className="text-white text-xl font-medium">{t('app.slogan')}</p>
-            </div>
-          </div>
-          <div className="rounded-lg overflow-hidden shadow-md">
+          <div className="relative rounded-lg overflow-hidden shadow-md">
             <img 
               src="/images/jlyIqXxWaWqjqekk-generated_image.jpg" 
               alt="Real Madrid" 
               className="w-full h-auto object-cover"
             />
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-[#001C58]/80 to-transparent">
+              <div className="px-6 py-8 text-center">
+                <Trophy className="w-16 h-16 text-[#FDBE11] mb-4 inline-block" />
+                <h2 className="text-white text-2xl font-bold mb-2">{t('app.name')}</h2>
+                <p className="text-white text-xl font-medium">{t('app.slogan')}</p>
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex-grow flex flex-col justify-center">
