@@ -35,9 +35,16 @@ export default function LoginPage() {
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <Trophy className="w-28 h-28 text-[#FDBE11]" />
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58] to-transparent p-4">
-              <p className="text-white text-lg font-medium">{t('app.slogan')}</p>
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001C58] to-transparent p-4 text-center">
+              <p className="text-white text-xl font-medium">{t('app.slogan')}</p>
             </div>
+          </div>
+          <div className="rounded-lg overflow-hidden shadow-md">
+            <img 
+              src="/images/real-madrid-banner.png" 
+              alt="Real Madrid" 
+              className="w-full h-auto object-cover"
+            />
           </div>
         </div>
         <div className="flex-grow flex flex-col justify-center">
