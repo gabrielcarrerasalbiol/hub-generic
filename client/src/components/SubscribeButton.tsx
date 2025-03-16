@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from 'react-i18next';
 
 interface SubscribeButtonProps {
   channelId: number | string;
@@ -20,6 +21,7 @@ export default function SubscribeButton({
   const { toast } = useToast();
   const { checkAuth, user } = useAuth();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [isSubscribed, setIsSubscribed] = useState(initialSubscribed);
   const [notificationsEnabled, setNotificationsEnabled] = useState(initialNotificationsEnabled);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,8 +63,8 @@ export default function SubscribeButton({
   const handleSubscribe = async () => {
     if (!checkAuth()) {
       toast({
-        title: "Inicia sesión para suscribirte",
-        description: "Necesitas iniciar sesión para suscribirte a canales",
+        title: t('auth.loginRequired'),
+        description: t('auth.loginToSubscribe'),
         variant: "destructive",
       });
       return;
@@ -70,8 +72,8 @@ export default function SubscribeButton({
     
     if (!channelId || channelId === 'undefined') {
       toast({
-        title: "Error al procesar",
-        description: "No se pudo identificar el canal, por favor recarga la página",
+        title: t('errors.processingError'),
+        description: t('errors.channelIdentificationError'),
         variant: "destructive",
       });
       return;
@@ -96,8 +98,8 @@ export default function SubscribeButton({
         setIsSubscribed(true);
         setNotificationsEnabled(true);
         toast({
-          title: "¡Suscripción exitosa!",
-          description: "Ahora recibirás actualizaciones de este canal",
+          title: t('subscriptions.success'),
+          description: t('subscriptions.successMessage'),
         });
         
         // Invalidar consultas relacionadas

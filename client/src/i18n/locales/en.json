@@ -125,7 +125,15 @@
     "noNotifications": "You have no notifications",
     "newVideo": "New video",
     "newSubscription": "New subscription",
-    "videoFavorited": "Video added to favorites"
+    "videoFavorited": "Video added to favorites",
+    "deleted": "Notification deleted",
+    "deletedSuccess": "The notification has been successfully deleted",
+    "deleteError": "Could not delete the notification",
+    "viewVideo": "View video",
+    "notificationsOn": "Notifications enabled",
+    "notificationsOff": "Notifications disabled",
+    "enabledSuccess": "You will receive alerts when new videos are published",
+    "disabledSuccess": "You will no longer receive alerts for new videos"
   },
   "errors": {
     "notFound": "Page not found",

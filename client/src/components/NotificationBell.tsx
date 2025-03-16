@@ -15,6 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 // Tipo para las notificaciones
 interface Notification {
@@ -33,6 +34,7 @@ export default function NotificationBell() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
+  const { t, i18n } = useTranslation();
 
   // Consultar el número de notificaciones no leídas
   const { data: notificationCountData, isLoading: countLoading } = useQuery({
@@ -90,14 +92,14 @@ export default function NotificationBell() {
       queryClient.invalidateQueries({ queryKey: ['/api/notifications/unread/count'] });
       
       toast({
-        title: "Notificación eliminada",
-        description: "La notificación ha sido eliminada exitosamente",
+        title: t('notifications.deleted'),
+        description: t('notifications.deletedSuccess'),
       });
     } catch (error) {
       console.error('Error deleting notification:', error);
       toast({
-        title: "Error al eliminar",
-        description: "No se pudo eliminar la notificación",
+        title: t('errors.deleteError'),
+        description: t('notifications.deleteError'),
         variant: "destructive",
       });
     }
@@ -123,19 +125,19 @@ export default function NotificationBell() {
       </PopoverTrigger>
       <PopoverContent className="w-[320px] p-0">
         <div className="p-4 border-b flex items-center justify-between">
-          <div className="font-medium">Notificaciones</div>
+          <div className="font-medium">{t('notifications.title')}</div>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => markAllAsRead()}
             disabled={unreadCount === 0}
           >
-            Marcar todas como leídas
+            {t('notifications.markAllRead')}
           </Button>
         </div>
         <ScrollArea className="h-[300px] p-0">
           {notificationsLoading ? (
-            <div className="p-4 text-center text-muted-foreground">Cargando notificaciones...</div>
+            <div className="p-4 text-center text-muted-foreground">{t('general.loading')}</div>
           ) : notifications.length > 0 ? (
             <div className="divide-y">
               {notifications.map((notification) => (
@@ -150,11 +152,11 @@ export default function NotificationBell() {
                           className="flex items-center text-xs text-blue-600 hover:text-blue-800 mt-1"
                         >
                           <Video className="h-3 w-3 mr-1" /> 
-                          Ver video
+                          {t('notifications.viewVideo')}
                         </Link>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(notification.createdAt).toLocaleDateString('es-ES', {
+                        {new Date(notification.createdAt).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'es-ES', {
                           hour: '2-digit',
                           minute: '2-digit',
                           day: '2-digit',
@@ -175,7 +177,7 @@ export default function NotificationBell() {
               ))}
             </div>
           ) : (
-            <div className="p-4 text-center text-muted-foreground">No tienes notificaciones</div>
+            <div className="p-4 text-center text-muted-foreground">{t('notifications.noNotifications')}</div>
           )}
         </ScrollArea>
       </PopoverContent>
