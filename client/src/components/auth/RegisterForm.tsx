@@ -93,7 +93,7 @@ export default function RegisterForm() {
   return (
     <Card className="w-full max-w-xl mx-auto">
       <CardHeader className="pb-4">
-        <CardTitle>{t('registerPage.title')}</CardTitle>
+        <CardTitle>{t('auth.registerPage.title')}</CardTitle>
       </CardHeader>
       <CardContent className="pt-2 pb-2">
         <Form {...form}>
@@ -104,9 +104,9 @@ export default function RegisterForm() {
                 name="username"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>{t('registerPage.usernameField')}</FormLabel>
+                    <FormLabel>{t('auth.registerPage.usernameField')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('registerPage.usernamePlaceholder')} {...field} className="h-9" />
+                      <Input placeholder={t('auth.registerPage.usernamePlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -118,9 +118,9 @@ export default function RegisterForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>{t('registerPage.emailField')}</FormLabel>
+                    <FormLabel>{t('auth.registerPage.emailField')}</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder={t('registerPage.emailPlaceholder')} {...field} className="h-9" />
+                      <Input type="email" placeholder={t('auth.registerPage.emailPlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -133,9 +133,9 @@ export default function RegisterForm() {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>{t('registerPage.nameField')}</FormLabel>
+                    <FormLabel>{t('auth.registerPage.nameField')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('registerPage.namePlaceholder')} {...field} className="h-9" />
+                      <Input placeholder={t('auth.registerPage.namePlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -148,9 +148,9 @@ export default function RegisterForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>{t('registerPage.passwordField')}</FormLabel>
+                    <FormLabel>{t('auth.registerPage.passwordField')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder={t('registerPage.passwordPlaceholder')} {...field} className="h-9" />
+                      <Input type="password" placeholder={t('auth.registerPage.passwordPlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -162,9 +162,9 @@ export default function RegisterForm() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem className="compact-form-item">
-                    <FormLabel>{t('registerPage.confirmPasswordField')}</FormLabel>
+                    <FormLabel>{t('auth.registerPage.confirmPasswordField')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder={t('registerPage.confirmPasswordPlaceholder')} {...field} className="h-9" />
+                      <Input type="password" placeholder={t('auth.registerPage.confirmPasswordPlaceholder')} {...field} className="h-9" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -173,7 +173,7 @@ export default function RegisterForm() {
             </div>
             
             <Button type="submit" className="w-full mt-4" disabled={isSubmitting}>
-              {isSubmitting ? t('registerPage.submitting') : t('registerPage.submitButton')}
+              {isSubmitting ? t('auth.registerPage.submitting') : t('auth.registerPage.submitButton')}
             </Button>
           </form>
         </Form>
@@ -182,9 +182,9 @@ export default function RegisterForm() {
         {/* SSO buttons temporarily hidden */}
         <div className="text-center w-full">
           <p className="text-sm">
-            {t('registerPage.alreadyHaveAccount')}{' '}
+            {t('auth.registerPage.alreadyHaveAccount')}{' '}
             <Link href="/login" className="text-primary underline">
-              {t('registerPage.loginLink')}
+              {t('auth.registerPage.loginLink')}
             </Link>
           </p>
         </div>
