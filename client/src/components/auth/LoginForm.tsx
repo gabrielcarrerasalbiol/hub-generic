@@ -81,7 +81,7 @@ export default function LoginForm() {
   return (
     <Card className="w-full max-w-xl mx-auto">
       <CardHeader className="pb-4">
-        <CardTitle>{t('auth.loginPage.title')}</CardTitle>
+        <CardTitle>{t('loginPage.title')}</CardTitle>
       </CardHeader>
       <CardContent className="pt-2 pb-2">
         <Form {...form}>
@@ -94,7 +94,7 @@ export default function LoginForm() {
                   <FormLabel>{t('auth.username')}</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder={`${t('auth.username')}...`} 
+                      placeholder={t('loginPage.usernamePlaceholder')} 
                       className="h-9" 
                       {...field} 
                     />
@@ -118,7 +118,7 @@ export default function LoginForm() {
                   <FormControl>
                     <Input 
                       type="password" 
-                      placeholder={`${t('auth.password')}...`}
+                      placeholder={t('loginPage.passwordPlaceholder')}
                       className="h-9" 
                       {...field} 
                     />
@@ -133,7 +133,7 @@ export default function LoginForm() {
               className="w-full mt-4" 
               disabled={isSubmitting}
             >
-              {isSubmitting ? t('auth.loginPage.logging') : t('auth.login')}
+              {isSubmitting ? t('loginPage.submitting') : t('loginPage.submitButton')}
             </Button>
           </form>
         </Form>
@@ -142,9 +142,9 @@ export default function LoginForm() {
         {/* SSO buttons temporarily hidden */}
         <div className="text-center w-full">
           <p className="text-sm">
-            {t('auth.loginPage.noAccount')}{' '}
+            {t('loginPage.noAccount')}{' '}
             <Link href="/register" className="text-primary underline">
-              {t('auth.register')}
+              {t('loginPage.registerLink')}
             </Link>
           </p>
         </div>
