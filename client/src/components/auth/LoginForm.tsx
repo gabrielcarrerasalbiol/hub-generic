@@ -54,24 +54,24 @@ export default function LoginForm() {
       
       if (success) {
         toast({
-          title: t('loginPage.successTitle'),
-          description: t('loginPage.successMessage'),
+          title: t('auth.loginPage.successTitle'),
+          description: t('auth.loginPage.successMessage'),
         });
         // Use navigate instead of window.location
         navigate('/');
       } else {
         toast({
           variant: 'destructive',
-          title: t('loginPage.errorTitle'),
-          description: error || t('loginPage.errorMessage'),
+          title: t('auth.loginPage.errorTitle'),
+          description: error || t('auth.loginPage.errorMessage'),
         });
       }
     } catch (err: any) {
       console.error('Error during login:', err);
       toast({
         variant: 'destructive',
-        title: t('loginPage.errorTitle'),
-        description: err.message || t('loginPage.errorMessage'),
+        title: t('auth.loginPage.errorTitle'),
+        description: err.message || t('auth.loginPage.errorMessage'),
       });
     } finally {
       setIsSubmitting(false);
@@ -81,7 +81,7 @@ export default function LoginForm() {
   return (
     <Card className="w-full max-w-xl mx-auto">
       <CardHeader className="pb-4">
-        <CardTitle>{t('loginPage.title')}</CardTitle>
+        <CardTitle>{t('auth.loginPage.title')}</CardTitle>
       </CardHeader>
       <CardContent className="pt-2 pb-2">
         <Form {...form}>
@@ -94,7 +94,7 @@ export default function LoginForm() {
                   <FormLabel>{t('auth.username')}</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder={t('loginPage.usernamePlaceholder')} 
+                      placeholder={t('auth.loginPage.usernamePlaceholder')} 
                       className="h-9" 
                       {...field} 
                     />
@@ -118,7 +118,7 @@ export default function LoginForm() {
                   <FormControl>
                     <Input 
                       type="password" 
-                      placeholder={t('loginPage.passwordPlaceholder')}
+                      placeholder={t('auth.loginPage.passwordPlaceholder')}
                       className="h-9" 
                       {...field} 
                     />
@@ -133,7 +133,7 @@ export default function LoginForm() {
               className="w-full mt-4" 
               disabled={isSubmitting}
             >
-              {isSubmitting ? t('loginPage.submitting') : t('loginPage.submitButton')}
+              {isSubmitting ? t('auth.loginPage.submitting') : t('auth.loginPage.submitButton')}
             </Button>
           </form>
         </Form>
@@ -142,9 +142,9 @@ export default function LoginForm() {
         {/* SSO buttons temporarily hidden */}
         <div className="text-center w-full">
           <p className="text-sm">
-            {t('loginPage.noAccount')}{' '}
+            {t('auth.loginPage.noAccount')}{' '}
             <Link href="/register" className="text-primary underline">
-              {t('loginPage.registerLink')}
+              {t('auth.loginPage.registerLink')}
             </Link>
           </p>
         </div>
