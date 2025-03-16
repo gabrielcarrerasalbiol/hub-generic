@@ -154,8 +154,14 @@ export default function PollManagement() {
   const createPoll = useMutation({
     mutationFn: (data: PollFormValues) => {
       // Asegurarnos de que las opciones tienen el formato correcto
+      // y excluimos campos de ID opcionales para nuevas opciones
       const payload = {
-        ...data,
+        title: data.title,
+        titleEs: data.titleEs, 
+        question: data.question,
+        questionEs: data.questionEs,
+        status: data.status,
+        showInSidebar: data.showInSidebar,
         options: data.options.map(option => ({
           text: option.text,
           textEs: option.textEs,
@@ -202,10 +208,31 @@ export default function PollManagement() {
 
   // Mutación para actualizar encuesta
   const updatePoll = useMutation({
-    mutationFn: ({ id, data }: { id: number, data: PollFormValues }) => apiRequest(`/api/polls/${id}`, {
-      method: 'PUT',
-      data
-    }),
+    mutationFn: ({ id, data }: { id: number, data: PollFormValues }) => {
+      // Asegurarnos de que las opciones tienen el formato correcto
+      // para actualización
+      const payload = {
+        title: data.title,
+        titleEs: data.titleEs, 
+        question: data.question,
+        questionEs: data.questionEs,
+        status: data.status,
+        showInSidebar: data.showInSidebar,
+        options: data.options.map(option => ({
+          id: option.id,
+          text: option.text,
+          textEs: option.textEs,
+          order: option.order
+        }))
+      };
+      
+      console.log('Actualizando encuesta:', payload);
+      
+      return apiRequest(`/api/polls/${id}`, {
+        method: 'PUT',
+        data: payload
+      });
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/polls'] });
       toast({
