@@ -41,7 +41,7 @@ export default function LoginPage() {
           </div>
           <div className="rounded-lg overflow-hidden shadow-md">
             <img 
-              src="/images/real-madrid-banner.png" 
+              src="/images/jlyIqXxWaWqjqekk-generated_image.jpg" 
               alt="Real Madrid" 
               className="w-full h-auto object-cover"
             />
