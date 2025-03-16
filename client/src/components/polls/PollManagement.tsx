@@ -48,13 +48,16 @@ import { PollResults } from '@/components/polls/PollResults';
 // Esquema para validación del formulario de encuesta
 const pollFormSchema = z.object({
   title: z.string().min(5, { message: 'El título debe tener al menos 5 caracteres' }),
-  description: z.string().optional(),
+  titleEs: z.string().min(5, { message: 'El título en español debe tener al menos 5 caracteres' }),
+  question: z.string().min(5, { message: 'La pregunta debe tener al menos 5 caracteres' }),
+  questionEs: z.string().min(5, { message: 'La pregunta en español debe tener al menos 5 caracteres' }),
   status: z.enum(['draft', 'published']),
   showInSidebar: z.boolean().default(false),
   options: z.array(
     z.object({
       id: z.number().optional(),
       text: z.string().min(1, { message: 'La opción no puede estar vacía' }),
+      textEs: z.string().min(1, { message: 'La opción en español no puede estar vacía' }),
       order: z.number().default(0)
     })
   ).min(2, { message: 'Debe haber al menos 2 opciones' })
@@ -65,7 +68,9 @@ type PollFormValues = z.infer<typeof pollFormSchema>;
 interface Poll {
   id: number;
   title: string;
-  description: string | null;
+  titleEs: string;
+  question: string;
+  questionEs: string;
   status: 'draft' | 'published';
   showInSidebar: boolean;
   createdAt: string;
@@ -73,6 +78,7 @@ interface Poll {
   options: {
     id: number;
     text: string;
+    textEs: string;
     order: number;
     pollId: number;
   }[];
@@ -103,12 +109,14 @@ export default function PollManagement() {
     resolver: zodResolver(pollFormSchema),
     defaultValues: {
       title: '',
-      description: '',
+      titleEs: '',
+      question: '',
+      questionEs: '',
       status: 'draft',
       showInSidebar: false,
       options: [
-        { text: '', order: 0 },
-        { text: '', order: 1 }
+        { text: '', textEs: '', order: 0 },
+        { text: '', textEs: '', order: 1 }
       ]
     }
   });
@@ -124,12 +132,15 @@ export default function PollManagement() {
     if (editingPoll) {
       form.reset({
         title: editingPoll.title,
-        description: editingPoll.description || '',
+        titleEs: editingPoll.titleEs,
+        question: editingPoll.question,
+        questionEs: editingPoll.questionEs,
         status: editingPoll.status,
         showInSidebar: editingPoll.showInSidebar,
         options: editingPoll.options.map(opt => ({
           id: opt.id,
           text: opt.text,
+          textEs: opt.textEs,
           order: opt.order
         }))
       });
@@ -263,19 +274,21 @@ export default function PollManagement() {
 
   // Agregar una nueva opción de respuesta
   const handleAddOption = () => {
-    append({ text: '', order: fields.length });
+    append({ text: '', textEs: '', order: fields.length });
   };
 
   // Abrir dialog para crear nueva encuesta
   const handleCreateNew = () => {
     form.reset({
       title: '',
-      description: '',
+      titleEs: '',
+      question: '',
+      questionEs: '',
       status: 'draft',
       showInSidebar: false,
       options: [
-        { text: '', order: 0 },
-        { text: '', order: 1 }
+        { text: '', textEs: '', order: 0 },
+        { text: '', textEs: '', order: 1 }
       ]
     });
     setEditingPoll(null);
@@ -413,37 +426,73 @@ export default function PollManagement() {
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Título</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Título de la encuesta" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Título (inglés)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Título en inglés" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descripción (opcional)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Descripción adicional de la encuesta"
-                        {...field}
-                        value={field.value || ''}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="titleEs"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Título (español)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Título en español" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="question"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Pregunta (inglés)</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Pregunta en inglés"
+                          {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="questionEs"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Pregunta (español)</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Pregunta en español"
+                          {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
@@ -493,15 +542,16 @@ export default function PollManagement() {
                 </div>
 
                 {fields.map((field, index) => (
-                  <div key={field.id} className="flex items-center gap-2">
+                  <div key={field.id} className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2 items-start">
                     <FormField
                       control={form.control}
                       name={`options.${index}.text`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
+                          <FormLabel className="text-xs">Opción {index + 1} (inglés)</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder={`Opción ${index + 1}`}
+                              placeholder={`Opción ${index + 1} en inglés`}
                               {...field}
                             />
                           </FormControl>
@@ -509,16 +559,35 @@ export default function PollManagement() {
                         </FormItem>
                       )}
                     />
-                    {index > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => remove(index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <div className="flex items-end gap-2">
+                      <FormField
+                        control={form.control}
+                        name={`options.${index}.textEs`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-xs">Opción {index + 1} (español)</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder={`Opción ${index + 1} en español`}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      {index > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="mb-1"
+                          onClick={() => remove(index)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
                 {form.formState.errors.options?.root && (
