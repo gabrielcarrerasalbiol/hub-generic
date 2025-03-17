@@ -267,46 +267,37 @@ export async function getYouTubeChannelDetails(channelIdentifiers: string[]): Pr
           allItems.push(response.data.items[0]);
         }
       } else {
-        // Intentamos buscar por nombre de usuario
-        params.forUsername = identifier;
-        console.log(`Usando username para buscar: ${identifier}`);
+        // Para URLs con caracteres especiales como Ñ, usamos una búsqueda directa
+        // en lugar de forUsername que puede fallar con caracteres internacionales
+        console.log(`Utilizando búsqueda directa para: ${identifier} (puede contener caracteres especiales)`);
         
         try {
-          // Primero probamos con forUsername
-          const response = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, { params });
+          // Hacemos directamente una búsqueda para manejar mejor los caracteres especiales
+          const searchResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/search`, {
+            params: {
+              part: 'snippet',
+              q: identifier,
+              type: 'channel',
+              maxResults: 1,
+              key: YOUTUBE_API_KEY
+            }
+          });
           
-          if (response.data.items && response.data.items.length > 0) {
-            allItems.push(response.data.items[0]);
-          } else {
-            // Si no funciona, hacemos una búsqueda general
-            console.log(`No se encontró canal con username, intentando búsqueda general para: ${identifier}`);
+          if (searchResponse.data.items && searchResponse.data.items.length > 0) {
+            const channelId = searchResponse.data.items[0].id.channelId;
+            console.log(`Encontrado ID de canal por búsqueda: ${channelId}`);
             
-            const searchResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/search`, {
+            // Ahora obtenemos los detalles completos usando el ID
+            const detailsResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, {
               params: {
-                part: 'snippet',
-                q: identifier,
-                type: 'channel',
-                maxResults: 1,
+                part: 'snippet,statistics,brandingSettings',
+                id: channelId,
                 key: YOUTUBE_API_KEY
               }
             });
             
-            if (searchResponse.data.items && searchResponse.data.items.length > 0) {
-              const channelId = searchResponse.data.items[0].id.channelId;
-              console.log(`Encontrado ID de canal por búsqueda: ${channelId}`);
-              
-              // Ahora obtenemos los detalles completos usando el ID
-              const detailsResponse = await axios.get(`${YOUTUBE_API_BASE_URL}/channels`, {
-                params: {
-                  part: 'snippet,statistics,brandingSettings',
-                  id: channelId,
-                  key: YOUTUBE_API_KEY
-                }
-              });
-              
-              if (detailsResponse.data.items && detailsResponse.data.items.length > 0) {
-                allItems.push(detailsResponse.data.items[0]);
-              }
+            if (detailsResponse.data.items && detailsResponse.data.items.length > 0) {
+              allItems.push(detailsResponse.data.items[0]);
             }
           }
         } catch (error) {

@@ -1514,10 +1514,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let channelId = '';
       
       try {
-        const url = new URL(youtubeUrl);
+        // Para manejar caracteres especiales como 'Ñ', aseguramos que la URL esté codificada correctamente
+        const decodedUrl = decodeURI(youtubeUrl);
+        const url = new URL(decodedUrl);
         
-        // Obtener el path de la URL
+        // Obtener el path de la URL correctamente decodificado
         const pathParts = url.pathname.split('/').filter(Boolean);
+        
+        console.log("URL decodificada:", decodedUrl);
+        console.log("Partes de la ruta:", pathParts);
         
         // Manejar formatos especiales
         if (pathParts.length >= 1) {
@@ -1531,6 +1536,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           } 
           // Formato: youtube.com/c/nombre o youtube.com/user/nombre
           else if ((pathParts[0] === 'c' || pathParts[0] === 'user') && pathParts.length >= 2) {
+            // Tratamos el nombre del canal directamente como una cadena de búsqueda
+            // para manejar caracteres especiales
             channelIdOrUsername = pathParts[1];
           }
           // Formato: youtube.com/nombrecanal
@@ -1539,6 +1546,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       } catch (error) {
+        console.error("Error al procesar URL:", error);
         return res.status(400).json({ error: "URL de YouTube no válida" });
       }
       
