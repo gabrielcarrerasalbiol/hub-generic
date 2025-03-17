@@ -21,15 +21,74 @@ export default function VideosPage() {
   const { query, setQuery, debouncedSearch } = useSearch();
   
   // Extraer parámetros de URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const platformParam = urlParams.get('platform');
-  const categoryParam = urlParams.get('category');
+  // Función para mapear nombres de categoría en español a los equivalentes en inglés
+  const mapCategoryToEnum = (categoryParam: string | null): CategoryType => {
+    // Si es null, devolvemos 'all'
+    if (!categoryParam) return "all";
+    
+    // Mapa de conversión de nombres de categoría a sus equivalentes en el enum
+    const categoryMap: Record<string, CategoryType> = {
+      'partidos': 'matches',
+      'matches': 'matches',
+      'fichajes': 'transfers',
+      'transfers': 'transfers',
+      'tacticas': 'tactics',
+      'tactics': 'tactics',
+      'analisis': 'tactics',
+      'análisis': 'tactics',
+      'entrevistas': 'interviews',
+      'interviews': 'interviews',
+      'historia': 'history',
+      'history': 'history',
+      'afición': 'fan_content',
+      'aficion': 'fan_content',
+      'fan_content': 'fan_content',
+      'fans': 'fan_content',
+      'noticias': 'news',
+      'news': 'news',
+      'all': 'all'
+    };
+    
+    // Convertir a minúsculas y normalizar (quitar acentos)
+    const normalizedCategory = categoryParam.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    
+    // Devolver la categoría mapeada o 'all' si no se encuentra
+    return categoryMap[normalizedCategory] || "all";
+  };
+  
+  const getUrlParams = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+      platform: urlParams.get('platform') as PlatformType || "all",
+      category: mapCategoryToEnum(urlParams.get('category'))
+    };
+  };
   
   // Estados
-  const [platform, setPlatform] = useState<PlatformType>(
-    (platformParam as PlatformType) || "all"
-  );
-  const [category, setCategory] = useState<string>(categoryParam || "all");
+  const [platform, setPlatform] = useState<PlatformType>(getUrlParams().platform);
+  const [category, setCategory] = useState<CategoryType>(getUrlParams().category);
+  
+  // Efecto para detectar cambios en la URL (navegación con enlaces externos)
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const params = getUrlParams();
+      console.log("URL cambió. Nuevos parámetros:", params);
+      setPlatform(params.platform);
+      setCategory(params.category);
+    };
+    
+    // Añadir event listener para popstate (cuando se usa el botón atrás/adelante)
+    window.addEventListener('popstate', handleUrlChange);
+    
+    // También verificar los parámetros cuando el componente se monta
+    handleUrlChange();
+    
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+    };
+  }, []);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<"newest" | "popular" | "az" | "za">("newest");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
