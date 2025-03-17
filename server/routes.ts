@@ -137,11 +137,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const platform = req.query.platform || "all";
       const category = req.query.category || "all";
+      const searchQuery = req.query.query as string || "";
       // Para solicitudes admin, usamos un límite mucho mayor para obtener todos los videos
       const isAdminRequest = req.headers['x-admin-request'] === 'true';
       const limit = isAdminRequest ? 1000 : (parseInt(req.query.limit as string) || 20);
       
-      console.log(`DEBUG: Solicitud de videos - platform: ${platform}, category: ${category}, limit: ${limit}`);
+      console.log(`DEBUG: Solicitud de videos - platform: ${platform}, category: ${category}, limit: ${limit}, query: ${searchQuery}`);
       
       if (!PlatformType.safeParse(platform).success) {
         console.log(`ERROR: Plataforma inválida: ${platform}`);
@@ -155,69 +156,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let videos: Video[] = [];
       
-      // Si no hay filtros específicos, obtener todos los videos
-      if (platform === "all" && category === "all") {
-        console.log("DEBUG: Obteniendo todos los videos sin filtros");
-        videos = await storage.getVideos(limit);
-        console.log(`DEBUG: Se encontraron ${videos.length} videos sin filtros`);
-      } 
-      // Si solo hay filtro de plataforma
-      else if (platform !== "all" && category === "all") {
-        console.log(`DEBUG: Filtrando videos por plataforma: ${platform}`);
-        videos = await storage.getVideosByPlatform(platform.toString(), limit);
-        console.log(`DEBUG: Se encontraron ${videos.length} videos para la plataforma ${platform}`);
-      }
-      // Si solo hay filtro de categoría
-      else if (platform === "all" && category !== "all") {
-        // Mapear nombres de categorías a IDs
-        console.log(`DEBUG: Filtrando videos por categoría: ${category}`);
-        const categories = await storage.getCategories();
-        console.log(`DEBUG: Categorías disponibles: ${categories.map(c => c.name).join(', ')}`);
+      // Si hay una búsqueda, utilizamos la funcionalidad de búsqueda
+      if (searchQuery && searchQuery.trim().length > 0) {
+        console.log(`DEBUG: Buscando videos que coincidan con: "${searchQuery}"`);
         
-        const categoryName = getCategoryNameFromType(category.toString());
-        console.log(`DEBUG: Nombre de categoría mapeado: ${categoryName}`);
+        // Mejorar la búsqueda con IA si es posible
+        let enhancedQuery = searchQuery;
+        try {
+          enhancedQuery = await AIService.enhanceSearch(searchQuery);
+          console.log(`DEBUG: Búsqueda mejorada con AI: "${enhancedQuery}"`);
+        } catch (error) {
+          console.log("DEBUG: No se pudo mejorar la búsqueda con AI, usando consulta original");
+        }
         
-        // Buscar la categoría comparando de forma insensible a mayúsculas/minúsculas
-        const categoryId = categories.find(cat => 
-          cat.name.toLowerCase() === categoryName.toLowerCase())?.id;
+        // Buscar con la consulta mejorada
+        videos = await storage.searchVideos(enhancedQuery, limit);
+        console.log(`DEBUG: Se encontraron ${videos.length} videos para la búsqueda "${searchQuery}"`);
         
-        console.log(`DEBUG: ID de categoría encontrado: ${categoryId || 'No encontrado'}`);
+        // Aplicar filtros de plataforma y categoría a los resultados si se especifican
+        if (platform !== "all") {
+          videos = videos.filter(video => video.platform === platform);
+          console.log(`DEBUG: Filtrado por plataforma: ${platform}, quedan ${videos.length} videos`);
+        }
         
-        if (categoryId) {
-          videos = await storage.getVideosByCategory(categoryId, limit);
-          console.log(`DEBUG: Se encontraron ${videos.length} videos para la categoría ${category} (ID: ${categoryId})`);
-        } else {
-          console.log(`ERROR: No se encontró un ID de categoría para "${category}"`);
+        if (category !== "all") {
+          const categories = await storage.getCategories();
+          const categoryName = getCategoryNameFromType(category.toString());
+          const categoryId = categories.find(cat => 
+            cat.name.toLowerCase() === categoryName.toLowerCase())?.id;
+          
+          if (categoryId) {
+            videos = videos.filter(video => 
+              video.categoryIds && video.categoryIds.includes(String(categoryId))
+            );
+            console.log(`DEBUG: Filtrado por categoría: ${category}, quedan ${videos.length} videos`);
+          }
         }
       }
-      // Si hay ambos filtros
+      // Si no hay búsqueda, aplicamos los filtros normales
       else {
-        console.log(`DEBUG: Filtrando videos por plataforma (${platform}) y categoría (${category})`);
-        
-        // Mapear nombres de categorías a IDs
-        const categories = await storage.getCategories();
-        const categoryName = getCategoryNameFromType(category.toString());
-        // Buscar la categoría comparando de forma insensible a mayúsculas/minúsculas
-        const categoryId = categories.find(cat => 
-          cat.name.toLowerCase() === categoryName.toLowerCase())?.id;
+        // Si no hay filtros específicos, obtener todos los videos
+        if (platform === "all" && category === "all") {
+          console.log("DEBUG: Obteniendo todos los videos sin filtros");
+          videos = await storage.getVideos(limit);
+          console.log(`DEBUG: Se encontraron ${videos.length} videos sin filtros`);
+        } 
+        // Si solo hay filtro de plataforma
+        else if (platform !== "all" && category === "all") {
+          console.log(`DEBUG: Filtrando videos por plataforma: ${platform}`);
+          videos = await storage.getVideosByPlatform(platform.toString(), limit);
+          console.log(`DEBUG: Se encontraron ${videos.length} videos para la plataforma ${platform}`);
+        }
+        // Si solo hay filtro de categoría
+        else if (platform === "all" && category !== "all") {
+          // Mapear nombres de categorías a IDs
+          console.log(`DEBUG: Filtrando videos por categoría: ${category}`);
+          const categories = await storage.getCategories();
+          console.log(`DEBUG: Categorías disponibles: ${categories.map(c => c.name).join(', ')}`);
           
-        console.log(`DEBUG: ID de categoría encontrado: ${categoryId || 'No encontrado'}`);
+          const categoryName = getCategoryNameFromType(category.toString());
+          console.log(`DEBUG: Nombre de categoría mapeado: ${categoryName}`);
           
-        // Primero filtramos por plataforma
-        const platformVideos = await storage.getVideosByPlatform(platform.toString(), limit * 2);
-        console.log(`DEBUG: Se encontraron ${platformVideos.length} videos para la plataforma ${platform}`);
-        
-        // Luego filtramos manualmente por categoría dentro de los resultados
-        if (categoryId) {
-          videos = platformVideos.filter(video => {
-            const hasCategory = video.categoryIds && video.categoryIds.includes(categoryId.toString());
-            console.log(`DEBUG: Video ID ${video.id} - Categorías: ${video.categoryIds} - Tiene categoría ${categoryId}? ${hasCategory}`);
-            return hasCategory;
-          }).slice(0, limit);
-          console.log(`DEBUG: Después de filtrar por categoría, quedan ${videos.length} videos`);
-        } else {
-          console.log(`DEBUG: No se encontró ID para categoría "${category}", usando solo videos de plataforma`);
-          videos = platformVideos.slice(0, limit);
+          // Buscar la categoría comparando de forma insensible a mayúsculas/minúsculas
+          const categoryId = categories.find(cat => 
+            cat.name.toLowerCase() === categoryName.toLowerCase())?.id;
+          
+          console.log(`DEBUG: ID de categoría encontrado: ${categoryId || 'No encontrado'}`);
+          
+          if (categoryId) {
+            videos = await storage.getVideosByCategory(categoryId, limit);
+            console.log(`DEBUG: Se encontraron ${videos.length} videos para la categoría ${category} (ID: ${categoryId})`);
+          } else {
+            console.log(`ERROR: No se encontró un ID de categoría para "${category}"`);
+          }
+        }
+        // Si hay ambos filtros
+        else {
+          console.log(`DEBUG: Filtrando videos por plataforma (${platform}) y categoría (${category})`);
+          
+          // Mapear nombres de categorías a IDs
+          const categories = await storage.getCategories();
+          const categoryName = getCategoryNameFromType(category.toString());
+          // Buscar la categoría comparando de forma insensible a mayúsculas/minúsculas
+          const categoryId = categories.find(cat => 
+            cat.name.toLowerCase() === categoryName.toLowerCase())?.id;
+            
+          console.log(`DEBUG: ID de categoría encontrado: ${categoryId || 'No encontrado'}`);
+            
+          // Primero filtramos por plataforma
+          const platformVideos = await storage.getVideosByPlatform(platform.toString(), limit * 2);
+          console.log(`DEBUG: Se encontraron ${platformVideos.length} videos para la plataforma ${platform}`);
+          
+          // Luego filtramos manualmente por categoría dentro de los resultados
+          if (categoryId) {
+            videos = platformVideos.filter(video => {
+              const hasCategory = video.categoryIds && video.categoryIds.includes(categoryId.toString());
+              console.log(`DEBUG: Video ID ${video.id} - Categorías: ${video.categoryIds} - Tiene categoría ${categoryId}? ${hasCategory}`);
+              return hasCategory;
+            }).slice(0, limit);
+            console.log(`DEBUG: Después de filtrar por categoría, quedan ${videos.length} videos`);
+          } else {
+            console.log(`DEBUG: No se encontró ID para categoría "${category}", usando solo videos de plataforma`);
+            videos = platformVideos.slice(0, limit);
+          }
         }
       }
       
