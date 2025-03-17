@@ -10,9 +10,9 @@ import { useTranslation } from 'react-i18next';
 
 // Props para el componente
 interface HomeFiltersProps {
-  platform: string;
-  setPlatform: (platform: string) => void;
-  category: string;
+  platform: PlatformType;
+  setPlatform: (platform: PlatformType) => void;
+  category: CategoryType;
   setCategory: (category: CategoryType) => void;
   onFilterChange: () => void;
 }
@@ -31,7 +31,7 @@ export default function HomeFilters({
   const { t } = useTranslation();
 
   // Manejadores de eventos unificados
-  const handlePlatformChange = (newPlatform: string) => {
+  const handlePlatformChange = (newPlatform: PlatformType) => {
     setPlatform(newPlatform);
     // Recargar inmediatamente
     onFilterChange();
@@ -53,7 +53,7 @@ export default function HomeFilters({
             className={`${platform === "all" 
               ? "bg-[#001C58] text-white border-[#FDBE11]" 
               : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-            onClick={() => handlePlatformChange("all")}
+            onClick={() => handlePlatformChange("all" as PlatformType)}
           >
             <Layers className="h-4 w-4 mr-2" /> {t('home.all')}
           </Button>
@@ -63,7 +63,7 @@ export default function HomeFilters({
             className={`${platform === "youtube" 
               ? "bg-red-600 text-white hover:bg-red-700" 
               : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-            onClick={() => handlePlatformChange("youtube")}
+            onClick={() => handlePlatformChange("youtube" as PlatformType)}
           >
             <Youtube className="h-4 w-4 mr-2" /> YouTube
           </Button>
@@ -73,7 +73,7 @@ export default function HomeFilters({
             className={`${platform === "twitch" 
               ? "bg-purple-600 text-white hover:bg-purple-700" 
               : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-            onClick={() => handlePlatformChange("twitch")}
+            onClick={() => handlePlatformChange("twitch" as PlatformType)}
           >
             <TwitchIcon className="h-4 w-4 mr-2" /> Twitch
           </Button>
@@ -83,7 +83,7 @@ export default function HomeFilters({
             className={`${platform === "twitter" 
               ? "bg-blue-500 text-white hover:bg-blue-600" 
               : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-            onClick={() => handlePlatformChange("twitter")}
+            onClick={() => handlePlatformChange("twitter" as PlatformType)}
             disabled={true}
           >
             <Twitter className="h-4 w-4 mr-2" /> Twitter
@@ -94,7 +94,7 @@ export default function HomeFilters({
             className={`${platform === "instagram" 
               ? "bg-pink-500 text-white hover:bg-pink-600" 
               : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-            onClick={() => handlePlatformChange("instagram")}
+            onClick={() => handlePlatformChange("instagram" as PlatformType)}
             disabled={true}
           >
             <Instagram className="h-4 w-4 mr-2" /> Instagram
@@ -105,7 +105,7 @@ export default function HomeFilters({
             className={`${platform === "tiktok" 
               ? "bg-black text-white hover:bg-gray-900" 
               : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-            onClick={() => handlePlatformChange("tiktok")}
+            onClick={() => handlePlatformChange("tiktok" as PlatformType)}
             disabled={true}
           >
             <TikTokIcon className="h-4 w-4 mr-2" /> TikTok

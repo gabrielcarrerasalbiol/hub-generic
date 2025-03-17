@@ -21,16 +21,23 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ChevronLeft, ChevronRight, ExternalLink, Layers, Youtube, Twitter, Instagram } from "lucide-react";
-import TikTokIcon from "@/components/icons/TikTokIcon";
-import TwitchIcon from "@/components/icons/TwitchIcon";
+import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 
 export default function Home() {
   const { t } = useLanguage();
-  const [platform, setPlatform] = useState<PlatformType>("all");
-  const [category, setCategory] = useState<CategoryType>("all");
+  const [platform, setPlatformState] = useState<PlatformType>("all");
+  const [category, setCategoryState] = useState<CategoryType>("all");
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
   const carouselIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Funciones intermedias para garantizar compatibilidad de tipos
+  const setPlatform = (newPlatform: PlatformType) => {
+    setPlatformState(newPlatform);
+  };
+  
+  const setCategory = (newCategory: CategoryType) => {
+    setCategoryState(newCategory);
+  };
   
   // Array de imágenes para el slider
   const bannerImages = [
