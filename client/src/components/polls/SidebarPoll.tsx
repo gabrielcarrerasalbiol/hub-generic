@@ -196,12 +196,12 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1" className="border-0">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-sm font-medium">
+            <span className="text-xs font-medium truncate max-w-[180px] block overflow-hidden">
               {pollTitle}
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            <h3 className="text-sm font-semibold mb-3">
+            <h3 className="text-xs font-semibold mb-3">
               {pollQuestion}
             </h3>
 
@@ -209,12 +209,12 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
               <div className="space-y-3">
                 {results.map((option) => (
                   <div key={option.id} className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>{option.text}</span>
+                    <div className="flex justify-between text-xs">
+                      <span className="truncate max-w-[70%]">{option.text}</span>
                       <span className="font-medium">{option.percentage}%</span>
                     </div>
                     <motion.div
-                      className="h-2 bg-accent rounded-full overflow-hidden"
+                      className="h-1.5 bg-accent rounded-full overflow-hidden"
                       initial={{ width: 0 }}
                       animate={{ width: "100%" }}
                       transition={{ duration: 0.5 }}
@@ -226,7 +226,7 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
                         transition={{ duration: 0.8, delay: 0.3 }}
                       />
                     </motion.div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-[10px] text-muted-foreground">
                       {option.voteCount} {t("poll.votes")}
                     </div>
                   </div>
@@ -250,7 +250,7 @@ export function SidebarPoll({ onVote }: SidebarPollProps) {
                     <Button
                       key={option.id}
                       variant={selectedOption === option.id ? "default" : "outline"}
-                      className="w-full justify-start text-left font-normal"
+                      className="w-full justify-start text-left font-normal text-xs py-1.5"
                       onClick={() => setSelectedOption(option.id)}
                     >
                       {/* Mostrar texto en español si está disponible y el idioma es español */}
