@@ -97,12 +97,15 @@ export default function SearchPage() {
           params.append('category', selectedCategory);
         }
         
+        console.log(`Realizando búsqueda con query: ${searchQuery}`);
+        
         // Usamos el endpoint unificado de videos
         const response = await fetch(`/api/videos?${params.toString()}`);
         if (!response.ok) {
           throw new Error('Error al buscar videos');
         }
         const data = await response.json();
+        console.log(`Búsqueda completada. Resultados: ${data.length} videos`);
         return data;
       } finally {
         // Después de completar la búsqueda (éxito o error)
@@ -111,7 +114,7 @@ export default function SearchPage() {
         setShouldSearch(false);
       }
     },
-    enabled: !!searchQuery && shouldSearch, // Solo buscar cuando ambos son true
+    enabled: !!searchQuery, // Ejecutar la búsqueda siempre que haya un término de búsqueda
   });
 
   // Handle form submission for new search
