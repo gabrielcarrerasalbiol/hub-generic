@@ -1509,12 +1509,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Se requiere la URL del canal de YouTube" });
       }
       
+      console.log("URL del canal recibida:", youtubeUrl);
+      
       // Extraer el ID del canal de YouTube de la URL
       let channelIdOrUsername = '';
       let channelId = '';
       
       try {
-        // Para manejar caracteres especiales como 'Ñ', aseguramos que la URL esté codificada correctamente
+        // Para manejar caracteres especiales como 'Ñ', aseguramos que la URL esté decodificada correctamente
         const decodedUrl = decodeURI(youtubeUrl);
         const url = new URL(decodedUrl);
         
@@ -1536,9 +1538,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           } 
           // Formato: youtube.com/c/nombre o youtube.com/user/nombre
           else if ((pathParts[0] === 'c' || pathParts[0] === 'user') && pathParts.length >= 2) {
-            // Tratamos el nombre del canal directamente como una cadena de búsqueda
-            // para manejar caracteres especiales
-            channelIdOrUsername = pathParts[1];
+            // Para canales con caracteres especiales, usamos el nombre decodificado directamente
+            channelIdOrUsername = decodeURIComponent(pathParts[1]);
+            console.log("Usando nombre de canal decodificado:", channelIdOrUsername);
           }
           // Formato: youtube.com/nombrecanal
           else {
