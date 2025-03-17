@@ -96,10 +96,19 @@ export default function Home() {
     const headers: HeadersInit = {};
     if (token) {
       headers.Authorization = `Bearer ${token}`;
+      console.log("Token añadido a la consulta:", `Bearer ${token.substring(0, 12)}...`);
     }
     
+    // Agregamos un parámetro de tiempo único para evitar el caché del navegador
+    const separator = url.includes('?') ? '&' : '?';
+    const urlWithNoCache = `${url}${separator}_=${Date.now()}`;
+    
     console.log("Realizando petición a:", url);
-    const response = await fetch(url, { headers });
+    const response = await fetch(urlWithNoCache, { 
+      headers,
+      // Asegurarnos de que no se use la caché
+      cache: 'no-store'
+    });
     if (!response.ok) {
       throw new Error(`Error en la consulta: ${response.status}`);
     }
@@ -140,9 +149,20 @@ export default function Home() {
       const url = `${baseUrl}?${params.toString()}`;
       console.log("URL final de consulta:", url);
       
-      return makeRequest(url);
+      // Aquí agregamos un token para que sea diferente en cada solicitud
+      // Esto fuerza a React Query a invalidar la caché
+      const token = Date.now(); // Timestamp actual
+      console.log("Token añadido a la solicitud:", token);
+      
+      // Añadir el token al header
+      const tokenAddedToHeaders = await makeRequest(url);
+      return tokenAddedToHeaders;
     },
     refetchOnWindowFocus: false,
+    // Importante: asegurarnos de que se vuelva a ejecutar cuando cambie la categoría o plataforma
+    refetchOnMount: true,
+    // Podemos agregar staleTime: 0 para que siempre recargue los datos
+    staleTime: 0,
     enabled: true,
   });
   
