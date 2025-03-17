@@ -1588,12 +1588,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ error: "Este canal ya es premium" });
         }
         
-        // Agregar como canal premium
+        // Agregar como canal premium - usar el ID del usuario autenticado
         const premiumChannel = await storage.addPremiumChannel({
           channelId: channel.id,
           priority: priority || 5,
           notes: notes || null,
-          addedById: 1 // Admin por defecto para simplificar
+          addedById: req.user?.id // ID del usuario autenticado que está añadiendo el canal
         });
         
         res.status(201).json({
@@ -1644,7 +1644,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         channelId: parseInt(channelId),
         priority: priority || 5, // Prioridad por defecto (1-10)
         notes: notes || null,
-        addedById: 1 // Admin por defecto para simplificar
+        addedById: req.user?.id // ID del usuario autenticado que está añadiendo el canal
       });
       
       res.status(201).json({
