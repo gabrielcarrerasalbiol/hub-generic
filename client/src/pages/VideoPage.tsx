@@ -208,24 +208,67 @@ export default function VideoPage() {
     }
   };
 
-  // SEO optimizado para videos
+  // SEO optimizado para videos - Especial énfasis en YouTube
   const videoLang = video.language || 'es';
   const videoMetaDescription = video.description 
     ? (video.description.length > 160 ? `${video.description.substring(0, 157)}...` : video.description)
-    : `Video de ${video.channelTitle} sobre el Real Madrid. Ver en Hub Madridista, el agregador de contenido madridista.`;
+    : `Video de ${video.channelTitle} sobre el Real Madrid. Mira contenido exclusivo en Hub Madridista, el mejor agregador de videos madridistas.`;
+  
+  // Crear palabras clave optimizadas por categoría y plataforma
+  const generateEnhancedKeywords = () => {
+    let baseKeywords = `Real Madrid, videos, ${video.channelTitle}, fútbol, LaLiga, Champions League`;
+    
+    // Agregar palabras clave específicas por plataforma
+    if (video.platform === 'youtube') {
+      baseKeywords += `, YouTube Real Madrid, canal YouTube ${video.channelTitle}, ver videos Real Madrid, contenido Real Madrid YouTube`;
+    }
+    
+    // Agregar keywords basadas en las categorías del video
+    if (video.categoryIds && video.categoryIds.length > 0) {
+      // Palabras clave por tipo de contenido
+      if (video.categoryIds.includes('1') || video.categoryIds.includes('2')) {
+        baseKeywords += ', partidos Real Madrid, resúmenes partidos, goles Real Madrid';
+      }
+      if (video.categoryIds.includes('3')) {
+        baseKeywords += ', análisis táctico, análisis jugadas Real Madrid';
+      }
+      if (video.categoryIds.includes('4')) {
+        baseKeywords += ', jugadores Real Madrid, estrellas madridistas';
+      }
+    }
+    
+    return baseKeywords;
+  };
+  
+  // Formato de duración para metadatos
+  const formatDuration = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    let duration = 'PT';
+    if (hours > 0) duration += `${hours}H`;
+    if (minutes > 0) duration += `${minutes}M`;
+    if (secs > 0 || (hours === 0 && minutes === 0)) duration += `${secs}S`;
+    
+    return duration;
+  };
   
   return (
     <main className="flex-1 bg-gray-100 p-4 md:p-6 overflow-y-auto">
-      {/* SEO optimizado para páginas de video */}
+      {/* SEO optimizado para páginas de video con énfasis en YouTube */}
       <SEO
-        title={`${video.title} | Hub Madridista`}
+        title={`${video.title} | Videos Real Madrid | Hub Madridista`}
         description={videoMetaDescription}
-        keywords={`Real Madrid, videos, ${video.channelTitle}, fútbol, LaLiga`}
+        keywords={generateEnhancedKeywords()}
         ogImage={video.thumbnailUrl || ''}
         ogType="video"
         twitterCard="summary_large_image"
         lang={videoLang === 'es' ? 'es' : 'en'}
         structuredData={videoSchema(video)}
+        videoSource={video.platform === 'youtube' ? 'youtube' : (video.platform === 'tiktok' ? 'tiktok' : null)}
+        publishDate={video.publishedAt || undefined}
+        duration={typeof video.duration === 'number' ? formatDuration(video.duration) : undefined}
       />
       <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-6 px-2">

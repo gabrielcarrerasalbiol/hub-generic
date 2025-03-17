@@ -47,7 +47,7 @@ export const homePageSchema = () => ({
   "about": realmadridOrg
 });
 
-// Esquema para un video individual
+// Esquema para un video individual optimizado para SEO con YouTube
 export const videoSchema = (video: Video, channel?: Channel) => {
   // Convertir duración a formato ISO 8601 (PT1H2M3S)
   const formatDuration = (seconds: number) => {
@@ -70,6 +70,43 @@ export const videoSchema = (video: Video, channel?: Channel) => {
     
   const thumbnailUrl = video.thumbnailUrl || 
     `https://img.youtube.com/vi/${video.externalId}/hqdefault.jpg`;
+    
+  // Generar palabras clave optimizadas para SEO basadas en el contenido
+  const generateKeywords = () => {
+    let keywords = "Real Madrid, fútbol, LaLiga, Champions League";
+    
+    // Agregar palabras clave específicas por plataforma
+    if (video.platform === 'youtube') {
+      keywords += ", YouTube Real Madrid, canal YouTube madridista, videos Real Madrid";
+    }
+    
+    // Agregar palabras clave basadas en categorías
+    if (video.categoryIds && video.categoryIds.length > 0) {
+      // Análisis de contenido basado en IDs de categorías
+      const categoryIds = video.categoryIds.map(id => parseInt(id));
+      
+      // Categoría de partidos (normalmente ID 1 o 2)
+      if (categoryIds.some(id => id === 1 || id === 2)) {
+        keywords += ", partidos Real Madrid, resumen partido, highlights Real Madrid";
+      }
+      
+      // Categoría de análisis (normalmente ID 3)
+      if (categoryIds.some(id => id === 3)) {
+        keywords += ", análisis táctico, análisis Real Madrid, táctica fútbol";
+      }
+      
+      // Categoría de jugadores (normalmente ID 4)
+      if (categoryIds.some(id => id === 4)) {
+        keywords += ", jugadores Real Madrid, estrellas madridistas";
+      }
+    }
+    
+    return keywords;
+  };
+  
+  // Generar idioma de contenido para mejorar SEO multilingüe
+  const contentLanguage = video.language || 'es';
+  const formattedDuration = formatDuration(typeof video.duration === 'number' ? video.duration : 0);
 
   return {
     "@context": "https://schema.org",
@@ -78,9 +115,10 @@ export const videoSchema = (video: Video, channel?: Channel) => {
     "description": video.description || video.title,
     "thumbnailUrl": thumbnailUrl,
     "uploadDate": video.publishedAt,
-    "duration": formatDuration(typeof video.duration === 'number' ? video.duration : 0),
+    "duration": formattedDuration,
     "embedUrl": `https://www.youtube.com/embed/${video.externalId}`,
     "contentUrl": videoUrl,
+    "inLanguage": contentLanguage,
     "author": {
       "@type": "Person",
       "name": channel?.title || video.channelTitle
@@ -98,7 +136,25 @@ export const videoSchema = (video: Video, channel?: Channel) => {
       "interactionType": "https://schema.org/WatchAction",
       "userInteractionCount": video.viewCount || 0
     },
-    "keywords": "Real Madrid, fútbol, LaLiga, videos, Champions League"
+    "keywords": generateKeywords(),
+    "potentialAction": {
+      "@type": "WatchAction",
+      "target": videoUrl
+    },
+    "isAccessibleForFree": true,
+    "isFamilyFriendly": true,
+    ...(video.platform === 'youtube' && {
+      "publication": {
+        "@type": "BroadcastEvent",
+        "isLiveBroadcast": false,
+        "startDate": video.publishedAt
+      },
+      "recordingOf": {
+        "@type": "Event",
+        "name": `Video de ${video.channelTitle} sobre Real Madrid`,
+        "about": realmadridOrg
+      }
+    })
   };
 };
 
