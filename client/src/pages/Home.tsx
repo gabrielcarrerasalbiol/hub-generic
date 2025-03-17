@@ -75,6 +75,11 @@ export default function Home() {
     queryFn: getQueryFn<Channel[]>({ on401: 'returnNull' }),
   });
 
+  // Función para obtener token
+  const getToken = () => {
+    return localStorage.getItem('token') || '';
+  };
+  
   // Fetch videos filtered by platform and category (limitado a 20)
   const { 
     data: filteredVideos = [], 
@@ -82,14 +87,40 @@ export default function Home() {
     refetch: refetchFilteredVideos
   } = useQuery({
     queryKey: ["/api/videos", { platform, category, limit: 20 }],
-    queryFn: async (context) => {
-      console.log("Realizando consulta de videos filtrados:", context.queryKey);
-      const fn = getQueryFn<Video[]>({ on401: 'returnNull' });
-      const results = await fn(context);
-      console.log("Resultados de videos filtrados:", results?.length || 0, "videos");
-      return results;
+    queryFn: async () => {
+      console.log(`Realizando consulta directa con platform=${platform} y category=${category}`);
+      
+      // Construir URL con parámetros explícitos
+      const baseUrl = "/api/videos";
+      const params = new URLSearchParams();
+      if (platform !== "all") {
+        params.append("platform", platform);
+      }
+      if (category !== "all") {
+        params.append("category", category);
+      }
+      params.append("limit", "20");
+      
+      const url = `${baseUrl}?${params.toString()}`;
+      console.log("URL de consulta:", url);
+      
+      // Realizar la petición directamente
+      const token = getToken();
+      const headers: HeadersInit = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(url, { headers });
+      if (!response.ok) {
+        throw new Error(`Error en la consulta: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`Resultados obtenidos: ${data.length} videos`);
+      return data;
     },
-    // Siempre habilitado para asegurar que se actualice con cualquier cambio de filtro
+    refetchOnWindowFocus: false,
     enabled: true,
   });
   
@@ -287,8 +318,8 @@ export default function Home() {
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
                 onClick={() => {
                   setPlatform("all");
-                  // Recargamos los videos con los nuevos filtros
-                  setTimeout(() => refetchFilteredVideos(), 50);
+                  // Recargamos los videos con los nuevos filtros inmediatamente
+                  refetchFilteredVideos();
                 }}
               >
                 <Layers className="h-4 w-4 mr-2" /> {t('home.all')}
@@ -301,8 +332,8 @@ export default function Home() {
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
                 onClick={() => {
                   setPlatform("youtube");
-                  // Recargamos los videos con los nuevos filtros
-                  setTimeout(() => refetchFilteredVideos(), 50);
+                  // Recargamos los videos con los nuevos filtros inmediatamente
+                  refetchFilteredVideos();
                 }}
               >
                 <Youtube className="h-4 w-4 mr-2" /> YouTube
@@ -315,8 +346,8 @@ export default function Home() {
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
                 onClick={() => {
                   setPlatform("twitch");
-                  // Recargamos los videos con los nuevos filtros
-                  setTimeout(() => refetchFilteredVideos(), 50);
+                  // Recargamos los videos con los nuevos filtros inmediatamente
+                  refetchFilteredVideos();
                 }}
               >
                 <TwitchIcon className="h-4 w-4 mr-2" /> Twitch
