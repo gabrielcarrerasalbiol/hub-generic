@@ -351,7 +351,7 @@ export default function Home() {
                 <Button 
                   variant="outline" 
                   className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
-                  onClick={() => setPlatform("all")}
+                  onClick={() => setPlatform("all" as PlatformType)}
                 >
                   {t('home.viewAllVideos')}
                 </Button>
