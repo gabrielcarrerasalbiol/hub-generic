@@ -299,16 +299,7 @@ export default function Home() {
           <h2 className="text-xl font-bold text-[#001C58] border-l-4 border-[#FDBE11] pl-3">
             {t('home.discoverContent')}
           </h2>
-          <div className="hidden md:flex space-x-1">
-            <CategoryFilters 
-              selectedCategory={category} 
-              onSelectCategory={(newCategory) => {
-                setCategory(newCategory as CategoryType);
-                // Recargamos los videos con los nuevos filtros
-                setTimeout(() => refetchFilteredVideos(), 50);
-              }} 
-            />
-          </div>
+          {/* Filtros de categoría para desktop - ahora manejados por HomeFilters */}
         </div>
         
         {/* Contenedor de tabs y filtros */}
@@ -323,110 +314,14 @@ export default function Home() {
             position: 'relative',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
           }}>
-          {/* Tabs de plataformas */}
-          <div className="mb-6 flex justify-center border-b border-[#FDBE11]/20 pb-4">
-            <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 max-w-3xl">
-              <Button
-                variant={platform === "all" ? "default" : "ghost"}
-                className={`${platform === "all" 
-                  ? "bg-[#001C58] text-white border-[#FDBE11]" 
-                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => {
-                  setPlatform("all");
-                  // Recargamos los videos con los nuevos filtros inmediatamente
-                  refetchFilteredVideos();
-                }}
-              >
-                <Layers className="h-4 w-4 mr-2" /> {t('home.all')}
-              </Button>
-              
-              <Button
-                variant={platform === "youtube" ? "default" : "ghost"}
-                className={`${platform === "youtube" 
-                  ? "bg-red-600 text-white hover:bg-red-700" 
-                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => {
-                  setPlatform("youtube");
-                  // Recargamos los videos con los nuevos filtros inmediatamente
-                  refetchFilteredVideos();
-                }}
-              >
-                <Youtube className="h-4 w-4 mr-2" /> YouTube
-              </Button>
-              
-              <Button
-                variant={platform === "twitch" ? "default" : "ghost"}
-                className={`${platform === "twitch" 
-                  ? "bg-purple-600 text-white hover:bg-purple-700" 
-                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => {
-                  setPlatform("twitch");
-                  // Recargamos los videos con los nuevos filtros inmediatamente
-                  refetchFilteredVideos();
-                }}
-              >
-                <TwitchIcon className="h-4 w-4 mr-2" /> Twitch
-              </Button>
-              
-              <Button
-                variant={platform === "twitter" ? "default" : "ghost"}
-                className={`${platform === "twitter" 
-                  ? "bg-blue-500 text-white hover:bg-blue-600" 
-                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => {
-                  setPlatform("twitter");
-                  // Recargamos los videos con los nuevos filtros
-                  setTimeout(() => refetchFilteredVideos(), 50);
-                }}
-                disabled={true}
-              >
-                <Twitter className="h-4 w-4 mr-2" /> Twitter
-              </Button>
-              
-              <Button
-                variant={platform === "instagram" ? "default" : "ghost"}
-                className={`${platform === "instagram" 
-                  ? "bg-pink-500 text-white hover:bg-pink-600" 
-                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => {
-                  setPlatform("instagram");
-                  // Recargamos los videos con los nuevos filtros
-                  setTimeout(() => refetchFilteredVideos(), 50);
-                }}
-                disabled={true}
-              >
-                <Instagram className="h-4 w-4 mr-2" /> Instagram
-              </Button>
-              
-              <Button
-                variant={platform === "tiktok" ? "default" : "ghost"}
-                className={`${platform === "tiktok" 
-                  ? "bg-black text-white hover:bg-gray-900" 
-                  : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => {
-                  setPlatform("tiktok");
-                  // Recargamos los videos con los nuevos filtros
-                  setTimeout(() => refetchFilteredVideos(), 50);
-                }}
-                disabled={true}
-              >
-                <TikTokIcon className="h-4 w-4 mr-2" /> TikTok
-              </Button>
-            </div>
-          </div>
-          
-          {/* Categorías en mobile */}
-          <div className="block md:hidden mb-6">
-            <h3 className="text-sm font-medium mb-2 text-[#001C58]">{t('home.filterByCategory')}</h3>
-            <CategoryFilters 
-              selectedCategory={category} 
-              onSelectCategory={(newCategory) => {
-                setCategory(newCategory as CategoryType);
-                // Recargamos los videos con los nuevos filtros
-                setTimeout(() => refetchFilteredVideos(), 50);
-              }} 
-            />
-          </div>
+          {/* Componente de filtros unificado */}
+          <HomeFilters
+            platform={platform}
+            setPlatform={setPlatform}
+            category={category}
+            setCategory={setCategory}
+            onFilterChange={refetchFilteredVideos}
+          />
           
           {/* Contenido por plataforma */}
           {!isPlatformAvailable ? (

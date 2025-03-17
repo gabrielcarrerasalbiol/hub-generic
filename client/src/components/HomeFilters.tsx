@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Layers, Instagram, Twitter } from "lucide-react";
-import Youtube from "../icons/Youtube";
-import TikTokIcon from "../icons/TikTokIcon";
-import TwitchIcon from "../icons/TwitchIcon";
+import { Youtube } from "lucide-react";
+import TikTokIcon from "./icons/TikTokIcon";
+import TwitchIcon from "./icons/TwitchIcon";
 import CategoryFilters from "./CategoryFilters";
 import { PlatformType, CategoryType } from '@shared/schema';
 import { useTranslation } from 'react-i18next';
