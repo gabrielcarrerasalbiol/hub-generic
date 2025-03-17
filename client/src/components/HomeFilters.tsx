@@ -1,0 +1,126 @@
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { Layers, Instagram, Twitter } from "lucide-react";
+import Youtube from "../icons/Youtube";
+import TikTokIcon from "../icons/TikTokIcon";
+import TwitchIcon from "../icons/TwitchIcon";
+import CategoryFilters from "./CategoryFilters";
+import { PlatformType, CategoryType } from '@shared/schema';
+import { useTranslation } from 'react-i18next';
+
+// Props para el componente
+interface HomeFiltersProps {
+  platform: string;
+  setPlatform: (platform: string) => void;
+  category: string;
+  setCategory: (category: CategoryType) => void;
+  onFilterChange: () => void;
+}
+
+/**
+ * Componente unificado de filtros para la página de inicio
+ * Combina los filtros de plataforma y categoría
+ */
+export default function HomeFilters({
+  platform,
+  setPlatform,
+  category,
+  setCategory,
+  onFilterChange
+}: HomeFiltersProps) {
+  const { t } = useTranslation();
+
+  // Manejadores de eventos unificados
+  const handlePlatformChange = (newPlatform: string) => {
+    setPlatform(newPlatform);
+    // Recargar inmediatamente
+    onFilterChange();
+  };
+
+  const handleCategoryChange = (newCategory: string) => {
+    setCategory(newCategory as CategoryType);
+    // Recargar inmediatamente
+    onFilterChange();
+  };
+
+  return (
+    <>
+      {/* Filtros de plataforma */}
+      <div className="mb-6 flex justify-center border-b border-[#FDBE11]/20 pb-4">
+        <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 max-w-3xl">
+          <Button
+            variant={platform === "all" ? "default" : "ghost"}
+            className={`${platform === "all" 
+              ? "bg-[#001C58] text-white border-[#FDBE11]" 
+              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+            onClick={() => handlePlatformChange("all")}
+          >
+            <Layers className="h-4 w-4 mr-2" /> {t('home.all')}
+          </Button>
+          
+          <Button
+            variant={platform === "youtube" ? "default" : "ghost"}
+            className={`${platform === "youtube" 
+              ? "bg-red-600 text-white hover:bg-red-700" 
+              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+            onClick={() => handlePlatformChange("youtube")}
+          >
+            <Youtube className="h-4 w-4 mr-2" /> YouTube
+          </Button>
+          
+          <Button
+            variant={platform === "twitch" ? "default" : "ghost"}
+            className={`${platform === "twitch" 
+              ? "bg-purple-600 text-white hover:bg-purple-700" 
+              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+            onClick={() => handlePlatformChange("twitch")}
+          >
+            <TwitchIcon className="h-4 w-4 mr-2" /> Twitch
+          </Button>
+          
+          <Button
+            variant={platform === "twitter" ? "default" : "ghost"}
+            className={`${platform === "twitter" 
+              ? "bg-blue-500 text-white hover:bg-blue-600" 
+              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+            onClick={() => handlePlatformChange("twitter")}
+            disabled={true}
+          >
+            <Twitter className="h-4 w-4 mr-2" /> Twitter
+          </Button>
+          
+          <Button
+            variant={platform === "instagram" ? "default" : "ghost"}
+            className={`${platform === "instagram" 
+              ? "bg-pink-500 text-white hover:bg-pink-600" 
+              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+            onClick={() => handlePlatformChange("instagram")}
+            disabled={true}
+          >
+            <Instagram className="h-4 w-4 mr-2" /> Instagram
+          </Button>
+          
+          <Button
+            variant={platform === "tiktok" ? "default" : "ghost"}
+            className={`${platform === "tiktok" 
+              ? "bg-black text-white hover:bg-gray-900" 
+              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+            onClick={() => handlePlatformChange("tiktok")}
+            disabled={true}
+          >
+            <TikTokIcon className="h-4 w-4 mr-2" /> TikTok
+          </Button>
+        </div>
+      </div>
+            
+      {/* Filtros de categoría */}
+      <div className="block md:hidden mb-6">
+        <h3 className="text-sm font-medium mb-2 text-[#001C58]">{t('home.filterByCategory')}</h3>
+        <CategoryFilters 
+          selectedCategory={category} 
+          onSelectCategory={handleCategoryChange} 
+        />
+      </div>
+    </>
+  );
+}

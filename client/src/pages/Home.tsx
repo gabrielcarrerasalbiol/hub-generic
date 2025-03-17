@@ -5,7 +5,7 @@ import FeaturedVideo from "@/components/FeaturedVideo";
 import VideoCard from "@/components/VideoCard";
 import ChannelCard from "@/components/ChannelCard";
 import PlatformFilters from "../components/PlatformFilters";
-import CategoryFilters from "../components/CategoryFilters";
+import HomeFilters from "../components/HomeFilters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Video, Channel, PlatformType, CategoryType } from "@shared/schema";
@@ -75,10 +75,38 @@ export default function Home() {
     queryFn: getQueryFn<Channel[]>({ on401: 'returnNull' }),
   });
 
+  // Estado para seguimiento de consultas
+  const [requestId, setRequestId] = useState(0);
+
   // Función para obtener token
   const getToken = () => {
     return localStorage.getItem('token') || '';
   };
+  
+  // Función auxiliar para hacer peticiones HTTP
+  const makeRequest = async (url: string) => {
+    const token = getToken();
+    const headers: HeadersInit = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    
+    console.log("Realizando petición a:", url);
+    const response = await fetch(url, { headers });
+    if (!response.ok) {
+      throw new Error(`Error en la consulta: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log(`Resultados obtenidos: ${data.length} videos`);
+    return data;
+  };
+  
+  // Efecto para actualizar cuando cambian los filtros
+  useEffect(() => {
+    // Crear un nuevo ID de solicitud para el seguimiento
+    setRequestId(prev => prev + 1);
+  }, [platform, category]);
   
   // Fetch videos filtered by platform and category (limitado a 20)
   const { 
@@ -86,13 +114,14 @@ export default function Home() {
     isLoading: isFilteredLoading,
     refetch: refetchFilteredVideos
   } = useQuery({
-    queryKey: ["/api/videos", { platform, category, limit: 20 }],
+    queryKey: [`/api/videos-${platform}-${category}`, requestId],
     queryFn: async () => {
-      console.log(`Realizando consulta directa con platform=${platform} y category=${category}`);
-      
       // Construir URL con parámetros explícitos
       const baseUrl = "/api/videos";
       const params = new URLSearchParams();
+      
+      console.log(`DEBUG: Construyendo URL para platform=${platform}, category=${category}`);
+      
       if (platform !== "all") {
         params.append("platform", platform);
       }
@@ -102,23 +131,9 @@ export default function Home() {
       params.append("limit", "20");
       
       const url = `${baseUrl}?${params.toString()}`;
-      console.log("URL de consulta:", url);
+      console.log("URL final de consulta:", url);
       
-      // Realizar la petición directamente
-      const token = getToken();
-      const headers: HeadersInit = {};
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-      
-      const response = await fetch(url, { headers });
-      if (!response.ok) {
-        throw new Error(`Error en la consulta: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log(`Resultados obtenidos: ${data.length} videos`);
-      return data;
+      return makeRequest(url);
     },
     refetchOnWindowFocus: false,
     enabled: true,
