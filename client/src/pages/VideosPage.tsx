@@ -49,14 +49,84 @@ export default function VideosPage() {
     window.history.replaceState(null, "", newUrl);
   }, [platform, category]);
 
+  // Estado para seguimiento de consultas (similar a Home.tsx)
+  const [requestId, setRequestId] = useState(0);
+  
+  // Efecto para actualizar cuando cambian los filtros
+  useEffect(() => {
+    // Crear un nuevo ID de solicitud para el seguimiento
+    setRequestId(prev => prev + 1);
+  }, [platform, category, debouncedSearch]);
+  
+  // Función para obtener token
+  const getToken = () => {
+    return localStorage.getItem('token') || '';
+  };
+  
+  // Función auxiliar para hacer peticiones HTTP
+  const makeRequest = async (url: string) => {
+    const token = getToken();
+    const headers: HeadersInit = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+      console.log("Token añadido a la solicitud:", `Bearer ${token.substring(0, 12)}...`);
+    }
+    
+    // Agregamos un parámetro de tiempo único para evitar el caché del navegador
+    const separator = url.includes('?') ? '&' : '?';
+    const urlWithNoCache = `${url}${separator}_=${Date.now()}`;
+    
+    console.log("Realizando petición a:", url);
+    const response = await fetch(urlWithNoCache, { 
+      headers,
+      // Asegurarnos de que no se use la caché
+      cache: 'no-store'
+    });
+    if (!response.ok) {
+      throw new Error(`Error en la consulta: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log(`Resultados obtenidos: ${data.length} videos`);
+    return data;
+  };
+  
   // Consulta para obtener videos filtrados
   const { 
     data: filteredVideos = [], 
     isLoading: isFilteredLoading,
     isFetching: isFilteredFetching
   } = useQuery({
-    queryKey: ["/api/videos", { platform, category, query: debouncedSearch, limit: 100 }],
-    queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
+    queryKey: [`/api/videos-${platform}-${category}-${debouncedSearch}`, requestId],
+    queryFn: async () => {
+      // Construir URL con parámetros explícitos
+      const baseUrl = "/api/videos";
+      const params = new URLSearchParams();
+      
+      console.log(`DEBUG: Construyendo URL para platform=${platform}, category=${category}, search=${debouncedSearch}`);
+      
+      if (platform !== "all") {
+        params.append("platform", platform);
+      }
+      if (category !== "all") {
+        params.append("category", category);
+      }
+      if (debouncedSearch) {
+        params.append("query", debouncedSearch);
+      }
+      params.append("limit", "100");
+      
+      const url = `${baseUrl}?${params.toString()}`;
+      console.log("URL final de consulta:", url);
+      
+      // Añadir el token al header para invalidar caché
+      const tokenAddedToHeaders = await makeRequest(url);
+      return tokenAddedToHeaders;
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    staleTime: 0,
+    enabled: true,
   });
 
   // Aplicar ordenación a los videos
