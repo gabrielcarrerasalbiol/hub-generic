@@ -254,7 +254,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       case "press": return "ruedas de prensa";
       case "interviews": return "entrevistas";
       case "players": return "jugadores";
-      case "analysis": return "análisis";
+      case "tactics": return "análisis";
+      case "history": return "momentos históricos";
+      case "fan_content": return "afición";
+      case "transfers": return "fichajes";
+      case "news": return "noticias";
       default: return "";
     }
   }
