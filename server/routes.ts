@@ -177,8 +177,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const categoryName = getCategoryNameFromType(category.toString());
         console.log(`DEBUG: Nombre de categoría mapeado: ${categoryName}`);
         
+        // Buscar la categoría comparando de forma insensible a mayúsculas/minúsculas
         const categoryId = categories.find(cat => 
-          cat.name.toLowerCase() === categoryName)?.id;
+          cat.name.toLowerCase() === categoryName.toLowerCase())?.id;
         
         console.log(`DEBUG: ID de categoría encontrado: ${categoryId || 'No encontrado'}`);
         
@@ -196,8 +197,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Mapear nombres de categorías a IDs
         const categories = await storage.getCategories();
         const categoryName = getCategoryNameFromType(category.toString());
+        // Buscar la categoría comparando de forma insensible a mayúsculas/minúsculas
         const categoryId = categories.find(cat => 
-          cat.name.toLowerCase() === categoryName)?.id;
+          cat.name.toLowerCase() === categoryName.toLowerCase())?.id;
           
         console.log(`DEBUG: ID de categoría encontrado: ${categoryId || 'No encontrado'}`);
           
