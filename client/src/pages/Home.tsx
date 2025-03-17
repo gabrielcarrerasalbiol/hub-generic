@@ -78,11 +78,13 @@ export default function Home() {
   // Fetch videos filtered by platform and category (limitado a 20)
   const { 
     data: filteredVideos = [], 
-    isLoading: isFilteredLoading 
+    isLoading: isFilteredLoading,
+    refetch: refetchFilteredVideos
   } = useQuery({
     queryKey: ["/api/videos", { platform, category, limit: 20 }],
     queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
-    enabled: platform !== "all" || category !== "all",
+    // Siempre habilitado para asegurar que se actualice con cualquier cambio de filtro
+    enabled: true,
   });
   
   // Verificar si la plataforma seleccionada está disponible
@@ -248,7 +250,11 @@ export default function Home() {
           <div className="hidden md:flex space-x-1">
             <CategoryFilters 
               selectedCategory={category} 
-              onSelectCategory={(newCategory) => setCategory(newCategory as CategoryType)} 
+              onSelectCategory={(newCategory) => {
+                setCategory(newCategory as CategoryType);
+                // Recargamos los videos con los nuevos filtros
+                setTimeout(() => refetchFilteredVideos(), 50);
+              }} 
             />
           </div>
         </div>
@@ -273,7 +279,11 @@ export default function Home() {
                 className={`${platform === "all" 
                   ? "bg-[#001C58] text-white border-[#FDBE11]" 
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => setPlatform("all")}
+                onClick={() => {
+                  setPlatform("all");
+                  // Recargamos los videos con los nuevos filtros
+                  setTimeout(() => refetchFilteredVideos(), 50);
+                }}
               >
                 <Layers className="h-4 w-4 mr-2" /> {t('home.all')}
               </Button>
@@ -283,7 +293,11 @@ export default function Home() {
                 className={`${platform === "youtube" 
                   ? "bg-red-600 text-white hover:bg-red-700" 
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => setPlatform("youtube")}
+                onClick={() => {
+                  setPlatform("youtube");
+                  // Recargamos los videos con los nuevos filtros
+                  setTimeout(() => refetchFilteredVideos(), 50);
+                }}
               >
                 <Youtube className="h-4 w-4 mr-2" /> YouTube
               </Button>
@@ -293,7 +307,11 @@ export default function Home() {
                 className={`${platform === "twitch" 
                   ? "bg-purple-600 text-white hover:bg-purple-700" 
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => setPlatform("twitch")}
+                onClick={() => {
+                  setPlatform("twitch");
+                  // Recargamos los videos con los nuevos filtros
+                  setTimeout(() => refetchFilteredVideos(), 50);
+                }}
               >
                 <TwitchIcon className="h-4 w-4 mr-2" /> Twitch
               </Button>
@@ -303,7 +321,11 @@ export default function Home() {
                 className={`${platform === "twitter" 
                   ? "bg-blue-500 text-white hover:bg-blue-600" 
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => setPlatform("twitter")}
+                onClick={() => {
+                  setPlatform("twitter");
+                  // Recargamos los videos con los nuevos filtros
+                  setTimeout(() => refetchFilteredVideos(), 50);
+                }}
                 disabled={true}
               >
                 <Twitter className="h-4 w-4 mr-2" /> Twitter
@@ -314,7 +336,11 @@ export default function Home() {
                 className={`${platform === "instagram" 
                   ? "bg-pink-500 text-white hover:bg-pink-600" 
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => setPlatform("instagram")}
+                onClick={() => {
+                  setPlatform("instagram");
+                  // Recargamos los videos con los nuevos filtros
+                  setTimeout(() => refetchFilteredVideos(), 50);
+                }}
                 disabled={true}
               >
                 <Instagram className="h-4 w-4 mr-2" /> Instagram
@@ -325,7 +351,11 @@ export default function Home() {
                 className={`${platform === "tiktok" 
                   ? "bg-black text-white hover:bg-gray-900" 
                   : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
-                onClick={() => setPlatform("tiktok")}
+                onClick={() => {
+                  setPlatform("tiktok");
+                  // Recargamos los videos con los nuevos filtros
+                  setTimeout(() => refetchFilteredVideos(), 50);
+                }}
                 disabled={true}
               >
                 <TikTokIcon className="h-4 w-4 mr-2" /> TikTok
@@ -338,7 +368,11 @@ export default function Home() {
             <h3 className="text-sm font-medium mb-2 text-[#001C58]">{t('home.filterByCategory')}</h3>
             <CategoryFilters 
               selectedCategory={category} 
-              onSelectCategory={(newCategory) => setCategory(newCategory as CategoryType)} 
+              onSelectCategory={(newCategory) => {
+                setCategory(newCategory as CategoryType);
+                // Recargamos los videos con los nuevos filtros
+                setTimeout(() => refetchFilteredVideos(), 50);
+              }} 
             />
           </div>
           
