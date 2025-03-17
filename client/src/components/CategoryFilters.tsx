@@ -4,34 +4,32 @@ import {
   Radio, 
   MessageSquare, 
   Trophy, 
-  User, 
   Newspaper,
-  Ticket,
   ChevronsRight,
   Users,
   ShieldCheck,
   Mic2
 } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
+import { CategoryType } from '@shared/schema';
 
 interface CategoryFiltersProps {
-  selectedCategory: string;
-  onSelectCategory: (category: string) => void;
+  selectedCategory: CategoryType;
+  onSelectCategory: (category: CategoryType) => void;
 }
 
 export default function CategoryFilters({ selectedCategory, onSelectCategory }: CategoryFiltersProps) {
   const { t } = useLanguage();
   
   const categories = [
-    { id: "all", name: t('categories.all'), icon: <ChevronsRight className="h-4 w-4" /> },
-    { id: "Partidos", name: t('categories.matches'), icon: <Radio className="h-4 w-4 text-[#FDBE11]" /> },
-    { id: "Análisis", name: t('categories.analysis'), icon: <MessageSquare className="h-4 w-4" /> },
-    { id: "Histórico", name: t('categories.history'), icon: <Trophy className="h-4 w-4 text-[#FDBE11]" /> },
-    { id: "Jugadores", name: t('sidebar.players'), icon: <User className="h-4 w-4" /> },
-    { id: "Noticias", name: t('categories.news'), icon: <Newspaper className="h-4 w-4" /> },
-    { id: "Entrevistas", name: t('categories.interviews'), icon: <Mic2 className="h-4 w-4" /> },
-    { id: "Afición", name: t('categories.fans'), icon: <Users className="h-4 w-4" /> },
-    { id: "Institucional", name: t('categories.institutional', 'Institucional'), icon: <ShieldCheck className="h-4 w-4" /> },
+    { id: "all" as CategoryType, name: t('categories.all'), icon: <ChevronsRight className="h-4 w-4" /> },
+    { id: "matches" as CategoryType, name: t('categories.matches'), icon: <Radio className="h-4 w-4 text-[#FDBE11]" /> },
+    { id: "tactics" as CategoryType, name: t('categories.analysis'), icon: <MessageSquare className="h-4 w-4" /> },
+    { id: "history" as CategoryType, name: t('categories.history'), icon: <Trophy className="h-4 w-4 text-[#FDBE11]" /> },
+    { id: "news" as CategoryType, name: t('categories.news'), icon: <Newspaper className="h-4 w-4" /> },
+    { id: "interviews" as CategoryType, name: t('categories.interviews'), icon: <Mic2 className="h-4 w-4" /> },
+    { id: "fan_content" as CategoryType, name: t('categories.fans'), icon: <Users className="h-4 w-4" /> },
+    { id: "transfers" as CategoryType, name: t('categories.transfers', 'Fichajes'), icon: <ShieldCheck className="h-4 w-4" /> },
   ];
 
   return (

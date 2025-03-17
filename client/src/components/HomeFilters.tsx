@@ -113,13 +113,24 @@ export default function HomeFilters({
         </div>
       </div>
             
-      {/* Filtros de categoría */}
+      {/* Filtros de categoría para móvil */}
       <div className="block md:hidden mb-6">
         <h3 className="text-sm font-medium mb-2 text-[#001C58]">{t('home.filterByCategory')}</h3>
         <CategoryFilters 
           selectedCategory={category} 
           onSelectCategory={handleCategoryChange} 
         />
+      </div>
+      
+      {/* Filtros de categoría para desktop */}
+      <div className="hidden md:block mt-6 mb-4">
+        <h3 className="text-sm font-medium mb-3 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.filterByCategory')}</h3>
+        <div className="flex flex-wrap gap-2">
+          <CategoryFilters 
+            selectedCategory={category} 
+            onSelectCategory={handleCategoryChange} 
+          />
+        </div>
       </div>
     </>
   );
