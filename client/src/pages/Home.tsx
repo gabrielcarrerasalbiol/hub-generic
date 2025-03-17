@@ -82,7 +82,13 @@ export default function Home() {
     refetch: refetchFilteredVideos
   } = useQuery({
     queryKey: ["/api/videos", { platform, category, limit: 20 }],
-    queryFn: getQueryFn<Video[]>({ on401: 'returnNull' }),
+    queryFn: async (context) => {
+      console.log("Realizando consulta de videos filtrados:", context.queryKey);
+      const fn = getQueryFn<Video[]>({ on401: 'returnNull' });
+      const results = await fn(context);
+      console.log("Resultados de videos filtrados:", results?.length || 0, "videos");
+      return results;
+    },
     // Siempre habilitado para asegurar que se actualice con cualquier cambio de filtro
     enabled: true,
   });
