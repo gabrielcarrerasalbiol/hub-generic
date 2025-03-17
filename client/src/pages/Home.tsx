@@ -395,7 +395,7 @@ export default function Home() {
                 </h3>
                 {category !== "all" && (
                   <span className="ml-3 px-2 py-1 bg-[#FDBE11]/20 text-[#001C58] text-xs font-medium rounded-full">
-                    {category}
+                    {t(`categories.${category}`, category)}
                   </span>
                 )}
               </div>

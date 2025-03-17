@@ -37,8 +37,8 @@ export default function HomeFilters({
     onFilterChange();
   };
 
-  const handleCategoryChange = (newCategory: string) => {
-    setCategory(newCategory as CategoryType);
+  const handleCategoryChange = (newCategory: CategoryType) => {
+    setCategory(newCategory);
     // Recargar inmediatamente
     onFilterChange();
   };

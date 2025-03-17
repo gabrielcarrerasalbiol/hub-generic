@@ -45,7 +45,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
               ? "bg-[#001C58] text-white hover:bg-[#001C58]/90"
               : "hover:bg-slate-100"
           )}
-          onClick={() => onSelectCategory(category.id)}
+          onClick={() => onSelectCategory(category.id as CategoryType)}
         >
           {category.icon}
           {category.name}
