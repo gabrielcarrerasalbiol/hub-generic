@@ -423,7 +423,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If we have few results, try to fetch more from YouTube
       if (videos.length < 5) {
         try {
-          const searchResult = await searchYouTubeVideos(enhancedQuery, 10);
+          // Usar la consulta original del usuario
+          const searchResult = await searchYouTubeVideos(query, 10);
           
           if (searchResult.items && searchResult.items.length > 0) {
             const videoIds = searchResult.items
@@ -460,8 +461,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
             }
             
-            // Re-query to get the new videos
-            const updatedVideos = await storage.searchVideos(enhancedQuery, limit);
+            // Re-query to get the new videos usando la consulta original
+            const updatedVideos = await storage.searchVideos(query, limit);
             
             // Check if any videos are favorites (solo si hay usuario autenticado)
             let videosWithFavorite = updatedVideos;
