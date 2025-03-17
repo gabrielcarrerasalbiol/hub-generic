@@ -158,19 +158,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Si hay una búsqueda, utilizamos la funcionalidad de búsqueda
       if (searchQuery && searchQuery.trim().length > 0) {
-        console.log(`DEBUG: Buscando videos que coincidan con: "${searchQuery}"`);
+        console.log(`DEBUG: Buscando videos que coincidan exactamente con: "${searchQuery}"`);
         
-        // Mejorar la búsqueda con IA si es posible
-        let enhancedQuery = searchQuery;
-        try {
-          enhancedQuery = await AIService.enhanceSearch(searchQuery);
-          console.log(`DEBUG: Búsqueda mejorada con AI: "${enhancedQuery}"`);
-        } catch (error) {
-          console.log("DEBUG: No se pudo mejorar la búsqueda con AI, usando consulta original");
-        }
-        
-        // Buscar con la consulta mejorada
-        videos = await storage.searchVideos(enhancedQuery, limit);
+        // Buscar con la consulta exacta que ingresó el usuario
+        videos = await storage.searchVideos(searchQuery, limit);
         console.log(`DEBUG: Se encontraron ${videos.length} videos para la búsqueda "${searchQuery}"`);
         
         // Aplicar filtros de plataforma y categoría a los resultados si se especifican
@@ -417,16 +408,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Query parameter is required" });
       }
       
-      // Enhance search with AIService (usa DeepSeek y tiene fallback automático)
-      let enhancedQuery = query;
-      try {
-        enhancedQuery = await AIService.enhanceSearch(query);
-      } catch (error) {
-        console.log("Search enhancement failed with all AI services, using original query");
+      console.log(`DEBUG: Buscando videos que coincidan exactamente con: "${query}"`);
+      
+      // Simular una pequeña latencia para mostrar el spinner (solo para búsquedas)
+      if (query) {
+        await new Promise(resolve => setTimeout(resolve, 800)); // 800ms de retardo para demostrar el spinner
       }
       
-      // Search local database
-      const videos = await storage.searchVideos(enhancedQuery, limit);
+      // Search local database usando solo los términos exactos del buscador
+      const videos = await storage.searchVideos(query, limit);
+      console.log(`DEBUG: Se encontraron ${videos.length} videos para la búsqueda "${query}"`);
+      
       
       // If we have few results, try to fetch more from YouTube
       if (videos.length < 5) {
