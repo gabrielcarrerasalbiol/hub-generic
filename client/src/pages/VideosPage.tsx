@@ -69,6 +69,10 @@ export default function VideosPage() {
   // Estados
   const [platform, setPlatform] = useState<PlatformType>(getUrlParams().platform);
   const [category, setCategory] = useState<CategoryType>(getUrlParams().category);
+  // Siempre mostrar los filtros expandidos por defecto
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState<"newest" | "popular" | "az" | "za">("newest");
   
   // Efecto para detectar cambios en la URL (navegación con enlaces externos)
   useEffect(() => {
@@ -77,6 +81,12 @@ export default function VideosPage() {
       console.log("URL cambió. Nuevos parámetros:", params);
       setPlatform(params.platform);
       setCategory(params.category);
+      
+      // Asegurarnos de que los filtros estén visibles cuando cambia la URL
+      setIsFilterOpen(true);
+      
+      // Resetear la página cuando cambian los filtros
+      setPage(1);
     };
     
     // Añadir event listener para popstate (cuando se usa el botón atrás/adelante)
@@ -89,9 +99,6 @@ export default function VideosPage() {
       window.removeEventListener('popstate', handleUrlChange);
     };
   }, []);
-  const [page, setPage] = useState(1);
-  const [sort, setSort] = useState<"newest" | "popular" | "az" | "za">("newest");
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const itemsPerPage = 24; // 6 filas de 4 columnas
 
   // Verificar si la plataforma seleccionada está disponible

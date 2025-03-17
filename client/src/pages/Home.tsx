@@ -33,6 +33,9 @@ export default function Home() {
   // Funciones intermedias para garantizar compatibilidad de tipos
   const setPlatform = (newPlatform: PlatformType) => {
     setPlatformState(newPlatform);
+    // Restablecer el filtro de categoría cuando se cambia la plataforma
+    // para evitar combinar un filtro de categoría con una plataforma que no tiene videos
+    setCategoryState("all");
   };
   
   const setCategory = (newCategory: CategoryType) => {
