@@ -79,13 +79,26 @@ export default function SearchPage() {
     error,
     refetch
   } = useQuery<Video[]>({
-    queryKey: ['/api/videos/search', searchQuery],
+    queryKey: ['/api/videos', searchQuery, selectedPlatform, selectedCategory],
     queryFn: async () => {
       // Indicamos que estamos buscando
       setIsSearching(true);
       try {
-        // Ahora utilizamos 'q' para que coincida con lo que espera el backend
-        const response = await fetch(`/api/videos/search?q=${encodeURIComponent(searchQuery)}`);
+        // Construimos la URL con todos los parámetros
+        const params = new URLSearchParams();
+        params.append('query', searchQuery);
+        params.append('limit', '100');
+        
+        // Añadir filtros adicionales si están seleccionados
+        if (selectedPlatform !== 'all') {
+          params.append('platform', selectedPlatform);
+        }
+        if (selectedCategory !== 'all') {
+          params.append('category', selectedCategory);
+        }
+        
+        // Usamos el endpoint unificado de videos
+        const response = await fetch(`/api/videos?${params.toString()}`);
         if (!response.ok) {
           throw new Error('Error al buscar videos');
         }
