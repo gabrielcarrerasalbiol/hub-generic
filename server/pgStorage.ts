@@ -293,16 +293,44 @@ export class PgStorage implements IStorage {
       return [];
     }
     
+    // Determinar si es una búsqueda específica (una o dos palabras) o general (más palabras)
+    const isSpecificSearch = searchTerms.length <= 2 && (
+      searchTerms.some(term => term.length > 5) || // Término largo
+      query.includes('"') || // Contiene comillas
+      searchTerms.includes("guerra") || // Palabras clave específicas
+      searchTerms.includes("madrid") ||
+      searchTerms.includes("vinicius") ||
+      searchTerms.includes("bellingham") ||
+      searchTerms.includes("ancelotti")
+    );
+    
     // Creamos patrones de búsqueda para cada término
     const searchPatterns = searchTerms.map(term => `%${term}%`);
     
-    // Construimos la consulta SQL con condiciones OR para cada término y cada campo
-    const conditions = searchPatterns.map(pattern => {
-      return sql`${videos.title} ILIKE ${pattern} OR ${videos.description} ILIKE ${pattern} OR ${videos.summary} ILIKE ${pattern} OR ${videos.channelTitle} ILIKE ${pattern}`;
-    });
+    let whereClause;
     
-    // Combinamos las condiciones con OR
-    const whereClause = sql.join(conditions, sql` OR `);
+    if (isSpecificSearch) {
+      // Para búsquedas específicas, usamos AND entre los términos para resultados más precisos
+      const termConditions = searchPatterns.map(pattern => {
+        // Cada término debe aparecer en al menos uno de los campos
+        return sql`(${videos.title} ILIKE ${pattern} OR ${videos.description} ILIKE ${pattern} OR ${videos.summary} ILIKE ${pattern} OR ${videos.channelTitle} ILIKE ${pattern})`;
+      });
+      
+      // Combinamos las condiciones con AND
+      whereClause = sql.join(termConditions, sql` AND `);
+      
+      console.log(`DEBUG: Búsqueda específica con términos: ${searchTerms.join(', ')}`);
+    } else {
+      // Para búsquedas generales, mantenemos la búsqueda con OR para resultados más amplios
+      const conditions = searchPatterns.map(pattern => {
+        return sql`${videos.title} ILIKE ${pattern} OR ${videos.description} ILIKE ${pattern} OR ${videos.summary} ILIKE ${pattern} OR ${videos.channelTitle} ILIKE ${pattern}`;
+      });
+      
+      // Combinamos las condiciones con OR
+      whereClause = sql.join(conditions, sql` OR `);
+      
+      console.log(`DEBUG: Búsqueda general con términos: ${searchTerms.join(', ')}`);
+    }
     
     // Ejecutamos la consulta con orden por relevancia (más recientes primero)
     return db.select()
