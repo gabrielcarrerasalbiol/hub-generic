@@ -293,7 +293,6 @@ export function registerAuthRoutes(app: Express) {
           ipAddress,
           userAgent,
           success: true,
-          timestamp: new Date(),
           userId: user.id,
           details: JSON.stringify({provider: 'apple'})
         };
