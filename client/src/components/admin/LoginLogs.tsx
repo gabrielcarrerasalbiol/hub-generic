@@ -72,31 +72,19 @@ export default function LoginLogs() {
   // Obtener todos los logs de login
   const { data: allLogs, isLoading: isLoadingAll } = useQuery<LoginLog[]>({
     queryKey: ['/api/admin/login-logs'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/login-logs');
-      if (!response.ok) throw new Error('Error al cargar logs de login');
-      return response.json();
-    },
+    // No definimos queryFn ya que usará el configurado globalmente en el queryClient
   });
 
   // Obtener logs fallidos
   const { data: failedLogs, isLoading: isLoadingFailed } = useQuery<LoginLog[]>({
     queryKey: ['/api/admin/login-logs/failed'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/login-logs/failed');
-      if (!response.ok) throw new Error('Error al cargar logs fallidos');
-      return response.json();
-    },
+    // No definimos queryFn ya que usará el configurado globalmente en el queryClient
   });
 
   // Obtener logs recientes (últimos 24h)
   const { data: recentLogs, isLoading: isLoadingRecent } = useQuery<LoginLog[]>({
     queryKey: ['/api/admin/login-logs/recent'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/login-logs/recent');
-      if (!response.ok) throw new Error('Error al cargar logs recientes');
-      return response.json();
-    },
+    // No definimos queryFn ya que usará el configurado globalmente en el queryClient
   });
 
   // Función para calcular estadísticas

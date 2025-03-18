@@ -453,11 +453,16 @@ export function registerAuthRoutes(app: Express) {
   // Esta ruta solo debe existir en ambiente de desarrollo
   app.post('/api/auth/refresh-admin-token', async (req: Request, res: Response) => {
     try {
-      // Buscar usuario admin (para pruebas/desarrollo)
-      const adminUser = await storage.getUserByUsername('testadmin');
+      // Buscar cualquiera de los usuarios admin (para pruebas/desarrollo)
+      let adminUser = await storage.getUserByUsername('newadmin');
       
       if (!adminUser) {
-        return res.status(404).json({ error: 'Usuario administrador no encontrado' });
+        // Intentar con usuario alternativo
+        adminUser = await storage.getUserByUsername('admin');
+        
+        if (!adminUser) {
+          return res.status(404).json({ error: 'No se encontró ningún usuario administrador' });
+        }
       }
       
       // Generar nuevo token
