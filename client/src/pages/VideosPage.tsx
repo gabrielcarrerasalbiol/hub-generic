@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { useSearch } from "../hooks/useSearch";
+import { useSearch } from "../hooks/use-search";
 import { getQueryFn } from "@/lib/queryClient";
 import { Video, PlatformType, CategoryType } from "@shared/schema";
 // Importando los componentes como default

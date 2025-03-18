@@ -10,14 +10,19 @@ import PlatformFilters from '@/components/PlatformFilters';
 import CategoryFilters from '@/components/CategoryFilters';
 import { PlatformType, CategoryType } from '@shared/schema';
 import { useAnalytics } from '../hooks/use-analytics';
+import { useSearch } from '../hooks/use-search';
+import { Switch } from '@/components/ui/switch';
+import { Sparkles } from 'lucide-react';
 
 export default function SearchPage() {
   const [, setLocation] = useLocation();
   const [location] = useLocation();
-  const [searchQuery, setSearchQuery] = useState('');
+  // Usamos el hook de búsqueda con debounce
+  const { query: searchQuery, setQuery: setSearchQuery, debouncedSearch } = useSearch('', 400);
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformType>('all');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('all');
   const [visibleVideos, setVisibleVideos] = useState(12);
+  const [useAI, setUseAI] = useState(false);
   const { trackSearch } = useAnalytics();
   
   // Parse query params from URL
@@ -79,7 +84,7 @@ export default function SearchPage() {
     error,
     refetch
   } = useQuery<Video[]>({
-    queryKey: ['/api/videos', searchQuery, selectedPlatform, selectedCategory],
+    queryKey: ['/api/videos', searchQuery, selectedPlatform, selectedCategory, useAI],
     queryFn: async () => {
       // Indicamos que estamos buscando
       setIsSearching(true);
@@ -97,10 +102,16 @@ export default function SearchPage() {
           params.append('category', selectedCategory);
         }
         
-        console.log(`Realizando búsqueda con query: ${searchQuery}`);
+        // Añadir flag para usar mejora de IA si está activada
+        if (useAI) {
+          params.append('useai', 'true');
+          console.log(`Realizando búsqueda con mejora de IA para: "${searchQuery}"`);
+        } else {
+          console.log(`Realizando búsqueda estándar para: "${searchQuery}"`);
+        }
         
-        // Usamos el endpoint unificado de videos
-        const response = await fetch(`/api/videos?${params.toString()}`);
+        // Usar el endpoint de búsqueda (no el genérico de videos)
+        const response = await fetch(`/api/videos/search?${params.toString()}`);
         if (!response.ok) {
           throw new Error('Error al buscar videos');
         }
@@ -242,6 +253,26 @@ export default function SearchPage() {
             )}
           </Button>
         </form>
+        
+        {/* Opción para usar búsqueda inteligente con IA */}
+        <div className="mt-4 flex items-center space-x-2 pb-2 border-b border-gray-100 dark:border-gray-700">
+          <Switch 
+            id="ai-search" 
+            checked={useAI}
+            onCheckedChange={setUseAI}
+            disabled={isLoading || isFetching || isSearching}
+          />
+          <label 
+            htmlFor="ai-search" 
+            className="text-sm font-medium cursor-pointer flex items-center gap-2 text-gray-700 dark:text-gray-300"
+          >
+            <Sparkles size={16} className="text-amber-500" />
+            Búsqueda inteligente con IA
+          </label>
+          <div className="ml-auto text-xs text-gray-500 dark:text-gray-400 italic">
+            {useAI ? 'Activa' : 'Desactivada'}
+          </div>
+        </div>
 
         <div className="mt-4 flex flex-col md:flex-row gap-4">
           <div className="md:w-1/2">

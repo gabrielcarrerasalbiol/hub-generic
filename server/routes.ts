@@ -403,28 +403,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const query = (req.query.query as string) || (req.query.q as string) || "";
       const limit = parseInt(req.query.limit as string) || 50;
+      const useAiEnhancement = req.query.useai === 'true';
       
       if (!query) {
         return res.status(400).json({ message: "Query parameter is required" });
       }
       
-      console.log(`DEBUG: Buscando videos que coincidan exactamente con: "${query}"`);
+      // Variable para almacenar la consulta que se usará para la búsqueda
+      let searchQuery = query;
+      let enhancedQuery = null;
+      
+      // Si está habilitada la mejora con IA, intentar mejorar la consulta
+      if (useAiEnhancement && query.length > 3) {
+        try {
+          console.log(`DEBUG: Intentando mejorar la consulta "${query}" con IA`);
+          // Usar el servicio AIService para mejorar la consulta
+          enhancedQuery = await AIService.enhanceSearch(query);
+          
+          if (enhancedQuery && enhancedQuery !== query) {
+            console.log(`DEBUG: Consulta mejorada con IA: "${enhancedQuery}"`);
+            searchQuery = enhancedQuery;
+          } else {
+            console.log(`DEBUG: No se pudo mejorar la consulta con IA, usando original`);
+          }
+        } catch (aiError) {
+          console.error("Error al mejorar la búsqueda con IA:", aiError);
+          // En caso de error, continuar con la consulta original
+        }
+      }
+      
+      console.log(`DEBUG: Buscando videos con la consulta${enhancedQuery ? ' mejorada' : ''}: "${searchQuery}"`);
       
       // Simular una pequeña latencia para mostrar el spinner (solo para búsquedas)
       if (query) {
         await new Promise(resolve => setTimeout(resolve, 800)); // 800ms de retardo para demostrar el spinner
       }
       
-      // Search local database usando solo los términos exactos del buscador
-      const videos = await storage.searchVideos(query, limit);
-      console.log(`DEBUG: Se encontraron ${videos.length} videos para la búsqueda "${query}"`);
+      // Realizar la búsqueda en la base de datos con la consulta (mejorada o no)
+      const videos = await storage.searchVideos(searchQuery, limit);
+      console.log(`DEBUG: Se encontraron ${videos.length} videos para la búsqueda "${searchQuery}"`);
       
-      
-      // If we have few results, try to fetch more from YouTube
+      // Si hay pocos resultados, buscar en YouTube
       if (videos.length < 5) {
         try {
-          // Usar la consulta original del usuario
-          const searchResult = await searchYouTubeVideos(query, 10);
+          // Usar la consulta mejorada si está disponible, o la original en caso contrario
+          const searchResult = await searchYouTubeVideos(searchQuery, 10);
           
           if (searchResult.items && searchResult.items.length > 0) {
             const videoIds = searchResult.items
