@@ -469,16 +469,14 @@ export const loginLogs = pgTable("login_logs", {
   ipAddress: varchar("ip_address", { length: 45 }),
   userAgent: text("user_agent"),
   success: boolean("success").default(true),
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  timestamp: timestamp("timestamp").defaultNow().notNull(), // Esta columna sirve como 'createdAt'
   details: text("details"),
   provider: text("provider").default("local").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const insertLoginLogSchema = createInsertSchema(loginLogs).omit({
   id: true,
   timestamp: true,
-  createdAt: true,
 });
 
 export type InsertLoginLog = z.infer<typeof insertLoginLogSchema>;
