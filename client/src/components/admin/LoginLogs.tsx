@@ -209,7 +209,7 @@ export default function LoginLogs() {
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
-            <CardTitle>Registros de Acceso</CardTitle>
+            <CardTitle>Accesos</CardTitle>
             <CardDescription>
               Historial de inicios de sesión en la plataforma
             </CardDescription>

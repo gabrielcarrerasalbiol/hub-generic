@@ -46,7 +46,7 @@ export default function AdminPage() {
           </TabsTrigger>
           <TabsTrigger value="loginlogs" className="flex items-center gap-2">
             <LogIn className="h-4 w-4" />
-            <span>Registros de Acceso</span>
+            <span>Accesos</span>
           </TabsTrigger>
           <TabsTrigger value="videos" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
@@ -58,11 +58,11 @@ export default function AdminPage() {
           </TabsTrigger>
           <TabsTrigger value="premium" className="flex items-center gap-2">
             <Star className="h-4 w-4" />
-            <span>Canales Premium</span>
+            <span>Premium</span>
           </TabsTrigger>
           <TabsTrigger value="recommended" className="flex items-center gap-2">
             <Award className="h-4 w-4" />
-            <span>Canales Recomendados</span>
+            <span>Recomendados</span>
           </TabsTrigger>
           <TabsTrigger value="polls" className="flex items-center gap-2">
             <BarChart className="h-4 w-4" />
@@ -145,7 +145,7 @@ export default function AdminPage() {
               
               <div className="border rounded-lg p-4 bg-blue-50 dark:bg-blue-950">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Importación de Canales Premium</h3>
+                  <h3 className="text-lg font-semibold">Importación Premium</h3>
                   <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 rounded-full text-xs font-medium">
                     Activo
                   </span>
@@ -157,13 +157,13 @@ export default function AdminPage() {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
                   onClick={() => setActiveTab('premium')}
                 >
-                  Ir a canales premium
+                  Ir a Premium
                 </button>
               </div>
               
               <div className="border rounded-lg p-4 bg-purple-50 dark:bg-purple-950">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Gestión de Canales Recomendados</h3>
+                  <h3 className="text-lg font-semibold">Gestión de Recomendados</h3>
                   <span className="px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 rounded-full text-xs font-medium">
                     Nuevo
                   </span>
@@ -175,7 +175,7 @@ export default function AdminPage() {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
                   onClick={() => setActiveTab('recommended')}
                 >
-                  Ir a canales recomendados
+                  Ir a Recomendados
                 </button>
               </div>
               
