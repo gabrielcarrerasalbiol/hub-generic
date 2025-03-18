@@ -171,6 +171,7 @@ export function registerAuthRoutes(app: Express) {
           userId: user?.id || null,
           details: err ? JSON.stringify({error: err.message}) : 
                   !user ? JSON.stringify({reason: info?.message || 'Credenciales inválidas'}) : null
+          // No incluimos el campo provider ya que no existe en la tabla actual
         };
         
         // Registrar el intento de inicio de sesión (exitoso o fallido)
