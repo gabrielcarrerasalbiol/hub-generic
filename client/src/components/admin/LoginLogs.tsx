@@ -334,7 +334,7 @@ export default function LoginLogs() {
                           </span>
                         </TableCell>
                         <TableCell className="whitespace-nowrap">
-                          {formatDate(log.createdAt)}
+                          {formatDate(log.timestamp)}
                         </TableCell>
                       </TableRow>
                     ))
