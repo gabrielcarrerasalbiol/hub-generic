@@ -192,8 +192,61 @@ function AppContent() {
   // Estado de carga inicial
   if (!isInitialized) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="animate-pulse text-2xl font-semibold">Cargando Hub Madridista...</div>
+      <div className="flex flex-col min-h-screen items-center justify-center bg-background">
+        <div className="mb-4">
+          <svg
+            width="100"
+            height="100"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="animate-pulse"
+          >
+            {/* Escudo del Real Madrid simplificado */}
+            <path
+              d="M50 5C74.8528 5 95 25.1472 95 50C95 74.8528 74.8528 95 50 95C25.1472 95 5 74.8528 5 50C5 25.1472 25.1472 5 50 5Z"
+              fill="#FFFFFF"
+              stroke="#0B529C"
+              strokeWidth="3"
+            />
+            <path
+              d="M50 12C71.5391 12 89 29.4609 89 51C89 72.5391 71.5391 90 50 90C28.4609 90 11 72.5391 11 51C11 29.4609 28.4609 12 50 12Z"
+              fill="#FFFFFF"
+              stroke="#0B529C"
+              strokeWidth="2"
+            />
+            {/* Corona */}
+            <path
+              d="M50 15L55 20H45L50 15Z"
+              fill="#FFD700"
+              stroke="#B8860B"
+              strokeWidth="1"
+            />
+            <path
+              d="M35 20H65"
+              stroke="#0B529C"
+              strokeWidth="2"
+            />
+            {/* Banda diagonal */}
+            <path
+              d="M35 30L65 70"
+              stroke="#9C0B0B"
+              strokeWidth="10"
+            />
+            {/* Letras R M C F */}
+            <text
+              x="38"
+              y="50"
+              fontFamily="Arial, sans-serif"
+              fontSize="8"
+              fontWeight="bold"
+              fill="#0B529C"
+            >
+              R M C F
+            </text>
+          </svg>
+        </div>
+        <div className="text-2xl font-semibold">Cargando Hub Madridista...</div>
       </div>
     );
   }
