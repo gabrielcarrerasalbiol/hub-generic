@@ -7,9 +7,10 @@ import PremiumChannelManagement from '@/components/admin/PremiumChannelManagemen
 import RecommendedChannelManagement from '@/components/admin/RecommendedChannelManagement';
 import FeaturedVideosManager from '@/components/admin/FeaturedVideosManager';
 import PollManagement from '@/components/polls/PollManagement';
+import LoginLogs from '@/components/admin/LoginLogs'; // Nuevo componente
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Users, Video, Activity, Star, Award, BarChart2, Sparkles, BarChart, Vote } from 'lucide-react';
+import { Users, Video, Activity, Star, Award, BarChart2, Sparkles, BarChart, Vote, LogIn } from 'lucide-react';
 
 export default function AdminPage() {
   const { isAdmin, checkAuth } = useAuth();
@@ -38,10 +39,14 @@ export default function AdminPage() {
       </div>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-7">
+        <TabsList className="mb-6 grid w-full grid-cols-8">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span>Usuarios</span>
+          </TabsTrigger>
+          <TabsTrigger value="loginlogs" className="flex items-center gap-2">
+            <LogIn className="h-4 w-4" />
+            <span>Registros de Acceso</span>
           </TabsTrigger>
           <TabsTrigger value="videos" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
@@ -71,6 +76,10 @@ export default function AdminPage() {
         
         <TabsContent value="users" className="space-y-6">
           <UserManagement />
+        </TabsContent>
+        
+        <TabsContent value="loginlogs" className="space-y-6">
+          <LoginLogs />
         </TabsContent>
         
         <TabsContent value="videos" className="space-y-6">
