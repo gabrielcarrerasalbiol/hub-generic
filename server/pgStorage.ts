@@ -14,10 +14,11 @@ import {
   Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote,
   Player, InsertPlayer, PlayerStats, InsertPlayerStats,
   StatsGame, InsertStatsGame, StatsGameQuestion, InsertStatsGameQuestion,
+  LoginLog, InsertLoginLog,
   users, videos, channels, categories, favorites, oauthTokens,
   channelSubscriptions, notifications, premiumChannels, recommendedChannels,
   viewHistory, comments, polls, pollOptions, pollVotes,
-  players, playerStats, statsGames, statsGameQuestions
+  players, playerStats, statsGames, statsGameQuestions, loginLogs
 } from '@shared/schema';
 
 // PostgreSQL implementation of the storage interface
@@ -2067,6 +2068,63 @@ export class PgStorage implements IStorage {
       console.error("Error answering stats game question:", error);
       return undefined;
     }
+  }
+
+  // Login Logs operations
+  async getLoginLogs(limit = 100, offset = 0): Promise<LoginLog[]> {
+    return db.select()
+      .from(loginLogs)
+      .orderBy(desc(loginLogs.timestamp))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getLoginLogsByUserId(userId: number, limit = 50, offset = 0): Promise<LoginLog[]> {
+    return db.select()
+      .from(loginLogs)
+      .where(eq(loginLogs.userId, userId))
+      .orderBy(desc(loginLogs.timestamp))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getFailedLoginAttempts(limit = 50, offset = 0): Promise<LoginLog[]> {
+    return db.select()
+      .from(loginLogs)
+      .where(eq(loginLogs.success, false))
+      .orderBy(desc(loginLogs.timestamp))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getRecentLogins(hoursAgo = 24, limit = 50): Promise<LoginLog[]> {
+    // Calcular la fecha desde hace X horas
+    const fromDate = new Date();
+    fromDate.setHours(fromDate.getHours() - hoursAgo);
+
+    return db.select()
+      .from(loginLogs)
+      .where(
+        and(
+          eq(loginLogs.success, true),
+          gte(loginLogs.timestamp, fromDate)
+        )
+      )
+      .orderBy(desc(loginLogs.timestamp))
+      .limit(limit);
+  }
+
+  async getUserLoginHistory(userId: number, limit = 10): Promise<LoginLog[]> {
+    return db.select()
+      .from(loginLogs)
+      .where(eq(loginLogs.userId, userId))
+      .orderBy(desc(loginLogs.timestamp))
+      .limit(limit);
+  }
+
+  async createLoginLog(log: InsertLoginLog): Promise<LoginLog> {
+    const result = await db.insert(loginLogs).values(log).returning();
+    return result[0];
   }
 }
 
