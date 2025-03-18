@@ -203,47 +203,30 @@ function AppContent() {
             className="animate-pulse"
           >
             {/* Escudo del Real Madrid simplificado */}
-            <path
-              d="M50 5C74.8528 5 95 25.1472 95 50C95 74.8528 74.8528 95 50 95C25.1472 95 5 74.8528 5 50C5 25.1472 25.1472 5 50 5Z"
-              fill="#FFFFFF"
-              stroke="#0B529C"
-              strokeWidth="3"
-            />
-            <path
-              d="M50 12C71.5391 12 89 29.4609 89 51C89 72.5391 71.5391 90 50 90C28.4609 90 11 72.5391 11 51C11 29.4609 28.4609 12 50 12Z"
-              fill="#FFFFFF"
-              stroke="#0B529C"
-              strokeWidth="2"
-            />
-            {/* Corona */}
-            <path
-              d="M50 15L55 20H45L50 15Z"
-              fill="#FFD700"
-              stroke="#B8860B"
-              strokeWidth="1"
-            />
-            <path
-              d="M35 20H65"
-              stroke="#0B529C"
-              strokeWidth="2"
-            />
+            <circle cx="50" cy="50" r="45" fill="#FFFFFF" stroke="#0B529C" strokeWidth="3" />
+            <circle cx="50" cy="50" r="38" fill="#FFFFFF" stroke="#0B529C" strokeWidth="2" />
+            
             {/* Banda diagonal */}
-            <path
-              d="M35 30L65 70"
-              stroke="#9C0B0B"
-              strokeWidth="10"
-            />
-            {/* Letras R M C F */}
-            <text
-              x="38"
-              y="50"
-              fontFamily="Arial, sans-serif"
-              fontSize="8"
-              fontWeight="bold"
-              fill="#0B529C"
-            >
-              R M C F
-            </text>
+            <line x1="35" y1="30" x2="65" y2="70" stroke="#9C0B0B" strokeWidth="10" />
+            
+            {/* Corona simplificada */}
+            <path d="M40 20L50 15L60 20H40Z" fill="#FFD700" />
+            
+            {/* Letras en forma de líneas para evitar problemas con fuentes */}
+            <g fill="#0B529C">
+              <rect x="38" y="45" width="2" height="10" />
+              <rect x="38" y="45" width="5" height="2" />
+              <rect x="38" y="50" width="5" height="2" />
+              
+              <rect x="48" y="45" width="2" height="10" />
+              <rect x="48" y="45" width="5" height="2" />
+              <rect x="48" y="50" width="5" height="2" />
+              <rect x="53" y="45" width="2" height="10" />
+              
+              <rect x="60" y="45" width="2" height="10" />
+              <rect x="60" y="45" width="5" height="2" />
+              <rect x="60" y="55" width="5" height="2" />
+            </g>
           </svg>
         </div>
         <div className="text-2xl font-semibold">Cargando Hub Madridista...</div>
