@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, uuid, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, uuid, primaryKey, uniqueIndex, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -460,3 +460,26 @@ export type StatType = z.infer<typeof StatType>;
 // Enum para las dificultades del juego
 export const GameDifficulty = z.enum(["easy", "medium", "hard"]);
 export type GameDifficulty = z.infer<typeof GameDifficulty>;
+
+// Tabla para los registros de inicio de sesión
+export const loginLogs = pgTable("login_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  username: text("username").notNull(),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  loginMethod: text("login_method", { enum: ["password", "google", "apple", "token"] }).notNull(),
+  success: boolean("success").default(true).notNull(),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  failReason: text("fail_reason"),
+  sessionId: text("session_id"),
+  deviceInfo: text("device_info"),
+});
+
+export const insertLoginLogSchema = createInsertSchema(loginLogs).omit({
+  id: true,
+  timestamp: true,
+});
+
+export type InsertLoginLog = z.infer<typeof insertLoginLogSchema>;
+export type LoginLog = typeof loginLogs.$inferSelect;

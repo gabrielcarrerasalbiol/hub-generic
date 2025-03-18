@@ -8,7 +8,8 @@ import {
   Comment, InsertComment, RecommendedChannel, InsertRecommendedChannel,
   Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote,
   Player, InsertPlayer, PlayerStats, InsertPlayerStats,
-  StatsGame, InsertStatsGame, StatsGameQuestion, InsertStatsGameQuestion
+  StatsGame, InsertStatsGame, StatsGameQuestion, InsertStatsGameQuestion,
+  LoginLog, InsertLoginLog
 } from "../shared/schema";
 
 // Storage interface defining all operations
@@ -187,6 +188,14 @@ export interface IStorage {
   updateStatsGameQuestion(id: number, questionData: Partial<InsertStatsGameQuestion>): Promise<StatsGameQuestion | undefined>;
   answerStatsGameQuestion(id: number, userSelection: number, isCorrect: boolean): Promise<StatsGameQuestion | undefined>;
   getPlayerComparisonStats(player1Id: number, player2Id: number, statType: string, season?: string): Promise<{player1Value: number | null, player2Value: number | null, winnerId: number}>;
+  
+  // Login Logs operations
+  getLoginLogs(limit?: number, offset?: number): Promise<LoginLog[]>;
+  getLoginLogsByUserId(userId: number, limit?: number, offset?: number): Promise<LoginLog[]>;
+  getFailedLoginAttempts(limit?: number, offset?: number): Promise<LoginLog[]>;
+  getRecentLogins(hoursAgo?: number, limit?: number): Promise<LoginLog[]>;
+  getUserLoginHistory(userId: number, limit?: number): Promise<LoginLog[]>;
+  createLoginLog(log: InsertLoginLog): Promise<LoginLog>;
 }
 
 // Exportar la implementación de PostgreSQL
