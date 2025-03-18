@@ -48,13 +48,13 @@ interface LoginLog {
   id: number;
   userId: number;
   username: string;
-  email: string | null;
   success: boolean;
   provider: string;
   ipAddress: string | null;
   userAgent: string | null;
+  timestamp: string;
   createdAt: string;
-  errorMessage?: string;
+  details: string | null;
 }
 
 interface LoginStats {
@@ -106,7 +106,7 @@ export default function LoginLogs() {
     const cutoffDate = subDays(new Date(), days);
     
     const filteredLogs = logs.filter(log => 
-      new Date(log.createdAt) >= cutoffDate
+      new Date(log.timestamp) >= cutoffDate
     );
 
     // Conteos básicos
@@ -129,7 +129,7 @@ export default function LoginLogs() {
     // Por fecha
     const dateCounts: Record<string, { count: number; success: number; failure: number }> = {};
     filteredLogs.forEach(log => {
-      const date = format(new Date(log.createdAt), 'yyyy-MM-dd');
+      const date = format(new Date(log.timestamp), 'yyyy-MM-dd');
       if (!dateCounts[date]) {
         dateCounts[date] = { count: 0, success: 0, failure: 0 };
       }
