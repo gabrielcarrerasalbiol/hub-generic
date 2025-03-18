@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import rateLimit from 'express-rate-limit';
 import { storage } from './storage';
 import { generateToken, isAuthenticated, isAdmin } from './auth';
-import { insertUserSchema, UserRole } from '../shared/schema';
+import { insertUserSchema, UserRole, InsertLoginLog } from '../shared/schema';
 import { z } from 'zod';
 import * as fs from 'fs';
 import { sendNewUserNotification, sendWelcomeEmail, sendPasswordResetEmail } from './api/emailService';
@@ -168,7 +168,6 @@ export function registerAuthRoutes(app: Express) {
           ipAddress,
           userAgent,
           success: !!user,
-          timestamp: new Date(),
           userId: user?.id || null,
           details: err ? JSON.stringify({error: err.message}) : 
                   !user ? JSON.stringify({reason: info?.message || 'Credenciales inválidas'}) : null
@@ -226,9 +225,35 @@ export function registerAuthRoutes(app: Express) {
       failureRedirect: '/login', 
       session: false 
     }),
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
       const user = req.user as any;
       const token = generateToken(user);
+      
+      // Registrar inicio de sesión exitoso con Google
+      try {
+        const userAgent = req.headers['user-agent'] || 'unknown';
+        let ipAddress = req.ip || req.socket.remoteAddress || 'unknown';
+        
+        // Limpiar dirección IPv6 si es necesario
+        if (ipAddress.includes('::ffff:')) {
+          ipAddress = ipAddress.replace('::ffff:', '');
+        }
+        
+        // Crear registro de login
+        const loginData: InsertLoginLog = {
+          username: user.username,
+          ipAddress,
+          userAgent,
+          success: true,
+          userId: user.id,
+          details: JSON.stringify({provider: 'google'})
+        };
+        
+        await storage.createLoginLog(loginData);
+      } catch (logError) {
+        console.error('Error registrando login con Google:', logError);
+        // Continuar con el proceso de login aunque falle el registro
+      }
       
       // Redirect with token to frontend
       res.redirect(`/?token=${token}`);
@@ -248,9 +273,36 @@ export function registerAuthRoutes(app: Express) {
       failureRedirect: '/login',
       session: false
     }),
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
       const user = req.user as any;
       const token = generateToken(user);
+      
+      // Registrar inicio de sesión exitoso con Apple
+      try {
+        const userAgent = req.headers['user-agent'] || 'unknown';
+        let ipAddress = req.ip || req.socket.remoteAddress || 'unknown';
+        
+        // Limpiar dirección IPv6 si es necesario
+        if (ipAddress.includes('::ffff:')) {
+          ipAddress = ipAddress.replace('::ffff:', '');
+        }
+        
+        // Crear registro de login
+        const loginData: InsertLoginLog = {
+          username: user.username,
+          ipAddress,
+          userAgent,
+          success: true,
+          timestamp: new Date(),
+          userId: user.id,
+          details: JSON.stringify({provider: 'apple'})
+        };
+        
+        await storage.createLoginLog(loginData);
+      } catch (logError) {
+        console.error('Error registrando login con Apple:', logError);
+        // Continuar con el proceso de login aunque falle el registro
+      }
       
       // Redirect with token to frontend
       res.redirect(`/?token=${token}`);

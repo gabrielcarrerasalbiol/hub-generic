@@ -464,21 +464,17 @@ export type GameDifficulty = z.infer<typeof GameDifficulty>;
 // Tabla para los registros de inicio de sesión
 export const loginLogs = pgTable("login_logs", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
   username: text("username").notNull(),
   ipAddress: varchar("ip_address", { length: 45 }),
   userAgent: text("user_agent"),
-  loginMethod: text("login_method", { enum: ["password", "google", "apple", "token"] }).notNull(),
-  success: boolean("success").default(true).notNull(),
+  success: boolean("success").default(true),
   timestamp: timestamp("timestamp").defaultNow().notNull(),
-  failReason: text("fail_reason"),
-  sessionId: text("session_id"),
-  deviceInfo: text("device_info"),
+  details: text("details"),
 });
 
 export const insertLoginLogSchema = createInsertSchema(loginLogs).omit({
   id: true,
-  timestamp: true,
 });
 
 export type InsertLoginLog = z.infer<typeof insertLoginLogSchema>;
