@@ -1175,6 +1175,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoints para sistema de seguimiento de inicios de sesión (admin dashboard)
+  
+  // Obtener todos los registros de login (paginados)
+  app.get("/api/admin/login-logs", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 100;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const logs = await storage.getLoginLogs(limit, offset);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error al obtener logs de inicio de sesión:", error);
+      res.status(500).json({ 
+        message: "No se pudieron obtener los registros de inicio de sesión" 
+      });
+    }
+  });
+
+  // Obtener intentos de login fallidos
+  app.get("/api/admin/login-logs/failed", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      const logs = await storage.getFailedLoginAttempts(limit, offset);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error al obtener intentos fallidos de inicio de sesión:", error);
+      res.status(500).json({ 
+        message: "No se pudieron obtener los intentos fallidos de inicio de sesión" 
+      });
+    }
+  });
+
+  // Obtener inicios de sesión recientes (últimas X horas)
+  app.get("/api/admin/login-logs/recent", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const hoursAgo = parseInt(req.query.hours as string) || 24;
+      const limit = parseInt(req.query.limit as string) || 50;
+      
+      const logs = await storage.getRecentLogins(hoursAgo, limit);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error al obtener inicios de sesión recientes:", error);
+      res.status(500).json({ 
+        message: "No se pudieron obtener los inicios de sesión recientes" 
+      });
+    }
+  });
+
+  // Obtener historial de inicios de sesión de un usuario específico
+  app.get("/api/admin/login-logs/user/:userId", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "ID de usuario no válido" });
+      }
+      
+      const limit = parseInt(req.query.limit as string) || 50;
+      const offset = parseInt(req.query.offset as string) || 0;
+      
+      // Verificar que el usuario existe
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+      
+      const logs = await storage.getLoginLogsByUserId(userId, limit, offset);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error al obtener historial de inicios de sesión del usuario:", error);
+      res.status(500).json({ 
+        message: "No se pudo obtener el historial de inicios de sesión" 
+      });
+    }
+  });
+
   // Endpoint para recategorizar un video específico usando IA
   app.post("/api/videos/:id/recategorize", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {

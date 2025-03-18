@@ -152,7 +152,36 @@ export function registerAuthRoutes(app: Express) {
         });
       }
       
-      passport.authenticate('local', { session: false }, (err: any, user: any, info: any) => {
+      const { username } = req.body;
+      let userAgent = req.headers['user-agent'] || 'unknown';
+      let ipAddress = req.ip || req.socket.remoteAddress || 'unknown';
+      
+      // Eliminar la parte de dirección de encabezado IPv6 si existe
+      if (ipAddress.includes('::ffff:')) {
+        ipAddress = ipAddress.replace('::ffff:', '');
+      }
+      
+      passport.authenticate('local', { session: false }, async (err: any, user: any, info: any) => {
+        // Objeto para registro de login
+        const loginData: InsertLoginLog = {
+          username,
+          ipAddress,
+          userAgent,
+          success: !!user,
+          timestamp: new Date(),
+          userId: user?.id || null,
+          details: err ? JSON.stringify({error: err.message}) : 
+                  !user ? JSON.stringify({reason: info?.message || 'Credenciales inválidas'}) : null
+        };
+        
+        // Registrar el intento de inicio de sesión (exitoso o fallido)
+        try {
+          await storage.createLoginLog(loginData);
+        } catch (logError) {
+          console.error('Error registrando intento de login:', logError);
+          // Continuamos con el flujo normal aunque falle el registro
+        }
+        
         if (err) {
           console.error('Error during login:', err);
           return res.status(500).json({ error: 'Error interno, por favor intenta nuevamente' });
