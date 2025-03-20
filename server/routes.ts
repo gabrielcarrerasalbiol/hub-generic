@@ -1815,10 +1815,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           
           // Importar los módulos necesarios
-          const { getTwitchUserDetailsByLogin, convertTwitchChannelToSchema } = await import("./api/twitch");
+          const { getTwitchUserDetailsByLogin, getTwitchUserDetails, convertTwitchChannelToSchema } = await import("./api/twitch");
+          
+          console.log(`Buscando canal de Twitch con nombre de usuario: "${twitchUsername}"`);
+          
+          // Limpiar nombre de usuario - quitar caracteres no válidos
+          if (twitchUsername.startsWith('@')) {
+            twitchUsername = twitchUsername.substring(1);
+          }
           
           // Buscar detalles del canal de Twitch
-          const twitchUser = await getTwitchUserDetailsByLogin(twitchUsername);
+          // Para Twitch, primero debemos determinar si es un nombre de usuario o un ID
+          let twitchUser;
+          
+          // Verificar si es un posible nombre de usuario (si contiene letras)
+          if (/[a-zA-Z]/.test(twitchUsername)) {
+            console.log(`Parece ser un nombre de usuario de Twitch: ${twitchUsername}`);
+            twitchUser = await getTwitchUserDetailsByLogin(twitchUsername);
+          } else {
+            // Es probablemente un ID numérico
+            console.log(`Parece ser un ID numérico de Twitch: ${twitchUsername}`);
+            twitchUser = await getTwitchUserDetails(twitchUsername);
+          }
+          
+          if (!twitchUser) {
+            // Intentar con el método alternativo si el primero falló
+            if (!/[a-zA-Z]/.test(twitchUsername)) {
+              console.log(`Intentando como nombre de usuario como respaldo: ${twitchUsername}`);
+              twitchUser = await getTwitchUserDetailsByLogin(twitchUsername);
+            } else {
+              console.log(`Intentando como ID numérico como respaldo: ${twitchUsername}`);
+              twitchUser = await getTwitchUserDetails(twitchUsername);
+            }
+          }
           
           if (!twitchUser) {
             return res.status(404).json({ error: "No se encontró el canal de Twitch" });
@@ -2338,15 +2367,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } else if (channelPlatform === "twitch") {
         // Importar utilidades para obtener datos de Twitch
-        const { getTwitchUserDetails, convertTwitchChannelToSchema } = await import("./api/twitch");
+        const { getTwitchUserDetails, getTwitchUserDetailsByLogin, convertTwitchChannelToSchema } = await import("./api/twitch");
         
         try {
-          // Buscar detalles del canal en la API de Twitch
-          const twitchUser = await getTwitchUserDetails(channelIdOrUsername);
+          // Para Twitch, primero debemos determinar si es un nombre de usuario o un ID
+          // Los IDs de Twitch son numéricos, mientras que los nombres de usuario son alfanuméricos
+          let twitchUser;
+          
+          // Verificar si es un posible nombre de usuario (si contiene letras)
+          if (/[a-zA-Z]/.test(channelIdOrUsername)) {
+            console.log(`Parece ser un nombre de usuario de Twitch: ${channelIdOrUsername}`);
+            twitchUser = await getTwitchUserDetailsByLogin(channelIdOrUsername);
+          } else {
+            // Es probablemente un ID numérico
+            console.log(`Parece ser un ID numérico de Twitch: ${channelIdOrUsername}`);
+            twitchUser = await getTwitchUserDetails(channelIdOrUsername);
+          }
+          
+          if (!twitchUser) {
+            // Intentar con el método alternativo si el primero falló
+            if (!/[a-zA-Z]/.test(channelIdOrUsername)) {
+              console.log(`Intentando como nombre de usuario como respaldo: ${channelIdOrUsername}`);
+              twitchUser = await getTwitchUserDetailsByLogin(channelIdOrUsername);
+            } else {
+              console.log(`Intentando como ID numérico como respaldo: ${channelIdOrUsername}`);
+              twitchUser = await getTwitchUserDetails(channelIdOrUsername);
+            }
+          }
           
           if (!twitchUser) {
             return res.status(404).json({ error: "No se encontró el canal de Twitch" });
           }
+          
+          console.log(`Canal de Twitch encontrado: ${twitchUser.display_name} (ID: ${twitchUser.id})`);
+          
           
           // Verificar si el canal ya existe
           channel = await storage.getChannelByExternalId(twitchUser.id);
