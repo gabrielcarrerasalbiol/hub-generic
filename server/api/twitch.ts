@@ -229,6 +229,38 @@ export async function getTwitchUserDetails(userId: string): Promise<TwitchUser |
 }
 
 /**
+ * Obtiene detalles de un usuario/canal de Twitch por nombre de login
+ * @param login Nombre de login del usuario en Twitch (ej: 'elchiringuitodirectoo')
+ * @returns Detalles del usuario si existe, o null si no se encuentra
+ */
+export async function getTwitchUserDetailsByLogin(login: string): Promise<TwitchUser | null> {
+  try {
+    const token = await getTwitchAccessToken();
+    if (!token) return null;
+    
+    console.log(`Buscando canal de Twitch con login: "${login}"`);
+    
+    const response = await axios.get(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(login)}`, {
+      headers: {
+        'Client-ID': process.env.TWITCH_CLIENT_ID || '',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    console.log("Respuesta de la API de Twitch:", JSON.stringify(response.data, null, 2));
+    
+    if (response.data && response.data.data && response.data.data.length > 0) {
+      return response.data.data[0];
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error al obtener detalles del usuario en Twitch por login:", error);
+    return null;
+  }
+}
+
+/**
  * Convierte un video de Twitch al formato de esquema de nuestra aplicación
  * @param video Video de Twitch
  * @param category ID de la categoría (opcional, se establecerá mediante IA si no se proporciona)
