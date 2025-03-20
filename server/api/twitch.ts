@@ -6,6 +6,10 @@
 import axios from "axios";
 import { InsertVideo, InsertChannel } from "@shared/schema";
 import { AIService } from "../services/aiService";
+
+// Variables para propósitos de depuración
+let lastTwitchApiCall = '';
+let lastTwitchApiResponse = {};
 import { storage } from "../storage";
 import { processVideoNotifications } from "./notificationService";
 
@@ -250,12 +254,18 @@ export async function getTwitchUserDetailsByLogin(login: string): Promise<Twitch
     console.log(`Buscando canal de Twitch con login: "${cleanLogin}"`);
     
     try {
-      const response = await axios.get(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(cleanLogin)}`, {
+      // Guardamos los datos de la llamada para debugging
+      lastTwitchApiCall = `https://api.twitch.tv/helix/users?login=${encodeURIComponent(cleanLogin)}`;
+      
+      const response = await axios.get(lastTwitchApiCall, {
         headers: {
           'Client-ID': process.env.TWITCH_CLIENT_ID || '',
           'Authorization': `Bearer ${token}`
         }
       });
+      
+      // Guardar respuesta para debugging
+      lastTwitchApiResponse = response.data || {};
       
       console.log("Respuesta de la API de Twitch:", JSON.stringify(response.data, null, 2));
       
@@ -271,12 +281,18 @@ export async function getTwitchUserDetailsByLogin(login: string): Promise<Twitch
       // Intentar con una búsqueda general si falla la búsqueda por login exacto
       try {
         console.log(`Intentando búsqueda general para '${cleanLogin}'...`);
-        const searchResponse = await axios.get(`https://api.twitch.tv/helix/search/channels?query=${encodeURIComponent(cleanLogin)}&first=1`, {
+        const searchUrl = `https://api.twitch.tv/helix/search/channels?query=${encodeURIComponent(cleanLogin)}&first=1`;
+        lastTwitchApiCall = searchUrl;
+        
+        const searchResponse = await axios.get(searchUrl, {
           headers: {
             'Client-ID': process.env.TWITCH_CLIENT_ID || '',
             'Authorization': `Bearer ${token}`
           }
         });
+        
+        lastTwitchApiResponse = searchResponse.data || {};
+        console.log("Resultado de la búsqueda general:", JSON.stringify(searchResponse.data, null, 2));
         
         if (searchResponse.data && searchResponse.data.data && searchResponse.data.data.length > 0) {
           console.log(`Búsqueda general encontró canal similar: ${searchResponse.data.data[0].display_name}`);

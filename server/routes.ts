@@ -2270,6 +2270,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const matches = url.match(/twitch\.tv\/([^\/\?]+)/);
         channelIdOrUsername = matches ? matches[1] : "";
         channelPlatform = "twitch";
+        
+        console.log(`URL de Twitch decodificada: nombre de usuario = "${channelIdOrUsername}"`);
+        
+        // Limpiar nombre de usuario - quitar caracteres no válidos
+        if (channelIdOrUsername.startsWith('@')) {
+          channelIdOrUsername = channelIdOrUsername.substring(1);
+        }
       } else if (url.includes("twitter.com") || url.includes("x.com")) {
         // Extraer ID de canal de Twitter
         const matches = url.match(/(?:twitter\.com|x\.com)\/([^\/\?]+)/);
