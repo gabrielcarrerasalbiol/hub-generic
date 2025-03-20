@@ -96,15 +96,15 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   };
 
   return (
-    <header className="bg-white dark:bg-[#2A2040] dark:text-white shadow-md sticky top-0 z-50 border-b-4 border-[#FDBE11] w-full">
+    <header className="bg-white dark:bg-[#2A2040] dark:text-white shadow-md sticky top-0 z-50 border-b-4 border-[#FDBE11] w-full overflow-x-hidden">
       <div className="w-full px-4 mx-auto">
         <div className="flex items-center justify-between py-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 shrink-0">
               <img 
                 src="/hubmadridista.png" 
                 alt="Hub Madridista Logo" 
-                className="h-14" 
+                className="h-12 sm:h-14" 
               />
               <span className="font-bold text-lg hidden md:inline">
                 <span className="text-[#362C5A] dark:text-[#9D8FDD]">Hub</span><span className="text-[#FFD700] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Madridista</span>
@@ -148,7 +148,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           </div>
           
           {/* User Menu */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-1 sm:space-x-4 shrink-0">
             {/* Language Selector */}
             <LanguageSelector />
             
