@@ -236,26 +236,60 @@ export async function getTwitchUserDetails(userId: string): Promise<TwitchUser |
 export async function getTwitchUserDetailsByLogin(login: string): Promise<TwitchUser | null> {
   try {
     const token = await getTwitchAccessToken();
-    if (!token) return null;
-    
-    console.log(`Buscando canal de Twitch con login: "${login}"`);
-    
-    const response = await axios.get(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(login)}`, {
-      headers: {
-        'Client-ID': process.env.TWITCH_CLIENT_ID || '',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    
-    console.log("Respuesta de la API de Twitch:", JSON.stringify(response.data, null, 2));
-    
-    if (response.data && response.data.data && response.data.data.length > 0) {
-      return response.data.data[0];
+    if (!token) {
+      console.error("No se pudo obtener el token de acceso para Twitch");
+      return null;
     }
     
-    return null;
-  } catch (error) {
-    console.error("Error al obtener detalles del usuario en Twitch por login:", error);
+    // Limpiar el nombre de usuario - quitar caracteres no válidos y asegurarse de que no tenga prefijo @
+    let cleanLogin = login.trim();
+    if (cleanLogin.startsWith('@')) {
+      cleanLogin = cleanLogin.substring(1);
+    }
+    
+    console.log(`Buscando canal de Twitch con login: "${cleanLogin}"`);
+    
+    try {
+      const response = await axios.get(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(cleanLogin)}`, {
+        headers: {
+          'Client-ID': process.env.TWITCH_CLIENT_ID || '',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log("Respuesta de la API de Twitch:", JSON.stringify(response.data, null, 2));
+      
+      if (response.data && response.data.data && response.data.data.length > 0) {
+        return response.data.data[0];
+      } else {
+        console.log(`No se encontró usuario de Twitch con login: ${cleanLogin}`);
+        return null;
+      }
+    } catch (apiError: any) {
+      console.error(`Error en la API de Twitch al buscar el login '${cleanLogin}':`, apiError.response?.data || apiError.message);
+      
+      // Intentar con una búsqueda general si falla la búsqueda por login exacto
+      try {
+        console.log(`Intentando búsqueda general para '${cleanLogin}'...`);
+        const searchResponse = await axios.get(`https://api.twitch.tv/helix/search/channels?query=${encodeURIComponent(cleanLogin)}&first=1`, {
+          headers: {
+            'Client-ID': process.env.TWITCH_CLIENT_ID || '',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (searchResponse.data && searchResponse.data.data && searchResponse.data.data.length > 0) {
+          console.log(`Búsqueda general encontró canal similar: ${searchResponse.data.data[0].display_name}`);
+          return searchResponse.data.data[0];
+        }
+      } catch (searchError) {
+        console.error("Error en búsqueda alternativa:", searchError);
+      }
+      
+      return null;
+    }
+  } catch (error: any) {
+    console.error("Error general al obtener detalles del usuario en Twitch:", error.message);
     return null;
   }
 }
