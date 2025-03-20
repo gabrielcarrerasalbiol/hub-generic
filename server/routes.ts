@@ -1670,115 +1670,197 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Agregar un canal premium por URL directa de YouTube
+  // Agregar un canal premium por URL directa de YouTube o Twitch
   app.post("/api/premium-channels/add-by-url", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
-      const { youtubeUrl, priority, notes } = req.body;
+      const { channelUrl, platform = "youtube", priority, notes } = req.body;
+      const youtubeUrl = platform === "youtube" ? channelUrl : null; // Para compatibilidad con código existente
       
-      if (!youtubeUrl) {
-        return res.status(400).json({ error: "Se requiere la URL del canal de YouTube" });
+      if (!channelUrl) {
+        return res.status(400).json({ error: "Se requiere la URL del canal" });
       }
       
-      console.log("URL del canal recibida:", youtubeUrl);
-      
-      // Extraer el ID del canal de YouTube de la URL
-      let channelIdOrUsername = '';
-      let channelId = '';
-      
-      try {
-        // Para manejar caracteres especiales como 'Ñ', aseguramos que la URL esté decodificada correctamente
-        const decodedUrl = decodeURI(youtubeUrl);
-        const url = new URL(decodedUrl);
-        
-        // Obtener el path de la URL correctamente decodificado
-        const pathParts = url.pathname.split('/').filter(Boolean);
-        
-        console.log("URL decodificada:", decodedUrl);
-        console.log("Partes de la ruta:", pathParts);
-        
-        // Manejar formatos especiales
-        if (pathParts.length >= 1) {
-          // Formato: youtube.com/@username
-          if (pathParts[0].startsWith('@')) {
-            channelIdOrUsername = pathParts[0];
-          }
-          // Formato: youtube.com/channel/UC...
-          else if (pathParts[0] === 'channel' && pathParts.length >= 2) {
-            channelIdOrUsername = pathParts[1];
-          } 
-          // Formato: youtube.com/c/nombre o youtube.com/user/nombre
-          else if ((pathParts[0] === 'c' || pathParts[0] === 'user') && pathParts.length >= 2) {
-            // Para canales con caracteres especiales, usamos el nombre decodificado directamente
-            channelIdOrUsername = decodeURIComponent(pathParts[1]);
-            console.log("Usando nombre de canal decodificado:", channelIdOrUsername);
-          }
-          // Formato: youtube.com/nombrecanal
-          else {
-            channelIdOrUsername = pathParts[0];
-          }
-        }
-      } catch (error) {
-        console.error("Error al procesar URL:", error);
-        return res.status(400).json({ error: "URL de YouTube no válida" });
+      if (!["youtube", "twitch"].includes(platform)) {
+        return res.status(400).json({ error: "Plataforma no válida. Se admite youtube o twitch" });
       }
       
-      if (!channelIdOrUsername) {
-        return res.status(400).json({ error: "No se pudo extraer el ID o nombre del canal de la URL" });
-      }
+      console.log(`URL del canal de ${platform} recibida:`, channelUrl);
       
-      // Importar los módulos necesarios
-      const { getYouTubeChannelDetails, convertYouTubeChannelToSchema } = await import("./api/youtube");
-      
-      try {
-        console.log(`Buscando canal de YouTube con identificador: "${channelIdOrUsername}"`);
+      // Procesar la URL según la plataforma seleccionada
+      if (platform === "youtube") {
+        let youtubeChannelId = '';
+        let youtubeChannelUsername = '';
         
-        // Buscar detalles del canal
-        const channelDetails = await getYouTubeChannelDetails([channelIdOrUsername]);
-        console.log("Respuesta de la API de YouTube:", JSON.stringify(channelDetails, null, 2));
-        
-        if (!channelDetails.items || channelDetails.items.length === 0) {
-          return res.status(404).json({ error: "No se encontró el canal de YouTube" });
-        }
-        
-        const channelInfo = channelDetails.items[0];
-        channelId = channelInfo.id;
-        
-        // Verificar si el canal ya existe en la base de datos
-        let channel = await storage.getChannelByExternalId(channelId);
-        
-        // Si no existe, crearlo
-        if (!channel) {
-          const channelData = convertYouTubeChannelToSchema(channelInfo);
-          channel = await storage.createChannel(channelData);
-        }
-        
-        // Verificar que no sea ya un canal premium
-        const isPremium = await storage.isPremiumChannel(channel.id);
-        if (isPremium) {
-          return res.status(400).json({ error: "Este canal ya es premium" });
-        }
-        
-        // Agregar como canal premium - usar el ID del usuario autenticado
-        const premiumChannel = await storage.addPremiumChannel({
-          channelId: channel.id,
-          priority: priority || 5,
-          notes: notes || null,
-          addedById: req.user?.id // ID del usuario autenticado que está añadiendo el canal
-        });
-        
-        res.status(201).json({
-          message: "Canal premium añadido correctamente desde URL",
-          channel: {
-            ...premiumChannel,
-            channelDetails: channel
+        try {
+          // Para manejar caracteres especiales como 'Ñ', aseguramos que la URL esté decodificada correctamente
+          const decodedUrl = decodeURI(channelUrl);
+          const url = new URL(decodedUrl);
+          
+          // Obtener el path de la URL correctamente decodificado
+          const pathParts = url.pathname.split('/').filter(Boolean);
+          
+          console.log("URL de YouTube decodificada:", decodedUrl);
+          console.log("Partes de la ruta:", pathParts);
+          
+          // Manejar formatos especiales
+          if (pathParts.length >= 1) {
+            // Formato: youtube.com/@username
+            if (pathParts[0].startsWith('@')) {
+              youtubeChannelUsername = pathParts[0];
+            }
+            // Formato: youtube.com/channel/UC...
+            else if (pathParts[0] === 'channel' && pathParts.length >= 2) {
+              youtubeChannelId = pathParts[1];
+            } 
+            // Formato: youtube.com/c/nombre o youtube.com/user/nombre
+            else if ((pathParts[0] === 'c' || pathParts[0] === 'user') && pathParts.length >= 2) {
+              // Para canales con caracteres especiales, usamos el nombre decodificado directamente
+              youtubeChannelUsername = decodeURIComponent(pathParts[1]);
+              console.log("Usando nombre de canal decodificado:", youtubeChannelUsername);
+            }
+            // Formato: youtube.com/nombrecanal
+            else {
+              youtubeChannelUsername = pathParts[0];
+            }
           }
-        });
-      } catch (error: any) {
-        console.error("Error fetching YouTube channel:", error);
-        res.status(500).json({ 
-          error: "Error al obtener información del canal de YouTube",
-          details: error.message
-        });
+          
+          // Usar el ID del canal si está disponible, de lo contrario usar el nombre de usuario
+          const channelIdentifier = youtubeChannelId || youtubeChannelUsername;
+          
+          if (!channelIdentifier) {
+            return res.status(400).json({ error: "No se pudo extraer el ID o nombre del canal de la URL de YouTube" });
+          }
+          
+          // Importar los módulos necesarios
+          const { getYouTubeChannelDetails, convertYouTubeChannelToSchema } = await import("./api/youtube");
+          
+          console.log(`Buscando canal de YouTube con identificador: "${channelIdentifier}"`);
+          
+          // Buscar detalles del canal
+          const channelDetails = await getYouTubeChannelDetails([channelIdentifier]);
+          console.log("Respuesta de la API de YouTube:", JSON.stringify(channelDetails, null, 2));
+          
+          if (!channelDetails.items || channelDetails.items.length === 0) {
+            return res.status(404).json({ error: "No se encontró el canal de YouTube" });
+          }
+          
+          const channelInfo = channelDetails.items[0];
+          const channelId = channelInfo.id;
+          
+          // Verificar si el canal ya existe en la base de datos
+          let channel = await storage.getChannelByExternalId(channelId);
+          
+          // Si no existe, crearlo
+          if (!channel) {
+            const channelData = convertYouTubeChannelToSchema(channelInfo);
+            channel = await storage.createChannel(channelData);
+          }
+          
+          // Verificar que no sea ya un canal premium
+          const isPremium = await storage.isPremiumChannel(channel.id);
+          if (isPremium) {
+            return res.status(400).json({ error: "Este canal ya es premium" });
+          }
+          
+          // Agregar como canal premium - usar el ID del usuario autenticado
+          const premiumChannel = await storage.addPremiumChannel({
+            channelId: channel.id,
+            priority: priority || 5,
+            notes: notes || null,
+            addedById: req.user?.id // ID del usuario autenticado que está añadiendo el canal
+          });
+          
+          res.status(201).json({
+            message: "Canal premium de YouTube añadido correctamente",
+            channel: {
+              ...premiumChannel,
+              channelDetails: channel
+            }
+          });
+        } catch (error: any) {
+          console.error("Error fetching YouTube channel:", error);
+          res.status(500).json({ 
+            error: "Error al obtener información del canal de YouTube",
+            details: error.message
+          });
+        }
+      }
+      // Procesamiento para canales de Twitch
+      else if (platform === "twitch") {
+        try {
+          // Extraer el nombre de login del canal de Twitch de la URL
+          let twitchUsername = '';
+          
+          try {
+            const decodedUrl = decodeURI(channelUrl);
+            const url = new URL(decodedUrl);
+            
+            // Obtener el path de la URL correctamente decodificado
+            const pathParts = url.pathname.split('/').filter(Boolean);
+            
+            console.log("URL de Twitch decodificada:", decodedUrl);
+            console.log("Partes de la ruta:", pathParts);
+            
+            // Obtener el nombre de usuario de la URL (twitch.tv/username)
+            if (pathParts.length >= 1) {
+              twitchUsername = pathParts[0];
+            }
+          } catch (error) {
+            console.error("Error al procesar URL de Twitch:", error);
+            return res.status(400).json({ error: "URL de Twitch no válida" });
+          }
+          
+          if (!twitchUsername) {
+            return res.status(400).json({ error: "No se pudo extraer el nombre de usuario del canal de Twitch" });
+          }
+          
+          // Importar los módulos necesarios
+          const { getTwitchUserDetailsByLogin, convertTwitchChannelToSchema } = await import("./api/twitch");
+          
+          // Buscar detalles del canal de Twitch
+          const twitchUser = await getTwitchUserDetailsByLogin(twitchUsername);
+          
+          if (!twitchUser) {
+            return res.status(404).json({ error: "No se encontró el canal de Twitch" });
+          }
+          
+          // Verificar si el canal ya existe en la base de datos
+          let channel = await storage.getChannelByExternalId(twitchUser.id);
+          
+          // Si no existe, crearlo
+          if (!channel) {
+            const channelData = convertTwitchChannelToSchema(twitchUser);
+            channel = await storage.createChannel(channelData);
+          }
+          
+          // Verificar que no sea ya un canal premium
+          const isPremium = await storage.isPremiumChannel(channel.id);
+          if (isPremium) {
+            return res.status(400).json({ error: "Este canal ya es premium" });
+          }
+          
+          // Agregar como canal premium - usar el ID del usuario autenticado
+          const premiumChannel = await storage.addPremiumChannel({
+            channelId: channel.id,
+            priority: priority || 5,
+            notes: notes || null,
+            addedById: req.user?.id // ID del usuario autenticado que está añadiendo el canal
+          });
+          
+          res.status(201).json({
+            message: "Canal premium de Twitch añadido correctamente",
+            channel: {
+              ...premiumChannel,
+              channelDetails: channel
+            }
+          });
+        } catch (error: any) {
+          console.error("Error fetching Twitch channel:", error);
+          res.status(500).json({ 
+            error: "Error al obtener información del canal de Twitch",
+            details: error.message
+          });
+        }
       }
     } catch (error: any) {
       console.error("Error adding premium channel from URL:", error);
