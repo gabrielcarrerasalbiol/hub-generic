@@ -44,7 +44,8 @@ export default function VideoPage() {
     queryKey: [`/api/channels/${video?.channelId}/subscription`],
     queryFn: getQueryFn<SubscriptionStatusResponse>({ on401: 'returnNull' }),
     enabled: !!user && !!video?.channelId,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false, // Desactivamos el refresco automático al cambiar de pestaña
+    staleTime: 1000 * 60 * 30, // 30 minutos
   });
 
   // Fetch related videos
