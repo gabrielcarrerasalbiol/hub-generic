@@ -474,7 +474,7 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.latestVideos')}</h2>
         
         {isLatestLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {[...Array(12)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="w-full aspect-video" />
@@ -493,7 +493,7 @@ export default function Home() {
             ))}
           </div>
         ) : latestVideos.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {/* Mostramos solo los primeros 12 videos (3 filas de 4 columnas) */}
             {latestVideos.slice(0, 12).map((video) => (
               <VideoCard key={video.id} video={video} />
@@ -511,7 +511,7 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.popularVideosThisWeek')}</h2>
         
         {isTrendingLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {[...Array(12)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="w-full aspect-video" />
@@ -530,7 +530,7 @@ export default function Home() {
             ))}
           </div>
         ) : trendingVideosWithoutFeatured.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {/* Mostramos solo los primeros 12 videos (3 filas de 4 columnas) */}
             {trendingVideosWithoutFeatured.slice(0, 12).map((video) => (
               <VideoCard key={video.id} video={video} />
@@ -568,7 +568,7 @@ export default function Home() {
         <h2 className="text-xl font-bold mb-4 text-white border-l-4 border-[#FDBE11] pl-3 relative z-10">{t('home.recommendedChannels')}</h2>
         
         {isChannelsLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {[...Array(8)].map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="h-24 w-full" />

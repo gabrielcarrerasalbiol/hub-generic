@@ -382,7 +382,7 @@ export default function VideosPage() {
               </div>
             </div>
           ) : isFilteredLoading || isFilteredFetching ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {Array(12).fill(0).map((_, index) => (
                 <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                   <Skeleton className="w-full aspect-video" />
@@ -404,7 +404,7 @@ export default function VideosPage() {
             <div className="bg-white rounded-lg shadow-md p-8 text-center border border-slate-200">
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                  <Searcharch className="h-8 w-8 text-slate-400" />
+                  <Search className="h-8 w-8 text-slate-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-[#001C58] mb-2">No se encontraron resultados</h3>
                 <p className="text-gray-600 mb-6 max-w-xl mx-auto">
@@ -439,7 +439,7 @@ export default function VideosPage() {
               </div>
 
               {/* Cuadrícula de videos */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
                 {displayedVideos.map((video) => (
                   <VideoCard key={video.id} video={video} />
                 ))}
