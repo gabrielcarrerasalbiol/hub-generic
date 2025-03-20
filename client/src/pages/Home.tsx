@@ -588,7 +588,7 @@ export default function Home() {
             ))}
           </div>
         ) : recommendedChannels.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {/* Mostramos solo hasta 8 canales (2 filas de 4) */}
             {recommendedChannels.slice(0, 8).map((channel) => (
               <ChannelCard key={channel.id} channel={channel} />
