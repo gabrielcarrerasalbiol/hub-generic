@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from "@/hooks/useAuth";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Menu } from "lucide-react";
 
 type LayoutProps = {
   children: ReactNode;
@@ -59,7 +59,7 @@ export default function Layout({ children, fullWidth = false }: LayoutProps) {
             className="md:hidden fixed bottom-5 right-5 bg-[#FDBE11] text-[#001C58] rounded-full p-3 shadow-lg z-40"
             aria-label="Toggle Sidebar"
           >
-            <i className="fas fa-bars"></i>
+            <Menu className="h-5 w-5" />
           </button>
         )}
         
