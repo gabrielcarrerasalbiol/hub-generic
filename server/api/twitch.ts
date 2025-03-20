@@ -157,10 +157,12 @@ export async function searchTwitchVideos(query = "Real Madrid", maxResults = 10)
     }
     
     // Filtrar videos que contienen los términos de búsqueda en el título
+    // Para Twitch ampliamos palabras clave para capturar más contenido
     const keywords = [
       "real madrid", "madrid", "bernabeu", "santiago bernabeu", 
       "la liga", "champions", "copa del rey", "kroos", "modric", 
-      "vinicius", "bellingham", "ancelotti"
+      "vinicius", "bellingham", "ancelotti", "chiringuito", 
+      "jugones", "directo", "futbol", "liga", "deportes", "pedrerol"
     ];
     
     return videos.filter(video => {
@@ -470,29 +472,48 @@ export async function importTwitchChannelVideos(channelId: string, maxResults = 
           continue;
         }
         
-        // Filtrar videos con pocas visualizaciones
-        if (video.view_count < MIN_VIEW_COUNT) {
+        // Para canales específicos como "El Chiringuito", aceptamos todos los videos
+        // porque son muy relevantes aunque tengan pocas visualizaciones
+        const lowViewChannelExceptions = ["elchiringuitodirectoo", "elchiringuitoenvivo", "jugoneslmoficial"];
+        
+        // Sólo filtramos por visualizaciones si no es uno de los canales de excepción
+        if (video.view_count < MIN_VIEW_COUNT && 
+            !lowViewChannelExceptions.includes(userData.login.toLowerCase())) {
           console.log(`Ignorando video de Twitch ${video.id} con solo ${video.view_count} visualizaciones`);
           skippedCount++;
           continue;
         }
         
-        // Filtrar por relevancia: el título o descripción debe contener palabras clave de Real Madrid
-        const keywords = [
-          "real madrid", "madrid", "bernabeu", "santiago bernabeu", 
-          "la liga", "champions", "copa del rey", "kroos", "modric", 
-          "vinicius", "bellingham", "ancelotti", "merengue"
-        ];
+        // Para canales específicos como "El Chiringuito", permitimos todos sus videos
+        // sin filtro adicional de palabras clave
+        const skipKeywordCheckChannels = ["elchiringuitodirectoo", "elchiringuitoenvivo", "jugoneslmoficial"];
         
-        const title = video.title.toLowerCase();
-        const desc = video.description?.toLowerCase() || '';
-        const isRelevant = keywords.some(keyword => title.includes(keyword) || desc.includes(keyword));
-        
-        if (!isRelevant) {
-          console.log(`Ignorando video no relevante: ${video.title}`);
-          skippedCount++;
-          continue;
+        // Si es uno de los canales de excepción, no hacemos filtrado de palabras clave
+        if (skipKeywordCheckChannels.includes(userData.login.toLowerCase())) {
+          console.log(`Canal prioritario ${userData.login}: Omitiendo filtro de palabras clave`);
+        } else {
+          // Filtrar por relevancia: el título o descripción debe contener palabras clave de Real Madrid
+          // Para Twitch ampliamos el conjunto de palabras clave para capturar más contenido
+          const keywords = [
+            "real madrid", "madrid", "bernabeu", "santiago bernabeu", 
+            "la liga", "champions", "copa del rey", "kroos", "modric", 
+            "vinicius", "bellingham", "ancelotti", "merengue", "chiringuito", 
+            "jugones", "directo", "futbol", "liga", "deportes", "pedrerol", "jota"
+          ];
+          
+          const title = video.title.toLowerCase();
+          const desc = video.description?.toLowerCase() || '';
+          const isRelevant = keywords.some(keyword => title.includes(keyword) || desc.includes(keyword));
+          
+          if (!isRelevant) {
+            console.log(`Ignorando video no relevante: ${video.title}`);
+            skippedCount++;
+            continue;
+          }
         }
+        
+        // Este código está duplicado y debe ser eliminado
+        // ya que ya se ha manejado en el bloque condicional anterior
         
         // Convertir al formato de esquema
         const videoData = convertTwitchVideoToSchema(video);
