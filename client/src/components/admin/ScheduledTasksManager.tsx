@@ -89,7 +89,7 @@ export default function ScheduledTasksManager() {
 
   // Mutación para ejecutar todas las tareas ahora
   const runTasksNowMutation = useMutation({
-    mutationFn: () => apiRequest('/api/scheduled-tasks/run-now', 'POST'),
+    mutationFn: () => apiRequest('/api/scheduled-tasks/run-now', 'POST', {}),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/scheduled-tasks'] });
       toast({
@@ -98,6 +98,7 @@ export default function ScheduledTasksManager() {
       });
     },
     onError: (error) => {
+      console.error("Error al ejecutar tareas:", error);
       toast({
         title: "Error",
         description: "No se pudieron ejecutar las tareas programadas",

@@ -7,6 +7,10 @@ import { searchYouTubeVideos, getYouTubeVideoDetails, getYouTubeChannelDetails, 
 import { recategorizeVideo, recategorizeAllVideos } from "./api/categoryUpdater";
 import { generateSummaryForVideo, generateSummariesForAllVideos } from "./api/summaryUpdater";
 import { checkUnavailableVideos, deleteUnavailableVideos } from "./api/videoValidator";
+import { executeTasksManually } from "./scheduledTasks";
+import { db } from "./db";
+import * as schema from "../shared/schema";
+import { eq } from "drizzle-orm";
 import { 
   getStatisticsOverview, 
   getStatisticsByCategory, 
@@ -4474,17 +4478,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/scheduled-tasks/run-now", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
+      console.log('[scheduledTasksManager] Iniciando ejecución manual de tareas programadas...');
+      console.log('[scheduledTasksManager] Llamando a executeManualImport()...');
       const result = await executeTasksManually();
+      console.log(`[scheduledTasksManager] executeManualImport() completado con éxito. Resultado: ${JSON.stringify(result)}`);
+      
+      // Actualizar el tiempo de última ejecución de las tareas
+      console.log('[scheduledTasksManager] Obteniendo configuraciones de tareas...');
+      const tasks = await db.select().from(schema.scheduledTasksConfig);
+      console.log(`[scheduledTasksManager] Encontradas ${tasks.length} configuraciones de tareas`);
+      
+      // Actualizar lastRun para cada tarea
+      for (const task of tasks) {
+        console.log(`[scheduledTasksManager] Actualizando lastRun para tarea ${task.taskName} (ID: ${task.id})`);
+        await db.update(schema.scheduledTasksConfig)
+          .set({ 
+            lastRun: new Date(),
+            updatedAt: new Date() 
+          })
+          .where(eq(schema.scheduledTasksConfig.id, task.id));
+      }
+      
+      console.log('[scheduledTasksManager] Ejecución manual de tareas completada con éxito');
       res.json({
         success: true,
         message: "Tareas ejecutadas manualmente con éxito",
         result
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error executing scheduled tasks manually:", error);
       res.status(500).json({ 
-        message: "Failed to execute scheduled tasks",
-        error: error.message
+        success: false,
+        message: "Error al ejecutar tareas programadas",
+        error: error?.message || "Error desconocido"
       });
     }
   });
