@@ -184,78 +184,96 @@ export default function ScheduledTasksManager() {
               Error al cargar las tareas programadas
             </div>
           ) : (
-            <Table>
-              <TableCaption>Lista de tareas programadas</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Descripción</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Expresión Cron</TableHead>
-                  <TableHead>Última ejecución</TableHead>
-                  <TableHead>Próxima ejecución</TableHead>
-                  <TableHead>Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tasks.map((task: ScheduledTask) => (
-                  <TableRow key={task.id}>
-                    <TableCell className="font-medium">{task.taskName}</TableCell>
-                    <TableCell>{task.description}</TableCell>
-                    <TableCell>
-                      {editingTaskId === task.id ? (
-                        <Switch 
-                          checked={editedTask.enabled} 
-                          onCheckedChange={(checked) => setEditedTask({...editedTask, enabled: checked})}
-                        />
-                      ) : (
-                        <div className="flex items-center">
-                          <div className={`h-2.5 w-2.5 rounded-full mr-2 ${task.enabled ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                          {task.enabled ? 'Activo' : 'Inactivo'}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {editingTaskId === task.id ? (
-                        <Input
-                          value={editedTask.cronExpression}
-                          onChange={(e) => setEditedTask({...editedTask, cronExpression: e.target.value})}
-                        />
-                      ) : (
-                        task.cronExpression
-                      )}
-                    </TableCell>
-                    <TableCell>{formatDate(task.lastRun)}</TableCell>
-                    <TableCell>{formatDate(task.nextRun)}</TableCell>
-                    <TableCell>
-                      {editingTaskId === task.id ? (
-                        <div className="flex space-x-2">
-                          <Button size="sm" onClick={handleSaveTask}>Guardar</Button>
-                          <Button size="sm" variant="outline" onClick={handleCancelEdit}>Cancelar</Button>
-                        </div>
-                      ) : (
-                        <div className="flex space-x-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            onClick={() => handleEditTask(task)}
-                          >
-                            Editar
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant={task.enabled ? 'destructive' : 'default'}
-                            onClick={() => handleToggleEnabled(task.id, task.enabled)}
-                          >
-                            {task.enabled ? 'Desactivar' : 'Activar'}
-                          </Button>
-                        </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div>
+              <div className="font-medium mb-4 flex flex-col space-y-2">
+                <div className="bg-blue-50 p-3 rounded-md text-blue-800 text-sm">
+                  <p className="font-bold">Estado:</p>
+                  <p>✓ Tareas programadas configuradas: {tasks.length}</p>
+                  <p>✓ Importación completa: Diariamente a medianoche</p>
+                  <p>✓ Actualización parcial: Diariamente a mediodía</p>
+                </div>
+                
+                <pre className="bg-gray-100 p-3 rounded-md overflow-auto text-xs">
+                  {JSON.stringify(tasks, null, 2)}
+                </pre>
+              </div>
+              
+              <div className="mt-4">
+                <p className="text-sm text-gray-600 mb-2">Configuración actual:</p>
+                <Table>
+                  <TableCaption>Lista de tareas programadas</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nombre</TableHead>
+                      <TableHead>Descripción</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead>Expresión Cron</TableHead>
+                      <TableHead>Última ejecución</TableHead>
+                      <TableHead>Próxima ejecución</TableHead>
+                      <TableHead>Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {tasks.map((task: ScheduledTask) => (
+                      <TableRow key={task.id}>
+                        <TableCell className="font-medium">{task.taskName}</TableCell>
+                        <TableCell>{task.description}</TableCell>
+                        <TableCell>
+                          {editingTaskId === task.id ? (
+                            <Switch 
+                              checked={editedTask.enabled} 
+                              onCheckedChange={(checked) => setEditedTask({...editedTask, enabled: checked})}
+                            />
+                          ) : (
+                            <div className="flex items-center">
+                              <div className={`h-2.5 w-2.5 rounded-full mr-2 ${task.enabled ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                              {task.enabled ? 'Activo' : 'Inactivo'}
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingTaskId === task.id ? (
+                            <Input
+                              value={editedTask.cronExpression}
+                              onChange={(e) => setEditedTask({...editedTask, cronExpression: e.target.value})}
+                            />
+                          ) : (
+                            task.cronExpression
+                          )}
+                        </TableCell>
+                        <TableCell>{formatDate(task.lastRun)}</TableCell>
+                        <TableCell>{formatDate(task.nextRun)}</TableCell>
+                        <TableCell>
+                          {editingTaskId === task.id ? (
+                            <div className="flex space-x-2">
+                              <Button size="sm" onClick={handleSaveTask}>Guardar</Button>
+                              <Button size="sm" variant="outline" onClick={handleCancelEdit}>Cancelar</Button>
+                            </div>
+                          ) : (
+                            <div className="flex space-x-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => handleEditTask(task)}
+                              >
+                                Editar
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant={task.enabled ? 'destructive' : 'default'}
+                                onClick={() => handleToggleEnabled(task.id, task.enabled)}
+                              >
+                                {task.enabled ? 'Desactivar' : 'Activar'}
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           )}
         </CardContent>
         <CardFooter className="flex justify-between">
