@@ -31,6 +31,7 @@ import { handleNewsletterSubscription } from './api/mailchimpService';
 import { isValidEmail } from './api/emailService';
 import { sendShareEmail } from './api/shareService';
 import { generateGameQuestions, evaluateAnswer, calculateScore } from './api/playerStatsGame';
+import { getStatisticsOverview } from './api/statistics';
 
 // Demo user ID - el ID actual puede variar si se elimina y se vuelve a crear
 // Se debe recuperar dinámicamente cada vez que se necesita
@@ -1378,6 +1379,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Endpoint para verificar disponibilidad de videos 
   // Ahora en dos pasos: primero verificar y luego confirmar el borrado
+  // Endpoint para obtener el conteo total de videos en la base de datos
+  app.get("/api/videos/count", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      // Usando la función de getStatisticsOverview para obtener el conteo total
+      const stats = await getStatisticsOverview();
+      res.json({ total: stats.videoCount });
+    } catch (error) {
+      console.error("Error fetching video count:", error);
+      res.status(500).json({ message: "Failed to fetch video count" });
+    }
+  });
+
   app.post("/api/videos/verify", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
       // Si hay una confirmación para borrar, procesamos los IDs
