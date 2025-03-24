@@ -4458,13 +4458,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/scheduled-tasks/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id, 10);
-      const { enabled, cronExpression, lastRun, nextRun } = req.body;
+      const { enabled, cronExpression } = req.body;
       
       const updatedTask = await updateScheduledTask(id, {
         enabled,
-        cronExpression,
-        lastRun,
-        nextRun
+        cronExpression
       });
       
       res.json(updatedTask);

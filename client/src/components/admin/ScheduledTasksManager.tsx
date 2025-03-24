@@ -48,6 +48,8 @@ interface ScheduledTask {
   createdAt: string;
   updatedAt: string;
   maxItemsToProcess: number | null;
+  createdById: number | null;
+  updatedById: number | null;
 }
 
 export default function ScheduledTasksManager() {
