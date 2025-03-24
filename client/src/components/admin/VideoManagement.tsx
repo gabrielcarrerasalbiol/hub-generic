@@ -87,6 +87,9 @@ export default function VideoManagement() {
   const [visibleVideos, setVisibleVideos] = useState(20);
   const VIDEOS_PER_PAGE = 20;
   
+  // Estado para almacenar el total de videos en la base de datos
+  const [totalVideos, setTotalVideos] = useState<number>(0);
+  
   // Obtener todos los videos con Header para indicar que es una solicitud admin
   // Límite para la carga inicial y bloques adicionales
   const [videosLimit, setVideosLimit] = useState(50);
@@ -114,6 +117,22 @@ export default function VideoManagement() {
     setIsLoadingMore(true);
     setVideosLimit(prev => prev + 50);
   };
+
+  // Obtener el conteo total de videos en la base de datos
+  const {
+    data: videoCount,
+    isLoading: isLoadingCount
+  } = useQuery({
+    queryKey: ['/api/videos/count'],
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+  
+  // Actualizar estado con el conteo total de videos
+  useEffect(() => {
+    if (videoCount && videoCount.total) {
+      setTotalVideos(videoCount.total);
+    }
+  }, [videoCount]);
 
   // Obtener todas las categorías
   const {
@@ -554,9 +573,16 @@ export default function VideoManagement() {
         <h2 className="text-2xl font-bold flex items-center">
           Gestión de Vídeos 
           {!isLoadingVideos && (
-            <Badge variant="outline" className="ml-3 text-sm font-normal bg-blue-50 text-blue-700 border-blue-200">
-              {Array.isArray(videos) ? videos.length : 0} videos totales
-            </Badge>
+            <div className="flex gap-2">
+              <Badge variant="outline" className="ml-3 text-sm font-normal bg-blue-50 text-blue-700 border-blue-200">
+                {Array.isArray(videos) ? videos.length : 0} videos cargados
+              </Badge>
+              {!isLoadingCount && totalVideos > 0 && (
+                <Badge variant="outline" className="text-sm font-normal bg-green-50 text-green-700 border-green-200">
+                  {totalVideos} videos en la base de datos
+                </Badge>
+              )}
+            </div>
           )}
         </h2>
       </div>
