@@ -14,11 +14,11 @@ import {
   Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote,
   Player, InsertPlayer, PlayerStats, InsertPlayerStats,
   StatsGame, InsertStatsGame, StatsGameQuestion, InsertStatsGameQuestion,
-  LoginLog, InsertLoginLog,
+  LoginLog, InsertLoginLog, ScheduledTaskConfig, InsertScheduledTaskConfig,
   users, videos, channels, categories, favorites, oauthTokens,
   channelSubscriptions, notifications, premiumChannels, recommendedChannels,
   viewHistory, comments, polls, pollOptions, pollVotes,
-  players, playerStats, statsGames, statsGameQuestions, loginLogs
+  players, playerStats, statsGames, statsGameQuestions, loginLogs, scheduledTasksConfig
 } from '@shared/schema';
 
 // PostgreSQL implementation of the storage interface
