@@ -132,9 +132,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const platform = req.query.platform || "all";
       const category = req.query.category || "all";
-      // Para solicitudes admin, usamos un límite mucho mayor para obtener todos los videos
+      // Permitimos que el parámetro limit enviado por el cliente tenga prioridad
+      // con un valor predeterminado según el tipo de solicitud
       const isAdminRequest = req.headers['x-admin-request'] === 'true';
-      const limit = isAdminRequest ? 1000 : (parseInt(req.query.limit as string) || 20);
+      const requestedLimit = parseInt(req.query.limit as string);
+      const limit = !isNaN(requestedLimit) ? requestedLimit : (isAdminRequest ? 50 : 20);
       
       if (!PlatformType.safeParse(platform).success) {
         return res.status(400).json({ message: "Invalid platform" });
