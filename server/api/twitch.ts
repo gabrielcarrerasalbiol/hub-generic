@@ -161,8 +161,11 @@ export async function searchTwitchVideos(query = "Real Madrid", maxResults = 10)
     const keywords = [
       "real madrid", "madrid", "bernabeu", "santiago bernabeu", 
       "la liga", "champions", "copa del rey", "kroos", "modric", 
-      "vinicius", "bellingham", "ancelotti", "chiringuito", 
-      "jugones", "directo", "futbol", "liga", "deportes", "pedrerol"
+      "vinicius", "bellingham", "ancelotti", "merengue", "chiringuito", 
+      "jugones", "directo", "futbol", "liga", "deportes", "pedrerol", "jota",
+      "real", "camacho", "florentino", "perez", "valverde", "rodrygo", "nacho",
+      "carvajal", "courtois", "mbappe", "lunin", "hala", "endrick", "rudiger",
+      "alaba", "militao", "tchouameni", "camavinga", "brahim", "guti", "raul"
     ];
     
     return videos.filter(video => {
@@ -459,8 +462,8 @@ export async function importTwitchChannelVideos(channelId: string, maxResults = 
     // Obtener categorías para clasificación IA
     const availableCategories = await storage.getCategories();
     
-    // Umbrales para filtrar videos
-    const MIN_VIEW_COUNT = 100; // Umbral más bajo para Twitch
+    // Umbrales para filtrar videos - Reducimos a 10 visualizaciones para ser más inclusivos con Twitch
+    const MIN_VIEW_COUNT = 10; // Umbral muy bajo para Twitch
     
     // Procesar cada video
     for (const video of videos) {
@@ -472,9 +475,13 @@ export async function importTwitchChannelVideos(channelId: string, maxResults = 
           continue;
         }
         
-        // Para canales específicos como "El Chiringuito", aceptamos todos los videos
+        // Para canales específicos, aceptamos todos los videos
         // porque son muy relevantes aunque tengan pocas visualizaciones
-        const lowViewChannelExceptions = ["elchiringuitodirectoo", "elchiringuitoenvivo", "jugoneslmoficial"];
+        const lowViewChannelExceptions = [
+          "elchiringuitodirectoo", "elchiringuitoenvivo", "jugoneslmoficial", 
+          "real_madrid_hala", "realmadrid", "real_madrid_tvlive", 
+          "real_madrid_vs_huesca2", "real_madridvs_barcelona"
+        ];
         
         // Sólo filtramos por visualizaciones si no es uno de los canales de excepción
         if (video.view_count < MIN_VIEW_COUNT && 
@@ -484,9 +491,13 @@ export async function importTwitchChannelVideos(channelId: string, maxResults = 
           continue;
         }
         
-        // Para canales específicos como "El Chiringuito", permitimos todos sus videos
+        // Para canales específicos, permitimos todos sus videos
         // sin filtro adicional de palabras clave
-        const skipKeywordCheckChannels = ["elchiringuitodirectoo", "elchiringuitoenvivo", "jugoneslmoficial"];
+        const skipKeywordCheckChannels = [
+          "elchiringuitodirectoo", "elchiringuitoenvivo", "jugoneslmoficial",
+          "real_madrid_hala", "realmadrid", "real_madrid_tvlive", 
+          "real_madrid_vs_huesca2", "real_madridvs_barcelona"
+        ];
         
         // Si es uno de los canales de excepción, no hacemos filtrado de palabras clave
         if (skipKeywordCheckChannels.includes(userData.login.toLowerCase())) {
@@ -498,7 +509,10 @@ export async function importTwitchChannelVideos(channelId: string, maxResults = 
             "real madrid", "madrid", "bernabeu", "santiago bernabeu", 
             "la liga", "champions", "copa del rey", "kroos", "modric", 
             "vinicius", "bellingham", "ancelotti", "merengue", "chiringuito", 
-            "jugones", "directo", "futbol", "liga", "deportes", "pedrerol", "jota"
+            "jugones", "directo", "futbol", "liga", "deportes", "pedrerol", "jota",
+            "real", "camacho", "florentino", "perez", "valverde", "rodrygo", "nacho",
+            "carvajal", "courtois", "mbappe", "lunin", "hala", "endrick", "rudiger",
+            "alaba", "militao", "tchouameni", "camavinga", "brahim", "guti", "raul"
           ];
           
           const title = video.title.toLowerCase();
