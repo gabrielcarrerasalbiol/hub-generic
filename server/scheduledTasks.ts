@@ -11,79 +11,90 @@
  * - Generación de resúmenes para videos sin resumen
  */
 
-import { storage } from './storage';
 import { CronJob } from 'cron';
-import { importPremiumChannelsVideos } from './api/videoFetcher';
-import { fetchAndProcessNewVideos } from './api/videoFetcher';
-import { recategorizeAllVideos } from './api/categoryUpdater';
-import { generateSummariesForAllVideos } from './api/summaryUpdater';
 import { log } from './vite';
+import { storage } from './storage';
+import { fetchAndProcessNewVideos } from './api/videoFetcher';
+import { importPremiumChannelsVideos } from './api/videoFetcher';
+// Importamos directamente de los archivos individuales
+import { AIService } from './services/aiService';
+import { recategorizeAllVideos } from './api/categoryUpdater';
+// Comentamos temporalmente para evitar errores de circular imports
+// import { initializeScheduledTasksFromDatabase } from './api/scheduledTasksManager';
 
-const MAX_VIDEOS_PER_CHANNEL = 30; // Número máximo de videos a importar por canal
-const MAX_SEARCH_RESULTS = 50; // Número máximo de videos a buscar en general
+// Variables para almacenar las tareas programadas activas
+let nightlyImportJob: CronJob | null = null;
+let middayUpdateJob: CronJob | null = null;
 
 /**
- * Inicializa y programa las tareas automáticas
+ * Configura e inicia las tareas programadas
  */
 export function setupScheduledTasks(): void {
   log('Configurando tareas programadas...', 'scheduledTasks');
-
-  // Tarea principal a las 00:00 cada día
-  // Formato cron: segundos minutos horas día-del-mes mes día-de-la-semana
-  const dailyImportJob = new CronJob(
-    '0 0 0 * * *', // A las 00:00:00 todos los días
-    executeNightlyTasks,
-    null,
-    false, // No iniciar automáticamente
-    'UTC' // Zona horaria
-  );
-
-  // Tarea adicional a las 12:00 cada día para obtener contenido reciente
-  const midDayUpdateJob = new CronJob(
-    '0 0 12 * * *', // A las 12:00:00 todos los días
-    executePartialUpdate,
-    null,
-    false,
-    'UTC'
-  );
-
-  // Iniciar las tareas programadas
-  dailyImportJob.start();
-  midDayUpdateJob.start();
-
-  log('Tareas programadas configuradas correctamente', 'scheduledTasks');
   
-  // Mostrar próximas ejecuciones
-  log(`Próxima importación completa: ${dailyImportJob.nextDate()}`, 'scheduledTasks');
-  log(`Próxima actualización parcial: ${midDayUpdateJob.nextDate()}`, 'scheduledTasks');
+  // Configurar las tareas predeterminadas sin intentar cargar desde la BD por ahora
+  // Después agregaremos la funcionalidad para cargar desde la BD
+  setupDefaultScheduledTasks();
+  log('Tareas programadas configuradas correctamente', 'scheduledTasks');
+}
+
+/**
+ * Configura las tareas programadas predeterminadas si no se pueden cargar desde la base de datos
+ */
+function setupDefaultScheduledTasks(): void {
+  try {
+    // Importación completa nocturna a las 00:00 UTC
+    nightlyImportJob = new CronJob(
+      '0 0 0 * * *', // A las 00:00:00 todos los días (medianoche)
+      executeNightlyTasks,
+      null,
+      true,
+      'UTC'
+    );
+    
+    // Actualización parcial a las 12:00 UTC
+    middayUpdateJob = new CronJob(
+      '0 0 12 * * *', // A las 12:00:00 todos los días (mediodía)
+      executePartialUpdate,
+      null,
+      true,
+      'UTC'
+    );
+    
+    log('Tareas programadas predeterminadas configuradas correctamente', 'scheduledTasks');
+    log(`Próxima importación completa: ${nightlyImportJob.nextDate().toJSDate()}`, 'scheduledTasks');
+    log(`Próxima actualización parcial: ${middayUpdateJob.nextDate().toJSDate()}`, 'scheduledTasks');
+  } catch (error) {
+    log(`Error al configurar tareas programadas predeterminadas: ${error}`, 'scheduledTasks');
+  }
 }
 
 /**
  * Ejecuta todas las tareas nocturnas programadas
  */
 async function executeNightlyTasks(): Promise<void> {
+  log('Iniciando tareas nocturnas programadas', 'scheduledTasks');
+  
   try {
-    log('Iniciando importación automática nocturna...', 'scheduledTasks');
+    // 1. Importar videos de canales premium
+    const premiumResult = await importPremiumChannelsVideos(50);
+    log(`Importados ${premiumResult.addedVideos} videos premium de ${premiumResult.processedChannels} canales`, 'scheduledTasks');
     
-    // 1. Importar videos de canales premium (más importantes)
-    const premiumImportResult = await importPremiumChannelsVideos(MAX_VIDEOS_PER_CHANNEL);
-    log(`Importación de canales premium completada: ${premiumImportResult.addedVideos} de ${premiumImportResult.totalVideos} videos añadidos`, 'scheduledTasks');
+    // 2. Buscar e importar nuevos videos
+    const newVideosResult = await fetchAndProcessNewVideos(30);
+    log(`Importados ${newVideosResult.added} videos nuevos de ${newVideosResult.total} encontrados`, 'scheduledTasks');
     
-    // 2. Buscar nuevos videos relacionados con el Real Madrid
-    const newVideosResult = await fetchAndProcessNewVideos(MAX_SEARCH_RESULTS);
-    log(`Búsqueda de videos completada: ${newVideosResult.added} de ${newVideosResult.total} videos añadidos`, 'scheduledTasks');
+    // 3. Recategorizar videos sin categoría
+    const recategorizeResult = await recategorizeAllVideos();
+    log(`Recategorizados ${recategorizeResult.success} de ${recategorizeResult.total} videos`, 'scheduledTasks');
     
-    // 3. Recategorizar videos sin categoría o con categorías incompletas
-    const recategorizationResult = await recategorizeAllVideos();
-    log(`Recategorización completada: ${recategorizationResult.success} de ${recategorizationResult.total} videos recategorizados`, 'scheduledTasks');
+    // 4. Generar resúmenes para videos sin resumen (temporalmente deshabilitado)
+    // const summaryResult = await AIService.generateSummariesForVideosWithoutSummary(30);
+    // log(`Generados ${summaryResult.success} de ${summaryResult.total} resúmenes de videos`, 'scheduledTasks');
     
-    // 4. Generar resúmenes para videos sin resumen
-    const summariesResult = await generateSummariesForAllVideos(100);
-    log(`Generación de resúmenes completada: ${summariesResult.success} de ${summariesResult.total} videos actualizados`, 'scheduledTasks');
-    
-    log('Importación automática nocturna completada con éxito', 'scheduledTasks');
+    log('Tareas nocturnas completadas exitosamente', 'scheduledTasks');
   } catch (error) {
-    log(`Error en la importación automática nocturna: ${error}`, 'scheduledTasks');
+    log(`Error al ejecutar tareas nocturnas: ${error}`, 'scheduledTasks');
   }
 }
 
@@ -92,16 +103,20 @@ async function executeNightlyTasks(): Promise<void> {
  * Solo busca nuevos videos, sin realizar tareas intensivas de procesamiento
  */
 async function executePartialUpdate(): Promise<void> {
+  log('Iniciando actualización parcial programada', 'scheduledTasks');
+  
   try {
-    log('Iniciando actualización parcial...', 'scheduledTasks');
+    // 1. Importar videos de canales premium
+    const premiumResult = await importPremiumChannelsVideos(20);
+    log(`Importados ${premiumResult.addedVideos} videos premium de ${premiumResult.processedChannels} canales`, 'scheduledTasks');
     
-    // Solo buscar nuevos videos relevantes de canales premium
-    const premiumImportResult = await importPremiumChannelsVideos(10); // Menos videos que en la actualización nocturna
-    log(`Actualización de canales premium completada: ${premiumImportResult.addedVideos} de ${premiumImportResult.totalVideos} videos añadidos`, 'scheduledTasks');
+    // 2. Buscar e importar solo algunos videos nuevos
+    const newVideosResult = await fetchAndProcessNewVideos(15);
+    log(`Importados ${newVideosResult.added} videos nuevos de ${newVideosResult.total} encontrados`, 'scheduledTasks');
     
-    log('Actualización parcial completada con éxito', 'scheduledTasks');
+    log('Actualización parcial completada exitosamente', 'scheduledTasks');
   } catch (error) {
-    log(`Error en la actualización parcial: ${error}`, 'scheduledTasks');
+    log(`Error al ejecutar actualización parcial: ${error}`, 'scheduledTasks');
   }
 }
 
@@ -110,32 +125,30 @@ async function executePartialUpdate(): Promise<void> {
  * Esta función puede ser llamada desde las rutas API para pruebas
  */
 export async function executeManualImport(): Promise<{
-  premiumVideos: { total: number, added: number },
-  newVideos: { total: number, added: number },
+  premiumVideos: { total: number, added: number, channels: number },
+  newVideos: { total: number, added: number }
 }> {
+  log('Iniciando importación manual solicitada por administrador', 'scheduledTasks');
+  
   try {
-    log('Iniciando importación manual...', 'scheduledTasks');
-    
     // 1. Importar videos de canales premium
-    const premiumImportResult = await importPremiumChannelsVideos(MAX_VIDEOS_PER_CHANNEL);
+    const premiumResult = await importPremiumChannelsVideos(25);
     
-    // 2. Buscar nuevos videos relacionados con el Real Madrid
-    const newVideosResult = await fetchAndProcessNewVideos(MAX_SEARCH_RESULTS);
+    // 2. Buscar e importar nuevos videos
+    const newVideosResult = await fetchAndProcessNewVideos(20);
     
-    log('Importación manual completada con éxito', 'scheduledTasks');
+    log('Importación manual completada exitosamente', 'scheduledTasks');
     
     return {
       premiumVideos: {
-        total: premiumImportResult.totalVideos,
-        added: premiumImportResult.addedVideos
+        total: premiumResult.totalVideos,
+        added: premiumResult.addedVideos,
+        channels: premiumResult.processedChannels
       },
-      newVideos: {
-        total: newVideosResult.total,
-        added: newVideosResult.added
-      }
+      newVideos: newVideosResult
     };
   } catch (error) {
-    log(`Error en la importación manual: ${error}`, 'scheduledTasks');
-    throw error;
+    log(`Error al ejecutar importación manual: ${error}`, 'scheduledTasks');
+    throw new Error(`Error al ejecutar importación manual: ${error}`);
   }
 }
