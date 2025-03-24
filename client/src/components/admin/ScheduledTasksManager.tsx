@@ -1,322 +1,349 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { toast } from '@/hooks/use-toast';
-import { Loader2, Play, Clock, Check, X } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { 
+  Table, 
+  TableBody, 
+  TableCaption, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-// Tipo para la configuración de tareas programadas
-interface ScheduledTaskConfig {
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+
+interface ScheduledTask {
   id: number;
-  taskName: string;
-  cronExpression: string;
+  name: string;
+  description: string;
   enabled: boolean;
+  cronExpression: string;
   lastRun: string | null;
   nextRun: string | null;
-  description: string | null;
-  maxItemsToProcess: number | null;
-}
-
-// Tipo para los resultados de una ejecución manual
-interface ManualExecutionResult {
-  premiumVideos: { total: number, added: number };
-  newVideos: { total: number, added: number };
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function ScheduledTasksManager() {
+  const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isExecuting, setIsExecuting] = useState(false);
-  const [selectedHour, setSelectedHour] = useState('00');
-  const [selectedMinute, setSelectedMinute] = useState('00');
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  
+  // Estado para la tarea que está siendo editada
+  const [editedTask, setEditedTask] = useState<Partial<ScheduledTask>>({});
 
-  // Cargar configuraciones de tareas programadas
-  const { data: tasks, isLoading, error } = useQuery<ScheduledTaskConfig[]>({
-    queryKey: ['/api/admin/scheduled-tasks'],
-    retry: 1,
+  // Obtener las tareas programadas
+  const { data: tasks, isLoading, error } = useQuery({
+    queryKey: ['/api/scheduled-tasks'],
+    refetchInterval: 30000, // Actualizar cada 30 segundos
   });
 
-  // Mutación para actualizar una tarea programada
+  // Mutación para actualizar una tarea
   const updateTaskMutation = useMutation({
-    mutationFn: async (taskData: Partial<ScheduledTaskConfig> & { id: number }) => {
-      return apiRequest(`/api/admin/scheduled-tasks/${taskData.id}`, {
-        method: 'PUT',
-        body: JSON.stringify(taskData),
-      });
-    },
+    mutationFn: (task: Partial<ScheduledTask> & { id: number }) => 
+      apiRequest(`/api/scheduled-tasks/${task.id}`, 'PUT', task),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/scheduled-tasks'] });
       toast({
-        title: 'Tarea actualizada',
-        description: 'La configuración de la tarea programada se ha actualizado correctamente.',
+        title: "Tarea actualizada",
+        description: "La configuración de la tarea ha sido actualizada correctamente",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/scheduled-tasks'] });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
-        title: 'Error',
-        description: `No se pudo actualizar la tarea: ${error.message}`,
-        variant: 'destructive',
+        title: "Error",
+        description: "No se pudo actualizar la tarea programada",
+        variant: "destructive",
       });
     },
   });
 
-  // Mutación para ejecutar manualmente una tarea
-  const executeManuallyMutation = useMutation({
-    mutationFn: async () => {
-      setIsExecuting(true);
-      return apiRequest('/api/admin/scheduled-tasks/execute-manual', {
-        method: 'POST',
-      }) as Promise<ManualExecutionResult>;
-    },
+  // Mutación para ejecutar todas las tareas ahora
+  const runTasksNowMutation = useMutation({
+    mutationFn: () => apiRequest('/api/scheduled-tasks/run-now', 'POST'),
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/scheduled-tasks'] });
       toast({
-        title: 'Importación completada',
-        description: `Se importaron ${data.premiumVideos.added} videos de canales premium y ${data.newVideos.added} videos nuevos.`,
-      });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/scheduled-tasks'] });
-      setIsExecuting(false);
-    },
-    onError: (error: any) => {
-      toast({
-        title: 'Error',
-        description: `No se pudo ejecutar la tarea: ${error.message}`,
-        variant: 'destructive',
-      });
-      setIsExecuting(false);
-    },
-  });
-
-  // Mutación para actualizar el horario de la tarea diaria
-  const updateDailyScheduleMutation = useMutation({
-    mutationFn: async ({ hour, minute }: { hour: string, minute: string }) => {
-      const cronExpression = `0 ${minute} ${hour} * * *`;
-      // Buscar la tarea de importación diaria y actualizarla
-      const dailyTask = tasks?.find(task => task.taskName === 'daily_import');
-      if (!dailyTask) {
-        throw new Error('No se encontró la tarea de importación diaria');
-      }
-      
-      return apiRequest(`/api/admin/scheduled-tasks/${dailyTask.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ cronExpression }),
+        title: "Tareas ejecutadas",
+        description: "Las tareas programadas han sido ejecutadas manualmente con éxito",
       });
     },
-    onSuccess: () => {
+    onError: (error) => {
       toast({
-        title: 'Horario actualizado',
-        description: 'El horario de importación diaria se ha actualizado correctamente.',
-      });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/scheduled-tasks'] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: 'Error',
-        description: `No se pudo actualizar el horario: ${error.message}`,
-        variant: 'destructive',
+        title: "Error",
+        description: "No se pudieron ejecutar las tareas programadas",
+        variant: "destructive",
       });
     },
   });
 
-  // Extraer hora y minuto de la expresión cron cuando se cargan las tareas
-  useEffect(() => {
-    if (tasks && tasks.length > 0) {
-      const dailyTask = tasks.find(task => task.taskName === 'daily_import');
-      if (dailyTask && dailyTask.cronExpression) {
-        // Formato de cronExpression: "0 MM HH * * *"
-        const parts = dailyTask.cronExpression.split(' ');
-        if (parts.length >= 3) {
-          setSelectedMinute(parts[1]);
-          setSelectedHour(parts[2]);
-        }
-      }
-    }
-  }, [tasks]);
-
-  // Manejar cambio en el estado de activación de una tarea
-  const handleToggleTask = (taskId: number, enabled: boolean) => {
-    updateTaskMutation.mutate({ id: taskId, enabled });
-  };
-
-  // Manejar la actualización del horario de la tarea diaria
-  const handleUpdateSchedule = () => {
-    updateDailyScheduleMutation.mutate({ 
-      hour: selectedHour, 
-      minute: selectedMinute 
+  // Manejar cambio de estado (habilitado/deshabilitado)
+  const handleToggleEnabled = (id: number, currentStatus: boolean) => {
+    updateTaskMutation.mutate({
+      id,
+      enabled: !currentStatus,
     });
   };
 
-  // Ejecutar importación manual
-  const handleExecuteManually = () => {
-    executeManuallyMutation.mutate();
+  // Editar una tarea
+  const handleEditTask = (task: ScheduledTask) => {
+    setEditingTaskId(task.id);
+    setEditedTask({
+      id: task.id,
+      cronExpression: task.cronExpression,
+      enabled: task.enabled,
+    });
   };
 
-  // Formatear fecha para mostrar
+  // Cancelar edición
+  const handleCancelEdit = () => {
+    setEditingTaskId(null);
+    setEditedTask({});
+  };
+
+  // Guardar cambios en la tarea
+  const handleSaveTask = () => {
+    if (!editedTask.id) return;
+    
+    updateTaskMutation.mutate({
+      id: editedTask.id,
+      cronExpression: editedTask.cronExpression,
+      enabled: editedTask.enabled,
+    });
+    
+    setEditingTaskId(null);
+    setEditedTask({});
+  };
+
+  // Formatear fechas
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Nunca';
-    const date = new Date(dateString);
-    return date.toLocaleString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    if (!dateString) return "No disponible";
+    try {
+      const date = parseISO(dateString);
+      return format(date, 'dd/MM/yyyy HH:mm:ss', { locale: es });
+    } catch (e) {
+      return dateString;
+    }
   };
 
-  // Generar opciones para horas y minutos
-  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
-  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+  // Ejecutar todas las tareas manualmente
+  const handleRunTasksNow = () => {
+    setIsConfirmDialogOpen(true);
+  };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[300px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Error</CardTitle>
-          <CardDescription>No se pudieron cargar las tareas programadas.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-destructive">
-            {(error as Error).message || 'Error desconocido'}
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const confirmRunTasks = () => {
+    setIsConfirmDialogOpen(false);
+    runTasksNowMutation.mutate();
+  };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>Configuración de Tareas Programadas</CardTitle>
+          <CardTitle>Administración de Tareas Programadas</CardTitle>
           <CardDescription>
-            Configure la hora de ejecución de las importaciones automáticas de videos
+            Configure las tareas programadas para la importación automática de videos
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Importación Diaria de Videos</h3>
-            <p className="text-sm text-muted-foreground">
-              Establezca la hora a la que se ejecutará la importación automática de videos cada día.
-            </p>
-            
-            <div className="flex items-end gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="hour">Hora</Label>
-                <Select 
-                  value={selectedHour}
-                  onValueChange={setSelectedHour}
-                >
-                  <SelectTrigger id="hour" className="w-[100px]">
-                    <SelectValue placeholder="Hora" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {hours.map((hour) => (
-                      <SelectItem key={hour} value={hour}>{hour}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="minute">Minuto</Label>
-                <Select 
-                  value={selectedMinute}
-                  onValueChange={setSelectedMinute}
-                >
-                  <SelectTrigger id="minute" className="w-[100px]">
-                    <SelectValue placeholder="Minuto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {minutes.map((minute) => (
-                      <SelectItem key={minute} value={minute}>{minute}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <Button 
-                onClick={handleUpdateSchedule}
-                disabled={updateDailyScheduleMutation.isPending}
-                className="ml-2"
-              >
-                {updateDailyScheduleMutation.isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Clock className="mr-2 h-4 w-4" />
-                )}
-                Actualizar Horario
-              </Button>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-60">
+              <p>Cargando tareas programadas...</p>
             </div>
-          </div>
-
-          <Separator />
-          
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Estado de Tareas Programadas</h3>
-            
-            {tasks && tasks.length > 0 ? (
-              <div className="grid gap-4">
-                {tasks.map((task) => (
-                  <div key={task.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="space-y-1">
-                      <h4 className="font-medium">{task.description || task.taskName}</h4>
-                      <div className="text-sm text-muted-foreground">
-                        <p>Próxima ejecución: {formatDate(task.nextRun)}</p>
-                        <p>Última ejecución: {formatDate(task.lastRun)}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <Label 
-                        htmlFor={`task-${task.id}`}
-                        className="mr-2 cursor-pointer"
-                      >
-                        {task.enabled ? 'Activada' : 'Desactivada'}
-                      </Label>
-                      <Checkbox
-                        id={`task-${task.id}`}
-                        checked={task.enabled}
-                        onCheckedChange={(checked) => 
-                          handleToggleTask(task.id, checked === true)
-                        }
-                        disabled={updateTaskMutation.isPending}
-                      />
-                    </div>
-                  </div>
+          ) : error ? (
+            <div className="bg-red-50 p-4 rounded-md text-red-700">
+              Error al cargar las tareas programadas
+            </div>
+          ) : (
+            <Table>
+              <TableCaption>Lista de tareas programadas</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Descripción</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Expresión Cron</TableHead>
+                  <TableHead>Última ejecución</TableHead>
+                  <TableHead>Próxima ejecución</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {tasks?.map((task: ScheduledTask) => (
+                  <TableRow key={task.id}>
+                    <TableCell className="font-medium">{task.name}</TableCell>
+                    <TableCell>{task.description}</TableCell>
+                    <TableCell>
+                      {editingTaskId === task.id ? (
+                        <Switch 
+                          checked={editedTask.enabled} 
+                          onCheckedChange={(checked) => setEditedTask({...editedTask, enabled: checked})}
+                        />
+                      ) : (
+                        <div className="flex items-center">
+                          <div className={`h-2.5 w-2.5 rounded-full mr-2 ${task.enabled ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                          {task.enabled ? 'Activo' : 'Inactivo'}
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editingTaskId === task.id ? (
+                        <Input
+                          value={editedTask.cronExpression}
+                          onChange={(e) => setEditedTask({...editedTask, cronExpression: e.target.value})}
+                        />
+                      ) : (
+                        task.cronExpression
+                      )}
+                    </TableCell>
+                    <TableCell>{formatDate(task.lastRun)}</TableCell>
+                    <TableCell>{formatDate(task.nextRun)}</TableCell>
+                    <TableCell>
+                      {editingTaskId === task.id ? (
+                        <div className="flex space-x-2">
+                          <Button size="sm" onClick={handleSaveTask}>Guardar</Button>
+                          <Button size="sm" variant="outline" onClick={handleCancelEdit}>Cancelar</Button>
+                        </div>
+                      ) : (
+                        <div className="flex space-x-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleEditTask(task)}
+                          >
+                            Editar
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant={task.enabled ? 'destructive' : 'default'}
+                            onClick={() => handleToggleEnabled(task.id, task.enabled)}
+                          >
+                            {task.enabled ? 'Desactivar' : 'Activar'}
+                          </Button>
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">No hay tareas programadas configuradas.</p>
-            )}
-          </div>
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button
-            variant="secondary"
-            onClick={handleExecuteManually}
-            disabled={isExecuting}
+          <div></div>
+          <Button 
+            onClick={handleRunTasksNow}
+            disabled={runTasksNowMutation.isPending}
           >
-            {isExecuting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Play className="mr-2 h-4 w-4" />
-            )}
-            Ejecutar Importación Ahora
+            {runTasksNowMutation.isPending 
+              ? "Ejecutando..." 
+              : "Ejecutar tareas ahora"}
           </Button>
         </CardFooter>
       </Card>
+
+      {/* Información sobre expresiones cron */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Ayuda sobre expresiones Cron</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <p>
+              Las expresiones cron permiten programar tareas en momentos específicos.
+              El formato es: <code className="bg-gray-100 p-1 rounded">* * * * *</code>
+            </p>
+            <table className="min-w-full border border-gray-200">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="p-2 border-b">Campo</th>
+                  <th className="p-2 border-b">Valores permitidos</th>
+                  <th className="p-2 border-b">Ejemplo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="p-2 border-b">Minuto</td>
+                  <td className="p-2 border-b">0-59</td>
+                  <td className="p-2 border-b"><code>0</code> = en punto de la hora</td>
+                </tr>
+                <tr>
+                  <td className="p-2 border-b">Hora</td>
+                  <td className="p-2 border-b">0-23</td>
+                  <td className="p-2 border-b"><code>0</code> = medianoche</td>
+                </tr>
+                <tr>
+                  <td className="p-2 border-b">Día del mes</td>
+                  <td className="p-2 border-b">1-31</td>
+                  <td className="p-2 border-b"><code>1</code> = primer día del mes</td>
+                </tr>
+                <tr>
+                  <td className="p-2 border-b">Mes</td>
+                  <td className="p-2 border-b">1-12</td>
+                  <td className="p-2 border-b"><code>*</code> = todos los meses</td>
+                </tr>
+                <tr>
+                  <td className="p-2 border-b">Día de la semana</td>
+                  <td className="p-2 border-b">0-6 (0 = domingo)</td>
+                  <td className="p-2 border-b"><code>1-5</code> = lunes a viernes</td>
+                </tr>
+              </tbody>
+            </table>
+            <div className="text-sm text-gray-600">
+              <h4 className="font-bold">Ejemplos comunes:</h4>
+              <ul className="list-disc list-inside space-y-1 mt-2">
+                <li><code className="bg-gray-100 p-1 rounded">0 0 * * *</code> - Todos los días a medianoche</li>
+                <li><code className="bg-gray-100 p-1 rounded">0 12 * * *</code> - Todos los días a las 12:00</li>
+                <li><code className="bg-gray-100 p-1 rounded">0 0 * * 0</code> - Todos los domingos a medianoche</li>
+                <li><code className="bg-gray-100 p-1 rounded">0 9-17 * * 1-5</code> - Cada hora de 9 a 17, de lunes a viernes</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Diálogo de confirmación */}
+      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Ejecutar tareas programadas?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esto iniciará inmediatamente todas las tareas de importación y actualización de videos.
+              Este proceso puede tardar varios minutos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmRunTasks}>Ejecutar ahora</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

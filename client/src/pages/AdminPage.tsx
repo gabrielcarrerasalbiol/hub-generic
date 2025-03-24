@@ -7,10 +7,11 @@ import PremiumChannelManagement from '@/components/admin/PremiumChannelManagemen
 import RecommendedChannelManagement from '@/components/admin/RecommendedChannelManagement';
 import FeaturedVideosManager from '@/components/admin/FeaturedVideosManager';
 import PollManagement from '@/components/polls/PollManagement';
-import LoginLogs from '@/components/admin/LoginLogs'; // Nuevo componente
+import LoginLogs from '@/components/admin/LoginLogs';
+import ScheduledTasksManager from '@/components/admin/ScheduledTasksManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Users, Video, Activity, Star, Award, BarChart2, Sparkles, BarChart, Vote, LogIn } from 'lucide-react';
+import { Users, Video, Activity, Star, Award, BarChart2, Sparkles, BarChart, Vote, LogIn, Clock } from 'lucide-react';
 
 export default function AdminPage() {
   const { isAdmin, checkAuth } = useAuth();
@@ -39,7 +40,7 @@ export default function AdminPage() {
       </div>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-8">
+        <TabsList className="mb-6 grid w-full grid-cols-9">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span>Usuarios</span>
@@ -67,6 +68,10 @@ export default function AdminPage() {
           <TabsTrigger value="polls" className="flex items-center gap-2">
             <BarChart className="h-4 w-4" />
             <span>Encuestas</span>
+          </TabsTrigger>
+          <TabsTrigger value="scheduled" className="flex items-center gap-2">
+            <Clock className="h-4 w-4" />
+            <span>Tareas</span>
           </TabsTrigger>
           <TabsTrigger value="processes" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -179,6 +184,25 @@ export default function AdminPage() {
                 </button>
               </div>
               
+              <div className="border rounded-lg p-4 bg-cyan-50 dark:bg-cyan-950">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Tareas Programadas</h3>
+                  <span className="px-2 py-1 bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-100 rounded-full text-xs font-medium">
+                    Nuevo
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Configura las tareas programadas para la importación automática de videos y otros procesos del sistema.
+                </p>
+                <button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md flex items-center justify-center gap-2"
+                  onClick={() => setActiveTab('scheduled')}
+                >
+                  <Clock className="h-4 w-4" />
+                  <span>Gestionar tareas</span>
+                </button>
+              </div>
+              
               <div className="border rounded-lg p-4 bg-amber-50 dark:bg-amber-950">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">Gestión de Encuestas</h3>
@@ -217,6 +241,14 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
+          
+          {/* Sección de tareas programadas */}
+          <ScheduledTasksManager />
+        </TabsContent>
+        
+        {/* Nueva pestaña para tareas programadas */}
+        <TabsContent value="scheduled" className="space-y-6">
+          <ScheduledTasksManager />
         </TabsContent>
       </Tabs>
     </div>

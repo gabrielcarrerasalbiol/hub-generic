@@ -31,6 +31,7 @@ import { handleNewsletterSubscription } from './api/mailchimpService';
 import { isValidEmail } from './api/emailService';
 import { sendShareEmail } from './api/shareService';
 import { generateGameQuestions, evaluateAnswer, calculateScore } from './api/playerStatsGame';
+import { getAllScheduledTasks, updateScheduledTask, executeTasksManually } from './api/scheduledTasksManager';
 
 // Demo user ID - el ID actual puede variar si se elimina y se vuelve a crear
 // Se debe recuperar dinámicamente cada vez que se necesita
@@ -4440,6 +4441,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching game results:", error);
       res.status(500).json({ message: "Failed to fetch game results" });
+    }
+  });
+
+  // API para tareas programadas (scheduled tasks)
+  app.get("/api/scheduled-tasks", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const tasks = await getAllScheduledTasks();
+      res.json(tasks);
+    } catch (error) {
+      console.error("Error fetching scheduled tasks:", error);
+      res.status(500).json({ message: "Failed to fetch scheduled tasks" });
+    }
+  });
+
+  app.put("/api/scheduled-tasks/:id", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      const { enabled, cronExpression, lastRun, nextRun } = req.body;
+      
+      const updatedTask = await updateScheduledTask(id, {
+        enabled,
+        cronExpression,
+        lastRun,
+        nextRun
+      });
+      
+      res.json(updatedTask);
+    } catch (error) {
+      console.error("Error updating scheduled task:", error);
+      res.status(500).json({ message: "Failed to update scheduled task" });
+    }
+  });
+
+  app.post("/api/scheduled-tasks/run-now", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const result = await executeTasksManually();
+      res.json({
+        success: true,
+        message: "Tareas ejecutadas manualmente con éxito",
+        result
+      });
+    } catch (error) {
+      console.error("Error executing scheduled tasks manually:", error);
+      res.status(500).json({ 
+        message: "Failed to execute scheduled tasks",
+        error: error.message
+      });
     }
   });
 
