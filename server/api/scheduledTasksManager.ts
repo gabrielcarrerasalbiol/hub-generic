@@ -138,12 +138,12 @@ export async function executeTasksManually() {
     }
     
     // Actualizar lastRun para la tarea de actualización parcial
-    const partialUpdateTask = tasks.find(task => task.taskName === 'update_videos');
+    const partialUpdateTask = tasks.find(task => task.taskName === 'partial_update' || task.taskName === 'update_videos');
     if (partialUpdateTask) {
-      log(`Actualizando lastRun para tarea update_videos (ID: ${partialUpdateTask.id})`, 'scheduledTasksManager');
+      log(`Actualizando lastRun para tarea ${partialUpdateTask.taskName} (ID: ${partialUpdateTask.id})`, 'scheduledTasksManager');
       await storage.updateScheduledTaskConfig(partialUpdateTask.id, { lastRun: now });
     } else {
-      log('No se encontró la tarea update_videos', 'scheduledTasksManager');
+      log('No se encontró la tarea partial_update o update_videos', 'scheduledTasksManager');
     }
     
     log('Ejecución manual de tareas completada con éxito', 'scheduledTasksManager');
@@ -182,6 +182,7 @@ function getTaskFunction(taskName: string): () => Promise<void> {
       };
       
     case 'update_videos':
+    case 'partial_update': // Nombre actual usado en la base de datos
     case 'midday_update': // Mantener compatibilidad con nombres anteriores
       return async () => {
         try {
