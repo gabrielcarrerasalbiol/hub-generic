@@ -9,7 +9,7 @@ import {
   Poll, InsertPoll, PollOption, InsertPollOption, PollVote, InsertPollVote,
   Player, InsertPlayer, PlayerStats, InsertPlayerStats,
   StatsGame, InsertStatsGame, StatsGameQuestion, InsertStatsGameQuestion,
-  LoginLog, InsertLoginLog
+  LoginLog, InsertLoginLog, ScheduledTaskConfig, InsertScheduledTaskConfig
 } from "../shared/schema";
 
 // Storage interface defining all operations
@@ -196,6 +196,14 @@ export interface IStorage {
   getRecentLogins(hoursAgo?: number, limit?: number): Promise<LoginLog[]>;
   getUserLoginHistory(userId: number, limit?: number): Promise<LoginLog[]>;
   createLoginLog(log: InsertLoginLog): Promise<LoginLog>;
+  
+  // Scheduled Tasks operations
+  getScheduledTasksConfigs(limit?: number, offset?: number): Promise<ScheduledTaskConfig[]>;
+  getScheduledTaskConfigById(id: number): Promise<ScheduledTaskConfig | undefined>;
+  getScheduledTaskConfigByName(taskName: string): Promise<ScheduledTaskConfig | undefined>;
+  createScheduledTaskConfig(config: InsertScheduledTaskConfig): Promise<ScheduledTaskConfig>;
+  updateScheduledTaskConfig(id: number, data: Partial<InsertScheduledTaskConfig> & { lastRun?: Date, nextRun?: Date }): Promise<ScheduledTaskConfig | undefined>;
+  deleteScheduledTaskConfig(id: number): Promise<boolean>;
 }
 
 // Exportar la implementación de PostgreSQL

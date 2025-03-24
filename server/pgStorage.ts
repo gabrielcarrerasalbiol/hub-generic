@@ -2126,6 +2126,95 @@ export class PgStorage implements IStorage {
     const result = await db.insert(loginLogs).values(log).returning();
     return result[0];
   }
+
+  // Scheduled Tasks operations
+  async getScheduledTasksConfigs(limit = 100, offset = 0): Promise<ScheduledTaskConfig[]> {
+    try {
+      return await db.select()
+        .from(scheduledTasksConfig)
+        .orderBy(asc(scheduledTasksConfig.id))
+        .limit(limit)
+        .offset(offset);
+    } catch (error) {
+      console.error("Error fetching scheduled tasks configs:", error);
+      return [];
+    }
+  }
+
+  async getScheduledTaskConfigById(id: number): Promise<ScheduledTaskConfig | undefined> {
+    try {
+      const result = await db.select()
+        .from(scheduledTasksConfig)
+        .where(eq(scheduledTasksConfig.id, id))
+        .limit(1);
+      
+      return result[0];
+    } catch (error) {
+      console.error(`Error fetching scheduled task config with ID ${id}:`, error);
+      return undefined;
+    }
+  }
+
+  async getScheduledTaskConfigByName(taskName: string): Promise<ScheduledTaskConfig | undefined> {
+    try {
+      const result = await db.select()
+        .from(scheduledTasksConfig)
+        .where(eq(scheduledTasksConfig.taskName, taskName))
+        .limit(1);
+      
+      return result[0];
+    } catch (error) {
+      console.error(`Error fetching scheduled task config with name ${taskName}:`, error);
+      return undefined;
+    }
+  }
+
+  async createScheduledTaskConfig(config: InsertScheduledTaskConfig): Promise<ScheduledTaskConfig> {
+    try {
+      const result = await db.insert(scheduledTasksConfig)
+        .values({
+          ...config,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error("Error creating scheduled task config:", error);
+      throw error;
+    }
+  }
+
+  async updateScheduledTaskConfig(id: number, data: Partial<InsertScheduledTaskConfig> & { lastRun?: Date, nextRun?: Date }): Promise<ScheduledTaskConfig | undefined> {
+    try {
+      const result = await db.update(scheduledTasksConfig)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(scheduledTasksConfig.id, id))
+        .returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error(`Error updating scheduled task config with ID ${id}:`, error);
+      return undefined;
+    }
+  }
+
+  async deleteScheduledTaskConfig(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(scheduledTasksConfig)
+        .where(eq(scheduledTasksConfig.id, id))
+        .returning();
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error(`Error deleting scheduled task config with ID ${id}:`, error);
+      return false;
+    }
+  }
 }
 
 // Exportar una instancia para su uso en la aplicación

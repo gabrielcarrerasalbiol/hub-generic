@@ -91,7 +91,7 @@ export async function updateScheduledTask(
           activeCronJobs.set(updatedTask.taskName, newJob);
           
           // Calcular y actualizar la próxima ejecución
-          const nextRun = newJob.nextDate().toDate();
+          const nextRun = newJob.nextDate().toJSDate();
           await storage.updateScheduledTaskConfig(id, { nextRun });
           
           log(`Tarea programada ${updatedTask.taskName} configurada para ejecutarse en: ${nextRun}`, 'scheduledTasksManager');
@@ -223,7 +223,7 @@ export async function initializeScheduledTasksFromDatabase(): Promise<void> {
           activeCronJobs.set(task.taskName, job);
           
           // Actualizar el tiempo de próxima ejecución
-          const nextRun = job.nextDate().toDate();
+          const nextRun = job.nextDate().toJSDate();
           await storage.updateScheduledTaskConfig(task.id, { nextRun });
           
           log(`Tarea programada ${task.taskName} iniciada, próxima ejecución: ${nextRun}`, 'scheduledTasksManager');
@@ -294,8 +294,8 @@ async function createDefaultScheduledTasks(): Promise<void> {
     activeCronJobs.set(task2.taskName, job2);
     
     // Actualizar los tiempos de próxima ejecución
-    await storage.updateScheduledTaskConfig(task1.id, { nextRun: job1.nextDate().toDate() });
-    await storage.updateScheduledTaskConfig(task2.id, { nextRun: job2.nextDate().toDate() });
+    await storage.updateScheduledTaskConfig(task1.id, { nextRun: job1.nextDate().toJSDate() });
+    await storage.updateScheduledTaskConfig(task2.id, { nextRun: job2.nextDate().toJSDate() });
     
     log('Tareas programadas predeterminadas creadas e iniciadas', 'scheduledTasksManager');
   } catch (error) {
