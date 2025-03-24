@@ -122,14 +122,14 @@ export default function VideoManagement() {
   const {
     data: videoCount,
     isLoading: isLoadingCount
-  } = useQuery({
+  } = useQuery<{total: number}>({
     queryKey: ['/api/videos/count'],
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
   
   // Actualizar estado con el conteo total de videos
   useEffect(() => {
-    if (videoCount && videoCount.total) {
+    if (videoCount?.total) {
       setTotalVideos(videoCount.total);
     }
   }, [videoCount]);

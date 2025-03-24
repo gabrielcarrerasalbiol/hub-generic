@@ -299,6 +299,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }
 
+  // Endpoint para obtener el conteo total de videos en la base de datos
+  app.get("/api/videos/count", async (req: Request, res: Response) => {
+    try {
+      // Usando la función de getStatisticsOverview para obtener el conteo total
+      const stats = await getStatisticsOverview();
+      res.json({ total: stats.videoCount });
+    } catch (error) {
+      console.error("Error fetching video count:", error);
+      res.status(500).json({ message: "Failed to fetch video count" });
+    }
+  });
+
   app.get("/api/videos/featured", async (req: Request, res: Response) => {
     try {
       // Obtenemos el límite de la solicitud, por defecto 50
