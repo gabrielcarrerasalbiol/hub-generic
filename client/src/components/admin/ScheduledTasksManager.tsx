@@ -39,14 +39,15 @@ import {
 
 interface ScheduledTask {
   id: number;
-  name: string;
-  description: string;
+  taskName: string;
+  description: string | null;
   enabled: boolean;
   cronExpression: string;
   lastRun: string | null;
   nextRun: string | null;
   createdAt: string;
   updatedAt: string;
+  maxItemsToProcess: number | null;
 }
 
 export default function ScheduledTasksManager() {
@@ -59,7 +60,7 @@ export default function ScheduledTasksManager() {
   const [editedTask, setEditedTask] = useState<Partial<ScheduledTask>>({});
 
   // Obtener las tareas programadas
-  const { data: tasks, isLoading, error } = useQuery({
+  const { data: tasks = [], isLoading, error } = useQuery<ScheduledTask[]>({
     queryKey: ['/api/scheduled-tasks'],
     refetchInterval: 30000, // Actualizar cada 30 segundos
   });
@@ -195,9 +196,9 @@ export default function ScheduledTasksManager() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tasks?.map((task: ScheduledTask) => (
+                {tasks.map((task: ScheduledTask) => (
                   <TableRow key={task.id}>
-                    <TableCell className="font-medium">{task.name}</TableCell>
+                    <TableCell className="font-medium">{task.taskName}</TableCell>
                     <TableCell>{task.description}</TableCell>
                     <TableCell>
                       {editingTaskId === task.id ? (
