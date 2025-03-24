@@ -483,3 +483,30 @@ export const insertLoginLogSchema = createInsertSchema(loginLogs).omit({
 
 export type InsertLoginLog = z.infer<typeof insertLoginLogSchema>;
 export type LoginLog = typeof loginLogs.$inferSelect;
+
+// Tabla para configuración de tareas programadas
+export const scheduledTasksConfig = pgTable("scheduled_tasks_config", {
+  id: serial("id").primaryKey(),
+  taskName: text("task_name").notNull().unique(), // Nombre único de la tarea: 'daily_import', 'midday_update'
+  cronExpression: text("cron_expression").notNull(), // Expresión cron: '0 0 0 * * *'
+  enabled: boolean("enabled").default(true).notNull(), // Si la tarea está activada
+  lastRun: timestamp("last_run"), // Último tiempo de ejecución
+  nextRun: timestamp("next_run"), // Próximo tiempo de ejecución programado
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdById: integer("created_by_id").references(() => users.id),
+  updatedById: integer("updated_by_id").references(() => users.id),
+  description: text("description"), // Descripción de la tarea
+  maxItemsToProcess: integer("max_items_to_process"), // Número máximo de items a procesar
+});
+
+export const insertScheduledTaskConfigSchema = createInsertSchema(scheduledTasksConfig).omit({
+  id: true,
+  lastRun: true,
+  nextRun: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertScheduledTaskConfig = z.infer<typeof insertScheduledTaskConfigSchema>;
+export type ScheduledTaskConfig = typeof scheduledTasksConfig.$inferSelect;
