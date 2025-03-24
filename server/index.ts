@@ -42,6 +42,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { initDb, isReadOnlyMode } from "./db";
 import { pgStorage } from "./pgStorage";
 import { preventWritesMiddleware } from "./middlewares/readOnlyMode";
+import { setupScheduledTasks } from "./scheduledTasks";
 
 const app = express();
 
@@ -198,6 +199,9 @@ app.use((req, res, next) => {
     
     // Inicializar datos predeterminados en la base de datos
     await pgStorage.initializeDefaultData();
+    
+    // Inicializar y configurar tareas programadas
+    setupScheduledTasks();
     
     // Register authentication routes
     registerAuthRoutes(app);

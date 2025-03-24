@@ -67,7 +67,7 @@ async function executeNightlyTasks(): Promise<void> {
     
     // 1. Importar videos de canales premium (más importantes)
     const premiumImportResult = await importPremiumChannelsVideos(MAX_VIDEOS_PER_CHANNEL);
-    log(`Importación de canales premium completada: ${premiumImportResult.added} de ${premiumImportResult.total} videos añadidos`, 'scheduledTasks');
+    log(`Importación de canales premium completada: ${premiumImportResult.addedVideos} de ${premiumImportResult.totalVideos} videos añadidos`, 'scheduledTasks');
     
     // 2. Buscar nuevos videos relacionados con el Real Madrid
     const newVideosResult = await fetchAndProcessNewVideos(MAX_SEARCH_RESULTS);
@@ -97,7 +97,7 @@ async function executePartialUpdate(): Promise<void> {
     
     // Solo buscar nuevos videos relevantes de canales premium
     const premiumImportResult = await importPremiumChannelsVideos(10); // Menos videos que en la actualización nocturna
-    log(`Actualización de canales premium completada: ${premiumImportResult.added} de ${premiumImportResult.total} videos añadidos`, 'scheduledTasks');
+    log(`Actualización de canales premium completada: ${premiumImportResult.addedVideos} de ${premiumImportResult.totalVideos} videos añadidos`, 'scheduledTasks');
     
     log('Actualización parcial completada con éxito', 'scheduledTasks');
   } catch (error) {
@@ -126,8 +126,8 @@ export async function executeManualImport(): Promise<{
     
     return {
       premiumVideos: {
-        total: premiumImportResult.total,
-        added: premiumImportResult.added
+        total: premiumImportResult.totalVideos,
+        added: premiumImportResult.addedVideos
       },
       newVideos: {
         total: newVideosResult.total,
