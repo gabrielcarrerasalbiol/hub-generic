@@ -115,25 +115,38 @@ export async function updateScheduledTask(
  */
 export async function executeTasksManually() {
   try {
+    log('Iniciando ejecución manual de tareas programadas...', 'scheduledTasksManager');
+    
     // Ejecutar la importación manual
+    log('Llamando a executeManualImport()...', 'scheduledTasksManager');
     const result = await executeManualImport();
+    log(`executeManualImport() completado con éxito. Resultado: ${JSON.stringify(result)}`, 'scheduledTasksManager');
     
     // Actualizar el tiempo de última ejecución para las tareas afectadas
+    log('Obteniendo configuraciones de tareas...', 'scheduledTasksManager');
     const tasks = await storage.getScheduledTasksConfigs();
+    log(`Encontradas ${tasks.length} configuraciones de tareas`, 'scheduledTasksManager');
     const now = new Date();
     
     // Actualizar lastRun para la tarea de importación diaria
-    const dailyImportTask = tasks.find(task => task.taskName === 'daily_import');
+    const dailyImportTask = tasks.find(task => task.taskName === 'import_premium_videos');
     if (dailyImportTask) {
+      log(`Actualizando lastRun para tarea import_premium_videos (ID: ${dailyImportTask.id})`, 'scheduledTasksManager');
       await storage.updateScheduledTaskConfig(dailyImportTask.id, { lastRun: now });
+    } else {
+      log('No se encontró la tarea import_premium_videos', 'scheduledTasksManager');
     }
     
     // Actualizar lastRun para la tarea de actualización parcial
-    const partialUpdateTask = tasks.find(task => task.taskName === 'midday_update');
+    const partialUpdateTask = tasks.find(task => task.taskName === 'update_videos');
     if (partialUpdateTask) {
+      log(`Actualizando lastRun para tarea update_videos (ID: ${partialUpdateTask.id})`, 'scheduledTasksManager');
       await storage.updateScheduledTaskConfig(partialUpdateTask.id, { lastRun: now });
+    } else {
+      log('No se encontró la tarea update_videos', 'scheduledTasksManager');
     }
     
+    log('Ejecución manual de tareas completada con éxito', 'scheduledTasksManager');
     return result;
   } catch (error) {
     log(`Error al ejecutar tareas manualmente: ${error}`, 'scheduledTasksManager');
@@ -149,39 +162,41 @@ export async function executeTasksManually() {
 function getTaskFunction(taskName: string): () => Promise<void> {
   // Importar dinámicamente las funciones necesarias
   switch (taskName) {
-    case 'daily_import':
+    case 'import_premium_videos':
+    case 'daily_import': // Mantener compatibilidad con nombres anteriores
       return async () => {
         try {
           log('Iniciando tarea programada: Importación diaria completa', 'scheduledTasksManager');
           const result = await executeManualImport();
-          log(`Tarea daily_import completada: Importados ${result.premiumVideos.added + result.newVideos.added} videos`, 'scheduledTasksManager');
+          log(`Tarea ${taskName} completada: Importados ${result.premiumVideos.added + result.newVideos.added} videos`, 'scheduledTasksManager');
           
           // Actualizar el tiempo de última ejecución
           const tasks = await storage.getScheduledTasksConfigs();
-          const dailyImportTask = tasks.find(task => task.taskName === 'daily_import');
-          if (dailyImportTask) {
-            await storage.updateScheduledTaskConfig(dailyImportTask.id, { lastRun: new Date() });
+          const taskToUpdate = tasks.find(task => task.taskName === taskName);
+          if (taskToUpdate) {
+            await storage.updateScheduledTaskConfig(taskToUpdate.id, { lastRun: new Date() });
           }
         } catch (error) {
-          log(`Error en tarea programada daily_import: ${error}`, 'scheduledTasksManager');
+          log(`Error en tarea programada ${taskName}: ${error}`, 'scheduledTasksManager');
         }
       };
       
-    case 'midday_update':
+    case 'update_videos':
+    case 'midday_update': // Mantener compatibilidad con nombres anteriores
       return async () => {
         try {
           log('Iniciando tarea programada: Actualización parcial de mediodía', 'scheduledTasksManager');
           const result = await executeManualImport();
-          log(`Tarea midday_update completada: Importados ${result.premiumVideos.added} videos de canales premium`, 'scheduledTasksManager');
+          log(`Tarea ${taskName} completada: Importados ${result.premiumVideos.added} videos de canales premium`, 'scheduledTasksManager');
           
           // Actualizar el tiempo de última ejecución
           const tasks = await storage.getScheduledTasksConfigs();
-          const partialUpdateTask = tasks.find(task => task.taskName === 'midday_update');
-          if (partialUpdateTask) {
-            await storage.updateScheduledTaskConfig(partialUpdateTask.id, { lastRun: new Date() });
+          const taskToUpdate = tasks.find(task => task.taskName === taskName);
+          if (taskToUpdate) {
+            await storage.updateScheduledTaskConfig(taskToUpdate.id, { lastRun: new Date() });
           }
         } catch (error) {
-          log(`Error en tarea programada midday_update: ${error}`, 'scheduledTasksManager');
+          log(`Error en tarea programada ${taskName}: ${error}`, 'scheduledTasksManager');
         }
       };
       
@@ -246,7 +261,7 @@ async function createDefaultScheduledTasks(): Promise<void> {
   try {
     // Tarea de importación diaria completa a las 00:00
     const dailyImportTask: InsertScheduledTaskConfig = {
-      taskName: 'daily_import',
+      taskName: 'import_premium_videos',
       cronExpression: '0 0 0 * * *', // A las 00:00:00 todos los días
       enabled: true,
       description: 'Importación completa diaria de videos',
@@ -257,7 +272,7 @@ async function createDefaultScheduledTasks(): Promise<void> {
     
     // Tarea de actualización parcial a las 12:00
     const middayUpdateTask: InsertScheduledTaskConfig = {
-      taskName: 'midday_update',
+      taskName: 'update_videos',
       cronExpression: '0 0 12 * * *', // A las 12:00:00 todos los días
       enabled: true,
       description: 'Actualización parcial de videos a mediodía',
