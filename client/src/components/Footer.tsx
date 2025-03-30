@@ -28,13 +28,9 @@ export default function Footer() {
                 <img 
                   src="/images/logo-hubmadridista.png" 
                   alt={t('app.name') + ' Logo'} 
-                  className="h-12 mr-2 relative z-10" 
+                  className="h-16 mr-2 relative z-10" 
                 />
               </div>
-              <span className="font-bold text-xl">
-                <span className="text-[#362C5A] dark:text-[#9D8FDD]">Hub</span>
-                <span className="text-[#FFD700] drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">Madridista</span>
-              </span>
             </div>
             
             <p className="text-gray-600 dark:text-gray-300 text-sm">
