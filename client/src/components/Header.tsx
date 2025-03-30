@@ -102,7 +102,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 shrink-0">
               <img 
-                src="/hubmadridista.png" 
+                src="/images/logo-hubmadridista.png" 
                 alt="Hub Madridista Logo" 
                 className="h-12 sm:h-14" 
               />

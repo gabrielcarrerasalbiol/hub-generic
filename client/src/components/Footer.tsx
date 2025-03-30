@@ -26,7 +26,7 @@ export default function Footer() {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full blur-[2px] bg-gradient-to-r from-yellow-100 to-purple-100 dark:from-yellow-900/20 dark:to-purple-900/30 opacity-70"></div>
                 <img 
-                  src="/hubmadridista.png" 
+                  src="/images/logo-hubmadridista.png" 
                   alt={t('app.name') + ' Logo'} 
                   className="h-12 mr-2 relative z-10" 
                 />
