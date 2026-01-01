@@ -134,7 +134,7 @@ export default function VideoCard({ video, compact = false, showFeaturedBadge = 
     return (
       <Link 
         href={`/video/${video.id}`}
-        className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 flex border border-[#FDBE11]/20 hover:border-[#FDBE11]/60 dark:border-[#FDBE11]/30 dark:hover:border-[#FDBE11]/80"
+        className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 flex border border-brand-secondary/20 hover:border-brand-secondary/60 dark:border-brand-secondary/30 dark:hover:border-brand-secondary/80"
         onClick={(e) => {
           // Prevent click if star button was clicked
           if ((e.target as HTMLElement).tagName === 'I' || 
@@ -153,7 +153,7 @@ export default function VideoCard({ video, compact = false, showFeaturedBadge = 
               {video.duration || '0:00'}
             </div>
             {video.featured && (
-              <div className="absolute top-1 right-1 bg-yellow-500 text-white text-xs px-1 py-0.5 rounded-full flex items-center">
+              <div className="absolute top-1 right-1 bg-brand-secondary text-white text-xs px-1 py-0.5 rounded-full flex items-center">
                 <Star className="w-3 h-3 mr-0.5" />
                 <span className="text-[10px]">Destacado</span>
               </div>
@@ -199,7 +199,7 @@ export default function VideoCard({ video, compact = false, showFeaturedBadge = 
   return (
     <Link 
       href={`/video/${video.id}`}
-      className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 border border-[#FDBE11]/20 hover:border-[#FDBE11]/60 dark:border-[#FDBE11]/30 dark:hover:border-[#FDBE11]/80"
+      className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 border border-brand-secondary/20 hover:border-brand-secondary/60 dark:border-brand-secondary/30 dark:hover:border-brand-secondary/80"
       onClick={(e) => {
         // Prevent click if star button was clicked
         if ((e.target as HTMLElement).tagName === 'I' || 
@@ -221,7 +221,7 @@ export default function VideoCard({ video, compact = false, showFeaturedBadge = 
           <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> {video.platform}
         </div>
         {video.featured && (
-          <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full flex items-center">
+          <div className="absolute top-2 right-2 bg-brand-secondary text-white text-xs px-2 py-0.5 rounded-full flex items-center">
             <Star className="w-3 h-3 mr-1" />
             <span>Destacado</span>
           </div>

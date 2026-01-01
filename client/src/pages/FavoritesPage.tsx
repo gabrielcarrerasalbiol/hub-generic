@@ -105,7 +105,7 @@ export default function FavoritesPage() {
       {/* Display empty state */}
       {!isLoading && !isError && favorites && favorites.length === 0 && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center">
-          <i className="far fa-star text-5xl text-gray-400 dark:text-[#FDBE11]/70 mb-4"></i>
+          <i className="far fa-star text-5xl text-gray-400 dark:text-brand-secondary/70 mb-4"></i>
           <h2 className="text-xl font-semibold mb-2 dark:text-white">No tienes favoritos guardados</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             Cuando marques videos como favoritos, aparecerán aquí para que puedas verlos fácilmente.

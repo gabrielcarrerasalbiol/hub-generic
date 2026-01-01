@@ -190,10 +190,10 @@ export default function CategoryPage() {
         )}
       />
       {/* Encabezado con título de categoría */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 border-b border-[#FDBE11] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 border-b border-brand-secondary pb-4">
         <div className="flex items-center mb-4 sm:mb-0">
-          <i className={`${categoryIcon} text-2xl text-[#FDBE11] mr-3`}></i>
-          <h1 className="text-2xl font-bold text-[#001C58]">{categoryTitle}</h1>
+          <i className={`${categoryIcon} text-2xl text-brand-secondary mr-3`}></i>
+          <h1 className="text-2xl font-bold text-brand-primary">{categoryTitle}</h1>
         </div>
         
         {/* Botón de filtros para móvil */}

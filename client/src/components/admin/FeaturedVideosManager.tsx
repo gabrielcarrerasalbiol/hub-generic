@@ -292,7 +292,7 @@ export default function FeaturedVideosManager() {
                         </TableCell>
                         <TableCell>
                           {video.featured && (
-                            <Star className="h-4 w-4 text-yellow-500" />
+                            <Star className="h-4 w-4 text-brand-secondary" />
                           )}
                         </TableCell>
                         <TableCell className="max-w-xs truncate font-medium">

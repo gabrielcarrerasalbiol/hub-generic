@@ -29,7 +29,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-white">
-      <div className="w-1/3 bg-white text-[#001C58] p-8 hidden lg:flex lg:flex-col border-r-2 border-[#FDBE11]">
+      <div className="w-1/3 bg-white text-brand-primary p-8 hidden lg:flex lg:flex-col border-r-2 border-brand-secondary">
         <div className="mb-8">
           <div className="relative rounded-lg overflow-hidden shadow-md">
             <img 
@@ -37,9 +37,9 @@ export default function LoginPage() {
               alt="Real Madrid" 
               className="w-full h-auto object-cover"
             />
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-[#001C58]/80 to-transparent">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-brand-primary/80 to-transparent">
               <div className="px-6 py-8 text-center">
-                <Trophy className="w-16 h-16 text-[#FDBE11] mb-4 inline-block" />
+                <Trophy className="w-16 h-16 text-brand-secondary mb-4 inline-block" />
                 <h2 className="text-white text-2xl font-bold mb-2">{t('app.name')}</h2>
                 <p className="text-white text-xl font-medium">{t('app.slogan')}</p>
               </div>
@@ -48,16 +48,16 @@ export default function LoginPage() {
         </div>
         <div className="flex-grow flex flex-col justify-center">
           <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2 text-[#001C58]">{t('auth.loginPage.benefits.title1')}</h3>
-            <p className="text-[#001C58]">{t('auth.loginPage.benefits.desc1')}</p>
+            <h3 className="text-xl font-semibold mb-2 text-brand-primary">{t('auth.loginPage.benefits.title1')}</h3>
+            <p className="text-brand-primary">{t('auth.loginPage.benefits.desc1')}</p>
           </div>
           <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2 text-[#001C58]">{t('auth.loginPage.benefits.title2')}</h3>
-            <p className="text-[#001C58]">{t('auth.loginPage.benefits.desc2')}</p>
+            <h3 className="text-xl font-semibold mb-2 text-brand-primary">{t('auth.loginPage.benefits.title2')}</h3>
+            <p className="text-brand-primary">{t('auth.loginPage.benefits.desc2')}</p>
           </div>
           <div>
-            <h3 className="text-xl font-semibold mb-2 text-[#001C58]">{t('auth.loginPage.benefits.title3')}</h3>
-            <p className="text-[#001C58]">{t('auth.loginPage.benefits.desc3')}</p>
+            <h3 className="text-xl font-semibold mb-2 text-brand-primary">{t('auth.loginPage.benefits.title3')}</h3>
+            <p className="text-brand-primary">{t('auth.loginPage.benefits.desc3')}</p>
           </div>
         </div>
       </div>
@@ -65,10 +65,10 @@ export default function LoginPage() {
         <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
           <div className="text-center mb-6">
             <h1 className="text-4xl font-bold mb-1">
-              <span className="text-[#001C58]">{t('app.name').split(' ')[0]}</span>
-              <span className="text-[#FDBE11]">{t('app.name').split(' ')[1] || ''}</span>
+              <span className="text-brand-primary">{t('app.name').split(' ')[0]}</span>
+              <span className="text-brand-secondary">{t('app.name').split(' ')[1] || ''}</span>
             </h1>
-            <div className="h-1 w-24 bg-gradient-to-r from-[#001C58] to-[#FDBE11] mx-auto mb-6"></div>
+            <div className="h-1 w-24 bg-gradient-to-r from-brand-primary to-brand-secondary mx-auto mb-6"></div>
           </div>
           <LoginForm />
         </div>

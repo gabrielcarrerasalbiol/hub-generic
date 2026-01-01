@@ -510,3 +510,23 @@ export const insertScheduledTaskConfigSchema = createInsertSchema(scheduledTasks
 
 export type InsertScheduledTaskConfig = z.infer<typeof insertScheduledTaskConfigSchema>;
 export type ScheduledTaskConfig = typeof scheduledTasksConfig.$inferSelect;
+
+// Site Configuration table - for customizable site settings
+export const siteConfig = pgTable("site_config", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(), // Unique key for the setting
+  value: text("value"), // JSON string or text value
+  type: text("type", { enum: ["text", "json", "image", "boolean", "number"] }).default("text").notNull(),
+  category: text("category").default("general").notNull(), // general, branding, content, social, seo
+  description: text("description"), // Description of what this setting controls
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  updatedById: integer("updated_by_id").references(() => users.id),
+});
+
+export const insertSiteConfigSchema = createInsertSchema(siteConfig).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type InsertSiteConfig = z.infer<typeof insertSiteConfigSchema>;
+export type SiteConfig = typeof siteConfig.$inferSelect;

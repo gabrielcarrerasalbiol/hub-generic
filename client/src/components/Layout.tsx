@@ -56,7 +56,7 @@ export default function Layout({ children, fullWidth = false }: LayoutProps) {
         {!fullWidth && !isAuthPage && (
           <button 
             onClick={toggleSidebar}
-            className="md:hidden fixed bottom-5 right-5 bg-[#FDBE11] text-[#001C58] rounded-full p-3 shadow-lg z-40"
+            className="md:hidden fixed bottom-5 right-5 bg-brand-secondary text-brand-primary rounded-full p-3 shadow-lg z-40"
             aria-label="Toggle Sidebar"
           >
             <Menu className="h-5 w-5" />

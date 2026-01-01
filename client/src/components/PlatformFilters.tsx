@@ -36,7 +36,7 @@ export default function PlatformFilters({ selectedPlatform, onSelectPlatform }: 
           className={cn(
             "flex items-center gap-1 border-slate-300",
             selectedPlatform === platform.id
-              ? "bg-[#001C58] text-white hover:bg-[#001C58]/90"
+              ? "bg-brand-primary text-white hover:bg-brand-primary/90"
               : "hover:bg-slate-100"
           )}
           onClick={() => onSelectPlatform(platform.id)}

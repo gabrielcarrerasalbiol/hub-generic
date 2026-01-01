@@ -50,25 +50,25 @@ export default function PremiumChannelsPage() {
               Volver
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-[#001C58] dark:text-white flex items-center">
+          <h1 className="text-2xl font-bold text-brand-primary dark:text-white flex items-center">
             Canales Premium
-            <Crown className="ml-2 text-[#FDBE11] h-5 w-5" />
+            <Crown className="ml-2 text-brand-secondary h-5 w-5" />
           </h1>
         </div>
         
         <div className="max-w-md mx-auto bg-white dark:bg-[#2A2040] rounded-xl shadow-lg overflow-hidden md:max-w-2xl">
           <div className="p-8">
             <div className="flex justify-center mb-4">
-              <Lock className="h-12 w-12 text-[#FDBE11]" />
+              <Lock className="h-12 w-12 text-brand-secondary" />
             </div>
-            <h2 className="text-xl font-semibold text-center text-[#001C58] dark:text-white mb-4">
+            <h2 className="text-xl font-semibold text-center text-brand-primary dark:text-white mb-4">
               Contenido Exclusivo Premium
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-center mb-6">
               Actualiza a una cuenta premium para acceder a los mejores canales exclusivos con contenido especializado del Real Madrid.
             </p>
             <div className="flex justify-center">
-              <Button className="bg-gradient-to-r from-[#FDBE11] to-[#FFC72C] text-[#001C58] hover:from-[#FDC731] hover:to-[#FFD74C]">
+              <Button className="bg-gradient-to-r from-brand-secondary to-yellow-400 text-brand-primary hover:from-yellow-400 hover:to-yellow-300">
                 <Crown className="mr-2 h-4 w-4" />
                 Actualizar a Premium
               </Button>
@@ -88,9 +88,9 @@ export default function PremiumChannelsPage() {
             Volver
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-[#001C58] dark:text-white flex items-center">
+        <h1 className="text-2xl font-bold text-brand-primary dark:text-white flex items-center">
           Canales Premium
-          <Crown className="ml-2 text-[#FDBE11] h-5 w-5" />
+          <Crown className="ml-2 text-brand-secondary h-5 w-5" />
         </h1>
       </div>
       
@@ -131,7 +131,7 @@ export default function PremiumChannelsPage() {
               href={`/channel/${channel.id}`}
               className="bg-white dark:bg-[#2A2040] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
             >
-              <div className="h-24 bg-gradient-to-r from-[#FDBE11] to-[#FFC72C] flex items-center justify-center">
+              <div className="h-24 bg-gradient-to-r from-brand-secondary to-yellow-400 flex items-center justify-center">
                 {channel.bannerUrl && (
                   <img 
                     src={channel.bannerUrl} 
@@ -157,12 +157,12 @@ export default function PremiumChannelsPage() {
                         target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=64`;
                       }}
                     />
-                    <span className="absolute -top-1 -right-1 bg-[#FDBE11] rounded-full w-6 h-6 flex items-center justify-center shadow-md">
-                      <Crown className="w-4 h-4 text-[#001C58]" />
+                    <span className="absolute -top-1 -right-1 bg-brand-secondary rounded-full w-6 h-6 flex items-center justify-center shadow-md">
+                      <Crown className="w-4 h-4 text-brand-primary" />
                     </span>
                   </div>
                   <div className="ml-4 pt-1">
-                    <h2 className="font-bold text-[#001C58] dark:text-white truncate flex items-center">
+                    <h2 className="font-bold text-brand-primary dark:text-white truncate flex items-center">
                       {channel.title}
                     </h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -188,7 +188,7 @@ export default function PremiumChannelsPage() {
       ) : (
         // No channels found
         <div className="text-center py-12">
-          <p className="text-[#001C58] dark:text-white text-lg">
+          <p className="text-brand-primary dark:text-white text-lg">
             No se encontraron canales premium que coincidan con la búsqueda
           </p>
           <p className="text-gray-500 dark:text-gray-400 mt-2">

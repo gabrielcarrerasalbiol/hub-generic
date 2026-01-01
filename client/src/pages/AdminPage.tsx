@@ -9,9 +9,10 @@ import FeaturedVideosManager from '@/components/admin/FeaturedVideosManager';
 import PollManagement from '@/components/polls/PollManagement';
 import LoginLogs from '@/components/admin/LoginLogs';
 import ScheduledTasksManager from '@/components/admin/ScheduledTasksManager';
+import SiteConfigManagement from '@/components/admin/SiteConfigManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Users, Video, Activity, Star, Award, BarChart2, Sparkles, BarChart, Vote, LogIn, Clock } from 'lucide-react';
+import { Users, Video, Activity, Star, Award, BarChart2, Sparkles, BarChart, Vote, LogIn, Clock, Settings } from 'lucide-react';
 
 export default function AdminPage() {
   const { isAdmin, checkAuth } = useAuth();
@@ -40,7 +41,11 @@ export default function AdminPage() {
       </div>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-9">
+        <TabsList className="mb-6 grid w-full grid-cols-10">
+          <TabsTrigger value="config" className="flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            <span>Config</span>
+          </TabsTrigger>
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span>Usuarios</span>
@@ -78,6 +83,10 @@ export default function AdminPage() {
             <span>Procesos</span>
           </TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="config" className="space-y-6">
+          <SiteConfigManagement />
+        </TabsContent>
         
         <TabsContent value="users" className="space-y-6">
           <UserManagement />

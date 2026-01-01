@@ -44,7 +44,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
 
   // Sidebar base classes
   const sidebarClasses = cn(
-    "bg-white dark:bg-[#362C5A] dark:text-white w-72 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-[#FDBE11]",
+    "bg-white dark:bg-[#362C5A] dark:text-white w-72 flex-shrink-0 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto border-r-2 border-brand-secondary",
     "md:block", // Always show on desktop
     isOpen 
       ? "fixed inset-0 w-full md:w-72 z-50 h-full" // Open state on mobile
@@ -56,19 +56,19 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     <aside className={sidebarClasses}>
       <nav className="py-4">
         {/* Explore Section */}
-        <div className="px-4 pb-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
-          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.explore')}</h3>
+        <div className="px-4 pb-4 border-b border-brand-secondary/50 dark:border-brand-secondary/25">
+          <h3 className="font-semibold text-brand-primary dark:text-brand-secondary uppercase text-xs tracking-wide">{t('sidebar.explore')}</h3>
           <ul className="mt-2 space-y-1">
             <li>
               <Link href="/" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}>
                   <Home className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                    isLinkActive("/") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                   )} />
                   {t('nav.home')}
               </Link>
@@ -77,12 +77,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link href="/videos" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/videos") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}>
                 <LayoutGrid className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/videos") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  isLinkActive("/videos") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 {t('sidebar.explorer')}
               </Link>
@@ -91,12 +91,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link href="/trending" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/trending") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}>
                 <TrendingUp className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/trending") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  isLinkActive("/trending") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 {t('nav.trending')}
               </Link>
@@ -105,12 +105,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link href="/featured-videos" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/featured-videos") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}>
                 <Crown className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/featured-videos") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  isLinkActive("/featured-videos") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 {t('sidebar.featured_videos')}
               </Link>
@@ -119,12 +119,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link href="/favorites" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/favorites") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}>
                   <Star className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/favorites") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                    isLinkActive("/favorites") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                   )} />
                   {t('nav.favorites')}
               </Link>
@@ -133,12 +133,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link href="/subscriptions" className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/subscriptions") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}>
                   <Rss className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/subscriptions") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                    isLinkActive("/subscriptions") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                   )} />
                   {t('sidebar.my_channels')}
               </Link>
@@ -149,13 +149,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/history") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <History className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/history") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  isLinkActive("/history") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 {t('sidebar.history')}
               </Link>
@@ -164,8 +164,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Platforms Section */}
-        <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
-          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.platforms')}</h3>
+        <div className="px-4 py-4 border-b border-brand-secondary/50 dark:border-brand-secondary/25">
+          <h3 className="font-semibold text-brand-primary dark:text-brand-secondary uppercase text-xs tracking-wide">{t('sidebar.platforms')}</h3>
           <ul className="mt-2 space-y-1">
             <li>
               <Link 
@@ -173,8 +173,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?platform=youtube") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <Youtube className="mr-3 h-4 w-4 text-red-500" />
@@ -187,8 +187,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?platform=twitch") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <TwitchIcon className="mr-3 h-4 w-4 text-purple-500" />
@@ -201,8 +201,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?platform=tiktok") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <TikTokIcon className="mr-3 h-4 w-4 text-black dark:text-white" />
@@ -216,8 +216,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?platform=twitter") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <Twitter className="mr-3 h-4 w-4 text-blue-400" />
@@ -231,8 +231,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?platform=instagram") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <Instagram className="mr-3 h-4 w-4 text-pink-500" />
@@ -244,8 +244,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Categories Section */}
-        <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
-          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.categories')}</h3>
+        <div className="px-4 py-4 border-b border-brand-secondary/50 dark:border-brand-secondary/25">
+          <h3 className="font-semibold text-brand-primary dark:text-brand-secondary uppercase text-xs tracking-wide">{t('sidebar.categories')}</h3>
           <ul className="mt-2 space-y-1">
             <li>
               <Link 
@@ -253,13 +253,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?category=Partidos") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <Radio className={cn(
                   "mr-3 h-4 w-4",
-                  location.includes("/videos?category=Partidos") ? "text-[#FDBE11]" : "text-[#FDBE11]"
+                  location.includes("/videos?category=Partidos") ? "text-brand-secondary" : "text-brand-secondary"
                 )} />
                 {t('sidebar.matches')}
               </Link>
@@ -270,13 +270,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?category=Análisis") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <MessageSquare className={cn(
                   "mr-3 h-4 w-4",
-                  location.includes("/videos?category=Análisis") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  location.includes("/videos?category=Análisis") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 {t('sidebar.analysis')}
               </Link>
@@ -287,13 +287,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?category=Histórico") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <Trophy className={cn(
                   "mr-3 h-4 w-4",
-                  location.includes("/videos?category=Histórico") ? "text-[#FDBE11]" : "text-[#FDBE11]"
+                  location.includes("/videos?category=Histórico") ? "text-brand-secondary" : "text-brand-secondary"
                 )} />
                 {t('sidebar.historic_moments')}
               </Link>
@@ -304,13 +304,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?category=Jugadores") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <User className={cn(
                   "mr-3 h-4 w-4",
-                  location.includes("/videos?category=Jugadores") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  location.includes("/videos?category=Jugadores") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 {t('sidebar.players')}
               </Link>
@@ -321,13 +321,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   location.includes("/videos?category=Noticias") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <Newspaper className={cn(
                   "mr-3 h-4 w-4",
-                  location.includes("/videos?category=Noticias") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  location.includes("/videos?category=Noticias") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 {t('sidebar.news')}
               </Link>
@@ -338,13 +338,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         {/* Interactive Games Section - Only for premium users */}
         {/* Sección de juegos oculta temporalmente 
         {isPremium && (
-          <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25 hidden">
+          <div className="px-4 py-4 border-b border-brand-secondary/50 dark:border-brand-secondary/25 hidden">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
-                <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide mr-2">
+                <h3 className="font-semibold text-brand-primary dark:text-brand-secondary uppercase text-xs tracking-wide mr-2">
                   {t('sidebar.games')}
                 </h3>
-                <Crown className="w-4 h-4 text-[#FDBE11]" />
+                <Crown className="w-4 h-4 text-brand-secondary" />
               </div>
             </div>
             <ul className="mt-2 space-y-1">
@@ -354,13 +354,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   className={cn(
                     "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                     isLinkActive("/stats-game") 
-                      ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                      : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                      ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                      : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                   )}
                 >
                   <BarChart2 className={cn(
                     "mr-3 h-4 w-4",
-                    isLinkActive("/stats-game") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                    isLinkActive("/stats-game") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                   )} />
                   {t('sidebar.stats_game')}
                 </Link>
@@ -371,8 +371,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         */}
         
         {/* Polls Section */}
-        <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
-          <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">Encuestas</h3>
+        <div className="px-4 py-4 border-b border-brand-secondary/50 dark:border-brand-secondary/25">
+          <h3 className="font-semibold text-brand-primary dark:text-brand-secondary uppercase text-xs tracking-wide">Encuestas</h3>
           <ul className="mt-2 space-y-1">
             <li>
               <Link 
@@ -380,13 +380,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/polls") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <Vote className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/polls") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  isLinkActive("/polls") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 Todas las encuestas
               </Link>
@@ -397,13 +397,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 className={cn(
                   "flex items-center px-2 py-2 text-sm font-medium rounded-md",
                   isLinkActive("/polls/results") 
-                    ? "bg-[#FDBE11]/10 text-[#001C58] dark:text-[#FDBE11] border-l-4 border-[#FDBE11]" 
-                    : "text-gray-700 dark:text-white hover:bg-[#FDBE11]/5 hover:text-[#001C58] dark:hover:text-[#FDBE11]"
+                    ? "bg-brand-secondary/10 text-brand-primary dark:text-brand-secondary border-l-4 border-brand-secondary" 
+                    : "text-gray-700 dark:text-white hover:bg-brand-secondary/5 hover:text-brand-primary dark:hover:text-brand-secondary"
                 )}
               >
                 <BarChart2 className={cn(
                   "mr-3 h-4 w-4",
-                  isLinkActive("/polls/results") ? "text-[#FDBE11]" : "text-gray-500 dark:text-[#FDBE11]/70"
+                  isLinkActive("/polls/results") ? "text-brand-secondary" : "text-gray-500 dark:text-brand-secondary/70"
                 )} />
                 Resultados
               </Link>
@@ -417,12 +417,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
         
         {/* Featured Channels Section */}
-        <div className="px-4 py-4 border-b border-[#FDBE11]/50 dark:border-[#FDBE11]/25">
+        <div className="px-4 py-4 border-b border-brand-secondary/50 dark:border-brand-secondary/25">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide">{t('sidebar.featured')}</h3>
+            <h3 className="font-semibold text-brand-primary dark:text-brand-secondary uppercase text-xs tracking-wide">{t('sidebar.featured')}</h3>
             <Link 
               href="/featured-channels"
-              className="text-xs text-[#001C58] dark:text-[#FDBE11] hover:underline"
+              className="text-xs text-brand-primary dark:text-brand-secondary hover:underline"
             >
               {t('sidebar.view_all')}
             </Link>
@@ -447,12 +447,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               <Link 
                 key={channel.id} 
                 href={`/channel/${channel.id}`}
-                className="flex items-center mt-3 hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20 rounded-md p-2 cursor-pointer"
+                className="flex items-center mt-3 hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20 rounded-md p-2 cursor-pointer"
               >
                 <img 
                   src={channel.thumbnailUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=32`} 
                   alt={channel.title} 
-                  className="w-8 h-8 rounded-full border border-[#FDBE11]"
+                  className="w-8 h-8 rounded-full border border-brand-secondary"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.onerror = null;
@@ -460,7 +460,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   }}
                 />
                 <div className="ml-2">
-                  <p className="text-sm font-medium text-[#001C58] dark:text-white">{channel.title}</p>
+                  <p className="text-sm font-medium text-brand-primary dark:text-white">{channel.title}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     {channel.platform === 'YouTube' && t('sidebar.youtube_channel')}
                     {channel.platform === 'TikTok' && t('sidebar.tiktok_channel')}
@@ -472,7 +472,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             ))
           ) : (
             // No channels available
-            <p className="text-sm text-[#001C58]/70 dark:text-gray-400 mt-3 text-center">
+            <p className="text-sm text-brand-primary/70 dark:text-gray-400 mt-3 text-center">
               {t('sidebar.no_featured')}
             </p>
           )}
@@ -483,14 +483,14 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
-                <h3 className="font-semibold text-[#001C58] dark:text-[#FDBE11] uppercase text-xs tracking-wide mr-2">
+                <h3 className="font-semibold text-brand-primary dark:text-brand-secondary uppercase text-xs tracking-wide mr-2">
                   {t('sidebar.premium_channels')}
                 </h3>
-                <Crown className="w-4 h-4 text-[#FDBE11]" />
+                <Crown className="w-4 h-4 text-brand-secondary" />
               </div>
               <Link 
                 href="/premium-channels"
-                className="text-xs text-[#001C58] dark:text-[#FDBE11] hover:underline"
+                className="text-xs text-brand-primary dark:text-brand-secondary hover:underline"
               >
                 {t('sidebar.view_all')}
               </Link>
@@ -515,25 +515,25 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                 <Link 
                   key={channel.id} 
                   href={`/channel/${channel.id}`}
-                  className="flex items-center mt-3 hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20 rounded-md p-2 cursor-pointer"
+                  className="flex items-center mt-3 hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20 rounded-md p-2 cursor-pointer"
                 >
                   <div className="relative">
                     <img 
                       src={channel.thumbnailUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=32`} 
                       alt={channel.title} 
-                      className="w-8 h-8 rounded-full border border-[#FDBE11]"
+                      className="w-8 h-8 rounded-full border border-brand-secondary"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.onerror = null;
                         target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.title)}&background=random&color=fff&size=32`;
                       }}
                     />
-                    <span className="absolute -top-1 -right-1 bg-[#FDBE11] rounded-full w-4 h-4 flex items-center justify-center">
-                      <Crown className="w-3 h-3 text-[#001C58]" />
+                    <span className="absolute -top-1 -right-1 bg-brand-secondary rounded-full w-4 h-4 flex items-center justify-center">
+                      <Crown className="w-3 h-3 text-brand-primary" />
                     </span>
                   </div>
                   <div className="ml-2">
-                    <p className="text-sm font-medium text-[#001C58] dark:text-white flex items-center">
+                    <p className="text-sm font-medium text-brand-primary dark:text-white flex items-center">
                       {channel.title}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -548,19 +548,19 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             ) : (
               // No premium channels available
               <div className="mt-3 p-2 text-center">
-                <p className="text-sm text-[#001C58]/70 dark:text-gray-400">
+                <p className="text-sm text-brand-primary/70 dark:text-gray-400">
                   {t('sidebar.no_premium_channels')}
                 </p>
               </div>
             )}
             
             {!isPremium && (
-              <div className="mt-4 p-3 bg-[#FDBE11]/10 dark:bg-[#FDBE11]/5 rounded-md border border-[#FDBE11]/30">
-                <p className="text-sm text-[#001C58] dark:text-white flex items-center mb-2">
-                  <Crown className="w-4 h-4 text-[#FDBE11] mr-2" />
+              <div className="mt-4 p-3 bg-brand-secondary/10 dark:bg-brand-secondary/5 rounded-md border border-brand-secondary/30">
+                <p className="text-sm text-brand-primary dark:text-white flex items-center mb-2">
+                  <Crown className="w-4 h-4 text-brand-secondary mr-2" />
                   {t('sidebar.premium_access')}
                 </p>
-                <p className="text-xs text-[#001C58]/80 dark:text-gray-300">
+                <p className="text-xs text-brand-primary/80 dark:text-gray-300">
                   {t('sidebar.premium_description')}
                 </p>
               </div>

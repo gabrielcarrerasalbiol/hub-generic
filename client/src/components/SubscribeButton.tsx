@@ -199,7 +199,7 @@ export default function SubscribeButton({
         }}
         disabled={isLoading}
         variant={isSubscribed ? "outline" : "default"}
-        className={isSubscribed ? "border-yellow-500 text-yellow-600 px-5" : "bg-gradient-to-r from-[#FDBE11] to-[#FFC72C] text-[#001C58] hover:from-[#FDC731] hover:to-[#FFD74C] px-5"}
+        className={isSubscribed ? "border-brand-secondary text-brand-secondary px-5" : "bg-gradient-to-r from-brand-secondary to-brand-secondary text-brand-primary hover:from-brand-secondary hover:to-brand-secondary/80 px-5"}
       >
         {isSubscribed ? "Quitar canal" : "Agregar canal"}
       </Button>

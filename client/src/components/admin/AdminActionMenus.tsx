@@ -374,7 +374,7 @@ export function AdminActionMenus({
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
                   <AlertDialogAction 
                     onClick={() => importFeaturedVideosMutation.mutate(fetchVideoCount)}
-                    className="bg-yellow-600 hover:bg-yellow-700"
+                    className="bg-brand-secondary hover:bg-brand-secondary/90"
                   >
                     Importar Videos Destacados
                   </AlertDialogAction>

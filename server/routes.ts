@@ -4515,5 +4515,204 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Site Configuration API - Public endpoint to get all settings
+  app.get("/api/site-config", async (req: Request, res: Response) => {
+    try {
+      const configs = await db.select().from(schema.siteConfig);
+      
+      // Convert to object format for easier frontend consumption
+      const configObject = configs.reduce((acc, config) => {
+        let value = config.value;
+        
+        // Parse JSON values
+        if (config.type === 'json' && value) {
+          try {
+            value = JSON.parse(value);
+          } catch (e) {
+            console.error(`Error parsing JSON for config ${config.key}:`, e);
+          }
+        } else if (config.type === 'boolean' && value) {
+          value = value === 'true';
+        } else if (config.type === 'number' && value) {
+          value = parseFloat(value);
+        }
+        
+        acc[config.key] = value;
+        return acc;
+      }, {} as Record<string, any>);
+      
+      res.json(configObject);
+    } catch (error) {
+      console.error("Error fetching site config:", error);
+      res.status(500).json({ message: "Failed to fetch site configuration" });
+    }
+  });
+
+  // Get single config by key
+  app.get("/api/site-config/:key", async (req: Request, res: Response) => {
+    try {
+      const config = await db.select()
+        .from(schema.siteConfig)
+        .where(eq(schema.siteConfig.key, req.params.key))
+        .limit(1);
+      
+      if (config.length === 0) {
+        return res.status(404).json({ message: "Configuration not found" });
+      }
+      
+      res.json(config[0]);
+    } catch (error) {
+      console.error("Error fetching config:", error);
+      res.status(500).json({ message: "Failed to fetch configuration" });
+    }
+  });
+
+  // Admin endpoint to get all configs with metadata
+  app.get("/api/admin/site-config", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const configs = await db.select().from(schema.siteConfig);
+      res.json(configs);
+    } catch (error) {
+      console.error("Error fetching site config:", error);
+      res.status(500).json({ message: "Failed to fetch site configuration" });
+    }
+  });
+
+  // Update or create site config
+  app.put("/api/admin/site-config/:key", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { key } = req.params;
+      const { value, type, category, description } = req.body;
+      const userId = req.user!.id;
+      
+      // Check if config exists
+      const existing = await db.select()
+        .from(schema.siteConfig)
+        .where(eq(schema.siteConfig.key, key))
+        .limit(1);
+      
+      let finalValue = value;
+      
+      // Stringify JSON values
+      if (type === 'json' && typeof value === 'object') {
+        finalValue = JSON.stringify(value);
+      } else if (type === 'boolean') {
+        finalValue = String(value);
+      } else if (type === 'number') {
+        finalValue = String(value);
+      }
+      
+      if (existing.length > 0) {
+        // Update existing
+        const updated = await db.update(schema.siteConfig)
+          .set({
+            value: finalValue,
+            type,
+            category,
+            description,
+            updatedAt: new Date(),
+            updatedById: userId,
+          })
+          .where(eq(schema.siteConfig.key, key))
+          .returning();
+        
+        res.json(updated[0]);
+      } else {
+        // Create new
+        const created = await db.insert(schema.siteConfig)
+          .values({
+            key,
+            value: finalValue,
+            type: type || 'text',
+            category: category || 'general',
+            description,
+            updatedById: userId,
+          })
+          .returning();
+        
+        res.json(created[0]);
+      }
+    } catch (error) {
+      console.error("Error updating site config:", error);
+      res.status(500).json({ message: "Failed to update site configuration" });
+    }
+  });
+
+  // Delete site config
+  app.delete("/api/admin/site-config/:key", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      await db.delete(schema.siteConfig)
+        .where(eq(schema.siteConfig.key, req.params.key));
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting site config:", error);
+      res.status(500).json({ message: "Failed to delete site configuration" });
+    }
+  });
+
+  // Bulk update site configs
+  app.post("/api/admin/site-config/bulk", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { configs } = req.body;
+      const userId = req.user!.id;
+      
+      const results = [];
+      
+      for (const config of configs) {
+        const { key, value, type, category, description } = config;
+        
+        let finalValue = value;
+        
+        if (type === 'json' && typeof value === 'object') {
+          finalValue = JSON.stringify(value);
+        } else if (type === 'boolean') {
+          finalValue = String(value);
+        } else if (type === 'number') {
+          finalValue = String(value);
+        }
+        
+        const existing = await db.select()
+          .from(schema.siteConfig)
+          .where(eq(schema.siteConfig.key, key))
+          .limit(1);
+        
+        if (existing.length > 0) {
+          const updated = await db.update(schema.siteConfig)
+            .set({
+              value: finalValue,
+              type,
+              category,
+              description,
+              updatedAt: new Date(),
+              updatedById: userId,
+            })
+            .where(eq(schema.siteConfig.key, key))
+            .returning();
+          
+          results.push(updated[0]);
+        } else {
+          const created = await db.insert(schema.siteConfig)
+            .values({
+              key,
+              value: finalValue,
+              type: type || 'text',
+              category: category || 'general',
+              description,
+              updatedById: userId,
+            })
+            .returning();
+          
+          results.push(created[0]);
+        }
+      }
+      
+      res.json({ success: true, configs: results });
+    } catch (error) {
+      console.error("Error bulk updating site config:", error);
+      res.status(500).json({ message: "Failed to bulk update site configuration" });
+    }
+  });
+
   return httpServer;
 }

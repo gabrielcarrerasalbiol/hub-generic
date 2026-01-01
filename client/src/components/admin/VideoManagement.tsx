@@ -618,7 +618,7 @@ export default function VideoManagement() {
           </div>
           
           <div className="flex items-center space-x-2">
-            <Star className="h-5 w-5 text-yellow-500" />
+            <Star className="h-5 w-5 text-brand-secondary" />
             <div className="flex items-center space-x-2">
               <Label htmlFor="featured-filter" className="text-sm">Destacados</Label>
               <Switch 
@@ -749,7 +749,7 @@ export default function VideoManagement() {
                     </TableCell>
                     <TableCell className="text-center">
                       {video.featured ? (
-                        <Star className="h-5 w-5 text-yellow-500 mx-auto" />
+                        <Star className="h-5 w-5 text-brand-secondary mx-auto" />
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}

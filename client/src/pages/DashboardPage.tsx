@@ -57,7 +57,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <PlayCircle className="mr-2 h-5 w-5 text-[#FDBE11]" />
+              <PlayCircle className="mr-2 h-5 w-5 text-brand-secondary" />
               <div className="text-2xl font-bold">
                 {loadingStats ? '...' : formatNumber(statsOverview?.videoCount)}
               </div>
@@ -73,7 +73,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Users className="mr-2 h-5 w-5 text-[#001C58]" />
+              <Users className="mr-2 h-5 w-5 text-brand-primary" />
               <div className="text-2xl font-bold">
                 {loadingStats ? '...' : formatNumber(statsOverview?.channelCount)}
               </div>
@@ -89,7 +89,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Calendar className="mr-2 h-5 w-5 text-[#001C58]" />
+              <Calendar className="mr-2 h-5 w-5 text-brand-primary" />
               <div className="text-2xl font-bold">
                 {loadingStats ? '...' : formatNumber(statsOverview?.videosLastWeek)}
               </div>
@@ -105,7 +105,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Users className="mr-2 h-5 w-5 text-[#FDBE11]" />
+              <Users className="mr-2 h-5 w-5 text-brand-secondary" />
               <div className="text-2xl font-bold">
                 {loadingStats ? '...' : formatNumber(statsOverview?.userCount)}
               </div>

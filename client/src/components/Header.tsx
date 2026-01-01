@@ -8,6 +8,7 @@ import { useAuth, resetAuthStorage } from '@/hooks/useAuth';
 import NotificationBell from '@/components/NotificationBell';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useLanguage } from '@/hooks/use-language';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +39,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { siteName, logoUrl, logoAlt } = useSiteConfig();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   
@@ -96,24 +98,25 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   };
 
   return (
-    <header className="bg-white dark:bg-[#2A2040] dark:text-white shadow-md sticky top-0 z-50 border-b-4 border-[#FDBE11] w-full overflow-x-hidden">
+    <header className="bg-white dark:bg-[#2A2040] dark:text-white shadow-md sticky top-0 z-50 border-b-4 border-brand-secondary w-full overflow-x-hidden">
       <div className="w-full px-4 mx-auto">
         <div className="flex items-center justify-between py-3">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 shrink-0">
               <img 
-                src="/images/logo-hubmadridista.png" 
-                alt="Hub Madridista Logo" 
+                src={logoUrl} 
+                alt={logoAlt}
+                title={siteName}
                 className="h-12 sm:h-14" 
               />
           </Link>
           
           {/* Menú de Navegación Principal - Desktop */}
           <div className="hidden md:flex items-center space-x-6 mx-6">
-            <Link href="/" className="font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300">
+            <Link href="/" className="font-medium text-brand-primary dark:text-white hover:text-brand-secondary transition-colors duration-300">
               {t('nav.home')}
             </Link>
-            <Link href="/home" className="font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300">
+            <Link href="/home" className="font-medium text-brand-primary dark:text-white hover:text-brand-secondary transition-colors duration-300">
               {t('nav.platform')}
             </Link>
           </div>
@@ -124,7 +127,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               <Input
                 type="text"
                 placeholder={t('general.search')}
-                className="w-full py-2 px-4 pr-10 rounded-full border border-[#FDBE11] focus:ring-[#001C58] focus:border-[#001C58]"
+                className="w-full py-2 px-4 pr-10 rounded-full border border-brand-secondary focus:ring-brand-primary focus:border-brand-primary"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -132,11 +135,11 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                 type="submit" 
                 size="sm" 
                 variant="ghost" 
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#001C58]"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-brand-primary"
                 disabled={isSearching}
               >
                 {isSearching ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-[#FDBE11]" />
+                  <Loader2 className="h-4 w-4 animate-spin text-brand-secondary" />
                 ) : (
                   <Search className="h-4 w-4" />
                 )}
@@ -238,10 +241,10 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               </>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button asChild variant="ghost" className="text-[#001C58] dark:text-white hover:text-[#001C58]/80 dark:hover:text-white/80 hover:bg-[#FDBE11]/10">
+                <Button asChild variant="ghost" className="text-brand-primary dark:text-white hover:text-brand-primary/80 dark:hover:text-white/80 hover:bg-brand-secondary/10">
                   <Link href="/login">{t('nav.login')}</Link>
                 </Button>
-                <Button asChild className="bg-gradient-to-r from-[#FDBE11] to-[#FFC72C] text-[#001C58] hover:from-[#FDC731] hover:to-[#FFD74C] border-none">
+                <Button asChild className="bg-gradient-to-r from-brand-secondary to-brand-secondary text-brand-primary hover:from-brand-secondary hover:to-brand-secondary/80 border-none">
                   <Link href="/register">{t('nav.register')}</Link>
                 </Button>
               </div>
@@ -252,7 +255,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="ml-2 text-yellow-600 border-yellow-600 hover:bg-yellow-50"
+                className="ml-2 text-brand-secondary border-brand-secondary hover:bg-brand-secondary/10"
                 onClick={handleResetAuth}
                 title={t('nav.resetAuthTitle')}
               >
@@ -267,14 +270,14 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
         <div className="md:hidden flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-3 mt-1 pb-2">
           <Link 
             href="/" 
-            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/2"
+            className="flex flex-col items-center text-sm font-medium text-brand-primary dark:text-white hover:text-brand-secondary transition-colors duration-300 w-1/2"
           >
             <i className="fas fa-home text-lg mb-1"></i>
             <span>{t('nav.home')}</span>
           </Link>
           <Link 
             href="/home" 
-            className="flex flex-col items-center text-sm font-medium text-[#001C58] dark:text-white hover:text-[#FDBE11] transition-colors duration-300 w-1/2"
+            className="flex flex-col items-center text-sm font-medium text-brand-primary dark:text-white hover:text-brand-secondary transition-colors duration-300 w-1/2"
           >
             <i className="fas fa-tv text-lg mb-1"></i>
             <span>{t('nav.platform')}</span>
@@ -287,7 +290,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
             <Input
               type="text"
               placeholder={t('general.search')}
-              className="w-full py-2 px-4 pr-10 rounded-full border border-[#FDBE11] focus:ring-[#001C58] focus:border-[#001C58]"
+              className="w-full py-2 px-4 pr-10 rounded-full border border-brand-secondary focus:ring-brand-primary focus:border-brand-primary"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -295,11 +298,11 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               type="submit" 
               size="sm" 
               variant="ghost" 
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#001C58]"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-brand-primary"
               disabled={isSearching}
             >
               {isSearching ? (
-                <Loader2 className="h-4 w-4 animate-spin text-[#FDBE11]" />
+                <Loader2 className="h-4 w-4 animate-spin text-brand-secondary" />
               ) : (
                 <Search className="h-4 w-4" />
               )}

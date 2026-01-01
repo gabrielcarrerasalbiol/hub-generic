@@ -11,10 +11,10 @@ export default function TermsPage() {
       </Helmet>
       
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-sm">
-        <h1 className="text-3xl font-bold mb-6 text-[#001C58] border-b pb-4">{t('terms.title')}</h1>
+        <h1 className="text-3xl font-bold mb-6 text-brand-primary border-b pb-4">{t('terms.title')}</h1>
         
         <div className="prose prose-lg max-w-none">
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.ownerInfo.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('terms.ownerInfo.title')}</h2>
           <ul className="list-disc ml-6 mb-4">
             <li>{t('terms.ownerInfo.owner')}</li>
             <li>{t('terms.ownerInfo.address')}</li>
@@ -22,7 +22,7 @@ export default function TermsPage() {
             <li>{t('terms.ownerInfo.email')}</li>
           </ul>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.purpose.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('terms.purpose.title')}</h2>
           <p className="mb-4">
             {t('terms.purpose.description')}
           </p>
@@ -36,7 +36,7 @@ export default function TermsPage() {
             {t('terms.purpose.acceptance')}
           </p>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.requirements.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('terms.requirements.title')}</h2>
           <p className="mb-4">{t('terms.requirements.description')}</p>
           <ul className="list-disc ml-6 mb-4">
             <li>{t('terms.requirements.age')}</li>
@@ -44,12 +44,12 @@ export default function TermsPage() {
             <li>{t('terms.requirements.truthful')}</li>
           </ul>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.embeddedContent.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('terms.embeddedContent.title')}</h2>
           <p className="mb-4">
             {t('terms.embeddedContent.description')}
           </p>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.subscriptions.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('terms.subscriptions.title')}</h2>
           <p className="mb-4">{t('terms.subscriptions.description')}</p>
           <ul className="list-disc ml-6 mb-4">
             <li>{t('terms.subscriptions.payment')}</li>
@@ -57,7 +57,7 @@ export default function TermsPage() {
             <li>{t('terms.subscriptions.cancellation')}</li>
           </ul>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('terms.liability.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('terms.liability.title')}</h2>
           <p className="mb-4">
             {t('terms.liability.description')}
           </p>

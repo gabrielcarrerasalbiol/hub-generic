@@ -82,7 +82,7 @@ const HeroSlider = ({
 
   return (
     <div 
-      className={`relative w-full ${height} overflow-hidden rounded-xl shadow-lg bg-[#001C58]/5`}
+      className={`relative w-full ${height} overflow-hidden rounded-xl shadow-lg bg-brand-primary/5`}
       ref={slidesContainerRef}
     >
       {/* Imágenes */}
@@ -108,7 +108,7 @@ const HeroSlider = ({
       </div>
 
       {/* Overlay de gradiente */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 via-[#001C58]/60 to-transparent z-20"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/80 via-brand-primary/60 to-transparent z-20"></div>
 
       {/* Contenido */}
       <div className="relative z-30 h-full flex flex-col justify-center">
@@ -116,7 +116,7 @@ const HeroSlider = ({
           <h1 className="text-3xl md:text-5xl font-bold mb-4 text-shadow-lg">{title}</h1>
           <p className="text-lg md:text-xl mb-8 text-shadow-sm max-w-lg">{subtitle}</p>
           <Link href={buttonLink}>
-            <Button className="bg-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/90 font-semibold px-6 py-2 text-lg shadow-lg transform transition hover:scale-105">
+            <Button className="bg-brand-secondary text-brand-primary hover:bg-brand-secondary/90 font-semibold px-6 py-2 text-lg shadow-lg transform transition hover:scale-105">
               {buttonText}
             </Button>
           </Link>
@@ -150,7 +150,7 @@ const HeroSlider = ({
             key={idx}
             className={`h-3 w-3 rounded-full transition-all shadow-md ${
               idx === currentIndex 
-                ? 'bg-[#FDBE11] w-5 scale-110' 
+                ? 'bg-brand-secondary w-5 scale-110' 
                 : 'bg-white/60 hover:bg-white/80'
             }`}
             onClick={() => {

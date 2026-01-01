@@ -271,7 +271,7 @@ export default function Home() {
                   <span 
                     key={idx} 
                     className={`block h-2 w-2 rounded-full ${
-                      idx === currentFeaturedIndex ? 'bg-[#FDBE11]' : 'bg-gray-300'
+                      idx === currentFeaturedIndex ? 'bg-brand-secondary' : 'bg-gray-300'
                     }`}
                   />
                 ))}
@@ -317,8 +317,8 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-md border-2 border-[#FDBE11] p-6 text-center">
-            <p className="text-[#001C58]">{t('home.noFeaturedContent')}</p>
+          <div className="bg-white rounded-xl shadow-md border-2 border-brand-secondary p-6 text-center">
+            <p className="text-brand-primary">{t('home.noFeaturedContent')}</p>
           </div>
         )}
       </section>
@@ -326,7 +326,7 @@ export default function Home() {
       {/* Videos por Plataforma - Nueva sección interactiva */}
       <section className="mb-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-[#001C58] border-l-4 border-[#FDBE11] pl-3">
+          <h2 className="text-xl font-bold text-brand-primary border-l-4 border-brand-secondary pl-3">
             {t('home.discoverContent')}
           </h2>
           {/* Filtros de categoría para desktop - ahora manejados por HomeFilters */}
@@ -334,7 +334,7 @@ export default function Home() {
         
         {/* Contenedor de tabs y filtros */}
         <div 
-          className="bg-gradient-to-r from-[#001C58]/5 to-[#FDBE11]/5 rounded-xl p-4 lg:p-6"
+          className="bg-gradient-to-r from-brand-primary/5 to-brand-secondary/5 rounded-xl p-4 lg:p-6"
           style={{
             backgroundColor: '#f8f9fa',
             backgroundSize: 'cover',
@@ -364,7 +364,7 @@ export default function Home() {
                     platform === 'instagram' ? 'text-pink-500' : ''
                   }`}></i>
                 </div>
-                <h3 className="text-xl font-semibold text-[#001C58] mb-2">{t('home.comingSoon')}</h3>
+                <h3 className="text-xl font-semibold text-brand-primary mb-2">{t('home.comingSoon')}</h3>
                 <p className="text-gray-600 mb-4 max-w-xl mx-auto">
                   {t('home.workingToIncorporate', { platform: platform })}
                 </p>
@@ -373,7 +373,7 @@ export default function Home() {
                 </p>
                 <Button 
                   variant="outline" 
-                  className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                  className="border-brand-secondary text-brand-primary hover:bg-brand-secondary/10"
                   onClick={() => setPlatform("all" as PlatformType)}
                 >
                   {t('home.viewAllVideos')}
@@ -403,7 +403,7 @@ export default function Home() {
             // Videos filtrados con título y badge
             <div>
               <div className="flex items-center mb-4">
-                <h3 className="text-lg font-semibold text-[#001C58]">
+                <h3 className="text-lg font-semibold text-brand-primary">
                   {platform !== "all" ? (
                     <span className="flex items-center">
                       <i className={`${getPlatformIcon(platform)} mr-2 ${
@@ -417,7 +417,7 @@ export default function Home() {
                   )}
                 </h3>
                 {category !== "all" && (
-                  <span className="ml-3 px-2 py-1 bg-[#FDBE11]/20 text-[#001C58] text-xs font-medium rounded-full">
+                  <span className="ml-3 px-2 py-1 bg-brand-secondary/20 text-brand-primary text-xs font-medium rounded-full">
                     {t(`categories.${category}`, category)}
                   </span>
                 )}
@@ -440,7 +440,7 @@ export default function Home() {
           ) : (
             // Videos trending por defecto
             <div>
-              <h3 className="text-lg font-semibold text-[#001C58] mb-4">{t('home.featuredVideos')}</h3>
+              <h3 className="text-lg font-semibold text-brand-primary mb-4">{t('home.featuredVideos')}</h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
                 {/* Ordenamos del más reciente al más antiguo basándonos en publishedAt */}
                 {[...trendingVideos]
@@ -462,7 +462,7 @@ export default function Home() {
         {/* Botón de explorar más */}
         <div className="mt-6 flex justify-center">
           <Link href="/videos">
-            <Button className="bg-[#001C58] text-white hover:bg-[#001C58]/90 flex items-center gap-2">
+            <Button className="bg-brand-primary text-white hover:bg-brand-primary/90 flex items-center gap-2">
               {t('home.exploreAllVideos')} <ExternalLink className="h-4 w-4 ml-1" />
             </Button>
           </Link>
@@ -471,7 +471,7 @@ export default function Home() {
 
       {/* Latest Videos Section */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.latestVideos')}</h2>
+        <h2 className="text-xl font-bold mb-4 text-brand-primary border-l-4 border-brand-secondary pl-3">{t('home.latestVideos')}</h2>
         
         {isLatestLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -500,15 +500,15 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58] dark:text-white">{t('home.noRecentVideosAvailable')}</p>
+          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-brand-secondary/30">
+            <p className="text-brand-primary dark:text-white">{t('home.noRecentVideosAvailable')}</p>
           </div>
         )}
       </section>
       
       {/* Trending Videos Section */}
       <section className="mb-10">
-        <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.popularVideosThisWeek')}</h2>
+        <h2 className="text-xl font-bold mb-4 text-brand-primary border-l-4 border-brand-secondary pl-3">{t('home.popularVideosThisWeek')}</h2>
         
         {isTrendingLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -537,8 +537,8 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58] dark:text-white">{t('home.noPopularVideosAvailable')}</p>
+          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-brand-secondary/30">
+            <p className="text-brand-primary dark:text-white">{t('home.noPopularVideosAvailable')}</p>
           </div>
         )}
         
@@ -546,7 +546,7 @@ export default function Home() {
           <Link href="/trending">
             <Button 
               variant="outline" 
-              className="px-6 py-2 border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+              className="px-6 py-2 border-brand-secondary text-brand-primary dark:text-white dark:border-brand-secondary hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20"
             >
               {t('home.viewMoreVideos')}
             </Button>
@@ -556,7 +556,7 @@ export default function Home() {
       
       {/* Top Channels Section */}
       <section 
-        className="mb-10 p-6 rounded-xl bg-gradient-to-r from-[#001C58] to-[#0a337d]" 
+        className="mb-10 p-6 rounded-xl bg-gradient-to-r from-brand-primary to-[#0a337d]" 
         style={{
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -564,8 +564,8 @@ export default function Home() {
           boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-[#001C58]/80 to-transparent rounded-xl"></div>
-        <h2 className="text-xl font-bold mb-4 text-white border-l-4 border-[#FDBE11] pl-3 relative z-10">{t('home.recommendedChannels')}</h2>
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/80 to-transparent rounded-xl"></div>
+        <h2 className="text-xl font-bold mb-4 text-white border-l-4 border-brand-secondary pl-3 relative z-10">{t('home.recommendedChannels')}</h2>
         
         {isChannelsLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -595,8 +595,8 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-[#FDBE11]/30">
-            <p className="text-[#001C58] dark:text-white">{t('home.noRecommendedChannelsAvailable')}</p>
+          <div className="bg-white rounded-lg shadow-md p-6 text-center border border-brand-secondary/30">
+            <p className="text-brand-primary dark:text-white">{t('home.noRecommendedChannelsAvailable')}</p>
           </div>
         )}
       </section>

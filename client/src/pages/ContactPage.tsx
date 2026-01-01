@@ -70,7 +70,7 @@ export default function ContactPage() {
       
       <div className="max-w-4xl mx-auto">
         <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h1 className="text-3xl font-bold mb-6 text-[#001C58] border-b pb-4">Contacto</h1>
+          <h1 className="text-3xl font-bold mb-6 text-brand-primary border-b pb-4">Contacto</h1>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
@@ -83,14 +83,14 @@ export default function ContactPage() {
               
               <div className="space-y-4 mt-8">
                 <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#001C58] mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-brand-primary mr-3">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                   </svg>
                   <span>contacto@hubmadridista.com</span>
                 </div>
                 
                 <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#001C58] mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-brand-primary mr-3">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                   </svg>
@@ -164,7 +164,7 @@ export default function ContactPage() {
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-[#001C58] hover:bg-[#001C58]/90"
+                    className="w-full bg-brand-primary hover:bg-brand-primary/90"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}

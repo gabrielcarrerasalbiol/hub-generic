@@ -199,7 +199,7 @@ export default function DashboardStatistics() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <PieChartIcon className="h-5 w-5 mr-2 text-[#FDBE11]" />
+                  <PieChartIcon className="h-5 w-5 mr-2 text-brand-secondary" />
                   Distribución por categoría
                 </CardTitle>
                 <CardDescription>
@@ -240,7 +240,7 @@ export default function DashboardStatistics() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <BarChart2 className="h-5 w-5 mr-2 text-[#001C58]" />
+                  <BarChart2 className="h-5 w-5 mr-2 text-brand-primary" />
                   Distribución por plataforma
                 </CardTitle>
                 <CardDescription>
@@ -270,7 +270,7 @@ export default function DashboardStatistics() {
             <Card className="md:col-span-2">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <LineChart className="h-5 w-5 mr-2 text-[#001C58]" />
+                  <LineChart className="h-5 w-5 mr-2 text-brand-primary" />
                   Tendencia de publicación
                 </CardTitle>
                 <CardDescription>
@@ -420,7 +420,7 @@ export default function DashboardStatistics() {
             <Card className="md:col-span-2">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <LineChart className="h-5 w-5 mr-2 text-[#001C58]" />
+                  <LineChart className="h-5 w-5 mr-2 text-brand-primary" />
                   Tendencia de publicación
                 </CardTitle>
                 <CardDescription>

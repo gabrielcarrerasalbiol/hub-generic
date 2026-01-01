@@ -3,4 +3,25 @@ dist
 .DS_Store
 server/public
 vite.config.ts.*
-*.tar.gz.env.production
+*.tar.gz
+
+# Environment files with secrets
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Secrets and credentials
+*_token.txt
+cookie.txt
+*.key
+*.pem
+*.cert
+
+# Database dumps
+*.sql
+*.dump
+
+# Logs
+*.log
+logs/

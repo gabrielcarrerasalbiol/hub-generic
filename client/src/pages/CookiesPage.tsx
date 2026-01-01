@@ -11,19 +11,19 @@ export default function CookiesPage() {
       </Helmet>
       
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-sm">
-        <h1 className="text-3xl font-bold mb-6 text-[#001C58] border-b pb-4">{t('cookies.title')}</h1>
+        <h1 className="text-3xl font-bold mb-6 text-brand-primary border-b pb-4">{t('cookies.title')}</h1>
         
         <div className="prose prose-lg max-w-none">
           <p className="mb-4">
             {t('cookies.introduction')}
           </p>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('cookies.definition.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('cookies.definition.title')}</h2>
           <p className="mb-4">
             {t('cookies.definition.description')}
           </p>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('cookies.types.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('cookies.types.title')}</h2>
           <ul className="mb-4">
             <li className="mb-2">
               <strong>{t('cookies.types.own.title')}</strong>: {t('cookies.types.own.description')}
@@ -38,7 +38,7 @@ export default function CookiesPage() {
             </li>
           </ul>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('cookies.purpose.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('cookies.purpose.title')}</h2>
           <p className="mb-4">{t('cookies.purpose.description')}</p>
           <ul className="list-disc ml-6 mb-4">
             <li>{t('cookies.purpose.usage1')}</li>
@@ -46,17 +46,17 @@ export default function CookiesPage() {
             <li>{t('cookies.purpose.usage3')}</li>
           </ul>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('cookies.consent.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('cookies.consent.title')}</h2>
           <p className="mb-4">
             {t('cookies.consent.description')}
           </p>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('cookies.disable.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('cookies.disable.title')}</h2>
           <p className="mb-4">
             {t('cookies.disable.description')}
           </p>
           
-          <h2 className="text-xl font-semibold mt-6 mb-4 text-[#001C58]">{t('cookies.jurisdiction.title')}</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-4 text-brand-primary">{t('cookies.jurisdiction.title')}</h2>
           <p className="mb-4">
             {t('cookies.jurisdiction.description')}
           </p>

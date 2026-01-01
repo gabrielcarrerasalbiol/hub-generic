@@ -274,16 +274,16 @@ export default function VideoPage() {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-6 px-2">
           {/* Información principal del video */}
-          <div className="w-full bg-white border-2 border-[#FDBE11] rounded-lg p-6 shadow-xl">
+          <div className="w-full bg-white border-2 border-brand-secondary rounded-lg p-6 shadow-xl">
             {/* Título del video y botón de favoritos */}
             <div className="mb-4">
               <div className="flex justify-between items-start">
-                <h1 className="text-2xl font-bold text-[#001C58] flex-grow">{video.title}</h1>
+                <h1 className="text-2xl font-bold text-brand-primary flex-grow">{video.title}</h1>
                 <div className="flex space-x-2">
                   {/* Botón de compartir */}
                   <Button 
                     variant="outline" 
-                    className="flex items-center border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                    className="flex items-center border-brand-secondary text-brand-primary hover:bg-brand-secondary/10"
                     onClick={() => setShareModalOpen(true)}
                   >
                     <svg 
@@ -344,11 +344,11 @@ export default function VideoPage() {
               
               {/* Video Summary - Solo visible para usuarios registrados */}
               {user && video.summary && video.summary.length > 0 && (
-                <div className="bg-[#F8F8FA] border-2 border-[#FDBE11] rounded-lg shadow-md p-4 mt-4">
+                <div className="bg-[#F8F8FA] border-2 border-brand-secondary rounded-lg shadow-md p-4 mt-4">
                   <div className="flex items-center mb-2">
-                    <i className="fas fa-lightbulb text-[#FDBE11] mr-2"></i>
-                    <h3 className="font-bold text-lg text-[#001C58]">Resumen AI</h3>
-                    <span className="ml-2 px-2 py-1 text-xs bg-[#001C58] text-white rounded-full">Premium</span>
+                    <i className="fas fa-lightbulb text-brand-secondary mr-2"></i>
+                    <h3 className="font-bold text-lg text-brand-primary">Resumen AI</h3>
+                    <span className="ml-2 px-2 py-1 text-xs bg-brand-primary text-white rounded-full">Premium</span>
                   </div>
                   <div className="text-gray-800 whitespace-pre-line text-sm">
                     {video.summary}
@@ -358,9 +358,9 @@ export default function VideoPage() {
 
               {/* Video Description con mejor formato - Colores Real Madrid */}
               <div className="bg-white rounded-lg shadow-md p-4 mt-4">
-                <h3 className="font-medium text-lg mb-2 text-[#001C58]">Descripción</h3>
+                <h3 className="font-medium text-lg mb-2 text-brand-primary">Descripción</h3>
                 {video.description ? (
-                  <div className="text-gray-700 whitespace-pre-line text-sm border-l-4 border-[#FDBE11] pl-3">
+                  <div className="text-gray-700 whitespace-pre-line text-sm border-l-4 border-brand-secondary pl-3">
                     {video.description.length > 300 
                       ? `${video.description.substring(0, 300)}...` 
                       : video.description
@@ -384,7 +384,7 @@ export default function VideoPage() {
                   <img 
                     src={video.channelThumbnail || `https://ui-avatars.com/api/?name=${encodeURIComponent(video.channelTitle)}&background=362C5A&color=fff&size=128`} 
                     alt={video.channelTitle} 
-                    className="w-12 h-12 rounded-full object-cover border-2 border-[#FDBE11]" 
+                    className="w-12 h-12 rounded-full object-cover border-2 border-brand-secondary" 
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.onerror = null;
@@ -392,8 +392,8 @@ export default function VideoPage() {
                     }}
                   />
                   <div className="ml-3">
-                    <p className="font-bold text-md text-[#001C58]">{video.channelTitle}</p>
-                    <p className="text-xs text-[#001C58]">
+                    <p className="font-bold text-md text-brand-primary">{video.channelTitle}</p>
+                    <p className="text-xs text-brand-primary">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white ${getPlatformColor(video.platform)}`}>
                         <i className={`${getPlatformIcon(video.platform)} mr-1`}></i> 
                         {video.platform}
@@ -415,7 +415,7 @@ export default function VideoPage() {
                 <CommentSection videoId={video.id} />
               </div>
               
-              <h2 className="font-bold text-xl mb-4 text-[#001C58]">Videos relacionados</h2>
+              <h2 className="font-bold text-xl mb-4 text-brand-primary">Videos relacionados</h2>
               
               {isRelatedLoading ? (
                 <div className="space-y-4">

@@ -110,7 +110,7 @@ export default function TrendingPage() {
     <main className="flex-1 bg-gray-100 dark:bg-[#2A2040] p-4 md:p-6 overflow-y-auto">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-[#001C58] dark:text-white">Videos en Tendencia</h1>
+          <h1 className="text-3xl font-bold text-brand-primary dark:text-white">Videos en Tendencia</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-1">Descubre los videos más populares de Real Madrid</p>
         </div>
         <div className="mt-4 md:mt-0">
@@ -118,7 +118,7 @@ export default function TrendingPage() {
             <DialogTrigger asChild>
               <Button 
                 variant="outline" 
-                className="border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+                className="border-brand-secondary text-brand-primary dark:text-white dark:border-brand-secondary hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20"
               >
                 <TrendingUp className="mr-2 h-4 w-4" />
                 Ver análisis de tendencias
@@ -126,7 +126,7 @@ export default function TrendingPage() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col">
               <DialogHeader className="flex-shrink-0">
-                <DialogTitle className="text-2xl font-bold text-[#001C58]">Análisis de Tendencias</DialogTitle>
+                <DialogTitle className="text-2xl font-bold text-brand-primary">Análisis de Tendencias</DialogTitle>
                 <DialogDescription>
                   Información detallada sobre los videos en tendencia del Real Madrid
                 </DialogDescription>
@@ -146,7 +146,7 @@ export default function TrendingPage() {
                       <Card>
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-semibold flex items-center">
-                            <PieChart className="mr-2 h-5 w-5 text-[#FDBE11]" />
+                            <PieChart className="mr-2 h-5 w-5 text-brand-secondary" />
                             Distribución por Plataforma
                           </CardTitle>
                         </CardHeader>
@@ -166,7 +166,7 @@ export default function TrendingPage() {
                                   <div className="flex-1">
                                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                                       <div 
-                                        className="bg-[#001C58] h-2.5 rounded-full" 
+                                        className="bg-brand-primary h-2.5 rounded-full" 
                                         style={{ width: `${Math.round((count / trendingVideos.length) * 100)}%` }}
                                       ></div>
                                     </div>
@@ -191,7 +191,7 @@ export default function TrendingPage() {
                       <Card>
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-semibold flex items-center">
-                            <BarChart className="mr-2 h-5 w-5 text-[#FDBE11]" />
+                            <BarChart className="mr-2 h-5 w-5 text-brand-secondary" />
                             Distribución por Categoría
                           </CardTitle>
                         </CardHeader>
@@ -218,7 +218,7 @@ export default function TrendingPage() {
                                   <div className="flex-1">
                                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                                       <div 
-                                        className="bg-[#FDBE11] h-2.5 rounded-full" 
+                                        className="bg-brand-secondary h-2.5 rounded-full" 
                                         style={{ width: `${Math.round((count / trendingVideos.length) * 100)}%` }}
                                       ></div>
                                     </div>
@@ -243,7 +243,7 @@ export default function TrendingPage() {
                       <Card>
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-semibold flex items-center">
-                            <AreaChart className="mr-2 h-5 w-5 text-[#FDBE11]" />
+                            <AreaChart className="mr-2 h-5 w-5 text-brand-secondary" />
                             Estadísticas de visualizaciones
                           </CardTitle>
                         </CardHeader>
@@ -283,7 +283,7 @@ export default function TrendingPage() {
                                     return (
                                       <div
                                         key={index}
-                                        className="flex-1 bg-[#001C58] mx-px"
+                                        className="flex-1 bg-brand-primary mx-px"
                                         style={{ height: `${Math.max(height, 5)}%` }}
                                         title={`${video.title}: ${video.viewCount || 0} vistas`}
                                       ></div>
@@ -302,7 +302,7 @@ export default function TrendingPage() {
                       <Card>
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-semibold flex items-center">
-                            <LineChart className="mr-2 h-5 w-5 text-[#FDBE11]" />
+                            <LineChart className="mr-2 h-5 w-5 text-brand-secondary" />
                             Videos por antigüedad
                           </CardTitle>
                         </CardHeader>
@@ -348,7 +348,7 @@ export default function TrendingPage() {
                                     <div className="flex-1">
                                       <div className="w-full bg-gray-200 rounded-full h-2.5">
                                         <div 
-                                          className="bg-[#001C58] h-2.5 rounded-full" 
+                                          className="bg-brand-primary h-2.5 rounded-full" 
                                           style={{ width: `${Math.round((count / trendingVideos.length) * 100)}%` }}
                                         ></div>
                                       </div>
@@ -427,7 +427,7 @@ export default function TrendingPage() {
                                       .slice(0, 3)
                                       .map((video, idx) => (
                                         <div key={video.id} className="flex items-center gap-2">
-                                          <div className="w-6 h-6 bg-[#001C58] text-white rounded-full flex items-center justify-center text-xs font-medium">
+                                          <div className="w-6 h-6 bg-brand-primary text-white rounded-full flex items-center justify-center text-xs font-medium">
                                             {idx + 1}
                                           </div>
                                           <div className="flex-1 text-sm font-medium truncate" title={video.title}>
@@ -522,7 +522,7 @@ export default function TrendingPage() {
                                         .slice(0, 3)
                                         .map((video, idx) => (
                                           <div key={video.id} className="flex items-center gap-2">
-                                            <div className="w-6 h-6 bg-[#FDBE11] text-white rounded-full flex items-center justify-center text-xs font-medium">
+                                            <div className="w-6 h-6 bg-brand-secondary text-white rounded-full flex items-center justify-center text-xs font-medium">
                                               {idx + 1}
                                             </div>
                                             <div className="flex-1 text-sm font-medium truncate" title={video.title}>
@@ -548,7 +548,7 @@ export default function TrendingPage() {
                     <Card>
                       <CardHeader className="pb-2">
                         <CardTitle className="text-lg font-semibold flex items-center">
-                          <Trophy className="mr-2 h-5 w-5 text-[#FDBE11]" />
+                          <Trophy className="mr-2 h-5 w-5 text-brand-secondary" />
                           Top 10 Videos Más Vistos
                         </CardTitle>
                       </CardHeader>
@@ -564,7 +564,7 @@ export default function TrendingPage() {
                                 
                                 return (
                                   <div key={video.id} className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-[#001C58] text-white rounded-full flex items-center justify-center font-bold">
+                                    <div className="w-8 h-8 bg-brand-primary text-white rounded-full flex items-center justify-center font-bold">
                                       {idx + 1}
                                     </div>
                                     <div className="w-12 h-12 bg-gray-200 rounded overflow-hidden flex-shrink-0">
@@ -600,7 +600,7 @@ export default function TrendingPage() {
                                         </div>
                                         <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
                                           <div 
-                                            className="bg-[#FDBE11] h-1.5 rounded-full" 
+                                            className="bg-brand-secondary h-1.5 rounded-full" 
                                             style={{ width: `${percentage}%` }}
                                           ></div>
                                         </div>
@@ -720,7 +720,7 @@ export default function TrendingPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Total videos</p>
-              <h3 className="text-2xl font-bold text-[#001C58] mt-1">
+              <h3 className="text-2xl font-bold text-brand-primary mt-1">
                 {Array.isArray(trendingVideos) ? trendingVideos.length : 0}
               </h3>
             </div>
@@ -734,7 +734,7 @@ export default function TrendingPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Vistas totales</p>
-              <h3 className="text-2xl font-bold text-[#001C58] mt-1">
+              <h3 className="text-2xl font-bold text-brand-primary mt-1">
                 {Array.isArray(trendingVideos) 
                   ? formatViewCount(trendingVideos.reduce((sum, video) => sum + (video.viewCount || 0), 0))
                   : 0}
@@ -750,7 +750,7 @@ export default function TrendingPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Filtrados</p>
-              <h3 className="text-2xl font-bold text-[#001C58] mt-1">
+              <h3 className="text-2xl font-bold text-brand-primary mt-1">
                 {sortedVideos.length}
               </h3>
             </div>
@@ -764,7 +764,7 @@ export default function TrendingPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Promedio de vistas</p>
-              <h3 className="text-2xl font-bold text-[#001C58] mt-1">
+              <h3 className="text-2xl font-bold text-brand-primary mt-1">
                 {Array.isArray(trendingVideos) && trendingVideos.length > 0
                   ? formatViewCount(trendingVideos.reduce((sum, video) => sum + (video.viewCount || 0), 0) / trendingVideos.length)
                   : 0}
@@ -778,7 +778,7 @@ export default function TrendingPage() {
       </div>
 
       {/* Videos Grid */}
-      <h2 className="text-xl font-bold mb-4 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">
+      <h2 className="text-xl font-bold mb-4 text-brand-primary border-l-4 border-brand-secondary pl-3">
         {sortedVideos.length} {sortedVideos.length === 1 ? "Video Encontrado" : "Videos Encontrados"}
       </h2>
       
@@ -815,7 +815,7 @@ export default function TrendingPage() {
               <Button 
                 onClick={loadMoreVideos}
                 variant="outline" 
-                className="border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+                className="border-brand-secondary text-brand-primary dark:text-white dark:border-brand-secondary hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20"
               >
                 <ChevronDown className="mr-2 h-4 w-4" />
                 Cargar más videos ({sortedVideos.length - visibleVideos} restantes)
@@ -824,18 +824,18 @@ export default function TrendingPage() {
           )}
         </>
       ) : (
-        <div className="bg-white rounded-lg shadow-md p-8 text-center border border-[#FDBE11]/30">
+        <div className="bg-white rounded-lg shadow-md p-8 text-center border border-brand-secondary/30">
           <div className="flex flex-col items-center max-w-md mx-auto">
             <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
               <TrendingUp className="h-8 w-8 text-amber-500" />
             </div>
-            <h3 className="text-xl font-semibold text-[#001C58] dark:text-white mb-2">No se encontraron videos</h3>
+            <h3 className="text-xl font-semibold text-brand-primary dark:text-white mb-2">No se encontraron videos</h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
               No hay videos que coincidan con los filtros seleccionados. Intenta modificar los criterios de búsqueda.
             </p>
             <Button 
               variant="outline" 
-              className="border-[#FDBE11] text-[#001C58] dark:text-white dark:border-[#FDBE11] hover:bg-[#FDBE11]/10 dark:hover:bg-[#FDBE11]/20"
+              className="border-brand-secondary text-brand-primary dark:text-white dark:border-brand-secondary hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20"
               onClick={() => {
                 setSearchQuery("");
                 setMinViews(0);

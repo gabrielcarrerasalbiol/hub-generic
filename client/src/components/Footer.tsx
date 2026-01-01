@@ -1,5 +1,6 @@
 import { Link } from 'wouter';
 import { useLanguage } from '@/hooks/use-language';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
 import NewsletterSubscription from './NewsletterSubscription';
 import { 
   Facebook, 
@@ -14,6 +15,18 @@ import { Separator } from '@/components/ui/separator';
 
 export default function Footer() {
   const { t } = useLanguage();
+  const { 
+    siteName, 
+    logoUrl, 
+    logoAlt, 
+    contactEmail, 
+    contactPhone,
+    socialTwitter,
+    socialFacebook,
+    socialInstagram,
+    socialYoutube,
+    get 
+  } = useSiteConfig();
   
   return (
     <footer className="bg-gradient-to-b from-gray-50 to-white dark:from-[#2A2040] dark:to-[#221A34] border-t border-gray-200 dark:border-gray-700 mt-auto pt-10 pb-6 w-full">
@@ -26,27 +39,28 @@ export default function Footer() {
               <div className="relative">
                 <div className="absolute inset-0 rounded-full blur-[2px] bg-gradient-to-r from-yellow-100 to-purple-100 dark:from-yellow-900/20 dark:to-purple-900/30 opacity-70"></div>
                 <img 
-                  src="/images/logo-hubmadridista.png" 
-                  alt={t('app.name') + ' Logo'} 
+                  src={logoUrl} 
+                  alt={logoAlt}
+                  title={siteName}
                   className="h-16 mr-2 relative z-10" 
                 />
               </div>
             </div>
             
             <p className="text-gray-600 dark:text-gray-300 text-sm">
-              {t('footer.description')}
+              {get('footer.about.text') || t('footer.description')}
             </p>
             
             <div className="space-y-2">
               <div className="flex items-center text-gray-600 dark:text-gray-300">
                 <Mail className="h-4 w-4 mr-2" />
-                <a href="mailto:contacto@hubmadridista.com" className="text-sm hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors">
-                  contacto@hubmadridista.com
+                <a href={`mailto:${contactEmail}`} className="text-sm hover:text-brand-primary dark:hover:text-brand-secondary transition-colors">
+                  {contactEmail}
                 </a>
               </div>
               <div className="flex items-center text-gray-600 dark:text-gray-300">
                 <Phone className="h-4 w-4 mr-2" />
-                <span className="text-sm">+34 667 976 076</span>
+                <span className="text-sm">{contactPhone}</span>
               </div>
               <div className="flex items-center text-gray-600 dark:text-gray-300">
                 <MapPin className="h-4 w-4 mr-2" />
@@ -56,34 +70,34 @@ export default function Footer() {
             
             <div className="flex space-x-4 pt-2">
               <a 
-                href="https://x.com/HubMadridistax" 
+                href={socialTwitter} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-[#001C58] dark:hover:bg-[#FDBE11] hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-brand-primary dark:hover:bg-brand-secondary hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a 
-                href="https://www.facebook.com/hubmadridista" 
+                href={socialFacebook} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-[#001C58] dark:hover:bg-[#FDBE11] hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-brand-primary dark:hover:bg-brand-secondary hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
               >
                 <Facebook className="h-4 w-4" />
               </a>
               <a 
-                href="https://www.instagram.com/hubmadridista" 
+                href={socialInstagram} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-[#001C58] dark:hover:bg-[#FDBE11] hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-brand-primary dark:hover:bg-brand-secondary hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
               >
                 <Instagram className="h-4 w-4" />
               </a>
               <a 
-                href="https://www.youtube.com/hubmadridista" 
+                href={socialYoutube} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-[#001C58] dark:hover:bg-[#FDBE11] hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-brand-primary dark:hover:bg-brand-secondary hover:text-white dark:hover:text-gray-900 transform hover:scale-110 transition-all duration-200 shadow-sm"
               >
                 <Youtube className="h-4 w-4" />
               </a>
@@ -99,27 +113,27 @@ export default function Footer() {
                 <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm uppercase">{t('footer.navigation')}</h4>
                 <ul className="space-y-1.5">
                   <li>
-                    <Link href="/" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('nav.home')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/tendencias" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/tendencias" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('nav.trending')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/buscar" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/buscar" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('footer.search')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/categorias" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/categorias" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('sidebar.categories')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/canales" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/canales" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('footer.channels')}
                     </Link>
                   </li>
@@ -130,27 +144,27 @@ export default function Footer() {
                 <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm uppercase">{t('footer.information')}</h4>
                 <ul className="space-y-1.5">
                   <li>
-                    <Link href="/sobre-nosotros" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/sobre-nosotros" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('footer.aboutUs')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/terminos" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/terminos" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('footer.terms')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/privacidad" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/privacidad" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('footer.privacy')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/cookies" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/cookies" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('footer.cookies')}
                     </Link>
                   </li>
                   <li>
-                    <Link href="/contacto" className="text-gray-600 dark:text-gray-300 hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors text-sm">
+                    <Link href="/contacto" className="text-gray-600 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-secondary transition-colors text-sm">
                       {t('footer.contact')}
                     </Link>
                   </li>

@@ -118,7 +118,7 @@ export default function NotificationsPage() {
         <TabsContent value={tab}>
           {isLoading ? (
             <div className="flex justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FDBE11]"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-secondary"></div>
             </div>
           ) : filteredNotifications.length === 0 ? (
             <Card>
@@ -139,7 +139,7 @@ export default function NotificationsPage() {
           ) : (
             <div className="space-y-4">
               {filteredNotifications.map((notification) => (
-                <Card key={notification.id} className={notification.isRead ? "" : "border-l-4 border-l-[#FDBE11]"}>
+                <Card key={notification.id} className={notification.isRead ? "" : "border-l-4 border-l-brand-secondary"}>
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center">

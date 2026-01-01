@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
 
 interface SEOProps {
   title?: string;
@@ -31,11 +32,11 @@ interface SEOProps {
  * />
  */
 export default function SEO({
-  title = 'Hub Madridista | Agregador de contenido Real Madrid',
-  description = 'Hub Madridista - La plataforma definitiva con los mejores videos y contenido del Real Madrid de todas las plataformas en un solo lugar',
-  keywords = 'Real Madrid, fútbol, LaLiga, Champions League, videos, noticias, jugadores, análisis, youtube, ver videos',
+  title,
+  description,
+  keywords,
   canonicalUrl,
-  ogImage = 'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/1200px-Real_Madrid_CF.svg.png',
+  ogImage,
   ogType = 'website',
   twitterCard = 'summary_large_image',
   lang = 'es',
@@ -45,6 +46,20 @@ export default function SEO({
   publishDate,
   duration,
 }: SEOProps) {
+  // Get site configuration
+  const { 
+    siteName, 
+    seoTitle, 
+    seoDescription, 
+    seoKeywords, 
+    seoOgImage 
+  } = useSiteConfig();
+  
+  // Use provided values or fallback to site config
+  const finalTitle = title || seoTitle;
+  const finalDescription = description || seoDescription;
+  const finalKeywords = keywords || seoKeywords;
+  const finalOgImage = ogImage || seoOgImage;
   // Construir URL canónica si no se proporcionó
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   const canonical = canonicalUrl || currentUrl;
@@ -53,19 +68,19 @@ export default function SEO({
   const structuredDataJson = structuredData ? JSON.stringify(structuredData) : '';
   
   // Keywords específicos por plataforma para mejorar SEO
-  let enhancedKeywords = keywords;
+  let enhancedKeywords = finalKeywords;
   if (videoSource === 'youtube') {
-    enhancedKeywords = `${keywords}, youtube real madrid, videos youtube real madrid, canal real madrid youtube, real madrid youtube oficial, ver videos real madrid`;
+    enhancedKeywords = `${finalKeywords}, youtube real madrid, videos youtube real madrid, canal real madrid youtube, real madrid youtube oficial, ver videos real madrid`;
   } else if (videoSource === 'tiktok') {
-    enhancedKeywords = `${keywords}, tiktok real madrid, videos tiktok real madrid, real madrid tiktok oficial`;
+    enhancedKeywords = `${finalKeywords}, tiktok real madrid, videos tiktok real madrid, real madrid tiktok oficial`;
   }
 
   return (
     <Helmet>
       {/* Metadatos básicos */}
       <html lang={lang} />
-      <title>{title}</title>
-      <meta name="description" content={description} />
+      <title>{finalTitle}</title>
+      <meta name="description" content={finalDescription} />
       <meta name="keywords" content={enhancedKeywords} />
       
       {/* Controlar indexación */}
@@ -79,23 +94,23 @@ export default function SEO({
       <link rel="canonical" href={canonical} />
       
       {/* Open Graph para Facebook, LinkedIn, etc */}
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:title" content={finalTitle} />
+      <meta property="og:description" content={finalDescription} />
       <meta property="og:url" content={canonical} />
       <meta property="og:type" content={ogType} />
-      <meta property="og:image" content={ogImage} />
-      <meta property="og:site_name" content="Hub Madridista" />
+      <meta property="og:image" content={finalOgImage} />
+      <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
       
       {/* Twitter Card */}
       <meta name="twitter:card" content={twitterCard} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:title" content={finalTitle} />
+      <meta name="twitter:description" content={finalDescription} />
+      <meta name="twitter:image" content={finalOgImage} />
       
       {/* Metadatos adicionales */}
-      <meta name="application-name" content="Hub Madridista" />
-      <meta name="apple-mobile-web-app-title" content="Hub Madridista" />
+      <meta name="application-name" content={siteName} />
+      <meta name="apple-mobile-web-app-title" content={siteName} />
       <meta name="theme-color" content="#ffffff" />
       
       {/* Metadatos específicos para videos */}

@@ -71,7 +71,7 @@ export default function AboutPage() {
       subtitle: t("about.heroSlider.home.subtitle"),
       bgColor: "bg-[#1E3A8A]",
       textColor: "text-white",
-      icon: <Trophy className="inline-block mr-3 h-10 w-10 text-[#FDBE11]" />,
+      icon: <Trophy className="inline-block mr-3 h-10 w-10 text-brand-secondary" />,
       image: "/images/real-madrid-hero.jpg"
     },
     {
@@ -85,7 +85,7 @@ export default function AboutPage() {
     {
       title: t("about.heroSlider.feeling.title"),
       subtitle: t("about.heroSlider.feeling.subtitle"),
-      bgColor: "bg-[#FDBE11]",
+      bgColor: "bg-brand-secondary",
       textColor: "text-[#1E3A8A]",
       icon: <Heart className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />,
       image: "/images/real-madrid-fans-stadium-view.jpg"
@@ -129,7 +129,7 @@ export default function AboutPage() {
                     {index === 0 && (
                       <div className="mt-6">
                         <Link href="/register">
-                          <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-bold px-6 py-2 text-lg rounded-lg shadow-md">
+                          <Button className="bg-brand-secondary hover:bg-brand-secondary/80 text-[#1E3A8A] font-bold px-6 py-2 text-lg rounded-lg shadow-md">
                             {t("about.registerButton")}
                           </Button>
                         </Link>
@@ -146,7 +146,7 @@ export default function AboutPage() {
                 key={index} 
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   currentSlideIndex === index 
-                    ? 'bg-[#FDBE11] scale-125' 
+                    ? 'bg-brand-secondary scale-125' 
                     : 'bg-gray-300/70'
                 }`}
               />
@@ -161,7 +161,7 @@ export default function AboutPage() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">{t("about.whatIsHub.title")}</h2>
-          <div className="w-20 h-1 bg-[#FDBE11] mx-auto mb-6"></div>
+          <div className="w-20 h-1 bg-brand-secondary mx-auto mb-6"></div>
           <p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
             {t("about.whatIsHub.description")}
           </p>
@@ -169,7 +169,7 @@ export default function AboutPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
-            <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-brand-secondary/80 rounded-full flex items-center justify-center">
               <Award className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-xl font-semibold mb-3 dark:text-white">{t("about.features.curatedContent.title")}</h3>
@@ -179,7 +179,7 @@ export default function AboutPage() {
           </div>
 
           <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
-            <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-brand-secondary/80 rounded-full flex items-center justify-center">
               <div className="flex items-center">
                 <Tv className="w-7 h-7 text-white" />
                 <Smartphone className="w-5 h-5 text-white ml-1" />
@@ -192,7 +192,7 @@ export default function AboutPage() {
           </div>
 
           <div className="bg-gray-100 dark:bg-[#3E355F] rounded-xl shadow-md p-6 text-center hover:shadow-lg transition duration-300">
-            <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-[#FDBE11]/80 rounded-full flex items-center justify-center relative">
+            <div className="w-16 h-16 mx-auto mb-4 bg-[#1E3A8A] dark:bg-brand-secondary/80 rounded-full flex items-center justify-center relative">
               <Bell className="w-8 h-8 text-white" />
               <Star className="w-4 h-4 text-white absolute top-2 right-2 animate-ping" />
             </div>
@@ -209,7 +209,7 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{t("about.premium.title")}</h2>
-            <div className="w-20 h-1 bg-[#FDBE11] mx-auto mb-6"></div>
+            <div className="w-20 h-1 bg-brand-secondary mx-auto mb-6"></div>
             <p className="text-lg max-w-3xl mx-auto">
               {t("about.premium.description")}
             </p>
@@ -218,10 +218,10 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
-                <Crown className="w-6 h-6 text-[#FDBE11]" />
+                <Crown className="w-6 h-6 text-brand-secondary" />
               </div>
-              <Star className="w-3 h-3 text-[#FDBE11] absolute top-4 right-4" />
-              <Star className="w-3 h-3 text-[#FDBE11] absolute top-4 left-4" />
+              <Star className="w-3 h-3 text-brand-secondary absolute top-4 right-4" />
+              <Star className="w-3 h-3 text-brand-secondary absolute top-4 left-4" />
               <h3 className="text-xl font-semibold mb-2">{t("about.premium.benefits.exclusiveChannels.title")}</h3>
               <p className="text-gray-200">
                 {t("about.premium.benefits.exclusiveChannels.description")}
@@ -230,7 +230,7 @@ export default function AboutPage() {
 
             <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
-                <Ban className="w-6 h-6 text-[#FDBE11]" />
+                <Ban className="w-6 h-6 text-brand-secondary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">{t("about.premium.benefits.noAds.title")}</h3>
               <p className="text-gray-200">
@@ -240,7 +240,7 @@ export default function AboutPage() {
 
             <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-[#FDBE11]" />
+                <Trophy className="w-6 h-6 text-brand-secondary" />
               </div>
               <History className="w-3 h-3 text-white/30 absolute top-4 right-6" />
               <History className="w-3 h-3 text-white/30 absolute top-6 right-10" />
@@ -252,7 +252,7 @@ export default function AboutPage() {
 
             <div className="bg-white/10 backdrop-blur rounded-xl p-6 hover:bg-white/20 transition duration-300 relative">
               <div className="w-14 h-14 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
-                <LineChart className="w-6 h-6 text-[#FDBE11]" />
+                <LineChart className="w-6 h-6 text-brand-secondary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">{t("about.premium.benefits.analysis.title")}</h3>
               <p className="text-gray-200">
@@ -265,12 +265,12 @@ export default function AboutPage() {
             {user ? (
               user.role === 'premium' ? (
                 <div className="bg-white/20 backdrop-blur inline-block px-6 py-3 rounded-lg">
-                  <CheckCircle className="inline-block text-[#FDBE11] h-5 w-5 mr-2" />
+                  <CheckCircle className="inline-block text-brand-secondary h-5 w-5 mr-2" />
                   <span className="font-medium">{t("about.premium.alreadyPremium")}</span>
                 </div>
               ) : (
                 <Link href="/profile">
-                  <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-medium text-lg px-8 py-3 rounded-lg">
+                  <Button className="bg-brand-secondary hover:bg-brand-secondary/80 text-[#1E3A8A] font-medium text-lg px-8 py-3 rounded-lg">
                     {t("about.premium.upgradeToPremium")}
                   </Button>
                 </Link>
@@ -278,7 +278,7 @@ export default function AboutPage() {
             ) : (
               <div className="space-x-4">
                 <Link href="/register">
-                  <Button className="bg-[#FDBE11] hover:bg-[#FDBE11]/80 text-[#1E3A8A] font-medium text-lg px-8 py-3 rounded-lg">
+                  <Button className="bg-brand-secondary hover:bg-brand-secondary/80 text-[#1E3A8A] font-medium text-lg px-8 py-3 rounded-lg">
                     {t("about.registerButton")}
                   </Button>
                 </Link>
@@ -297,7 +297,7 @@ export default function AboutPage() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">{t("about.testimonials.title")}</h2>
-          <div className="w-20 h-1 bg-[#FDBE11] mx-auto mb-6"></div>
+          <div className="w-20 h-1 bg-brand-secondary mx-auto mb-6"></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -316,7 +316,7 @@ export default function AboutPage() {
             </p>
             <div className="mt-4 flex">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 text-[#FDBE11] mr-1" fill="#FDBE11" />
+                <Star key={i} className="w-5 h-5 text-brand-secondary mr-1" fill="#FDBE11" />
               ))}
             </div>
           </div>
@@ -336,9 +336,9 @@ export default function AboutPage() {
             </p>
             <div className="mt-4 flex">
               {[...Array(4)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 text-[#FDBE11] mr-1" fill="#FDBE11" />
+                <Star key={i} className="w-5 h-5 text-brand-secondary mr-1" fill="#FDBE11" />
               ))}
-              <Star className="w-5 h-5 text-[#FDBE11] mr-1" fill="#FDBE11" strokeWidth={3} />
+              <Star className="w-5 h-5 text-brand-secondary mr-1" fill="#FDBE11" strokeWidth={3} />
             </div>
           </div>
 
@@ -357,16 +357,16 @@ export default function AboutPage() {
             </p>
             <div className="mt-4 flex">
               {[...Array(4)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 text-[#FDBE11] mr-1" fill="#FDBE11" />
+                <Star key={i} className="w-5 h-5 text-brand-secondary mr-1" fill="#FDBE11" />
               ))}
-              <Star className="w-5 h-5 text-[#FDBE11]/30 mr-1" />
+              <Star className="w-5 h-5 text-brand-secondary/30 mr-1" />
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="bg-[#FDBE11]/10 dark:bg-[#FDBE11]/5 py-16">
+      <section className="bg-brand-secondary/10 dark:bg-brand-secondary/5 py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 dark:text-white">
             {t("about.cta.title")}

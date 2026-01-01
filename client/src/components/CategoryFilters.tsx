@@ -23,9 +23,9 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
   
   const categories = [
     { id: "all" as CategoryType, name: t('categories.all'), icon: <ChevronsRight className="h-4 w-4" /> },
-    { id: "matches" as CategoryType, name: t('categories.matches'), icon: <Radio className="h-4 w-4 text-[#FDBE11]" /> },
+    { id: "matches" as CategoryType, name: t('categories.matches'), icon: <Radio className="h-4 w-4 text-brand-secondary" /> },
     { id: "tactics" as CategoryType, name: t('categories.analysis'), icon: <MessageSquare className="h-4 w-4" /> },
-    { id: "history" as CategoryType, name: t('categories.history'), icon: <Trophy className="h-4 w-4 text-[#FDBE11]" /> },
+    { id: "history" as CategoryType, name: t('categories.history'), icon: <Trophy className="h-4 w-4 text-brand-secondary" /> },
     { id: "news" as CategoryType, name: t('categories.news'), icon: <Newspaper className="h-4 w-4" /> },
     { id: "interviews" as CategoryType, name: t('categories.interviews'), icon: <Mic2 className="h-4 w-4" /> },
     { id: "fan_content" as CategoryType, name: t('categories.fans'), icon: <Users className="h-4 w-4" /> },
@@ -42,7 +42,7 @@ export default function CategoryFilters({ selectedCategory, onSelectCategory }: 
           className={cn(
             "flex items-center gap-1 border-slate-300",
             selectedCategory === category.id
-              ? "bg-[#001C58] text-white hover:bg-[#001C58]/90"
+              ? "bg-brand-primary text-white hover:bg-brand-primary/90"
               : "hover:bg-slate-100"
           )}
           onClick={() => onSelectCategory(category.id as CategoryType)}

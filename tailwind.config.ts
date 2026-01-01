@@ -13,6 +13,12 @@ export default {
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        // Brand colors from site config
+        brand: {
+          primary: "var(--color-primary, #001C58)",
+          secondary: "var(--color-secondary, #FDBE11)",
+          accent: "var(--color-accent, #FFFFFF)",
+        },
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",

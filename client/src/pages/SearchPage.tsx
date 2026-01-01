@@ -240,7 +240,7 @@ export default function SearchPage() {
           </div>
           <Button 
             type="submit" 
-            className="bg-[#001C58] hover:bg-[#001C58]/90 min-w-[100px]"
+            className="bg-brand-primary hover:bg-brand-primary/90 min-w-[100px]"
             disabled={isLoading || isFetching || isSearching || !searchQuery.trim()}
           >
             {(isLoading || isFetching || isSearching) ? (
@@ -279,7 +279,7 @@ export default function SearchPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium mb-2 dark:text-white">Filtrar por plataforma:</p>
               {(isLoading || isFetching || isSearching) && (
-                <div className="w-3 h-3 border-2 border-[#FDBE11] border-t-transparent rounded-full animate-spin mb-2"></div>
+                <div className="w-3 h-3 border-2 border-brand-secondary border-t-transparent rounded-full animate-spin mb-2"></div>
               )}
             </div>
             <div className={`${(isLoading || isFetching || isSearching) ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -293,7 +293,7 @@ export default function SearchPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium mb-2 dark:text-white">Filtrar por categoría:</p>
               {(isLoading || isFetching || isSearching) && (
-                <div className="w-3 h-3 border-2 border-[#FDBE11] border-t-transparent rounded-full animate-spin mb-2"></div>
+                <div className="w-3 h-3 border-2 border-brand-secondary border-t-transparent rounded-full animate-spin mb-2"></div>
               )}
             </div>
             <div className={`${(isLoading || isFetching || isSearching) ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -312,12 +312,12 @@ export default function SearchPage() {
           {/* Spinner principal - se muestra incluso durante las búsquedas posteriores */}
           <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center mb-6 animate-fadeIn">
             <div className="flex flex-col items-center justify-center">
-              <div className="w-16 h-16 border-4 border-[#FDBE11] border-t-transparent rounded-full animate-spin mb-4 relative">
-                <div className="absolute inset-0 w-16 h-16 border-4 border-[#001C58] border-b-transparent border-l-transparent border-r-transparent rounded-full animate-pulse"></div>
+              <div className="w-16 h-16 border-4 border-brand-secondary border-t-transparent rounded-full animate-spin mb-4 relative">
+                <div className="absolute inset-0 w-16 h-16 border-4 border-brand-primary border-b-transparent border-l-transparent border-r-transparent rounded-full animate-pulse"></div>
               </div>
               <h2 className="text-xl font-semibold mb-2 dark:text-white">Buscando contenido...</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Estamos buscando resultados para <span className="font-semibold text-[#001C58] dark:text-[#FDBE11]">"{searchQuery}"</span>. 
+                Estamos buscando resultados para <span className="font-semibold text-brand-primary dark:text-brand-secondary">"{searchQuery}"</span>. 
                 <br/>Esto puede tomar unos segundos.
               </p>
             </div>
@@ -361,7 +361,7 @@ export default function SearchPage() {
             <div className="flex gap-4">
               <Button onClick={() => {
                 setShouldSearch(true); // Activar búsqueda al intentar nuevamente
-              }} className="bg-[#001C58] hover:bg-[#001C58]/90">
+              }} className="bg-brand-primary hover:bg-brand-primary/90">
                 Intentar nuevamente
               </Button>
               <Button onClick={() => {
@@ -392,7 +392,7 @@ export default function SearchPage() {
             </Button>
             <Button onClick={() => {
               setShouldSearch(true); // Activar búsqueda al intentar nuevamente
-            }} className="bg-[#001C58] hover:bg-[#001C58]/90">
+            }} className="bg-brand-primary hover:bg-brand-primary/90">
               Intentar nuevamente
             </Button>
           </div>
@@ -417,7 +417,7 @@ export default function SearchPage() {
                   setLocation(`/search?q=${term}`);
                   setShouldSearch(true); // Activar búsqueda para términos predefinidos
                 }}
-                className="border-[#FDBE11] text-[#FDBE11] hover:bg-[#FDBE11]/10"
+                className="border-brand-secondary text-brand-secondary hover:bg-brand-secondary/10"
               >
                 {term}
               </Button>
@@ -441,7 +441,7 @@ export default function SearchPage() {
               <Button 
                 onClick={handleLoadMore}
                 variant="outline" 
-                className="px-6 py-2 border-[#001C58] text-[#001C58] dark:border-[#FDBE11] dark:text-[#FDBE11]"
+                className="px-6 py-2 border-brand-primary text-brand-primary dark:border-brand-secondary dark:text-brand-secondary"
               >
                 Cargar más resultados
               </Button>

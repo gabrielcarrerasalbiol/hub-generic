@@ -456,7 +456,7 @@ export default function PremiumChannelManagement() {
                       <TableCell>
                         <div className="flex items-center">
                           {[...Array(premiumChannel.priority)].map((_, i) => (
-                            <Star key={i} size={14} className="text-yellow-500 fill-yellow-500" />
+                            <Star key={i} size={14} className="text-brand-secondary fill-brand-secondary" />
                           ))}
                         </div>
                       </TableCell>

@@ -72,7 +72,7 @@ export function Pagination({
             key={`page-${page}`}
             variant={currentPage === page ? "default" : "outline"}
             size="icon"
-            className={`w-8 h-8 ${currentPage === page ? "bg-[#001C58] text-white" : ""}`}
+            className={`w-8 h-8 ${currentPage === page ? "bg-brand-primary text-white" : ""}`}
             onClick={() => onPageChange(page as number)}
           >
             {page}

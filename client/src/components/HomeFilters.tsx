@@ -46,13 +46,13 @@ export default function HomeFilters({
   return (
     <>
       {/* Filtros de plataforma */}
-      <div className="mb-6 flex justify-center border-b border-[#FDBE11]/20 pb-4">
+      <div className="mb-6 flex justify-center border-b border-brand-secondary/20 pb-4">
         <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 max-w-3xl">
           <Button
             variant={platform === "all" ? "default" : "ghost"}
             className={`${platform === "all" 
-              ? "bg-[#001C58] text-white border-[#FDBE11]" 
-              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+              ? "bg-brand-primary text-white border-brand-secondary" 
+              : "text-brand-primary hover:bg-brand-secondary/10"}`}
             onClick={() => handlePlatformChange("all" as PlatformType)}
           >
             <Layers className="h-4 w-4 mr-2" /> {t('home.all')}
@@ -62,7 +62,7 @@ export default function HomeFilters({
             variant={platform === "youtube" ? "default" : "ghost"}
             className={`${platform === "youtube" 
               ? "bg-red-600 text-white hover:bg-red-700" 
-              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+              : "text-brand-primary hover:bg-brand-secondary/10"}`}
             onClick={() => handlePlatformChange("youtube" as PlatformType)}
           >
             <Youtube className="h-4 w-4 mr-2" /> YouTube
@@ -72,7 +72,7 @@ export default function HomeFilters({
             variant={platform === "twitch" ? "default" : "ghost"}
             className={`${platform === "twitch" 
               ? "bg-purple-600 text-white hover:bg-purple-700" 
-              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+              : "text-brand-primary hover:bg-brand-secondary/10"}`}
             onClick={() => handlePlatformChange("twitch" as PlatformType)}
           >
             <TwitchIcon className="h-4 w-4 mr-2" /> Twitch
@@ -82,7 +82,7 @@ export default function HomeFilters({
             variant={platform === "twitter" ? "default" : "ghost"}
             className={`${platform === "twitter" 
               ? "bg-blue-500 text-white hover:bg-blue-600" 
-              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+              : "text-brand-primary hover:bg-brand-secondary/10"}`}
             onClick={() => handlePlatformChange("twitter" as PlatformType)}
             disabled={true}
           >
@@ -93,7 +93,7 @@ export default function HomeFilters({
             variant={platform === "instagram" ? "default" : "ghost"}
             className={`${platform === "instagram" 
               ? "bg-pink-500 text-white hover:bg-pink-600" 
-              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+              : "text-brand-primary hover:bg-brand-secondary/10"}`}
             onClick={() => handlePlatformChange("instagram" as PlatformType)}
             disabled={true}
           >
@@ -104,7 +104,7 @@ export default function HomeFilters({
             variant={platform === "tiktok" ? "default" : "ghost"}
             className={`${platform === "tiktok" 
               ? "bg-black text-white hover:bg-gray-900" 
-              : "text-[#001C58] hover:bg-[#FDBE11]/10"}`}
+              : "text-brand-primary hover:bg-brand-secondary/10"}`}
             onClick={() => handlePlatformChange("tiktok" as PlatformType)}
             disabled={true}
           >
@@ -115,7 +115,7 @@ export default function HomeFilters({
             
       {/* Filtros de categoría para móvil */}
       <div className="block md:hidden mb-6">
-        <h3 className="text-sm font-medium mb-2 text-[#001C58]">{t('home.filterByCategory')}</h3>
+        <h3 className="text-sm font-medium mb-2 text-brand-primary">{t('home.filterByCategory')}</h3>
         <CategoryFilters 
           selectedCategory={category} 
           onSelectCategory={handleCategoryChange} 
@@ -124,7 +124,7 @@ export default function HomeFilters({
       
       {/* Filtros de categoría para desktop */}
       <div className="hidden md:block mt-6 mb-4">
-        <h3 className="text-sm font-medium mb-3 text-[#001C58] border-l-4 border-[#FDBE11] pl-3">{t('home.filterByCategory')}</h3>
+        <h3 className="text-sm font-medium mb-3 text-brand-primary border-l-4 border-brand-secondary pl-3">{t('home.filterByCategory')}</h3>
         <div className="flex flex-wrap gap-2">
           <CategoryFilters 
             selectedCategory={category} 

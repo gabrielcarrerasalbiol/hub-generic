@@ -38,7 +38,7 @@ export default function LanguageSelector() {
           variant="ghost" 
           size="sm" 
           aria-label={t('language.select')}
-          className="px-2 rounded-full hover:bg-transparent hover:text-[#001C58] dark:hover:text-[#FDBE11] transition-colors"
+          className="px-2 rounded-full hover:bg-transparent hover:text-brand-primary dark:hover:text-brand-secondary transition-colors"
         >
           <span className="text-base mr-1">{getFlagEmoji()}</span>
           <Languages className="h-4 w-4" />

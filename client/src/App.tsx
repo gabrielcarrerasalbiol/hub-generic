@@ -37,6 +37,7 @@ import PollManagementPage from "@/pages/PollManagementPage";
 import StatsGame from "@/pages/StatsGame";
 import Layout from "@/components/Layout";
 import CookieConsent from "@/components/CookieConsent";
+import SiteConfigStyles from "@/components/SiteConfigStyles";
 import { useAuth } from '@/hooks/useAuth';
 import { useTokenHandler } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/hooks/use-theme';
@@ -241,6 +242,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
+        <SiteConfigStyles />
         <AppContent />
         <CookieConsent />
         <Toaster />

@@ -231,7 +231,7 @@ export default function VideosPage() {
         {/* Encabezado y filtros principales */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#001C58] mb-1">Explorador de Videos</h1>
+            <h1 className="text-2xl font-bold text-brand-primary mb-1">Explorador de Videos</h1>
             <p className="text-slate-600 text-sm">
               Descubre todos los videos relacionados con el Real Madrid
             </p>
@@ -321,7 +321,7 @@ export default function VideosPage() {
                   variant="outline"
                   size="sm"
                   onClick={resetFilters}
-                  className="text-[#001C58]"
+                  className="text-brand-primary"
                 >
                   Restablecer filtros
                 </Button>
@@ -365,7 +365,7 @@ export default function VideosPage() {
                 <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
                   <Filter className="h-8 w-8 text-amber-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#001C58] mb-2">Próximamente</h3>
+                <h3 className="text-xl font-semibold text-brand-primary mb-2">Próximamente</h3>
                 <p className="text-gray-600 mb-4 max-w-xl mx-auto">
                   Estamos trabajando para incorporar contenido de <span className="font-semibold capitalize">{platform}</span> a nuestro Hub Madridista.
                 </p>
@@ -374,7 +374,7 @@ export default function VideosPage() {
                 </p>
                 <Button 
                   variant="outline" 
-                  className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                  className="border-brand-secondary text-brand-primary hover:bg-brand-secondary/10"
                   onClick={() => setPlatform("all")}
                 >
                   Ver todos los videos
@@ -406,13 +406,13 @@ export default function VideosPage() {
                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                   <Search className="h-8 w-8 text-slate-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#001C58] mb-2">No se encontraron resultados</h3>
+                <h3 className="text-xl font-semibold text-brand-primary mb-2">No se encontraron resultados</h3>
                 <p className="text-gray-600 mb-6 max-w-xl mx-auto">
                   No hay videos que coincidan con los filtros actuales. Intenta cambiar tus criterios de búsqueda.
                 </p>
                 <Button 
                   variant="outline" 
-                  className="border-[#FDBE11] text-[#001C58] hover:bg-[#FDBE11]/10"
+                  className="border-brand-secondary text-brand-primary hover:bg-brand-secondary/10"
                   onClick={resetFilters}
                 >
                   Restablecer filtros

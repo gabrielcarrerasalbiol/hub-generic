@@ -12,18 +12,18 @@ export default function LanguageFilters({ selectedLanguage, onSelectLanguage }: 
       <Button
         variant={selectedLanguage === "all" ? "default" : "outline"}
         className={selectedLanguage === "all" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
+          ? "bg-white text-brand-primary border-brand-secondary font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-brand-secondary/10 text-brand-primary border-brand-secondary/30 dark:bg-[#3E355F] dark:text-white dark:border-brand-secondary/30"}
         onClick={() => onSelectLanguage("all")}
       >
-        <Globe className="h-4 w-4 mr-2 text-[#FDBE11]" /> Todos
+        <Globe className="h-4 w-4 mr-2 text-brand-secondary" /> Todos
       </Button>
       
       <Button
         variant={selectedLanguage === "es" ? "default" : "outline"}
         className={selectedLanguage === "es" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
+          ? "bg-white text-brand-primary border-brand-secondary font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-brand-secondary/10 text-brand-primary border-brand-secondary/30 dark:bg-[#3E355F] dark:text-white dark:border-brand-secondary/30"}
         onClick={() => onSelectLanguage("es")}
       >
         <Languages className="h-4 w-4 mr-2 text-red-500" /> Español
@@ -32,8 +32,8 @@ export default function LanguageFilters({ selectedLanguage, onSelectLanguage }: 
       <Button
         variant={selectedLanguage === "en" ? "default" : "outline"}
         className={selectedLanguage === "en" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
+          ? "bg-white text-brand-primary border-brand-secondary font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-brand-secondary/10 text-brand-primary border-brand-secondary/30 dark:bg-[#3E355F] dark:text-white dark:border-brand-secondary/30"}
         onClick={() => onSelectLanguage("en")}
       >
         <Languages className="h-4 w-4 mr-2 text-blue-500" /> Inglés
@@ -42,8 +42,8 @@ export default function LanguageFilters({ selectedLanguage, onSelectLanguage }: 
       <Button
         variant={selectedLanguage === "fr" ? "default" : "outline"}
         className={selectedLanguage === "fr" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
+          ? "bg-white text-brand-primary border-brand-secondary font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-brand-secondary/10 text-brand-primary border-brand-secondary/30 dark:bg-[#3E355F] dark:text-white dark:border-brand-secondary/30"}
         onClick={() => onSelectLanguage("fr")}
       >
         <Languages className="h-4 w-4 mr-2 text-green-500" /> Francés
@@ -52,11 +52,11 @@ export default function LanguageFilters({ selectedLanguage, onSelectLanguage }: 
       <Button
         variant={selectedLanguage === "pt" ? "default" : "outline"}
         className={selectedLanguage === "pt" 
-          ? "bg-white text-[#001C58] border-[#FDBE11] font-semibold dark:bg-[#3E355F] dark:text-white" 
-          : "bg-white hover:bg-[#FDBE11]/10 text-[#001C58] border-[#FDBE11]/30 dark:bg-[#3E355F] dark:text-white dark:border-[#FDBE11]/30"}
+          ? "bg-white text-brand-primary border-brand-secondary font-semibold dark:bg-[#3E355F] dark:text-white" 
+          : "bg-white hover:bg-brand-secondary/10 text-brand-primary border-brand-secondary/30 dark:bg-[#3E355F] dark:text-white dark:border-brand-secondary/30"}
         onClick={() => onSelectLanguage("pt")}
       >
-        <Languages className="h-4 w-4 mr-2 text-yellow-500" /> Portugués
+        <Languages className="h-4 w-4 mr-2 text-brand-secondary" /> Portugués
       </Button>
     </div>
   );

@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Site branding colors - defaults, will be overridden by JS from database */
+    --color-primary: #001C58;
+    --color-secondary: #FDBE11;
+    --color-accent: #FFFFFF;
+    --color-brand-primary: #001C58;
+    --color-brand-secondary: #FDBE11;
+    --color-brand-accent: #FFFFFF;
+  }
+  
   * {
     @apply border-border;
   }

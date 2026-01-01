@@ -87,7 +87,7 @@ export default function NewsletterSubscription() {
   return (
     <div className="w-full">
       <div className="flex items-center mb-3">
-        <Mail className="mr-2 h-5 w-5 text-[#FDBE11]" />
+        <Mail className="mr-2 h-5 w-5 text-brand-secondary" />
         <h3 className="font-semibold text-lg">{t('newsletter.title')}</h3>
       </div>
       
@@ -145,7 +145,7 @@ export default function NewsletterSubscription() {
                   />
                 </FormControl>
                 <div className="text-sm leading-tight">
-                  Acepto la <a href="/privacidad" className="text-[#1E3A8A] dark:text-[#FDBE11] hover:underline">{t('footer.privacy')}</a> y recibir comunicaciones.
+                  Acepto la <a href="/privacidad" className="text-[#1E3A8A] dark:text-brand-secondary hover:underline">{t('footer.privacy')}</a> y recibir comunicaciones.
                 </div>
                 <FormMessage />
               </FormItem>

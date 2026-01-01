@@ -97,7 +97,7 @@ export default function FeaturedVideo({ video }: FeaturedVideoProps) {
   return (
     <Link 
       href={`/video/${video.id}`}
-      className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md overflow-hidden block border border-[#FDBE11]/10 hover:border-[#FDBE11]/40 dark:border-[#FDBE11]/30 dark:hover:border-[#FDBE11]/80"
+      className="bg-white dark:bg-[#3E355F] rounded-xl shadow-md overflow-hidden block border border-brand-secondary/10 hover:border-brand-secondary/40 dark:border-brand-secondary/30 dark:hover:border-brand-secondary/80"
       onClick={(e) => {
         // Prevent click if star button was clicked
         if ((e.target as HTMLElement).tagName === 'I' || 

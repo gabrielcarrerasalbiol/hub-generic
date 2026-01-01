@@ -242,7 +242,7 @@ export default function HistoryPage() {
       {/* Sin historial */}
       {!isLoading && !isError && filteredVideos.length === 0 && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center">
-          <Clock className="mx-auto h-12 w-12 text-gray-400 dark:text-[#FDBE11]/70 mb-4" />
+          <Clock className="mx-auto h-12 w-12 text-gray-400 dark:text-brand-secondary/70 mb-4" />
           <h2 className="text-xl font-semibold mb-2 dark:text-white">
             {periodFilter === 'all' 
               ? "No has visto ningún video aún" 
@@ -269,7 +269,7 @@ export default function HistoryPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <PlayCircle className="mr-2 h-5 w-5 text-[#FDBE11]" />
+                  <PlayCircle className="mr-2 h-5 w-5 text-brand-secondary" />
                   <div className="text-2xl font-bold">
                     {stats.totalVideos}
                   </div>
@@ -285,7 +285,7 @@ export default function HistoryPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <Clock className="mr-2 h-5 w-5 text-[#001C58]" />
+                  <Clock className="mr-2 h-5 w-5 text-brand-primary" />
                   <div className="text-2xl font-bold">
                     {formatWatchTime(stats.totalWatchTime)}
                   </div>
@@ -301,7 +301,7 @@ export default function HistoryPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <Eye className="mr-2 h-5 w-5 text-[#001C58]" />
+                  <Eye className="mr-2 h-5 w-5 text-brand-primary" />
                   <div className="text-2xl font-bold">
                     {Math.round(stats.avgCompletion)}%
                   </div>
@@ -317,7 +317,7 @@ export default function HistoryPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <Calendar className="mr-2 h-5 w-5 text-[#FDBE11]" />
+                  <Calendar className="mr-2 h-5 w-5 text-brand-secondary" />
                   <div className="text-xl font-bold">
                     {filteredVideos.length > 0 ? new Date(filteredVideos[0].watchedAt).toLocaleDateString() : 'N/A'}
                   </div>

@@ -45,7 +45,7 @@ export default function FeaturedChannelsPage() {
             Volver
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-[#001C58] dark:text-white">Canales Destacados</h1>
+        <h1 className="text-2xl font-bold text-brand-primary dark:text-white">Canales Destacados</h1>
       </div>
       
       {/* Search input */}
@@ -111,7 +111,7 @@ export default function FeaturedChannelsPage() {
                     }}
                   />
                   <div className="ml-4 pt-1">
-                    <h2 className="font-bold text-[#001C58] dark:text-white truncate">{channel.title}</h2>
+                    <h2 className="font-bold text-brand-primary dark:text-white truncate">{channel.title}</h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {channel.platform === 'YouTube' && t('sidebar.youtube_channel')}
                       {channel.platform === 'TikTok' && t('sidebar.tiktok_channel')}
@@ -135,7 +135,7 @@ export default function FeaturedChannelsPage() {
       ) : (
         // No channels found
         <div className="text-center py-12">
-          <p className="text-[#001C58] dark:text-white text-lg">
+          <p className="text-brand-primary dark:text-white text-lg">
             No se encontraron canales que coincidan con la búsqueda
           </p>
           <p className="text-gray-500 dark:text-gray-400 mt-2">
