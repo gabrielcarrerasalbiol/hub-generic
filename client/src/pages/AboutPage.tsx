@@ -30,11 +30,19 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { Smartphone } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 export default function AboutPage() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { get, config } = useSiteConfig();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  
+  // Helper to get localized content from config
+  const getLocalizedContent = (keyPrefix: string, fallback: string = '') => {
+    const key = `${keyPrefix}.${language}`;
+    return get(key, fallback);
+  };
 
   // Referencia al carrusel
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -64,15 +72,15 @@ export default function AboutPage() {
     };
   }, [autoAdvanceSlide]);
   
-  // Carrusel mejorado con imágenes reales del Real Madrid
+  // Carrusel mejorado con imágenes configurables
   const heroSlides = [
     {
-      title: t("about.heroSlider.home.title"),
-      subtitle: t("about.heroSlider.home.subtitle"),
+      title: getLocalizedContent('content.hero.title', t("about.heroSlider.home.title")),
+      subtitle: getLocalizedContent('content.hero.subtitle', t("about.heroSlider.home.subtitle")),
       bgColor: "bg-[#1E3A8A]",
       textColor: "text-white",
       icon: <Trophy className="inline-block mr-3 h-10 w-10 text-brand-secondary" />,
-      image: "/images/real-madrid-hero.jpg"
+      image: get('banners.hero.image1', "/images/real-madrid-hero.jpg")
     },
     {
       title: t("about.heroSlider.passion.title"),
@@ -80,7 +88,7 @@ export default function AboutPage() {
       bgColor: "bg-gray-200",
       textColor: "text-[#1E3A8A]",
       icon: <Flame className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />,
-      image: "/images/real-madrid-fans-singing.jpg"
+      image: get('banners.hero.image2', "/images/real-madrid-fans-singing.jpg")
     },
     {
       title: t("about.heroSlider.feeling.title"),
@@ -88,7 +96,7 @@ export default function AboutPage() {
       bgColor: "bg-brand-secondary",
       textColor: "text-[#1E3A8A]",
       icon: <Heart className="inline-block mr-3 h-8 w-8 text-[#1E3A8A]" />,
-      image: "/images/real-madrid-fans-stadium-view.jpg"
+      image: get('banners.hero.image3', "/images/real-madrid-fans-stadium-view.jpg")
     },
     {
       title: t("about.heroSlider.fans.title"),
@@ -96,7 +104,7 @@ export default function AboutPage() {
       bgColor: "bg-gradient-to-r from-[#1E3A8A] to-[#2C2152]",
       textColor: "text-white",
       icon: <Users className="inline-block mr-3 h-8 w-8" />,
-      image: "/images/real-madrid-fans-stadium.jpg"
+      image: get('banners.hero.image1', "/images/real-madrid-fans-stadium.jpg")
     }
   ];
 
@@ -160,10 +168,12 @@ export default function AboutPage() {
       {/* About Hub Madridista */}
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">{t("about.whatIsHub.title")}</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-white">
+            {getLocalizedContent('content.about.title', t("about.whatIsHub.title"))}
+          </h2>
           <div className="w-20 h-1 bg-brand-secondary mx-auto mb-6"></div>
           <p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
-            {t("about.whatIsHub.description")}
+            {getLocalizedContent('content.about.description', t("about.whatIsHub.description"))}
           </p>
         </div>
 
