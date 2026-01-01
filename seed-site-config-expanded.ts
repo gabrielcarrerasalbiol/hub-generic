@@ -338,6 +338,30 @@ const expandedConfigs = [
     category: 'social',
     description: 'Contact phone number'
   },
+  
+  // Video Search Criteria
+  {
+    key: 'video.search.term',
+    value: 'Real Madrid',
+    type: 'text' as const,
+    category: 'content',
+    description: 'Main search term for finding videos'
+  },
+  {
+    key: 'video.search.keywords',
+    value: 'Real Madrid, RM, Madridista, Los Blancos',
+    type: 'text' as const,
+    category: 'content',
+    description: 'Additional keywords for video searches (comma separated)'
+  },
+  {
+    key: 'video.search.exclude',
+    value: 'Barcelona, Barça, FCB',
+    type: 'text' as const,
+    category: 'content',
+    description: 'Terms to exclude from video searches (comma separated)'
+  },
+  
   {
     key: 'social.twitter.url',
     value: 'https://x.com/HubMadridistax',

@@ -1,9 +1,56 @@
 import axios from 'axios';
 import { InsertVideo, InsertChannel } from '../../shared/schema';
+import { db } from '../db';
+import { siteConfig } from '../../shared/schema';
+import { eq } from 'drizzle-orm';
 
 // YouTube API constants
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || '';
 const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
+
+/**
+ * Get search term from site configuration
+ */
+async function getSearchTerm(): Promise<string> {
+  try {
+    const result = await db
+      .select()
+      .from(siteConfig)
+      .where(eq(siteConfig.key, 'video.search.term'))
+      .limit(1);
+    
+    const term = result.length > 0 && result[0].value ? result[0].value : 'Real Madrid';
+    console.log(`[YouTube] Using search term: "${term}"`);
+    return term;
+  } catch (error) {
+    console.error('Error fetching search term from config:', error);
+    return 'Real Madrid'; // Fallback
+  }
+}
+
+/**
+ * Get exclude terms from site configuration
+ */
+async function getExcludeTerms(): Promise<string[]> {
+  try {
+    const result = await db
+      .select()
+      .from(siteConfig)
+      .where(eq(siteConfig.key, 'video.search.exclude'))
+      .limit(1);
+    
+    if (result.length > 0 && result[0].value) {
+      // Split by comma and trim
+      const terms = result[0].value.split(',').map(t => t.trim()).filter(t => t);
+      console.log(`[YouTube] Excluding terms: ${terms.join(', ')}`);
+      return terms;
+    }
+    return [];
+  } catch (error) {
+    console.error('Error fetching exclude terms:', error);
+    return [];
+  }
+}
 
 interface YouTubeSearchResult {
   items: Array<{
@@ -125,7 +172,7 @@ export async function getChannelVideos(
 }
 
 /**
- * Search YouTube for Real Madrid related content
+ * Search YouTube for videos based on configured search term
  * Con preferencia por contenido en español y de canales populares
  */
 export async function searchYouTubeVideos(
@@ -136,10 +183,24 @@ export async function searchYouTubeVideos(
   order = 'relevance'
 ): Promise<YouTubeSearchResult> {
   try {
+    const searchTerm = await getSearchTerm();
+    const excludeTerms = await getExcludeTerms();
+    
+    // Build query with exclusions using YouTube's minus operator
+    let searchQuery = `"${searchTerm}" ${query}`;
+    
+    // Add exclude terms with minus operator
+    if (excludeTerms.length > 0) {
+      const exclusions = excludeTerms.map(term => `-"${term}"`).join(' ');
+      searchQuery = `${searchQuery} ${exclusions}`;
+    }
+    
+    console.log(`[YouTube] Full search query: ${searchQuery}`);
+    
     const response = await axios.get(`${YOUTUBE_API_BASE_URL}/search`, {
       params: {
         part: 'snippet',
-        q: `Real Madrid ${query}`,
+        q: searchQuery,
         maxResults,
         pageToken,
         type: 'video',

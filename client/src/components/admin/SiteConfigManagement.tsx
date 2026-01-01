@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Settings, Save, Upload, Palette, FileText, Globe, Mail, Loader2, Sparkles } from 'lucide-react';
+import { Settings, Save, Upload, Palette, FileText, Globe, Mail, Loader2, Sparkles, Video } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
@@ -88,6 +88,11 @@ export default function SiteConfigManagement() {
     'cta.explore.text.es': 'Explorar',
     'cta.explore.text.en': 'Explore',
     
+    // Video Search Criteria
+    'video.search.term': 'Real Madrid',
+    'video.search.keywords': 'Real Madrid, RM, Madridista, Los Blancos',
+    'video.search.exclude': 'Barcelona, Barça, FCB',
+    
     // Contact & Social
     'contact.email': 'contacto@hubmadridista.com',
     'contact.phone': '+34 667976076',
@@ -95,6 +100,12 @@ export default function SiteConfigManagement() {
     'social.facebook.url': 'https://www.facebook.com/hubmadridista',
     'social.instagram.url': 'https://www.instagram.com/hubmadridista',
     'social.youtube.url': 'https://www.youtube.com/hubmadridista',
+    
+    // Video Search Criteria
+    'video.search.primary': 'Real Madrid',
+    'video.search.keywords': 'Real Madrid, RM, Madridista, Los Blancos, Bernabéu',
+    'video.search.exclude': 'Barcelona, Barça, highlights fake',
+    'video.search.channels': 'Real Madrid, RMTV',
     
     // SEO
     'seo.default.title': 'Hub Madridista | Agregador de contenido Real Madrid',
@@ -202,13 +213,56 @@ export default function SiteConfigManagement() {
   };
 
   const handleImageUpload = async (key: string, file: File) => {
-    // TODO: Implement actual file upload to server
-    // For now, we'll use a placeholder
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      handleInputChange(key, reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const response = await fetch('/api/admin/upload-image', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              image: reader.result,
+              filename: file.name
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error('Upload failed');
+          }
+
+          const data = await response.json();
+          
+          if (data.success && data.url) {
+            handleInputChange(key, data.url);
+            toast({
+              title: "Imagen subida",
+              description: "La imagen se ha subido correctamente",
+            });
+          } else {
+            throw new Error('Invalid response');
+          }
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          toast({
+            title: "Error",
+            description: "No se pudo subir la imagen",
+            variant: "destructive",
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error reading file:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo leer el archivo",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
@@ -807,6 +861,57 @@ export default function SiteConfigManagement() {
 
         {/* Social Tab */}
         <TabsContent value="social" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Búsqueda de Videos</CardTitle>
+              <CardDescription>
+                Configura los criterios para buscar nuevos videos
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="video-search-term">Término de Búsqueda Principal</Label>
+                <Input
+                  id="video-search-term"
+                  value={configData['video.search.term'] || ''}
+                  onChange={(e) => handleInputChange('video.search.term', e.target.value)}
+                  placeholder="Real Madrid"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Este término se usará para buscar videos en YouTube y otras plataformas
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="video-search-keywords">Palabras Clave Adicionales</Label>
+                <Textarea
+                  id="video-search-keywords"
+                  value={configData['video.search.keywords'] || ''}
+                  onChange={(e) => handleInputChange('video.search.keywords', e.target.value)}
+                  placeholder="Real Madrid, RM, Madridista, Los Blancos"
+                  rows={3}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Separadas por comas. Se usarán como alternativas de búsqueda
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="video-search-exclude">Términos a Excluir</Label>
+                <Textarea
+                  id="video-search-exclude"
+                  value={configData['video.search.exclude'] || ''}
+                  onChange={(e) => handleInputChange('video.search.exclude', e.target.value)}
+                  placeholder="Real Madrid, Barcelona, Barça"
+                  rows={2}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Separados por comas. Los videos que contengan estos términos serán excluidos
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          
           <Card>
             <CardHeader>
               <CardTitle>Contacto y Redes Sociales</CardTitle>

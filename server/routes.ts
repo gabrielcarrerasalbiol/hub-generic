@@ -4714,5 +4714,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Upload image endpoint for site config
+  app.post("/api/admin/upload-image", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const { image, filename } = req.body;
+      
+      if (!image || !filename) {
+        return res.status(400).json({ message: "Image and filename are required" });
+      }
+
+      // Extract base64 data
+      const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+      const buffer = Buffer.from(base64Data, 'base64');
+      
+      // Generate unique filename
+      const ext = filename.split('.').pop() || 'png';
+      const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+      const filepath = `public/uploads/${uniqueFilename}`;
+      
+      // Write file
+      const fs = require('fs');
+      const path = require('path');
+      
+      // Ensure directory exists
+      const dir = path.dirname(filepath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      fs.writeFileSync(filepath, buffer);
+      
+      // Return public URL
+      const publicUrl = `/uploads/${uniqueFilename}`;
+      
+      res.json({ 
+        success: true, 
+        url: publicUrl,
+        filename: uniqueFilename 
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ message: "Failed to upload image" });
+    }
+  });
+
   return httpServer;
 }
