@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Home, Info, MessageSquare, MousePointerClick } from 'lucide-react';
+import { Home, Info, MessageSquare, MousePointerClick, Star, Trophy, Users } from 'lucide-react';
 
 interface ContentTabsManagerProps {
   configData: any;
@@ -16,7 +16,7 @@ export default function ContentTabsManager({ configData, handleInputChange }: Co
 
   return (
     <Tabs value={contentSubTab} onValueChange={setContentSubTab}>
-      <TabsList className="grid w-full grid-cols-4 mb-4">
+      <TabsList className="grid w-full grid-cols-6 mb-4">
         <TabsTrigger value="home" className="gap-2">
           <Home className="h-4 w-4" />
           Home
@@ -24,6 +24,14 @@ export default function ContentTabsManager({ configData, handleInputChange }: Co
         <TabsTrigger value="about" className="gap-2">
           <Info className="h-4 w-4" />
           About
+        </TabsTrigger>
+        <TabsTrigger value="about-page" className="gap-2">
+          <Star className="h-4 w-4" />
+          Landing
+        </TabsTrigger>
+        <TabsTrigger value="premium" className="gap-2">
+          <Trophy className="h-4 w-4" />
+          Premium
         </TabsTrigger>
         <TabsTrigger value="footer" className="gap-2">
           <MessageSquare className="h-4 w-4" />
@@ -188,6 +196,820 @@ export default function ContentTabsManager({ configData, handleInputChange }: Co
                   onChange={(e) => handleInputChange('about.values.en', e.target.value)}
                   placeholder="Passion, Quality, Community"
                 />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      {/* Landing Page Content (AboutPage.tsx) */}
+      <TabsContent value="about-page">
+        <Card>
+          <CardHeader>
+            <CardTitle>Página de Aterrizaje (Landing)</CardTitle>
+            <CardDescription>
+              Configura el contenido del carrusel hero y secciones de la página de inicio
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Hero Slides */}
+            <div className="border-b pb-6">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Carrusel Hero - Slides Adicionales
+              </h3>
+
+              {/* Slide 2 - Passion */}
+              <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">Slide 2 - La Pasión</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.hero.passion.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.passion.title.es', e.target.value)}
+                      placeholder="La Pasión Blanca"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.hero.passion.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.passion.title.en', e.target.value)}
+                      placeholder="The White Passion"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Subtítulo (ES)</Label>
+                    <Input
+                      value={configData['content.hero.passion.subtitle.es'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.passion.subtitle.es', e.target.value)}
+                      placeholder="Vive cada momento con la misma intensidad"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Subtitle (EN)</Label>
+                    <Input
+                      value={configData['content.hero.passion.subtitle.en'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.passion.subtitle.en', e.target.value)}
+                      placeholder="Experience every moment with the same intensity"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 3 - Feeling */}
+              <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">Slide 3 - El Sentimiento</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.hero.feeling.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.feeling.title.es', e.target.value)}
+                      placeholder="El Sentimiento"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.hero.feeling.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.feeling.title.en', e.target.value)}
+                      placeholder="The Feeling"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Subtítulo (ES)</Label>
+                    <Input
+                      value={configData['content.hero.feeling.subtitle.es'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.feeling.subtitle.es', e.target.value)}
+                      placeholder="Unidos por los colores que nos representan"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Subtitle (EN)</Label>
+                    <Input
+                      value={configData['content.hero.feeling.subtitle.en'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.feeling.subtitle.en', e.target.value)}
+                      placeholder="United by the colors that represent us"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Slide 4 - Fans */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">Slide 4 - La Afición</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.hero.fans.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.fans.title.es', e.target.value)}
+                      placeholder="La Afición Madridista"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.hero.fans.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.fans.title.en', e.target.value)}
+                      placeholder="The Madridista Fanbase"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Subtítulo (ES)</Label>
+                    <Input
+                      value={configData['content.hero.fans.subtitle.es'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.fans.subtitle.es', e.target.value)}
+                      placeholder="El corazón que late en cada estadio"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Subtitle (EN)</Label>
+                    <Input
+                      value={configData['content.hero.fans.subtitle.en'] || ''}
+                      onChange={(e) => handleInputChange('content.hero.fans.subtitle.en', e.target.value)}
+                      placeholder="The heart that beats in every stadium"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* What is Hub Section */}
+            <div className="border-b pb-6">
+              <h3 className="font-semibold mb-4">Sección "¿Qué es Madridista Hub?"</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Título (ES)</Label>
+                  <Input
+                    value={configData['content.about.title.es'] || ''}
+                    onChange={(e) => handleInputChange('content.about.title.es', e.target.value)}
+                    placeholder="¿Qué es Madridista Hub?"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Title (EN)</Label>
+                  <Input
+                    value={configData['content.about.title.en'] || ''}
+                    onChange={(e) => handleInputChange('content.about.title.en', e.target.value)}
+                    placeholder="What is Madridista Hub?"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Descripción (ES)</Label>
+                  <Textarea
+                    value={configData['content.about.description.es'] || ''}
+                    onChange={(e) => handleInputChange('content.about.description.es', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Description (EN)</Label>
+                  <Textarea
+                    value={configData['content.about.description.en'] || ''}
+                    onChange={(e) => handleInputChange('content.about.description.en', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="border-b pb-6">
+              <h3 className="font-semibold mb-4">Características (3 cards)</h3>
+
+              {/* Feature 1 - Curated Content */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">1. Contenido Curado</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.about.features.curated.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.curated.title.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.about.features.curated.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.curated.title.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Descripción (ES)</Label>
+                    <Textarea
+                      value={configData['content.about.features.curated.description.es'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.curated.description.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Description (EN)</Label>
+                    <Textarea
+                      value={configData['content.about.features.curated.description.en'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.curated.description.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature 2 - Multiplatform */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">2. Multiplataforma</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.about.features.multiplatform.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.multiplatform.title.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.about.features.multiplatform.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.multiplatform.title.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Descripción (ES)</Label>
+                    <Textarea
+                      value={configData['content.about.features.multiplatform.description.es'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.multiplatform.description.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Description (EN)</Label>
+                    <Textarea
+                      value={configData['content.about.features.multiplatform.description.en'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.multiplatform.description.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature 3 - Notifications */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">3. Notificaciones</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.about.features.notifications.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.notifications.title.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.about.features.notifications.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.notifications.title.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Descripción (ES)</Label>
+                    <Textarea
+                      value={configData['content.about.features.notifications.description.es'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.notifications.description.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Description (EN)</Label>
+                    <Textarea
+                      value={configData['content.about.features.notifications.description.en'] || ''}
+                      onChange={(e) => handleInputChange('content.about.features.notifications.description.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonials */}
+            <div className="border-b pb-6">
+              <h3 className="font-semibold mb-4">Testimonios</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Título de Sección (ES)</Label>
+                  <Input
+                    value={configData['content.testimonials.title.es'] || ''}
+                    onChange={(e) => handleInputChange('content.testimonials.title.es', e.target.value)}
+                    placeholder="Lo que dicen nuestros usuarios"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Section Title (EN)</Label>
+                  <Input
+                    value={configData['content.testimonials.title.en'] || ''}
+                    onChange={(e) => handleInputChange('content.testimonials.title.en', e.target.value)}
+                    placeholder="What our users say"
+                  />
+                </div>
+              </div>
+
+              {/* Testimonial 1 */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">Usuario 1 - Carlos</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Nombre (ES)</Label>
+                    <Input
+                      value={configData['content.testimonials.user1.name.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user1.name.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Name (EN)</Label>
+                    <Input
+                      value={configData['content.testimonials.user1.name.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user1.name.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Rol (ES)</Label>
+                    <Input
+                      value={configData['content.testimonials.user1.role.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user1.role.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Role (EN)</Label>
+                    <Input
+                      value={configData['content.testimonials.user1.role.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user1.role.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Testimonio (ES)</Label>
+                    <Textarea
+                      value={configData['content.testimonials.user1.quote.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user1.quote.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Quote (EN)</Label>
+                    <Textarea
+                      value={configData['content.testimonials.user1.quote.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user1.quote.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 2 */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">Usuario 2 - Laura</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Nombre (ES)</Label>
+                    <Input
+                      value={configData['content.testimonials.user2.name.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user2.name.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Name (EN)</Label>
+                    <Input
+                      value={configData['content.testimonials.user2.name.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user2.name.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Rol (ES)</Label>
+                    <Input
+                      value={configData['content.testimonials.user2.role.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user2.role.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Role (EN)</Label>
+                    <Input
+                      value={configData['content.testimonials.user2.role.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user2.role.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Testimonio (ES)</Label>
+                    <Textarea
+                      value={configData['content.testimonials.user2.quote.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user2.quote.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Quote (EN)</Label>
+                    <Textarea
+                      value={configData['content.testimonials.user2.quote.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user2.quote.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 3 */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">Usuario 3 - Miguel</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Nombre (ES)</Label>
+                    <Input
+                      value={configData['content.testimonials.user3.name.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user3.name.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Name (EN)</Label>
+                    <Input
+                      value={configData['content.testimonials.user3.name.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user3.name.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Rol (ES)</Label>
+                    <Input
+                      value={configData['content.testimonials.user3.role.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user3.role.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Role (EN)</Label>
+                    <Input
+                      value={configData['content.testimonials.user3.role.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user3.role.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Testimonio (ES)</Label>
+                    <Textarea
+                      value={configData['content.testimonials.user3.quote.es'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user3.quote.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Quote (EN)</Label>
+                    <Textarea
+                      value={configData['content.testimonials.user3.quote.en'] || ''}
+                      onChange={(e) => handleInputChange('content.testimonials.user3.quote.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Section */}
+            <div>
+              <h3 className="font-semibold mb-4">Sección CTA (Call to Action)</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Título (ES)</Label>
+                  <Input
+                    value={configData['content.cta.title.es'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.title.es', e.target.value)}
+                    placeholder="Únete a la comunidad madridista"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Title (EN)</Label>
+                  <Input
+                    value={configData['content.cta.title.en'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.title.en', e.target.value)}
+                    placeholder="Join the madridista community"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Descripción (ES)</Label>
+                  <Textarea
+                    value={configData['content.cta.description.es'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.description.es', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Description (EN)</Label>
+                  <Textarea
+                    value={configData['content.cta.description.en'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.description.en', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Botón "Ver Videos" (ES)</Label>
+                  <Input
+                    value={configData['content.cta.button.es'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.button.es', e.target.value)}
+                    placeholder="Ver todos los videos"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>"View Videos" Button (EN)</Label>
+                  <Input
+                    value={configData['content.cta.button.en'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.button.en', e.target.value)}
+                    placeholder="View all videos"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Botón "Registrar" (ES)</Label>
+                  <Input
+                    value={configData['content.cta.registerNow.es'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.registerNow.es', e.target.value)}
+                    placeholder="Registrarse Ahora"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>"Register" Button (EN)</Label>
+                  <Input
+                    value={configData['content.cta.registerNow.en'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.registerNow.en', e.target.value)}
+                    placeholder="Register Now"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Botón "Login" (ES)</Label>
+                  <Input
+                    value={configData['content.cta.login.es'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.login.es', e.target.value)}
+                    placeholder="Iniciar Sesión"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>"Login" Button (EN)</Label>
+                  <Input
+                    value={configData['content.cta.login.en'] || ''}
+                    onChange={(e) => handleInputChange('content.cta.login.en', e.target.value)}
+                    placeholder="Login"
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      {/* Premium Benefits Content */}
+      <TabsContent value="premium">
+        <Card>
+          <CardHeader>
+            <CardTitle>Sección Premium</CardTitle>
+            <CardDescription>
+              Configura los beneficios y textos de la sección premium
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Premium Header */}
+            <div className="border-b pb-6">
+              <h3 className="font-semibold mb-4">Encabezado Premium</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Título (ES)</Label>
+                  <Input
+                    value={configData['content.premium.title.es'] || ''}
+                    onChange={(e) => handleInputChange('content.premium.title.es', e.target.value)}
+                    placeholder="Beneficios Premium"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Title (EN)</Label>
+                  <Input
+                    value={configData['content.premium.title.en'] || ''}
+                    onChange={(e) => handleInputChange('content.premium.title.en', e.target.value)}
+                    placeholder="Premium Benefits"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Descripción (ES)</Label>
+                  <Textarea
+                    value={configData['content.premium.description.es'] || ''}
+                    onChange={(e) => handleInputChange('content.premium.description.es', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Description (EN)</Label>
+                  <Textarea
+                    value={configData['content.premium.description.en'] || ''}
+                    onChange={(e) => handleInputChange('content.premium.description.en', e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Premium Benefits Cards */}
+            <div className="border-b pb-6">
+              <h3 className="font-semibold mb-4">Beneficios Premium (4 cards)</h3>
+
+              {/* Benefit 1 - Exclusive Channels */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">1. Canales Exclusivos</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.premium.benefits.exclusive.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.exclusive.title.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.premium.benefits.exclusive.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.exclusive.title.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Descripción (ES)</Label>
+                    <Textarea
+                      value={configData['content.premium.benefits.exclusive.description.es'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.exclusive.description.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Description (EN)</Label>
+                    <Textarea
+                      value={configData['content.premium.benefits.exclusive.description.en'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.exclusive.description.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Benefit 2 - No Ads */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">2. Sin Publicidad</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.premium.benefits.noAds.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.noAds.title.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.premium.benefits.noAds.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.noAds.title.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Descripción (ES)</Label>
+                    <Textarea
+                      value={configData['content.premium.benefits.noAds.description.es'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.noAds.description.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Description (EN)</Label>
+                    <Textarea
+                      value={configData['content.premium.benefits.noAds.description.en'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.noAds.description.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Benefit 3 - Historical Archive */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">3. Archivo Histórico</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.premium.benefits.history.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.history.title.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.premium.benefits.history.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.history.title.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Descripción (ES)</Label>
+                    <Textarea
+                      value={configData['content.premium.benefits.history.description.es'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.history.description.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Description (EN)</Label>
+                    <Textarea
+                      value={configData['content.premium.benefits.history.description.en'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.history.description.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Benefit 4 - Advanced Analysis */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h4 className="font-medium mb-3">4. Análisis Avanzado</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título (ES)</Label>
+                    <Input
+                      value={configData['content.premium.benefits.analysis.title.es'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.analysis.title.es', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title (EN)</Label>
+                    <Input
+                      value={configData['content.premium.benefits.analysis.title.en'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.analysis.title.en', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Descripción (ES)</Label>
+                    <Textarea
+                      value={configData['content.premium.benefits.analysis.description.es'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.analysis.description.es', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Description (EN)</Label>
+                    <Textarea
+                      value={configData['content.premium.benefits.analysis.description.en'] || ''}
+                      onChange={(e) => handleInputChange('content.premium.benefits.analysis.description.en', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Premium Buttons */}
+            <div>
+              <h3 className="font-semibold mb-4">Botones Premium</h3>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <Label>Botón "Hazte Premium" (ES)</Label>
+                  <Input
+                    value={configData['content.premium.upgrade.es'] || ''}
+                    onChange={(e) => handleInputChange('content.premium.upgrade.es', e.target.value)}
+                    placeholder="Hazte Premium"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>"Go Premium" Button (EN)</Label>
+                  <Input
+                    value={configData['content.premium.upgrade.en'] || ''}
+                    onChange={(e) => handleInputChange('content.premium.upgrade.en', e.target.value)}
+                    placeholder="Upgrade to Premium"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Texto "Ya eres Premium" (ES)</Label>
+                  <Input
+                    value={configData['content.premium.alreadyPremium.es'] || ''}
+                    onChange={(e) => handleInputChange('content.premium.alreadyPremium.es', e.target.value)}
+                    placeholder="Ya eres usuario Premium"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>"Already Premium" Text (EN)</Label>
+                  <Input
+                    value={configData['content.premium.alreadyPremium.en'] || ''}
+                    onChange={(e) => handleInputChange('content.premium.alreadyPremium.en', e.target.value)}
+                    placeholder="Already a Premium User"
+                  />
+                </div>
               </div>
             </div>
           </CardContent>

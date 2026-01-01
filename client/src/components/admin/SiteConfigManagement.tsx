@@ -73,13 +73,111 @@ export default function SiteConfigManagement() {
     'footer.copyright.es': '© 2025 Hub Madridista. Todos los derechos reservados.',
     'footer.copyright.en': '© 2025 Hub Madridista. All rights reserved.',
     
-    // About Page
+    // About Page - Mission/Vision/Values
     'about.mission.es': 'Conectar a los madridistas de todo el mundo con el mejor contenido del club',
     'about.mission.en': 'Connecting madridistas worldwide with the best club content',
     'about.vision.es': 'Ser la plataforma de referencia para fans del Real Madrid',
     'about.vision.en': 'To be the reference platform for Real Madrid fans',
     'about.values.es': 'Pasión, Calidad, Comunidad',
     'about.values.en': 'Passion, Quality, Community',
+
+    // About Page - Hero Slides (slides 2-4)
+    'content.hero.passion.title.es': 'La Pasión Blanca',
+    'content.hero.passion.title.en': 'The White Passion',
+    'content.hero.passion.subtitle.es': 'Vive cada momento con la misma intensidad',
+    'content.hero.passion.subtitle.en': 'Experience every moment with the same intensity',
+    'content.hero.feeling.title.es': 'El Sentimiento',
+    'content.hero.feeling.title.en': 'The Feeling',
+    'content.hero.feeling.subtitle.es': 'Unidos por los colores que nos representan',
+    'content.hero.feeling.subtitle.en': 'United by the colors that represent us',
+    'content.hero.fans.title.es': 'La Afición Madridista',
+    'content.hero.fans.title.en': 'The Madridista Fanbase',
+    'content.hero.fans.subtitle.es': 'El corazón que late en cada estadio',
+    'content.hero.fans.subtitle.en': 'The heart that beats in every stadium',
+
+    // About Page - What is Hub Section
+    'content.about.title.es': '¿Qué es Madridista Hub?',
+    'content.about.title.en': 'What is Madridista Hub?',
+    'content.about.description.es': 'Madridista Hub es la plataforma definitiva para los fans del Real Madrid, ofreciendo una experiencia inmersiva y personalizada con todo el contenido relacionado con el club más laureado del mundo.',
+    'content.about.description.en': 'Madridista Hub is the definitive platform for Real Madrid fans, offering an immersive and personalized experience with all content related to the most decorated club in the world.',
+    'content.about.features.curated.title.es': 'Contenido Curado',
+    'content.about.features.curated.title.en': 'Curated Content',
+    'content.about.features.curated.description.es': 'Accede a los mejores videos, noticias y actualizaciones del Real Madrid, seleccionados y categorizados automáticamente para ti.',
+    'content.about.features.curated.description.en': 'Access the best videos, news, and updates from Real Madrid, automatically selected and categorized for you.',
+    'content.about.features.multiplatform.title.es': 'Multiplataforma',
+    'content.about.features.multiplatform.title.en': 'Multiplatform',
+    'content.about.features.multiplatform.description.es': 'Contenido de YouTube, Twitter, TikTok y más, todo en un solo lugar para que nunca te pierdas nada importante.',
+    'content.about.features.multiplatform.description.en': 'Content from YouTube, Twitter, TikTok, and more, all in one place so you never miss anything important.',
+    'content.about.features.notifications.title.es': 'Notificaciones',
+    'content.about.features.notifications.title.en': 'Notifications',
+    'content.about.features.notifications.description.es': 'Mantente al día con alertas personalizadas sobre nuevo contenido de tus canales y categorías favoritas.',
+    'content.about.features.notifications.description.en': 'Stay up to date with personalized alerts about new content from your favorite channels and categories.',
+
+    // About Page - Premium Benefits Section
+    'content.premium.title.es': 'Beneficios Premium',
+    'content.premium.title.en': 'Premium Benefits',
+    'content.premium.description.es': 'Desbloquea todo el potencial de Madridista Hub con nuestra suscripción premium y disfruta de ventajas exclusivas.',
+    'content.premium.description.en': 'Unlock the full potential of Madridista Hub with our premium subscription and enjoy exclusive advantages.',
+    'content.premium.benefits.exclusive.title.es': 'Canales Exclusivos',
+    'content.premium.benefits.exclusive.title.en': 'Exclusive Channels',
+    'content.premium.benefits.exclusive.description.es': 'Acceso a canales premium con contenido exclusivo y análisis en profundidad.',
+    'content.premium.benefits.exclusive.description.en': 'Access to premium channels with exclusive content and in-depth analysis.',
+    'content.premium.benefits.noAds.title.es': 'Sin Publicidad',
+    'content.premium.benefits.noAds.title.en': 'Ad-Free',
+    'content.premium.benefits.noAds.description.es': 'Disfruta de una experiencia sin anuncios en toda la plataforma.',
+    'content.premium.benefits.noAds.description.en': 'Enjoy an ad-free experience across the entire platform.',
+    'content.premium.benefits.history.title.es': 'Archivo Histórico',
+    'content.premium.benefits.history.title.en': 'Historical Archive',
+    'content.premium.benefits.history.description.es': 'Accede a nuestro archivo completo de momentos históricos del Real Madrid.',
+    'content.premium.benefits.history.description.en': 'Access our complete archive of historical Real Madrid moments.',
+    'content.premium.benefits.analysis.title.es': 'Análisis Avanzado',
+    'content.premium.benefits.analysis.title.en': 'Advanced Analysis',
+    'content.premium.benefits.analysis.description.es': 'Estadísticas detalladas y análisis tácticos exclusivos de cada partido.',
+    'content.premium.benefits.analysis.description.en': 'Detailed statistics and exclusive tactical analysis of each match.',
+    'content.premium.upgrade.es': 'Hazte Premium',
+    'content.premium.upgrade.en': 'Upgrade to Premium',
+    'content.premium.alreadyPremium.es': 'Ya eres usuario Premium',
+    'content.premium.alreadyPremium.en': 'Already a Premium User',
+
+    // About Page - Testimonials Section
+    'content.testimonials.title.es': 'Lo que dicen nuestros usuarios',
+    'content.testimonials.title.en': 'What our users say',
+    'content.testimonials.user1.name.es': 'Carlos Rodríguez',
+    'content.testimonials.user1.name.en': 'Carlos Rodríguez',
+    'content.testimonials.user1.role.es': 'Usuario Premium',
+    'content.testimonials.user1.role.en': 'Premium User',
+    'content.testimonials.user1.quote.es': 'Madridista Hub ha cambiado la forma en que sigo al Real Madrid. Toda la información en un solo lugar y perfectamente categorizada. ¡Servicio increíble!',
+    'content.testimonials.user1.quote.en': 'Madridista Hub has changed the way I follow Real Madrid. All information in one place and perfectly categorized. Amazing service!',
+    'content.testimonials.user2.name.es': 'Laura Martínez',
+    'content.testimonials.user2.name.en': 'Laura Martínez',
+    'content.testimonials.user2.role.es': 'Usuario Premium',
+    'content.testimonials.user2.role.en': 'Premium User',
+    'content.testimonials.user2.quote.es': 'Las notificaciones personalizadas son geniales, nunca me pierdo el nuevo contenido de mis canales favoritos. La suscripción premium es totalmente recomendable.',
+    'content.testimonials.user2.quote.en': 'The personalized notifications are great, I never miss new content from my favorite channels. The premium subscription is totally recommended.',
+    'content.testimonials.user3.name.es': 'Miguel Sánchez',
+    'content.testimonials.user3.name.en': 'Miguel Sánchez',
+    'content.testimonials.user3.role.es': 'Usuario Gratis',
+    'content.testimonials.user3.role.en': 'Free User',
+    'content.testimonials.user3.quote.es': 'Incluso la versión gratuita es excepcional. La interfaz es intuitiva y encuentro todo el contenido relevante rápidamente. Definitivamente subiré a Premium.',
+    'content.testimonials.user3.quote.en': 'Even the free version is exceptional. The interface is intuitive and I find all relevant content quickly. I\'m definitely upgrading to Premium.',
+
+    // About Page - CTA Section
+    'content.cta.title.es': 'Únete a la comunidad madridista',
+    'content.cta.title.en': 'Join the madridista community',
+    'content.cta.description.es': 'Miles de fans ya disfrutan de la mejor experiencia para seguir y disfrutar todo el contenido relacionado con el Real Madrid. ¡Únete a nuestra comunidad hoy!',
+    'content.cta.description.en': 'Thousands of fans already enjoy the best experience to follow and enjoy all content related to Real Madrid. Join our community today!',
+    'content.cta.button.es': 'Ver todos los videos',
+    'content.cta.button.en': 'View all videos',
+    'content.cta.registerNow.es': 'Registrarse Ahora',
+    'content.cta.registerNow.en': 'Register Now',
+    'content.cta.login.es': 'Iniciar Sesión',
+    'content.cta.login.en': 'Login',
+
+    // Hero Images
+    'banners.hero.image1': '/images/real-madrid-hero.jpg',
+    'banners.hero.image2': '/images/real-madrid-fans-singing.jpg',
+    'banners.hero.image3': '/images/real-madrid-fans-stadium-view.jpg',
+    'banners.hero.image4': '/images/real-madrid-fans-stadium.jpg',
     
     // Call to Actions
     'cta.register.text.es': 'Únete Ahora',
@@ -90,10 +188,11 @@ export default function SiteConfigManagement() {
     'cta.explore.text.en': 'Explore',
     
     // Video Search Criteria
-    'video.search.term': 'Real Madrid',
-    'video.search.keywords': 'Real Madrid, RM, Madridista, Los Blancos',
-    'video.search.exclude': 'Barcelona, Barça, FCB',
-    
+    'video.search.primary': 'Real Madrid',
+    'video.search.keywords': 'Real Madrid, RM, Madridista, Los Blancos, Bernabéu',
+    'video.search.exclude': 'Barcelona, Barça, highlights fake',
+    'video.search.channels': 'Real Madrid, RMTV',
+
     // Contact & Social
     'contact.email': 'contacto@hubmadridista.com',
     'contact.phone': '+34 667976076',
@@ -101,13 +200,7 @@ export default function SiteConfigManagement() {
     'social.facebook.url': 'https://www.facebook.com/hubmadridista',
     'social.instagram.url': 'https://www.instagram.com/hubmadridista',
     'social.youtube.url': 'https://www.youtube.com/hubmadridista',
-    
-    // Video Search Criteria
-    'video.search.primary': 'Real Madrid',
-    'video.search.keywords': 'Real Madrid, RM, Madridista, Los Blancos, Bernabéu',
-    'video.search.exclude': 'Barcelona, Barça, highlights fake',
-    'video.search.channels': 'Real Madrid, RMTV',
-    
+
     // SEO
     'seo.default.title': 'Hub Madridista | Agregador de contenido Real Madrid',
     'seo.default.description': 'Hub Madridista - La plataforma definitiva con los mejores videos y contenido del Real Madrid de todas las plataformas en un solo lugar',
