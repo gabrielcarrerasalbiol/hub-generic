@@ -5,18 +5,20 @@
 | Property | Value |
 |----------|-------|
 | **IP Address** | 82.165.196.49 |
-| **URL** | http://82.165.196.49 |
+| **URL (HTTP)** | http://82.165.196.49 |
+| **URL (HTTPS)** | https://82.165.196.49 |
 | **OS** | Ubuntu 24.04 LTS |
 | **SSH User** | root |
 | **SSH Port** | 22 |
-| **App Port** | 5000 (internal), 80 (external via Apache) |
+| **App Port** | 5000 (internal), 80/443 (external via Apache) |
+| **Root Password** | 9MtcEzn0 |
 
 ## Architecture
 
 ```
-Internet (Port 80)
+Internet (Port 80/443)
     ↓
-Apache2 (Reverse Proxy)
+Apache2 (Reverse Proxy with SSL)
     ↓
 Node.js App (Port 5000)
     ↓
@@ -69,11 +71,21 @@ systemctl status apache2
 # Restart Apache
 systemctl restart apache2
 
-# View Apache error logs
+# Start Apache
+systemctl start apache2
+
+# Enable Apache on boot
+systemctl enable apache2
+
+# View Apache error logs (HTTP)
 tail -f /var/log/apache2/hub-generic-error.log
+
+# View Apache error logs (HTTPS)
+tail -f /var/log/apache2/hub-generic-ssl-error.log
 
 # View Apache access logs
 tail -f /var/log/apache2/hub-generic-access.log
+tail -f /var/log/apache2/hub-generic-ssl-access.log
 ```
 
 ### System Commands
@@ -102,7 +114,10 @@ tail -f /root/.pm2/logs/hub-generic-error.log
 | **App Directory** | `/root/hub-generic/` |
 | **Built Files** | `/root/hub-generic/dist/` |
 | **PM2 Config** | `/root/hub-generic/ecosystem.config.cjs` |
-| **Apache Config** | `/etc/apache2/sites-available/hub-generic.conf` |
+| **Apache Config (HTTP)** | `/etc/apache2/sites-available/hub-generic.conf` |
+| **Apache Config (HTTPS)** | `/etc/apache2/sites-available/hub-generic-ssl.conf` |
+| **SSL Certificate** | `/etc/ssl/certs/apache-selfsigned.crt` |
+| **SSL Private Key** | `/etc/ssl/private/apache-selfsigned.key` |
 | **PM2 Logs** | `/root/.pm2/logs/` |
 | **Apache Logs** | `/var/log/apache2/` |
 
@@ -147,17 +162,31 @@ pm2 start ecosystem.config.cjs
 pm2 save
 ```
 
-### 6. Apache Reverse Proxy
+### 6. Apache Reverse Proxy with HTTPS
 ```bash
 # Install Apache
 apt install -y apache2
 
-# Enable proxy modules
-a2enmod proxy proxy_http rewrite
+# Enable proxy and SSL modules
+a2enmod proxy proxy_http rewrite ssl
 
-# Configure virtual host at /etc/apache2/sites-available/hub-generic.conf
+# Create self-signed SSL certificate (valid for 1 year)
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /etc/ssl/private/apache-selfsigned.key \
+  -out /etc/ssl/certs/apache-selfsigned.crt \
+  -subj "/C=ES/ST=Madrid/L=Madrid/O=HubMadridista/CN=82.165.196.49"
+
+# Configure HTTP virtual host at /etc/apache2/sites-available/hub-generic.conf
 a2ensite hub-generic.conf
+
+# Configure HTTPS virtual host at /etc/apache2/sites-available/hub-generic-ssl.conf
+a2ensite hub-generic-ssl.conf
+
+# Restart Apache
 systemctl restart apache2
+
+# Enable Apache on boot
+systemctl enable apache2
 ```
 
 ## Troubleshooting
@@ -200,10 +229,12 @@ curl http://localhost
 This is expected for some routes. The catch-all route serves index.html for client-side routing.
 
 ### Blank screen / JS not loading
-1. Check browser console for errors
-2. Verify assets are being served: `curl -I http://82.165.196.49/assets/index-*.js`
-3. Check API responses: `curl http://82.165.196.49/api/videos`
-4. Check site config: `curl http://82.165.196.49/api/site-config/public`
+**Solution**: Use HTTPS instead of HTTP to avoid CORS issues
+1. Access via HTTPS: https://82.165.196.49 (accept security warning)
+2. Check browser console for errors
+3. Verify assets are being served: `curl -k -I https://82.165.196.49/assets/index-*.js`
+4. Check API responses: `curl -k https://82.165.196.49/api/videos`
+5. Ensure Apache is running: `systemctl status apache2`
 
 ## Important Notes
 
@@ -217,19 +248,21 @@ This is expected for some routes. The catch-all route serves index.html for clie
 ## Security Considerations
 
 1. **Firewall**: UFW is inactive (hosting provider manages firewall)
-2. **SSL/HTTPS**: Not configured - currently HTTP only
+2. **SSL/HTTPS**: ✅ Self-signed certificate configured (browser will show warning)
 3. **API Keys**: Stored in ecosystem.config.cjs (consider using secrets manager)
 4. **Database**: Connection uses SSL (sslmode=require)
+5. **Admin User**: bcarreras@gmail.com (password: Oldbury2022)
 
 ## Future Improvements
 
-1. **Set up SSL** with Let's Encrypt for HTTPS
+1. ✅ ~~**Set up SSL**~~ - Self-signed certificate active (upgrade to Let's Encrypt when domain is added)
 2. **Add domain name** and configure DNS
-3. **Set up monitoring** (PM2 Plus, Uptime monitoring)
-4. **Configure backups** for database
-5. **Add CI/CD** pipeline for deployments
-6. **Rate limiting** is configured but may need tuning
-7. **Consider using secrets manager** for API keys
+3. **Upgrade to Let's Encrypt SSL** (requires domain name)
+4. **Set up monitoring** (PM2 Plus, Uptime monitoring)
+5. **Configure backups** for database
+6. **Add CI/CD** pipeline for deployments
+7. **Rate limiting** is configured but may need tuning
+8. **Consider using secrets manager** for API keys
 
 ## Quick Reference
 
@@ -254,7 +287,25 @@ free -h        # Memory
 top            # CPU
 ```
 
+## Admin Access
+
+### Admin User Credentials
+- **Email**: bcarreras@gmail.com
+- **Password**: Oldbury2022
+- **Login URL**: https://82.165.196.49/login
+
+### Creating Additional Admin Users
+To manually update a user to admin status in the database:
+```bash
+# Install PostgreSQL client (if not installed)
+apt install -y postgresql-client
+
+# Connect and update user
+psql 'postgresql://neondb_owner:npg_OL1njwhR9JvA@ep-bold-cherry-ahsogrm2-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require' \
+  -c "UPDATE users SET \"isAdmin\" = true WHERE username = 'username@example.com';"
+```
+
 ---
 
-**Last Updated**: 2025-01-12
+**Last Updated**: 2026-01-13
 **Deployed By**: Claude Code
