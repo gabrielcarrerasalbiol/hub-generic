@@ -61,7 +61,10 @@ app.use(helmet({
         "'unsafe-eval'", 
         "https://ui-avatars.com",
         "https://plausible.io",
-        "https://*.googletagmanager.com"
+        "https://*.googletagmanager.com",
+        "https://*.google.com",
+        "https://*.googleadservices.com",
+        "https://*.doubleclick.net"
       ],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
@@ -71,7 +74,10 @@ app.use(helmet({
         "https://api.openai.com", 
         "https://claude-api.anthropic.com",
         "https://plausible.io",
-        "https://*.google-analytics.com"
+        "https://*.google-analytics.com",
+        "https://*.google.com",
+        "https://*.googleadservices.com",
+        "https://*.doubleclick.net"
       ],
       frameSrc: ["'self'", "https://www.youtube.com", "https://player.vimeo.com", "https://www.tiktok.com"]
     }

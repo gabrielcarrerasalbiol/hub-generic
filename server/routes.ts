@@ -29,6 +29,9 @@ import {
   Player, PlayerStats, StatsGame, StatsGameQuestion, StatType, GameDifficulty,
   InsertPlayer, InsertPlayerStats, InsertStatsGame, InsertStatsGameQuestion
 } from "../shared/schema";
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import fs from 'fs';
 import { ZodError } from "zod";
 import { isAuthenticated, isAdmin, isPremium } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';
@@ -4730,18 +4733,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate unique filename
       const ext = filename.split('.').pop() || 'png';
       const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-      const filepath = `public/uploads/${uniqueFilename}`;
       
-      // Write file
-      const fs = require('fs');
-      const path = require('path');
+      // Get proper paths
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      const uploadDir = join(__dirname, '..', 'public', 'uploads');
+      const filepath = join(uploadDir, uniqueFilename);
       
       // Ensure directory exists
-      const dir = path.dirname(filepath);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
       }
       
+      // Write file
       fs.writeFileSync(filepath, buffer);
       
       // Return public URL
@@ -4754,7 +4758,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Error uploading image:", error);
-      res.status(500).json({ message: "Failed to upload image" });
+      res.status(500).json({ message: "Failed to upload image", error: String(error) });
     }
   });
 
