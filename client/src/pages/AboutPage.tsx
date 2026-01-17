@@ -441,7 +441,7 @@ export default function AboutPage() {
       {/* Footer Branding */}
       <section className="bg-[#1E3A8A] text-white py-12">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Hub Madridista</h2>
+          <h2 className="text-3xl font-bold mb-4">{siteName || t('app.name')}</h2>
           <p className="text-sm text-white/70 mb-4">{t('footer.description')}</p>
           <div className="flex justify-center gap-6">
             <Link href="/terminos">
