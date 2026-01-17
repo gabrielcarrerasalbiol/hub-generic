@@ -3,6 +3,12 @@ import { siteConfig } from './server/db/schema';
 import { eq } from 'drizzle-orm';
 
 const contentConfig = [
+  // Hero Slider - Main (First Slide)
+  { key: 'content.hero.title.en', value: 'Madridista Hub' },
+  { key: 'content.hero.title.es', value: 'Hub Madridista' },
+  { key: 'content.hero.subtitle.en', value: 'The digital home for all madridistas' },
+  { key: 'content.hero.subtitle.es', value: 'El hogar digital de todos los madridistas' },
+  
   // Hero Slider - Passion
   { key: 'content.hero.passion.title.en', value: 'The White Passion' },
   { key: 'content.hero.passion.title.es', value: 'La Pasión Blanca' },
