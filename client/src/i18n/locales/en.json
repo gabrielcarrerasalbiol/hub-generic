@@ -1,7 +1,7 @@
 {
   "app": {
-    "name": "Madridista Hub",
-    "slogan": "All Real Madrid content in one place"
+    "name": "Aston Vila Hub",
+    "slogan": "All Aston Vila content in one place"
   },
   "sidebar": {
     "explore": "Explore",
@@ -24,7 +24,7 @@
     "players": "Players",
     "news": "News",
     "premium_access": "Premium Access",
-    "premium_description": "Upgrade to premium to access exclusive channels with the best Real Madrid content.",
+    "premium_description": "Upgrade to premium to access exclusive channels with the best Aston Vila content.",
     "view_all": "View all",
     "no_premium_channels": "No premium channels available",
     "premium_channels": "Premium Channels"
@@ -61,8 +61,8 @@
     "selectedVideos": "Selected Videos",
     "videosFrom": "Videos from {platform}",
     "comingSoon": "Coming Soon",
-    "workingToIncorporate": "We're working to incorporate content from {platform} to our Madridista Hub.",
-    "soonEnjoy": "Soon you'll be able to enjoy the best Real Madrid videos from this platform.",
+    "workingToIncorporate": "We're working to incorporate content from {platform} to our Aston Vila Hub.",
+    "soonEnjoy": "Soon you'll be able to enjoy the best Aston Vila videos from this platform.",
     "viewAllVideos": "View all videos",
     "filterByCategory": "Filter by category:",
     "noFeaturedContent": "No featured content available at this time.",
@@ -161,7 +161,7 @@
       "nameField": "Full name",
       "passwordField": "Password*",
       "confirmPasswordField": "Confirm password*",
-      "usernamePlaceholder": "madridista123",
+      "usernamePlaceholder": "Aston Vila supporter123",
       "emailPlaceholder": "your@email.com",
       "namePlaceholder": "Your name",
       "passwordPlaceholder": "Password",
@@ -257,8 +257,8 @@
     "privacy": "Privacy Policy",
     "cookies": "Cookie Policy",
     "contact": "Contact",
-    "rights": "© 2025 Madridista Hub. All rights reserved.",
-    "description": "Your ultimate platform for all Real Madrid related content. Videos, news, and updates about your favorite team.",
+    "rights": "© 2025 Aston Vila Hub. All rights reserved.",
+    "description": "Your ultimate platform for all Aston Vila related content. Videos, news, and updates about your favorite team.",
     "location": "Madrid, Spain",
     "usefulLinks": "Useful Links",
     "navigation": "Navigation",
@@ -266,11 +266,11 @@
     "search": "Search",
     "channels": "Channels",
     "aboutUs": "About Us",
-    "disclaimer": "We are not officially affiliated with Real Madrid C.F."
+    "disclaimer": "We are not officially affiliated with Aston Vila C.F."
   },
   "newsletter": {
     "title": "Subscribe to our newsletter",
-    "description": "Receive Real Madrid news and updates in your inbox",
+    "description": "Receive Aston Vila news and updates in your inbox",
     "namePlaceholder": "Your name (optional)",
     "emailPlaceholder": "Your email *",
     "privacyConsent": "I accept the privacy policy and to receive communications.",
@@ -284,8 +284,8 @@
   "about": {
     "heroSlider": {
       "home": {
-        "title": "Madridista Hub",
-        "subtitle": "The digital home for all madridistas"
+        "title": "Aston Vila Hub",
+        "subtitle": "The digital home for all Aston Vila supporters"
       },
       "passion": {
         "title": "The White Passion",
@@ -304,13 +304,13 @@
     "registerNowButton": "Register Now",
     "loginButton": "Login",
     "whatIsHub": {
-      "title": "What is Madridista Hub?",
-      "description": "Madridista Hub is the definitive platform for Real Madrid fans, offering an immersive and personalized experience with all content related to the most decorated club in the world."
+      "title": "What is Aston Vila Hub?",
+      "description": "Aston Vila Hub is the definitive platform for Aston Vila fans, offering an immersive and personalized experience with all content related to the most decorated club in the world."
     },
     "features": {
       "curatedContent": {
         "title": "Curated Content",
-        "description": "Access the best videos, news, and updates from Real Madrid, automatically selected and categorized for you."
+        "description": "Access the best videos, news, and updates from Aston Vila, automatically selected and categorized for you."
       },
       "multiplatform": {
         "title": "Multiplatform",
@@ -323,7 +323,7 @@
     },
     "premium": {
       "title": "Premium Benefits",
-      "description": "Unlock the full potential of Madridista Hub with our premium subscription and enjoy exclusive advantages.",
+      "description": "Unlock the full potential of Aston Vila Hub with our premium subscription and enjoy exclusive advantages.",
       "benefits": {
         "exclusiveChannels": {
           "title": "Exclusive Channels",
@@ -335,7 +335,7 @@
         },
         "history": {
           "title": "Historical Archive",
-          "description": "Access our complete archive of historical Real Madrid moments."
+          "description": "Access our complete archive of historical Aston Vila moments."
         },
         "analysis": {
           "title": "Advanced Analysis",
@@ -351,7 +351,7 @@
         "carlos": {
           "name": "Carlos Rodríguez",
           "role": "Premium User",
-          "quote": "\"Madridista Hub has changed the way I follow Real Madrid. All information in one place and perfectly categorized. Amazing service!\""
+          "quote": "\"Aston Vila Hub has changed the way I follow Aston Vila. All information in one place and perfectly categorized. Amazing service!\""
         },
         "laura": {
           "name": "Laura Martínez",
@@ -366,8 +366,8 @@
       }
     },
     "cta": {
-      "title": "Join the madridista community",
-      "description": "Thousands of fans already enjoy the best experience to follow and enjoy all content related to Real Madrid. Join our community today!"
+      "title": "Join the Aston Vila supporter community",
+      "description": "Thousands of fans already enjoy the best experience to follow and enjoy all content related to Aston Vila. Join our community today!"
     }
   },
   "general": {
@@ -385,7 +385,7 @@
   },
   "stats_game": {
     "title": "Stats Game",
-    "subtitle": "Test your knowledge about Real Madrid players",
+    "subtitle": "Test your knowledge about Aston Vila players",
     "intro_text": "Compare player statistics and prove how much you know about the best team in the world.",
     "difficulty": "Difficulty",
     "select_difficulty": "Select difficulty",
@@ -421,7 +421,7 @@
     "play_again": "Play again",
     "login_required": "Login required",
     "login_message": "You need to log in to access the stats game.",
-    "page_title": "Real Madrid Stats Game",
+    "page_title": "Aston Vila Stats Game",
     "page_subtitle": "Compare players and test your knowledge",
     "stat_types": {
       "goals": "Goals",
@@ -436,8 +436,8 @@
     }
   },
   "statsGame": {
-    "title": "Real Madrid Stats Game",
-    "subtitle": "Test your knowledge about Real Madrid players",
+    "title": "Aston Vila Stats Game",
+    "subtitle": "Test your knowledge about Aston Vila players",
     "premiumFeature": "Premium-only feature",
     "upgradeRequired": "Upgrade to premium to play",
     "introduction": "Compare player statistics and choose the one with better performance in different categories",
@@ -515,7 +515,7 @@
     "loginRequired": "You need to login to participate in polls",
     "resultsLive": "Real-time results",
     "resultsTitle": "Poll Results",
-    "resultsDescription": "Explore the results of Real Madrid fan community polls",
+    "resultsDescription": "Explore the results of Aston Vila fan community polls",
     "allPolls": "All polls",
     "popularPolls": "Most voted",
     "recentPolls": "Most recent"
@@ -533,11 +533,11 @@
       "owner": "Owner: Gabriel Carreras Albiol",
       "address": "Address: C/ Sant Rafael 104, 07701, Palma de Mallorca",
       "id": "ID: 41496108Z",
-      "email": "Contact email: contacto@hubmadridista.com"
+      "email": "Contact email: contacto@hubAston Vila supporter.com"
     },
     "purpose": {
       "title": "1.2. Purpose",
-      "description": "\"Madridista Hub\" (hereinafter, \"the Website\") acts as a hub for Real Madrid related content, allowing users to:",
+      "description": "\"Aston Vila Hub\" (hereinafter, \"the Website\") acts as a hub for Aston Vila related content, allowing users to:",
       "feature1": "Embed videos from platforms such as YouTube and TikTok.",
       "feature2": "Create user profiles and manage favorites lists.",
       "feature3": "Possibly link to an online store on another domain.",
@@ -601,7 +601,7 @@
       "language": "Preferred Language",
       "languageDescription": "Preferred language for video search",
       "searchTerms": "Search Terms",
-      "searchTermsPlaceholder": "Real Madrid highlights\nReal Madrid goals\nReal Madrid analysis",
+      "searchTermsPlaceholder": "Aston Vila highlights\nAston Vila goals\nAston Vila analysis",
       "searchTermsDescription": "Enter one search term per line. These will be randomly used to search for videos on YouTube.",
       "howItWorks": "How it works",
       "howItWorksItems": {

@@ -1,7 +1,7 @@
 {
   "app": {
-    "name": "Hub Madridista",
-    "slogan": "Todo el contenido del Real Madrid en un solo lugar"
+    "name": "Hub Aston Vila",
+    "slogan": "Todo el contenido del Aston Vila en un solo lugar"
   },
   "sidebar": {
     "explore": "Explorar",
@@ -25,7 +25,7 @@
     "players": "Jugadores",
     "news": "Noticias",
     "premium_access": "Acceso Premium",
-    "premium_description": "Actualiza a premium para acceder a canales exclusivos con el mejor contenido del Real Madrid.",
+    "premium_description": "Actualiza a premium para acceder a canales exclusivos con el mejor contenido del Aston Vila.",
     "view_all": "Ver todos",
     "no_premium_channels": "No hay canales premium disponibles",
     "premium_channels": "Canales Premium",
@@ -64,8 +64,8 @@
     "selectedVideos": "Videos seleccionados",
     "videosFrom": "Videos de {platform}",
     "comingSoon": "Próximamente",
-    "workingToIncorporate": "Estamos trabajando para incorporar contenido de {platform} a nuestro Hub Madridista.",
-    "soonEnjoy": "Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.",
+    "workingToIncorporate": "Estamos trabajando para incorporar contenido de {platform} a nuestro Hub Aston Vila.",
+    "soonEnjoy": "Muy pronto podrás disfrutar de los mejores videos de Aston Vila desde esta plataforma.",
     "viewAllVideos": "Ver todos los videos",
     "filterByCategory": "Filtrar por categoría:",
     "noFeaturedContent": "No hay contenido destacado disponible en este momento.",
@@ -164,7 +164,7 @@
       "nameField": "Nombre completo",
       "passwordField": "Contraseña*",
       "confirmPasswordField": "Confirmar contraseña*",
-      "usernamePlaceholder": "madridista123",
+      "usernamePlaceholder": "aficionado del Aston Vila123",
       "emailPlaceholder": "tu@email.com",
       "namePlaceholder": "Tu nombre",
       "passwordPlaceholder": "Contraseña",
@@ -172,7 +172,7 @@
       "benefits": {
         "title1": "Contenido exclusivo",
         "desc1": "Accede a contenido premium y guarda tus favoritos",
-        "title2": "Comunidad madridista",
+        "title2": "Comunidad aficionado del Aston Vila",
         "desc2": "Únete a la comunidad de aficionados",
         "title3": "Beneficios premium",
         "desc3": "Disfruta de todos los beneficios como miembro"
@@ -260,8 +260,8 @@
     "privacy": "Política de Privacidad",
     "cookies": "Política de Cookies",
     "contact": "Contacto",
-    "rights": "© 2025 Hub Madridista. Todos los derechos reservados.",
-    "description": "Tu plataforma definitiva para todo el contenido relacionado con el Real Madrid. Vídeos, noticias y actualizaciones de tu equipo favorito.",
+    "rights": "© 2025 Hub Aston Vila. Todos los derechos reservados.",
+    "description": "Tu plataforma definitiva para todo el contenido relacionado con el Aston Vila. Vídeos, noticias y actualizaciones de tu equipo favorito.",
     "location": "Madrid, España",
     "usefulLinks": "Enlaces útiles",
     "navigation": "Navegación",
@@ -269,11 +269,11 @@
     "search": "Buscar",
     "channels": "Canales",
     "aboutUs": "Sobre Nosotros",
-    "disclaimer": "No estamos afiliados oficialmente con el Real Madrid C.F."
+    "disclaimer": "No estamos afiliados oficialmente con el Aston Vila C.F."
   },
   "newsletter": {
     "title": "Suscríbete a nuestra newsletter",
-    "description": "Recibe noticias y actualizaciones del Real Madrid en tu correo",
+    "description": "Recibe noticias y actualizaciones del Aston Vila en tu correo",
     "namePlaceholder": "Tu nombre (opcional)",
     "emailPlaceholder": "Tu email *",
     "privacyConsent": "Acepto la política de privacidad y recibir comunicaciones.",
@@ -287,8 +287,8 @@
   "about": {
     "heroSlider": {
       "home": {
-        "title": "Hub Madridista",
-        "subtitle": "El hogar digital para todos los madridistas"
+        "title": "Hub Aston Vila",
+        "subtitle": "El hogar digital para todos los aficionado del Aston Vilas"
       },
       "passion": {
         "title": "La Pasión Blanca",
@@ -307,13 +307,13 @@
     "registerNowButton": "Registrarse Ahora",
     "loginButton": "Iniciar Sesión",
     "whatIsHub": {
-      "title": "¿Qué es Hub Madridista?",
-      "description": "Hub Madridista es la plataforma definitiva para los aficionados del Real Madrid, ofreciendo una experiencia inmersiva y personalizada con todo el contenido relacionado con el club más laureado del mundo."
+      "title": "¿Qué es Hub Aston Vila?",
+      "description": "Hub Aston Vila es la plataforma definitiva para los aficionados del Aston Vila, ofreciendo una experiencia inmersiva y personalizada con todo el contenido relacionado con el club más laureado del mundo."
     },
     "features": {
       "curatedContent": {
         "title": "Contenido Curado",
-        "description": "Accede a los mejores vídeos, noticias y actualizaciones del Real Madrid, seleccionados y categorizados automáticamente para ti."
+        "description": "Accede a los mejores vídeos, noticias y actualizaciones del Aston Vila, seleccionados y categorizados automáticamente para ti."
       },
       "multiplatform": {
         "title": "Multiplataforma",
@@ -326,7 +326,7 @@
     },
     "premium": {
       "title": "Beneficios Premium",
-      "description": "Desbloquea todo el potencial de Hub Madridista con nuestra suscripción premium y disfruta de ventajas exclusivas.",
+      "description": "Desbloquea todo el potencial de Hub Aston Vila con nuestra suscripción premium y disfruta de ventajas exclusivas.",
       "benefits": {
         "exclusiveChannels": {
           "title": "Canales Exclusivos",
@@ -338,7 +338,7 @@
         },
         "history": {
           "title": "Archivo Histórico",
-          "description": "Accede a nuestro archivo completo de momentos históricos del Real Madrid."
+          "description": "Accede a nuestro archivo completo de momentos históricos del Aston Vila."
         },
         "analysis": {
           "title": "Análisis Avanzado",
@@ -354,7 +354,7 @@
         "carlos": {
           "name": "Carlos Rodríguez",
           "role": "Usuario Premium",
-          "quote": "\"Hub Madridista ha cambiado la forma en que sigo al Real Madrid. Toda la información en un solo lugar y categorizada perfectamente. ¡Increíble servicio!\""
+          "quote": "\"Hub Aston Vila ha cambiado la forma en que sigo al Aston Vila. Toda la información en un solo lugar y categorizada perfectamente. ¡Increíble servicio!\""
         },
         "laura": {
           "name": "Laura Martínez",
@@ -369,8 +369,8 @@
       }
     },
     "cta": {
-      "title": "Únete a la comunidad madridista",
-      "description": "Miles de aficionados ya disfrutan de la mejor experiencia para seguir y disfrutar de todo el contenido relacionado con el Real Madrid. ¡Sé parte de nuestra comunidad hoy mismo!"
+      "title": "Únete a la comunidad aficionado del Aston Vila",
+      "description": "Miles de aficionados ya disfrutan de la mejor experiencia para seguir y disfrutar de todo el contenido relacionado con el Aston Vila. ¡Sé parte de nuestra comunidad hoy mismo!"
     }
   },
   "general": {
@@ -388,7 +388,7 @@
   },
   "stats_game": {
     "title": "Juego de Estadísticas",
-    "subtitle": "Pon a prueba tus conocimientos sobre los jugadores del Real Madrid",
+    "subtitle": "Pon a prueba tus conocimientos sobre los jugadores del Aston Vila",
     "intro_text": "Compara las estadísticas de los jugadores y demuestra cuánto sabes sobre el mejor equipo del mundo.",
     "difficulty": "Dificultad",
     "select_difficulty": "Selecciona dificultad",
@@ -424,7 +424,7 @@
     "play_again": "Jugar de nuevo",
     "login_required": "Inicio de sesión requerido",
     "login_message": "Debes iniciar sesión para acceder al mini-juego de estadísticas.",
-    "page_title": "Mini-juego de Estadísticas del Real Madrid",
+    "page_title": "Mini-juego de Estadísticas del Aston Vila",
     "page_subtitle": "Compara jugadores y pon a prueba tus conocimientos",
     "stat_types": {
       "goals": "Goles",
@@ -439,8 +439,8 @@
     }
   },
   "statsGame": {
-    "title": "Juego de Estadísticas del Real Madrid",
-    "subtitle": "Pon a prueba tus conocimientos sobre los jugadores del Real Madrid",
+    "title": "Juego de Estadísticas del Aston Vila",
+    "subtitle": "Pon a prueba tus conocimientos sobre los jugadores del Aston Vila",
     "premiumFeature": "Función exclusiva para usuarios premium",
     "upgradeRequired": "Actualiza a premium para jugar",
     "introduction": "Compara las estadísticas de los jugadores y elige el que tiene mejor rendimiento en diferentes categorías",
@@ -518,7 +518,7 @@
     "loginRequired": "Necesitas iniciar sesión para participar en las encuestas",
     "resultsLive": "Resultados en tiempo real",
     "resultsTitle": "Resultados de Encuestas",
-    "resultsDescription": "Explora los resultados de las encuestas de la comunidad madridista",
+    "resultsDescription": "Explora los resultados de las encuestas de la comunidad aficionado del Aston Vila",
     "allPolls": "Todas las encuestas",
     "popularPolls": "Más votadas",
     "recentPolls": "Más recientes"
@@ -531,7 +531,7 @@
   },
   "cookies": {
     "title": "Política de Cookies",
-    "introduction": "Esta Política de Cookies explica el uso de cookies y tecnologías similares en \"Hub Madridista\".",
+    "introduction": "Esta Política de Cookies explica el uso de cookies y tecnologías similares en \"Hub Aston Vila\".",
     "definition": {
       "title": "3.1. Definición de cookies",
       "description": "Las cookies son pequeños archivos que se descargan en el dispositivo del Usuario al visitar ciertas páginas web. Permiten, entre otras cosas, reconocer un dispositivo, recordar preferencias y recopilar información sobre hábitos de navegación."
@@ -558,7 +558,7 @@
     },
     "consent": {
       "title": "3.4. Consentimiento",
-      "description": "Al acceder por primera vez a Hub Madridista, se muestra un aviso de cookies. El Usuario puede aceptar todas, configurarlas o rechazarlas. La instalación de cookies opcionales solo se realiza con consentimiento. El Usuario puede retirar su consentimiento en cualquier momento desde la configuración de cookies del Sitio Web."
+      "description": "Al acceder por primera vez a Hub Aston Vila, se muestra un aviso de cookies. El Usuario puede aceptar todas, configurarlas o rechazarlas. La instalación de cookies opcionales solo se realiza con consentimiento. El Usuario puede retirar su consentimiento en cualquier momento desde la configuración de cookies del Sitio Web."
     },
     "disable": {
       "title": "3.5. Desactivación",
@@ -576,11 +576,11 @@
       "owner": "Titular: Gabriel Carreras Albiol",
       "address": "Domicilio: C/ Sant Rafael 104, 07701, Palma de Mallorca",
       "id": "DNI: 41496108Z",
-      "email": "Correo electrónico de contacto: contacto@hubmadridista.com"
+      "email": "Correo electrónico de contacto: contacto@hubaficionado del Aston Vila.com"
     },
     "purpose": {
       "title": "1.2. Objeto",
-      "description": "\"Hub Madridista\" (en adelante, \"el Sitio Web\") actúa como un hub de contenidos relacionados con el Real Madrid, permitiendo a los usuarios:",
+      "description": "\"Hub Aston Vila\" (en adelante, \"el Sitio Web\") actúa como un hub de contenidos relacionados con el Aston Vila, permitiendo a los usuarios:",
       "feature1": "Incrustar (embeder) videos de plataformas como YouTube y TikTok.",
       "feature2": "Crear perfiles de usuario y gestionar listas de favoritos.",
       "feature3": "Posiblemente, enlazar a una tienda online en otro dominio.",
@@ -644,7 +644,7 @@
       "language": "Idioma Preferido",
       "languageDescription": "Idioma preferido para la búsqueda de videos",
       "searchTerms": "Términos de Búsqueda",
-      "searchTermsPlaceholder": "Real Madrid highlights\nReal Madrid goles\nReal Madrid análisis",
+      "searchTermsPlaceholder": "Aston Vila highlights\nAston Vila goles\nAston Vila análisis",
       "searchTermsDescription": "Ingresa un término de búsqueda por línea. Estos se usarán de manera aleatoria para buscar videos en YouTube.",
       "howItWorks": "Cómo funciona",
       "howItWorksItems": {

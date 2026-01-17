@@ -5,14 +5,14 @@ import { eq } from 'drizzle-orm';
 
 const contentConfig = [
   // Hero Slider - Main (First Slide)
-  { key: 'content.hero.title.en', value: 'Madridista Hub' },
-  { key: 'content.hero.title.es', value: 'Hub Madridista' },
-  { key: 'content.hero.subtitle.en', value: 'The digital home for all madridistas' },
-  { key: 'content.hero.subtitle.es', value: 'El hogar digital de todos los madridistas' },
+  { key: 'content.hero.title.en', value: 'Aston Vila Hub' },
+  { key: 'content.hero.title.es', value: 'Hub Aston Vila' },
+  { key: 'content.hero.subtitle.en', value: 'The digital home for all Aston Vila supporters' },
+  { key: 'content.hero.subtitle.es', value: 'El hogar digital de todos los Aston Vila supporters' },
   
   // Hero Slider - Passion
-  { key: 'content.hero.passion.title.en', value: 'The White Passion' },
-  { key: 'content.hero.passion.title.es', value: 'La Pasión Blanca' },
+  { key: 'content.hero.passion.title.en', value: 'The Claret and Blue Passion' },
+  { key: 'content.hero.passion.title.es', value: 'La Pasión Villana' },
   { key: 'content.hero.passion.subtitle.en', value: 'Experience every moment with the same intensity' },
   { key: 'content.hero.passion.subtitle.es', value: 'Vive cada momento con la misma intensidad' },
   
@@ -23,22 +23,22 @@ const contentConfig = [
   { key: 'content.hero.feeling.subtitle.es', value: 'Unidos por los colores que nos representan' },
   
   // Hero Slider - Fans
-  { key: 'content.hero.fans.title.en', value: 'The Madridista Fanbase' },
-  { key: 'content.hero.fans.title.es', value: 'La Afición Madridista' },
+  { key: 'content.hero.fans.title.en', value: 'The Aston Vila Fanbase' },
+  { key: 'content.hero.fans.title.es', value: 'La Afición Villana' },
   { key: 'content.hero.fans.subtitle.en', value: 'The heart that beats in every stadium' },
   { key: 'content.hero.fans.subtitle.es', value: 'El corazón que late en cada estadio' },
   
   // About Section
-  { key: 'content.about.title.en', value: 'What is Madridista Hub?' },
-  { key: 'content.about.title.es', value: '¿Qué es Hub Madridista?' },
-  { key: 'content.about.description.en', value: 'Madridista Hub is the definitive platform for Real Madrid fans, offering an immersive and personalized experience with all content related to the most decorated club in the world.' },
-  { key: 'content.about.description.es', value: 'Hub Madridista es la plataforma definitiva para aficionados del Real Madrid, ofreciendo una experiencia inmersiva y personalizada con todo el contenido relacionado con el club más laureado del mundo.' },
+  { key: 'content.about.title.en', value: 'What is Aston Vila Hub?' },
+  { key: 'content.about.title.es', value: '¿Qué es Hub Aston Vila?' },
+  { key: 'content.about.description.en', value: 'Aston Vila Hub is the definitive platform for Aston Vila fans, offering an immersive and personalized experience with all content related to the most decorated club in the world.' },
+  { key: 'content.about.description.es', value: 'Hub Aston Vila es la plataforma definitiva para aficionados del Aston Vila, ofreciendo una experiencia inmersiva y personalizada con todo el contenido relacionado con el club más laureado del mundo.' },
   
   // Features - Curated Content
   { key: 'content.about.features.curated.title.en', value: 'Curated Content' },
   { key: 'content.about.features.curated.title.es', value: 'Contenido Curado' },
-  { key: 'content.about.features.curated.description.en', value: 'Access the best videos, news, and updates from Real Madrid, automatically selected and categorized for you.' },
-  { key: 'content.about.features.curated.description.es', value: 'Accede a los mejores vídeos, noticias y actualizaciones del Real Madrid, automáticamente seleccionados y categorizados para ti.' },
+  { key: 'content.about.features.curated.description.en', value: 'Access the best videos, news, and updates from Aston Vila, automatically selected and categorized for you.' },
+  { key: 'content.about.features.curated.description.es', value: 'Accede a los mejores vídeos, noticias y actualizaciones del Aston Vila, automáticamente seleccionados y categorizados para ti.' },
   
   // Features - Multiplatform
   { key: 'content.about.features.multiplatform.title.en', value: 'Multiplatform' },
@@ -55,8 +55,8 @@ const contentConfig = [
   // Premium Section
   { key: 'content.premium.title.en', value: 'Premium Benefits' },
   { key: 'content.premium.title.es', value: 'Beneficios Premium' },
-  { key: 'content.premium.description.en', value: 'Unlock the full potential of Madridista Hub with our premium subscription and enjoy exclusive advantages.' },
-  { key: 'content.premium.description.es', value: 'Desbloquea todo el potencial de Hub Madridista con nuestra suscripción premium y disfruta de ventajas exclusivas.' },
+  { key: 'content.premium.description.en', value: 'Unlock the full potential of Aston Vila Hub with our premium subscription and enjoy exclusive advantages.' },
+  { key: 'content.premium.description.es', value: 'Desbloquea todo el potencial de Hub Aston Vila con nuestra suscripción premium y disfruta de ventajas exclusivas.' },
   
   // Premium Benefits - Exclusive
   { key: 'content.premium.benefits.exclusive.title.en', value: 'Exclusive Channels' },
@@ -73,8 +73,8 @@ const contentConfig = [
   // Premium Benefits - Archive
   { key: 'content.premium.benefits.history.title.en', value: 'Historical Archive' },
   { key: 'content.premium.benefits.history.title.es', value: 'Archivo Histórico' },
-  { key: 'content.premium.benefits.history.description.en', value: 'Access our complete archive of historical Real Madrid moments.' },
-  { key: 'content.premium.benefits.history.description.es', value: 'Accede a nuestro archivo completo de momentos históricos del Real Madrid.' },
+  { key: 'content.premium.benefits.history.description.en', value: 'Access our complete archive of historical Aston Vila moments.' },
+  { key: 'content.premium.benefits.history.description.es', value: 'Accede a nuestro archivo completo de momentos históricos del Aston Vila.' },
   
   // Premium Benefits - Analysis
   { key: 'content.premium.benefits.analysis.title.en', value: 'Advanced Analysis' },
@@ -95,8 +95,8 @@ const contentConfig = [
   { key: 'content.testimonials.user1.name.es', value: 'Carlos Rodríguez' },
   { key: 'content.testimonials.user1.role.en', value: 'Premium User' },
   { key: 'content.testimonials.user1.role.es', value: 'Usuario Premium' },
-  { key: 'content.testimonials.user1.quote.en', value: '"Madridista Hub has changed the way I follow Real Madrid. All information in one place and perfectly categorized. Amazing service!"' },
-  { key: 'content.testimonials.user1.quote.es', value: '"Hub Madridista ha cambiado la forma en que sigo al Real Madrid. Toda la información en un solo lugar y perfectamente categorizada. ¡Servicio increíble!"' },
+  { key: 'content.testimonials.user1.quote.en', value: '"Aston Vila Hub has changed the way I follow Aston Vila. All information in one place and perfectly categorized. Amazing service!"' },
+  { key: 'content.testimonials.user1.quote.es', value: '"Hub Aston Vila ha cambiado la forma en que sigo al Aston Vila. Toda la información en un solo lugar y perfectamente categorizada. ¡Servicio increíble!"' },
   
   // Testimonials - User 2
   { key: 'content.testimonials.user2.name.en', value: 'Laura Martínez' },
@@ -115,10 +115,10 @@ const contentConfig = [
   { key: 'content.testimonials.user3.quote.es', value: '"Incluso la versión gratuita es excepcional. La interfaz es intuitiva y encuentro todo el contenido relevante rápidamente. Definitivamente me pasaré a Premium."' },
   
   // CTA Section
-  { key: 'content.cta.title.en', value: 'Join the madridista community' },
-  { key: 'content.cta.title.es', value: 'Únete a la comunidad madridista' },
-  { key: 'content.cta.description.en', value: 'Thousands of fans already enjoy the best experience to follow and enjoy all content related to Real Madrid. Join our community today!' },
-  { key: 'content.cta.description.es', value: 'Miles de aficionados ya disfrutan de la mejor experiencia para seguir y disfrutar de todo el contenido relacionado con el Real Madrid. ¡Únete a nuestra comunidad hoy!' },
+  { key: 'content.cta.title.en', value: 'Join the Aston Vila supporter community' },
+  { key: 'content.cta.title.es', value: 'Únete a la comunidad Aston Vila supporter' },
+  { key: 'content.cta.description.en', value: 'Thousands of fans already enjoy the best experience to follow and enjoy all content related to Aston Vila. Join our community today!' },
+  { key: 'content.cta.description.es', value: 'Miles de aficionados ya disfrutan de la mejor experiencia para seguir y disfrutar de todo el contenido relacionado con el Aston Vila. ¡Únete a nuestra comunidad hoy!' },
   { key: 'content.cta.button.en', value: 'View all videos' },
   { key: 'content.cta.button.es', value: 'Ver todos los vídeos' },
   { key: 'content.cta.registerNow.en', value: 'Register Now' },
