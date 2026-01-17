@@ -448,7 +448,7 @@ export default function SiteConfigManagement() {
           </TabsTrigger>
           <TabsTrigger value="seo" className="gap-2">
             <Globe className="h-4 w-4" />
-            SEO
+            {t('adminConfig.tabs.seo')}
           </TabsTrigger>
         </TabsList>
 
@@ -456,15 +456,15 @@ export default function SiteConfigManagement() {
         <TabsContent value="branding" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Identidad de Marca</CardTitle>
+              <CardTitle>{t('adminConfig.branding.title')}</CardTitle>
               <CardDescription>
-                Configura el nombre, logo y colores del sitio
+                {t('adminConfig.branding.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="site-name">Nombre del Sitio</Label>
+                  <Label htmlFor="site-name">{t('adminConfig.branding.siteName')}</Label>
                   <Input
                     id="site-name"
                     value={configData['site.name'] || ''}
@@ -474,7 +474,7 @@ export default function SiteConfigManagement() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="site-tagline">Eslogan</Label>
+                  <Label htmlFor="site-tagline">{t('adminConfig.branding.tagline')}</Label>
                   <Input
                     id="site-tagline"
                     value={configData['site.tagline'] || ''}
@@ -484,7 +484,7 @@ export default function SiteConfigManagement() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="logo-url">URL del Logo</Label>
+                  <Label htmlFor="logo-url">{t('adminConfig.branding.logoUrl')}</Label>
                   <div className="flex gap-2">
                     <Input
                       id="logo-url"
@@ -508,7 +508,7 @@ export default function SiteConfigManagement() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="logo-alt">Texto alternativo del Logo</Label>
+                  <Label htmlFor="logo-alt">{t('adminConfig.branding.logoAlt')}</Label>
                   <Input
                     id="logo-alt"
                     value={configData['site.logo.alt'] || ''}
@@ -518,7 +518,7 @@ export default function SiteConfigManagement() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="favicon-url">URL del Favicon</Label>
+                  <Label htmlFor="favicon-url">{t('adminConfig.branding.faviconUrl')}</Label>
                   <Input
                     id="favicon-url"
                     value={configData['site.favicon.url'] || ''}
@@ -529,7 +529,7 @@ export default function SiteConfigManagement() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="color-primary">Color Primario</Label>
+                    <Label htmlFor="color-primary">{t('adminConfig.branding.primaryColor')}</Label>
                     <div className="flex gap-2">
                       <Input
                         id="color-primary"
@@ -547,7 +547,7 @@ export default function SiteConfigManagement() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="color-secondary">Color Secundario</Label>
+                    <Label htmlFor="color-secondary">{t('adminConfig.branding.secondaryColor')}</Label>
                     <div className="flex gap-2">
                       <Input
                         id="color-secondary"
@@ -565,7 +565,7 @@ export default function SiteConfigManagement() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="color-accent">Color de Acento</Label>
+                    <Label htmlFor="color-accent">{t('adminConfig.branding.accentColor')}</Label>
                     <div className="flex gap-2">
                       <Input
                         id="color-accent"
@@ -823,14 +823,14 @@ export default function SiteConfigManagement() {
           
           <Card>
             <CardHeader>
-              <CardTitle>Contacto y Redes Sociales</CardTitle>
+              <CardTitle>{t('adminConfig.social.title')}</CardTitle>
               <CardDescription>
-                Configura la información de contacto y enlaces sociales
+                {t('adminConfig.social.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="contact-email">Email de Contacto</Label>
+                <Label htmlFor="contact-email">{t('adminConfig.social.contactEmail')}</Label>
                 <Input
                   id="contact-email"
                   type="email"
@@ -841,7 +841,7 @@ export default function SiteConfigManagement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="contact-phone">Teléfono de Contacto</Label>
+                <Label htmlFor="contact-phone">{t('adminConfig.social.contactPhone')}</Label>
                 <Input
                   id="contact-phone"
                   value={configData['contact.phone'] || ''}
@@ -851,7 +851,7 @@ export default function SiteConfigManagement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="twitter-url">Twitter/X URL</Label>
+                <Label htmlFor="twitter-url">{t('adminConfig.social.twitterUrl')}</Label>
                 <Input
                   id="twitter-url"
                   value={configData['social.twitter.url'] || ''}
@@ -861,7 +861,7 @@ export default function SiteConfigManagement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="facebook-url">Facebook URL</Label>
+                <Label htmlFor="facebook-url">{t('adminConfig.social.facebookUrl')}</Label>
                 <Input
                   id="facebook-url"
                   value={configData['social.facebook.url'] || ''}
@@ -871,7 +871,7 @@ export default function SiteConfigManagement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="instagram-url">Instagram URL</Label>
+                <Label htmlFor="instagram-url">{t('adminConfig.social.instagramUrl')}</Label>
                 <Input
                   id="instagram-url"
                   value={configData['social.instagram.url'] || ''}
@@ -881,7 +881,7 @@ export default function SiteConfigManagement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="youtube-url">YouTube URL</Label>
+                <Label htmlFor="youtube-url">{t('adminConfig.social.youtubeUrl')}</Label>
                 <Input
                   id="youtube-url"
                   value={configData['social.youtube.url'] || ''}
@@ -986,14 +986,14 @@ export default function SiteConfigManagement() {
         <TabsContent value="seo" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>SEO y Metadatos</CardTitle>
+              <CardTitle>{t('adminConfig.seo.title')}</CardTitle>
               <CardDescription>
-                Configura los metadatos para optimización de motores de búsqueda
+                {t('adminConfig.seo.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="seo-title">Título por Defecto</Label>
+                <Label htmlFor="seo-title">{t('adminConfig.seo.defaultTitle')}</Label>
                 <Input
                   id="seo-title"
                   value={configData['seo.default.title'] || ''}
@@ -1003,7 +1003,7 @@ export default function SiteConfigManagement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="seo-description">Descripción por Defecto</Label>
+                <Label htmlFor="seo-description">{t('adminConfig.seo.defaultDescription')}</Label>
                 <Textarea
                   id="seo-description"
                   value={configData['seo.default.description'] || ''}
@@ -1014,7 +1014,7 @@ export default function SiteConfigManagement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="seo-keywords">Palabras Clave</Label>
+                <Label htmlFor="seo-keywords">{t('adminConfig.seo.keywords')}</Label>
                 <Textarea
                   id="seo-keywords"
                   value={configData['seo.default.keywords'] || ''}
@@ -1025,7 +1025,7 @@ export default function SiteConfigManagement() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="seo-og-image">Imagen Open Graph (URL)</Label>
+                <Label htmlFor="seo-og-image">{t('adminConfig.seo.ogImage')}</Label>
                 <Input
                   id="seo-og-image"
                   value={configData['seo.og.image'] || ''}
