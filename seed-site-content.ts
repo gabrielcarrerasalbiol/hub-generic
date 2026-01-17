@@ -64,16 +64,16 @@ const contentConfig = [
   { key: 'content.premium.benefits.exclusive.description.es', value: 'Acceso a canales premium con contenido exclusivo y análisis en profundidad.' },
   
   // Premium Benefits - Ad-Free
-  { key: 'content.premium.benefits.adfree.title.en', value: 'Ad-Free' },
-  { key: 'content.premium.benefits.adfree.title.es', value: 'Sin Anuncios' },
-  { key: 'content.premium.benefits.adfree.description.en', value: 'Enjoy an ad-free experience across the entire platform.' },
-  { key: 'content.premium.benefits.adfree.description.es', value: 'Disfruta de una experiencia sin anuncios en toda la plataforma.' },
+  { key: 'content.premium.benefits.noAds.title.en', value: 'Ad-Free' },
+  { key: 'content.premium.benefits.noAds.title.es', value: 'Sin Anuncios' },
+  { key: 'content.premium.benefits.noAds.description.en', value: 'Enjoy an ad-free experience across the entire platform.' },
+  { key: 'content.premium.benefits.noAds.description.es', value: 'Disfruta de una experiencia sin anuncios en toda la plataforma.' },
   
   // Premium Benefits - Archive
-  { key: 'content.premium.benefits.archive.title.en', value: 'Historical Archive' },
-  { key: 'content.premium.benefits.archive.title.es', value: 'Archivo Histórico' },
-  { key: 'content.premium.benefits.archive.description.en', value: 'Access our complete archive of historical Real Madrid moments.' },
-  { key: 'content.premium.benefits.archive.description.es', value: 'Accede a nuestro archivo completo de momentos históricos del Real Madrid.' },
+  { key: 'content.premium.benefits.history.title.en', value: 'Historical Archive' },
+  { key: 'content.premium.benefits.history.title.es', value: 'Archivo Histórico' },
+  { key: 'content.premium.benefits.history.description.en', value: 'Access our complete archive of historical Real Madrid moments.' },
+  { key: 'content.premium.benefits.history.description.es', value: 'Accede a nuestro archivo completo de momentos históricos del Real Madrid.' },
   
   // Premium Benefits - Analysis
   { key: 'content.premium.benefits.analysis.title.en', value: 'Advanced Analysis' },
@@ -81,7 +81,15 @@ const contentConfig = [
   { key: 'content.premium.benefits.analysis.description.en', value: 'Detailed statistics and exclusive tactical analysis of each match.' },
   { key: 'content.premium.benefits.analysis.description.es', value: 'Estadísticas detalladas y análisis táctico exclusivo de cada partido.' },
   
-  // Testimonials - User 1
+  // Premium - Extra fields
+  { key: 'content.premium.alreadyPremium.en', value: 'You are already a Premium member' },
+  { key: 'content.premium.alreadyPremium.es', value: 'Ya eres miembro Premium' },
+  { key: 'content.premium.upgrade.en', value: 'Upgrade to Premium' },
+  { key: 'content.premium.upgrade.es', value: 'Actualizar a Premium' },
+  
+  // Testimonials
+  { key: 'content.testimonials.title.en', value: 'What our users say' },
+  { key: 'content.testimonials.title.es', value: 'Lo que dicen nuestros usuarios' },
   { key: 'content.testimonials.user1.name.en', value: 'Carlos Rodríguez' },
   { key: 'content.testimonials.user1.name.es', value: 'Carlos Rodríguez' },
   { key: 'content.testimonials.user1.role.en', value: 'Premium User' },
@@ -112,6 +120,8 @@ const contentConfig = [
   { key: 'content.cta.description.es', value: 'Miles de aficionados ya disfrutan de la mejor experiencia para seguir y disfrutar de todo el contenido relacionado con el Real Madrid. ¡Únete a nuestra comunidad hoy!' },
   { key: 'content.cta.button.en', value: 'View all videos' },
   { key: 'content.cta.button.es', value: 'Ver todos los vídeos' },
+  { key: 'content.cta.registerNow.en', value: 'Register Now' },
+  { key: 'content.cta.registerNow.es', value: 'Regístrate Ahora' },
 ];
 
 async function seedContent() {
