@@ -13,9 +13,11 @@ import SiteConfigManagement from '@/components/admin/SiteConfigManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Users, Video, Activity, Star, Award, BarChart2, Sparkles, BarChart, Vote, LogIn, Clock, Settings } from 'lucide-react';
+import { useLanguage } from '@/hooks/use-language';
 
 export default function AdminPage() {
   const { isAdmin, isSuperAdmin, checkAuth } = useAuth();
+  const { t } = useLanguage();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState('users');
 
@@ -31,11 +33,11 @@ export default function AdminPage() {
   return (
     <div className="container max-w-7xl py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Panel de Administración</h1>
+        <h1 className="text-3xl font-bold">{t('adminPanel.title')}</h1>
         <Link href="/dashboard">
           <Button variant="outline" className="flex items-center gap-2">
             <BarChart2 className="h-4 w-4" />
-            <span>Dashboard de Estadísticas</span>
+            <span>{t('adminPanel.dashboardButton')}</span>
           </Button>
         </Link>
       </div>
@@ -45,44 +47,44 @@ export default function AdminPage() {
           {isSuperAdmin() && (
             <TabsTrigger value="config" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
-              <span>Config</span>
+              <span>{t('adminPanel.tabs.config')}</span>
             </TabsTrigger>
           )}
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span>Usuarios</span>
+            <span>{t('adminPanel.tabs.users')}</span>
           </TabsTrigger>
           <TabsTrigger value="loginlogs" className="flex items-center gap-2">
             <LogIn className="h-4 w-4" />
-            <span>Accesos</span>
+            <span>{t('adminPanel.tabs.loginLogs')}</span>
           </TabsTrigger>
           <TabsTrigger value="videos" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
-            <span>Vídeos</span>
+            <span>{t('adminPanel.tabs.videos')}</span>
           </TabsTrigger>
           <TabsTrigger value="featured" className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
-            <span>Destacados</span>
+            <span>{t('adminPanel.tabs.featured')}</span>
           </TabsTrigger>
           <TabsTrigger value="premium" className="flex items-center gap-2">
             <Star className="h-4 w-4" />
-            <span>Premium</span>
+            <span>{t('adminPanel.tabs.premium')}</span>
           </TabsTrigger>
           <TabsTrigger value="recommended" className="flex items-center gap-2">
             <Award className="h-4 w-4" />
-            <span>Recomendados</span>
+            <span>{t('adminPanel.tabs.recommended')}</span>
           </TabsTrigger>
           <TabsTrigger value="polls" className="flex items-center gap-2">
             <BarChart className="h-4 w-4" />
-            <span>Encuestas</span>
+            <span>{t('adminPanel.tabs.polls')}</span>
           </TabsTrigger>
           <TabsTrigger value="scheduled" className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            <span>Tareas</span>
+            <span>{t('adminPanel.tabs.scheduled')}</span>
           </TabsTrigger>
           <TabsTrigger value="processes" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
-            <span>Procesos</span>
+            <span>{t('adminPanel.tabs.processes')}</span>
           </TabsTrigger>
         </TabsList>
         

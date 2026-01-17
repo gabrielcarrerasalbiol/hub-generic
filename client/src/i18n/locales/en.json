@@ -643,4 +643,21 @@
       "error": "Error saving configuration"
     }
   }
+,
+  "adminPanel": {
+    "title": "Administration Panel",
+    "dashboardButton": "Statistics Dashboard",
+    "tabs": {
+      "config": "Config",
+      "users": "Users",
+      "loginLogs": "Access Logs",
+      "videos": "Videos",
+      "featured": "Featured",
+      "premium": "Premium",
+      "recommended": "Recommended",
+      "polls": "Polls",
+      "scheduled": "Tasks",
+      "processes": "Processes"
+    }
+  }
 }

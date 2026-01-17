@@ -686,4 +686,21 @@
       "error": "Error al guardar la configuración"
     }
   }
+,
+  "adminPanel": {
+    "title": "Panel de Administración",
+    "dashboardButton": "Dashboard de Estadísticas",
+    "tabs": {
+      "config": "Config",
+      "users": "Usuarios",
+      "loginLogs": "Accesos",
+      "videos": "Vídeos",
+      "featured": "Destacados",
+      "premium": "Premium",
+      "recommended": "Recomendados",
+      "polls": "Encuestas",
+      "scheduled": "Tareas",
+      "processes": "Procesos"
+    }
+  }
 }
