@@ -27,8 +27,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useTranslation } from 'react-i18next';
 
 export default function SubscriptionsPage() {
+  const { t } = useTranslation();
   const { checkAuth } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -63,16 +65,16 @@ export default function SubscriptionsPage() {
       
       // Usar el valor actual ya que enabled contiene el nuevo estado
       toast({
-        title: enabled ? "Notificaciones activadas" : "Notificaciones desactivadas",
-        description: enabled 
-          ? "Recibirás alertas cuando se publiquen nuevos videos" 
-          : "Ya no recibirás alertas de nuevos videos",
+        title: enabled ? t('subscriptionsPage.toasts.enabled.title') : t('subscriptionsPage.toasts.disabled.title'),
+        description: enabled
+          ? t('subscriptionsPage.toasts.enabled.message')
+          : t('subscriptionsPage.toasts.disabled.message'),
       });
     } catch (error) {
       console.error('Error updating notification preference:', error);
       toast({
-        title: "Error al actualizar preferencias",
-        description: "No se pudieron actualizar las preferencias de notificaciones",
+        title: t('subscriptionsPage.toasts.error.title'),
+        description: t('subscriptionsPage.toasts.error.message'),
         variant: "destructive",
       });
     }
@@ -86,22 +88,22 @@ export default function SubscriptionsPage() {
       await apiRequest(`/api/subscriptions/${channelId}`, {
         method: 'DELETE'
       });
-      
+
       // Invalidar consultas para actualizar la UI
       queryClient.invalidateQueries({ queryKey: ['/api/subscriptions'] });
       queryClient.invalidateQueries({ queryKey: ['/api/subscriptions/channels'] });
-      
+
       toast({
-        title: "Suscripción cancelada",
-        description: "Ya no recibirás actualizaciones de este canal",
+        title: t('subscriptionsPage.toasts.unsubscribed.title'),
+        description: t('subscriptionsPage.toasts.unsubscribed.message'),
       });
-      
+
       setChannelToUnsubscribe(null);
     } catch (error) {
       console.error('Error unsubscribing from channel:', error);
       toast({
-        title: "Error al cancelar suscripción",
-        description: "No se pudo cancelar la suscripción, intenta nuevamente",
+        title: t('subscriptionsPage.toasts.unsubscribeError.title'),
+        description: t('subscriptionsPage.toasts.unsubscribeError.message'),
         variant: "destructive",
       });
     }
@@ -121,19 +123,19 @@ export default function SubscriptionsPage() {
 
   return (
     <div className="container py-6">
-      <h1 className="text-3xl font-bold mb-6">Mis canales</h1>
-      
+      <h1 className="text-3xl font-bold mb-6">{t('subscriptionsPage.title')}</h1>
+
       <div className="mb-6">
         <Input
-          placeholder="Buscar canales..."
+          placeholder={t('subscriptionsPage.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="max-w-md"
         />
       </div>
-      
+
       {isLoading ? (
-        <div className="text-center py-10">Cargando tus canales...</div>
+        <div className="text-center py-10">{t('subscriptionsPage.loading')}</div>
       ) : filteredChannels.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredChannels.map((channel) => (
@@ -157,33 +159,33 @@ export default function SubscriptionsPage() {
                     </div>
                   )}
                   <p className="text-sm text-muted-foreground line-clamp-2">
-                    {channel.description || "Sin descripción"}
+                    {channel.description || t('subscriptionsPage.noDescription')}
                   </p>
                 </div>
               </div>
-              
+
               <div className="mt-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Switch 
-                    checked={channel.notificationsEnabled} 
-                    onCheckedChange={(checked) => 
+                  <Switch
+                    checked={channel.notificationsEnabled}
+                    onCheckedChange={(checked) =>
                       updateNotificationPreference(channel.id, checked)
                     }
                     id={`notifications-${channel.id}`}
                   />
-                  <label 
+                  <label
                     htmlFor={`notifications-${channel.id}`}
                     className="text-sm cursor-pointer flex items-center gap-1"
                   >
                     {channel.notificationsEnabled ? (
                       <>
                         <Bell size={14} />
-                        <span>Notificaciones activas</span>
+                        <span>{t('subscriptionsPage.notifications.active')}</span>
                       </>
                     ) : (
                       <>
                         <BellOff size={14} />
-                        <span>Notificaciones inactivas</span>
+                        <span>{t('subscriptionsPage.notifications.inactive')}</span>
                       </>
                     )}
                   </label>
@@ -202,18 +204,18 @@ export default function SubscriptionsPage() {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>¿Eliminar canal?</AlertDialogTitle>
+                      <AlertDialogTitle>{t('subscriptionsPage.dialog.title')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        ¿Estás seguro que deseas eliminar{' '}
-                        <strong>{channelToUnsubscribe?.title}</strong> de tus canales? 
-                        Ya no recibirás notificaciones de nuevos videos de este canal.
+                        {t('subscriptionsPage.dialog.description', {
+                          title: <strong>{channelToUnsubscribe?.title}</strong>
+                        })}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel onClick={() => setChannelToUnsubscribe(null)}>
-                        Cancelar
+                        {t('subscriptionsPage.dialog.cancel')}
                       </AlertDialogCancel>
-                      <AlertDialogAction 
+                      <AlertDialogAction
                         className="bg-red-500 hover:bg-red-600"
                         onClick={() => {
                           if (channelToUnsubscribe) {
@@ -221,7 +223,7 @@ export default function SubscriptionsPage() {
                           }
                         }}
                       >
-                        Confirmar
+                        {t('subscriptionsPage.dialog.confirm')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -233,12 +235,12 @@ export default function SubscriptionsPage() {
       ) : (
         <div className="text-center py-10">
           <p className="text-muted-foreground mb-4">
-            {searchQuery 
-              ? "No se encontraron canales que coincidan con tu búsqueda." 
-              : "No tienes canales guardados en tu lista."}
+            {searchQuery
+              ? t('subscriptionsPage.empty.withSearch')
+              : t('subscriptionsPage.empty.withoutSearch')}
           </p>
           {searchQuery && (
-            <Button onClick={() => setSearchQuery('')}>Limpiar búsqueda</Button>
+            <Button onClick={() => setSearchQuery('')}>{t('subscriptionsPage.clearSearch')}</Button>
           )}
         </div>
       )}

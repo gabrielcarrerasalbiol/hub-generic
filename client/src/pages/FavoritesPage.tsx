@@ -7,8 +7,10 @@ import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { getQueryFn } from "@/lib/queryClient";
+import { useTranslation } from "react-i18next";
 
 export default function FavoritesPage() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -17,13 +19,13 @@ export default function FavoritesPage() {
   useEffect(() => {
     if (!authLoading && !user) {
       toast({
-        title: "Acceso restringido",
-        description: "Inicia sesión para ver tus favoritos",
+        title: t('favoritesPage.restricted.title'),
+        description: t('favoritesPage.restricted.message'),
         variant: "destructive",
       });
       setLocation("/login?redirect=/favoritos");
     }
-  }, [user, authLoading, setLocation, toast]);
+  }, [user, authLoading, setLocation, toast, t]);
 
   // Fetch user's favorite videos only if authenticated
   const { 
@@ -66,9 +68,9 @@ export default function FavoritesPage() {
   return (
     <main className="flex-1 bg-gray-100 dark:bg-[#2C2152] p-4 md:p-6 overflow-y-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2 dark:text-white">Mis Favoritos</h1>
+        <h1 className="text-2xl font-bold mb-2 dark:text-white">{t('favoritesPage.title')}</h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Aquí encontrarás todos tus videos favoritos del Real Madrid guardados en un solo lugar.
+          {t('favoritesPage.description')}
         </p>
       </div>
 
@@ -97,8 +99,8 @@ export default function FavoritesPage() {
       {/* Display error state */}
       {isError && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-6 text-center">
-          <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">Error</h2>
-          <p className="dark:text-gray-300">No se pudieron cargar tus videos favoritos. Por favor, intenta de nuevo más tarde.</p>
+          <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">{t('favoritesPage.error.title')}</h2>
+          <p className="dark:text-gray-300">{t('favoritesPage.error.message')}</p>
         </div>
       )}
 
@@ -106,12 +108,12 @@ export default function FavoritesPage() {
       {!isLoading && !isError && favorites && favorites.length === 0 && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center">
           <i className="far fa-star text-5xl text-gray-400 dark:text-brand-secondary/70 mb-4"></i>
-          <h2 className="text-xl font-semibold mb-2 dark:text-white">No tienes favoritos guardados</h2>
+          <h2 className="text-xl font-semibold mb-2 dark:text-white">{t('favoritesPage.empty.title')}</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Cuando marques videos como favoritos, aparecerán aquí para que puedas verlos fácilmente.
+            {t('favoritesPage.empty.message')}
           </p>
           <Link href="/" className="px-6 py-3 bg-[#1E3A8A] text-white rounded-md font-medium hover:bg-blue-800 transition duration-200 inline-block">
-            Explorar videos
+            {t('favoritesPage.exploreVideos')}
           </Link>
         </div>
       )}

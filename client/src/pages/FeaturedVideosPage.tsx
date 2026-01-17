@@ -7,8 +7,10 @@ import { Sparkles } from 'lucide-react';
 import ContentLayout from '@/components/layouts/ContentLayout';
 import EmptyState from '@/components/EmptyState';
 import LoadingVideos from '@/components/LoadingVideos';
+import { useTranslation } from 'react-i18next';
 
 export default function FeaturedVideosPage() {
+  const { t } = useTranslation();
   const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
   const [filteredVideos, setFilteredVideos] = useState<Video[]>([]);
 
@@ -31,32 +33,32 @@ export default function FeaturedVideosPage() {
   }, [selectedPlatform, videos]);
 
   const platforms = [
-    { id: 'all', name: 'Todas las plataformas' },
-    { id: 'youtube', name: 'YouTube' },
-    { id: 'twitch', name: 'Twitch' },
-    { id: 'twitter', name: 'Twitter' },
-    { id: 'tiktok', name: 'TikTok' },
-    { id: 'instagram', name: 'Instagram' },
+    { id: 'all' },
+    { id: 'youtube' },
+    { id: 'twitch' },
+    { id: 'twitter' },
+    { id: 'tiktok' },
+    { id: 'instagram' },
   ];
 
   return (
     <>
       <Helmet>
-        <title>Videos Destacados | Hub Madridista</title>
-        <meta name="description" content="Los mejores videos destacados del Real Madrid seleccionados por nuestro equipo editorial." />
+        <title>{t('featuredVideosPage.metaTitle')}</title>
+        <meta name="description" content={t('featuredVideosPage.metaDescription')} />
       </Helmet>
 
       <ContentLayout>
         <div className="flex items-center gap-2 mb-6">
           <Sparkles className="h-6 w-6 text-yellow-500" />
-          <h1 className="text-2xl font-bold">Videos Destacados</h1>
+          <h1 className="text-2xl font-bold">{t('featuredVideosPage.title')}</h1>
         </div>
 
         <div className="mb-6">
           <p className="text-gray-600 dark:text-gray-300 mb-4">
-            Descubre el contenido más relevante del Real Madrid seleccionado por nuestro equipo editorial.
+            {t('featuredVideosPage.description')}
           </p>
-          
+
           <div className="flex flex-wrap gap-2 mt-4">
             {platforms.map(platform => (
               <button
@@ -68,7 +70,7 @@ export default function FeaturedVideosPage() {
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
-                {platform.name}
+                {t(`featuredVideosPage.platforms.${platform.id}`)}
               </button>
             ))}
           </div>
@@ -78,13 +80,13 @@ export default function FeaturedVideosPage() {
           <LoadingVideos count={8} />
         ) : filteredVideos.length === 0 ? (
           <EmptyState
-            title="No hay videos destacados"
+            title={t('featuredVideosPage.empty.title')}
             description={
               selectedPlatform === 'all'
-                ? "Aún no tenemos videos destacados para mostrarte."
-                : `No hay videos destacados de ${
-                    platforms.find(p => p.id === selectedPlatform)?.name || selectedPlatform
-                  } en este momento.`
+                ? t('featuredVideosPage.empty.allDescription')
+                : t('featuredVideosPage.empty.platformDescription', {
+                    platform: platforms.find(p => p.id === selectedPlatform)?.name || selectedPlatform
+                  })
             }
             iconName="sparkles"
           />

@@ -18,8 +18,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useTranslation } from 'react-i18next';
 
 export default function TrendingPage() {
+  const { t } = useTranslation();
   const [timeframe, setTimeframe] = useState<string>("week");
   const [sortBy, setSortBy] = useState<string>("views");
   const [minViews, setMinViews] = useState<number>(0);
@@ -29,17 +31,23 @@ export default function TrendingPage() {
   
   // Función para obtener el nombre de la categoría según su ID
   const getCategoryName = (categoryId: number): string => {
-    const categoryMap: Record<number, string> = {
-      1: "Partidos",
-      2: "Entrenamientos",
-      3: "Ruedas de prensa",
-      4: "Entrevistas",
-      5: "Jugadores",
-      6: "Análisis",
-      7: "Momentos Históricos"
+    // Map category ID to translation keys
+    const categoryKeys: Record<number, string> = {
+      1: 'trendingPage.categoriesMap.matches',
+      2: 'trendingPage.categoriesMap.training',
+      3: 'trendingPage.categoriesMap.pressConferences',
+      4: 'trendingPage.categoriesMap.interviews',
+      5: 'trendingPage.categoriesMap.players',
+      6: 'trendingPage.categoriesMap.analysis',
+      7: 'trendingPage.categoriesMap.historicMoments'
     };
-    
-    return categoryMap[categoryId] || `Categoría ${categoryId}`;
+
+    const key = categoryKeys[categoryId];
+    if (key) {
+      return t(key);
+    }
+
+    return t('trendingPage.categoriesMap.category', { id: categoryId });
   };
 
   // Fetch trending videos - pedimos 100 videos en lugar de los 50 por defecto
@@ -110,44 +118,44 @@ export default function TrendingPage() {
     <main className="flex-1 bg-gray-100 dark:bg-[#2A2040] p-4 md:p-6 overflow-y-auto">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-brand-primary dark:text-white">Videos en Tendencia</h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">Descubre los videos más populares de Real Madrid</p>
+          <h1 className="text-3xl font-bold text-brand-primary dark:text-white">{t('trendingPage.title')}</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">{t('trendingPage.subtitle')}</p>
         </div>
         <div className="mt-4 md:mt-0">
           <Dialog>
             <DialogTrigger asChild>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="border-brand-secondary text-brand-primary dark:text-white dark:border-brand-secondary hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20"
               >
                 <TrendingUp className="mr-2 h-4 w-4" />
-                Ver análisis de tendencias
+                {t('trendingPage.viewTrendsAnalysis')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col">
               <DialogHeader className="flex-shrink-0">
-                <DialogTitle className="text-2xl font-bold text-brand-primary">Análisis de Tendencias</DialogTitle>
+                <DialogTitle className="text-2xl font-bold text-brand-primary">{t('trendingPage.analysisDialogTitle')}</DialogTitle>
                 <DialogDescription>
-                  Información detallada sobre los videos en tendencia del Real Madrid
+                  {t('trendingPage.analysisDialogDesc')}
                 </DialogDescription>
               </DialogHeader>
 
               <div className="mt-4 flex-1 overflow-hidden flex flex-col">
                 <Tabs defaultValue="summary" className="w-full h-full flex flex-col overflow-hidden">
                   <TabsList className="grid w-full grid-cols-4 flex-shrink-0 bg-white sticky top-0 z-10">
-                    <TabsTrigger value="summary">Resumen</TabsTrigger>
-                    <TabsTrigger value="platforms">Plataformas</TabsTrigger>
-                    <TabsTrigger value="categories">Categorías</TabsTrigger>
-                    <TabsTrigger value="top10">Top 10</TabsTrigger>
+                    <TabsTrigger value="summary">{t('trendingPage.tabs.summary')}</TabsTrigger>
+                    <TabsTrigger value="platforms">{t('trendingPage.tabs.platforms')}</TabsTrigger>
+                    <TabsTrigger value="categories">{t('trendingPage.tabs.categories')}</TabsTrigger>
+                    <TabsTrigger value="top10">{t('trendingPage.tabs.top10')}</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="summary" className="pt-4 flex-1 overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Card>
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-semibold flex items-center">
                             <PieChart className="mr-2 h-5 w-5 text-brand-secondary" />
-                            Distribución por Plataforma
+                            {t('trendingPage.summary.platformDistribution')}
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -165,14 +173,14 @@ export default function TrendingPage() {
                                   <div className="w-32 capitalize font-medium">{platform}</div>
                                   <div className="flex-1">
                                     <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                      <div 
-                                        className="bg-brand-primary h-2.5 rounded-full" 
+                                      <div
+                                        className="bg-brand-primary h-2.5 rounded-full"
                                         style={{ width: `${Math.round((count / trendingVideos.length) * 100)}%` }}
                                       ></div>
                                     </div>
                                   </div>
                                   <div className="w-16 text-right text-sm">
-                                    {count.toString()} videos
+                                    {count.toString()} {t('trendingPage.platforms.videosTotalViews', { count: count.toString(), views: '' }).split(' - ')[0]?.split(' ')[1] || 'videos'}
                                   </div>
                                   <div className="w-16 text-right text-sm font-medium">
                                     {Math.round((count / trendingVideos.length) * 100)}%
@@ -182,17 +190,17 @@ export default function TrendingPage() {
                             </div>
                           ) : (
                             <div className="py-8 text-center text-gray-500">
-                              No hay datos suficientes
+                              {t('trendingPage.summary.noData')}
                             </div>
                           )}
                         </CardContent>
                       </Card>
-                      
+
                       <Card>
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-semibold flex items-center">
                             <BarChart className="mr-2 h-5 w-5 text-brand-secondary" />
-                            Distribución por Categoría
+                            {t('trendingPage.summary.categoryDistribution')}
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -224,7 +232,7 @@ export default function TrendingPage() {
                                     </div>
                                   </div>
                                   <div className="w-16 text-right text-sm">
-                                    {count.toString()} videos
+                                    {count.toString()} {t('trendingPage.platforms.videosTotalViews', { count: count.toString(), views: '' }).split(' - ')[0]?.split(' ')[1] || 'videos'}
                                   </div>
                                   <div className="w-16 text-right text-sm font-medium">
                                     {Math.round((count / trendingVideos.length) * 100)}%
@@ -244,32 +252,32 @@ export default function TrendingPage() {
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-semibold flex items-center">
                             <AreaChart className="mr-2 h-5 w-5 text-brand-secondary" />
-                            Estadísticas de visualizaciones
+                            {t('trendingPage.summary.viewStats')}
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
                           {Array.isArray(trendingVideos) && trendingVideos.length > 0 ? (
                             <div className="space-y-4">
                               <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-500">Total de vistas:</span>
+                                <span className="text-sm text-gray-500">{t('trendingPage.summary.totalViews')}</span>
                                 <span className="font-medium">
                                   {formatViewCount(trendingVideos.reduce((sum, video) => sum + (video.viewCount || 0), 0))}
                                 </span>
                               </div>
                               <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-500">Promedio por video:</span>
+                                <span className="text-sm text-gray-500">{t('trendingPage.summary.avgPerVideo')}</span>
                                 <span className="font-medium">
                                   {formatViewCount(trendingVideos.reduce((sum, video) => sum + (video.viewCount || 0), 0) / trendingVideos.length)}
                                 </span>
                               </div>
                               <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-500">Vistas máximas:</span>
+                                <span className="text-sm text-gray-500">{t('trendingPage.summary.maxViews')}</span>
                                 <span className="font-medium">
                                   {formatViewCount(Math.max(...trendingVideos.map(v => v.viewCount || 0)))}
                                 </span>
                               </div>
                               <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-500">Vistas mínimas:</span>
+                                <span className="text-sm text-gray-500">{t('trendingPage.summary.minViews')}</span>
                                 <span className="font-medium">
                                   {formatViewCount(Math.min(...trendingVideos.filter(v => v.viewCount && v.viewCount > 0).map(v => v.viewCount || 0)))}
                                 </span>
@@ -285,7 +293,7 @@ export default function TrendingPage() {
                                         key={index}
                                         className="flex-1 bg-brand-primary mx-px"
                                         style={{ height: `${Math.max(height, 5)}%` }}
-                                        title={`${video.title}: ${video.viewCount || 0} vistas`}
+                                        title={`${video.title}: ${video.viewCount || 0} ${t('trendingPage.top10.views')}`}
                                       ></div>
                                     );
                                   })}
@@ -293,17 +301,17 @@ export default function TrendingPage() {
                             </div>
                           ) : (
                             <div className="py-8 text-center text-gray-500">
-                              No hay datos suficientes
+                              {t('trendingPage.summary.noData')}
                             </div>
                           )}
                         </CardContent>
                       </Card>
-                      
+
                       <Card>
                         <CardHeader className="pb-2">
                           <CardTitle className="text-lg font-semibold flex items-center">
                             <LineChart className="mr-2 h-5 w-5 text-brand-secondary" />
-                            Videos por antigüedad
+                            {t('trendingPage.summary.videosByAge')}
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -321,25 +329,25 @@ export default function TrendingPage() {
                                   
                                   let period = '';
                                   if (diffDays <= 7) {
-                                    period = 'última-semana';
+                                    period = 'lastWeek';
                                   } else if (diffDays <= 30) {
-                                    period = 'último-mes';
+                                    period = 'lastMonth';
                                   } else if (diffDays <= 90) {
-                                    period = 'último-trimestre';
+                                    period = 'lastQuarter';
                                   } else {
-                                    period = 'más-antiguos';
+                                    period = 'older';
                                   }
-                                  
+
                                   acc[period] = (acc[period] || 0) + 1;
                                   return acc;
                                 }, {} as Record<string, number>)
                               ).map(([period, count]: [string, number]) => {
                                 let label = '';
                                 switch(period) {
-                                  case 'última-semana': label = 'Última semana'; break;
-                                  case 'último-mes': label = 'Último mes'; break;
-                                  case 'último-trimestre': label = 'Último trimestre'; break;
-                                  case 'más-antiguos': label = 'Más antiguos'; break;
+                                  case 'lastWeek': label = t('trendingPage.summary.lastWeek'); break;
+                                  case 'lastMonth': label = t('trendingPage.summary.lastMonth'); break;
+                                  case 'lastQuarter': label = t('trendingPage.summary.lastQuarter'); break;
+                                  case 'older': label = t('trendingPage.summary.older'); break;
                                 }
                                 
                                 return (
@@ -402,25 +410,25 @@ export default function TrendingPage() {
                                 {platform}
                               </CardTitle>
                               <CardDescription>
-                                {data.count} videos - {formatViewCount(data.views)} vistas totales
+                                {t('trendingPage.platforms.videosTotalViews', { count: data.count, views: formatViewCount(data.views) })}
                               </CardDescription>
                             </CardHeader>
                             <CardContent>
                               <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-500">Promedio de vistas:</span>
+                                  <span className="text-sm text-gray-500">{t('trendingPage.platforms.avgViews')}</span>
                                   <span className="font-medium">
                                     {formatViewCount(data.views / data.count)}
                                   </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-500">Video más visto:</span>
+                                  <span className="text-sm text-gray-500">{t('trendingPage.platforms.mostViewed')}</span>
                                   <span className="font-medium">
                                     {formatViewCount(Math.max(...data.videos.map(v => v.viewCount || 0)))}
                                   </span>
                                 </div>
                                 <div className="mt-4">
-                                  <h4 className="text-sm font-medium mb-2">Top 3 videos de {platform}:</h4>
+                                  <h4 className="text-sm font-medium mb-2">{t('trendingPage.platforms.top3Videos', { platform })}</h4>
                                   <div className="space-y-2">
                                     {data.videos
                                       .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
@@ -515,7 +523,7 @@ export default function TrendingPage() {
                                     </span>
                                   </div>
                                   <div className="mt-4">
-                                    <h4 className="text-sm font-medium mb-2">Top 3 videos de esta categoría:</h4>
+                                    <h4 className="text-sm font-medium mb-2">{t('trendingPage.categories.top3VideosCategory')}</h4>
                                     <div className="space-y-2">
                                       {data.videos
                                         .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
@@ -549,7 +557,7 @@ export default function TrendingPage() {
                       <CardHeader className="pb-2">
                         <CardTitle className="text-lg font-semibold flex items-center">
                           <Trophy className="mr-2 h-5 w-5 text-brand-secondary" />
-                          Top 10 Videos Más Vistos
+                          {t('trendingPage.top10.title')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -576,7 +584,7 @@ export default function TrendingPage() {
                                         />
                                       ) : (
                                         <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
-                                          Sin imagen
+                                          {t('trendingPage.top10.noImage')}
                                         </div>
                                       )}
                                     </div>
@@ -611,7 +619,7 @@ export default function TrendingPage() {
                                         {formatViewCount(video.viewCount || 0)}
                                       </div>
                                       <div className="text-xs text-gray-500">
-                                        vistas
+                                        {t('trendingPage.top10.views')}
                                       </div>
                                     </div>
                                   </div>
@@ -637,56 +645,56 @@ export default function TrendingPage() {
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <h3 className="text-sm font-medium mb-2">Periodo de tiempo</h3>
+            <h3 className="text-sm font-medium mb-2">{t('trendingPage.filters.timeframe')}</h3>
             <Tabs defaultValue={timeframe} onValueChange={setTimeframe} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="day">Hoy</TabsTrigger>
-                <TabsTrigger value="week">Esta semana</TabsTrigger>
-                <TabsTrigger value="month">Este mes</TabsTrigger>
+                <TabsTrigger value="day">{t('trendingPage.filters.today')}</TabsTrigger>
+                <TabsTrigger value="week">{t('trendingPage.filters.thisWeek')}</TabsTrigger>
+                <TabsTrigger value="month">{t('trendingPage.filters.thisMonth')}</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
-          
+
           <div>
-            <h3 className="text-sm font-medium mb-2">Ordenar por</h3>
+            <h3 className="text-sm font-medium mb-2">{t('trendingPage.filters.sortBy')}</h3>
             <RadioGroup defaultValue={sortBy} onValueChange={setSortBy} className="flex flex-col space-y-1">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="views" id="sort-views" />
                 <Label htmlFor="sort-views" className="flex items-center">
-                  <Eye className="mr-1 h-4 w-4" /> Más vistas
+                  <Eye className="mr-1 h-4 w-4" /> {t('trendingPage.filters.mostViewed')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="date" id="sort-date" />
                 <Label htmlFor="sort-date" className="flex items-center">
-                  <Calendar className="mr-1 h-4 w-4" /> Más recientes
+                  <Calendar className="mr-1 h-4 w-4" /> {t('trendingPage.filters.mostRecent')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="title_asc" id="sort-title-asc" />
                 <Label htmlFor="sort-title-asc" className="flex items-center">
-                  <ArrowDownAZ className="mr-1 h-4 w-4" /> Título (A-Z)
+                  <ArrowDownAZ className="mr-1 h-4 w-4" /> {t('trendingPage.filters.titleAZ')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="title_desc" id="sort-title-desc" />
                 <Label htmlFor="sort-title-desc" className="flex items-center">
-                  <ArrowUpAZ className="mr-1 h-4 w-4" /> Título (Z-A)
+                  <ArrowUpAZ className="mr-1 h-4 w-4" /> {t('trendingPage.filters.titleZA')}
                 </Label>
               </div>
             </RadioGroup>
           </div>
-          
+
           <div>
-            <h3 className="text-sm font-medium mb-2">Filtros adicionales</h3>
+            <h3 className="text-sm font-medium mb-2">{t('trendingPage.filters.additionalFilters')}</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-1">
-                  <Label htmlFor="search">Buscar por título</Label>
+                  <Label htmlFor="search">{t('trendingPage.filters.searchByTitle')}</Label>
                 </div>
                 <Input
                   id="search"
-                  placeholder="Escribe para buscar..."
+                  placeholder={t('trendingPage.filters.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -694,9 +702,9 @@ export default function TrendingPage() {
               
               <div>
                 <div className="flex justify-between mb-1">
-                  <Label htmlFor="min-views">Vistas mínimas</Label>
+                  <Label htmlFor="min-views">{t('trendingPage.filters.minViews')}</Label>
                   <span className="text-sm text-gray-500">
-                    {minViews > 0 ? formatViewCount(minViews) : "Sin mínimo"}
+                    {minViews > 0 ? formatViewCount(minViews) : t('trendingPage.filters.noMin')}
                   </span>
                 </div>
                 <Slider
@@ -719,7 +727,7 @@ export default function TrendingPage() {
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Total videos</p>
+              <p className="text-sm text-gray-500">{t('trendingPage.stats.totalVideos')}</p>
               <h3 className="text-2xl font-bold text-brand-primary mt-1">
                 {Array.isArray(trendingVideos) ? trendingVideos.length : 0}
               </h3>
@@ -729,13 +737,13 @@ export default function TrendingPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Vistas totales</p>
+              <p className="text-sm text-gray-500">{t('trendingPage.stats.totalViews')}</p>
               <h3 className="text-2xl font-bold text-brand-primary mt-1">
-                {Array.isArray(trendingVideos) 
+                {Array.isArray(trendingVideos)
                   ? formatViewCount(trendingVideos.reduce((sum, video) => sum + (video.viewCount || 0), 0))
                   : 0}
               </h3>
@@ -745,11 +753,11 @@ export default function TrendingPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Filtrados</p>
+              <p className="text-sm text-gray-500">{t('trendingPage.stats.filtered')}</p>
               <h3 className="text-2xl font-bold text-brand-primary mt-1">
                 {sortedVideos.length}
               </h3>
@@ -759,11 +767,11 @@ export default function TrendingPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-sm p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Promedio de vistas</p>
+              <p className="text-sm text-gray-500">{t('trendingPage.stats.avgViews')}</p>
               <h3 className="text-2xl font-bold text-brand-primary mt-1">
                 {Array.isArray(trendingVideos) && trendingVideos.length > 0
                   ? formatViewCount(trendingVideos.reduce((sum, video) => sum + (video.viewCount || 0), 0) / trendingVideos.length)
@@ -779,7 +787,7 @@ export default function TrendingPage() {
 
       {/* Videos Grid */}
       <h2 className="text-xl font-bold mb-4 text-brand-primary border-l-4 border-brand-secondary pl-3">
-        {sortedVideos.length} {sortedVideos.length === 1 ? "Video Encontrado" : "Videos Encontrados"}
+        {sortedVideos.length} {sortedVideos.length === 1 ? t('trendingPage.results.videoFound') : t('trendingPage.results.videosFound')}
       </h2>
       
       {isLoading ? (
@@ -818,7 +826,7 @@ export default function TrendingPage() {
                 className="border-brand-secondary text-brand-primary dark:text-white dark:border-brand-secondary hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20"
               >
                 <ChevronDown className="mr-2 h-4 w-4" />
-                Cargar más videos ({sortedVideos.length - visibleVideos} restantes)
+                {t('trendingPage.results.loadMore')} ({sortedVideos.length - visibleVideos} {t('trendingPage.results.remaining')})
               </Button>
             </div>
           )}
@@ -829,12 +837,12 @@ export default function TrendingPage() {
             <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
               <TrendingUp className="h-8 w-8 text-amber-500" />
             </div>
-            <h3 className="text-xl font-semibold text-brand-primary dark:text-white mb-2">No se encontraron videos</h3>
+            <h3 className="text-xl font-semibold text-brand-primary dark:text-white mb-2">{t('trendingPage.results.noVideosFound')}</h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              No hay videos que coincidan con los filtros seleccionados. Intenta modificar los criterios de búsqueda.
+              {t('trendingPage.results.noVideosDesc')}
             </p>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="border-brand-secondary text-brand-primary dark:text-white dark:border-brand-secondary hover:bg-brand-secondary/10 dark:hover:bg-brand-secondary/20"
               onClick={() => {
                 setSearchQuery("");
@@ -843,7 +851,7 @@ export default function TrendingPage() {
                 setTimeframe("week");
               }}
             >
-              Restablecer filtros
+              {t('trendingPage.results.resetFilters')}
             </Button>
           </div>
         </div>

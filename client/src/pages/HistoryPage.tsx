@@ -4,11 +4,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { Redirect, Link } from "wouter";
 import VideoCard from "@/components/VideoCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
 } from "@/components/ui/tabs";
 import {
   Card,
@@ -28,6 +28,7 @@ import {
 import { apiRequest } from "@/lib/queryClient";
 import { Video } from "@shared/schema";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { useTranslation } from 'react-i18next';
 
 // Tipo para historial con estadísticas adicionales
 interface VideoHistory extends Video {
@@ -48,6 +49,7 @@ interface DailyStats {
 const COLORS = ['#FDBE11', '#001C58', '#8884d8', '#82ca9d', '#ffc658'];
 
 export default function HistoryPage() {
+  const { t } = useTranslation();
   const { user, checkAuth } = useAuth();
   const [periodFilter, setPeriodFilter] = useState<'all' | '7' | '30' | '90'>('all');
   
@@ -175,53 +177,50 @@ export default function HistoryPage() {
   
   // Formatear tiempo de visualización (en segundos) a formato legible
   const formatWatchTime = (seconds: number): string => {
-    if (seconds < 60) return `${seconds} segundos`;
-    
+    if (seconds < 60) return `${seconds} ${t('historyPage.stats.seconds')}`;
+
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes} minutos`;
-    
+    if (minutes < 60) return `${minutes} ${t('historyPage.stats.minutes')}`;
+
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
-    
-    if (remainingMinutes === 0) return `${hours} horas`;
-    return `${hours} h ${remainingMinutes} min`;
+
+    if (remainingMinutes === 0) return `${hours} ${t('historyPage.stats.hours')}`;
+    return t('historyPage.stats.timeFormat', { h: hours, m: remainingMinutes });
   };
-  
+
   // Obtener nombre de categoría a partir del ID
   function getCategoryName(categoryId: number): string {
-    switch (categoryId) {
-      case 1: return "Partidos";
-      case 2: return "Entrenamientos";
-      case 3: return "Ruedas de prensa";
-      case 4: return "Entrevistas";
-      case 5: return "Jugadores";
-      case 6: return "Análisis";
-      case 7: return "Momentos Históricos";
-      default: return `Categoría ${categoryId}`;
+    const key = `historyPage.categoriesMap.${categoryId}`;
+    const translation = t(key);
+    // If translation key doesn't exist, use default
+    if (translation.includes('historyPage.categoriesMap.')) {
+      return t('historyPage.categoriesMap.default', { id: categoryId });
     }
+    return translation;
   }
 
   return (
     <main className="flex-1 bg-gray-100 dark:bg-[#2C2152] p-4 md:p-6 overflow-y-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2 dark:text-white">Mi Historial</h1>
+        <h1 className="text-2xl font-bold mb-2 dark:text-white">{t('historyPage.title')}</h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Revisa tus videos vistos y analiza tus estadísticas de visualización.
+          {t('historyPage.description')}
         </p>
       </div>
-      
+
       {/* Filtros de período */}
       <div className="mb-6">
         <Tabs defaultValue={periodFilter} onValueChange={(value) => setPeriodFilter(value as any)}>
           <TabsList className="mb-4">
-            <TabsTrigger value="all">Todo</TabsTrigger>
-            <TabsTrigger value="7">Últimos 7 días</TabsTrigger>
-            <TabsTrigger value="30">Últimos 30 días</TabsTrigger>
-            <TabsTrigger value="90">Últimos 90 días</TabsTrigger>
+            <TabsTrigger value="all">{t('historyPage.tabs.all')}</TabsTrigger>
+            <TabsTrigger value="7">{t('historyPage.tabs.last7')}</TabsTrigger>
+            <TabsTrigger value="30">{t('historyPage.tabs.last30')}</TabsTrigger>
+            <TabsTrigger value="90">{t('historyPage.tabs.last90')}</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
-      
+
       {/* Estado de carga */}
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -234,25 +233,26 @@ export default function HistoryPage() {
       {/* Error */}
       {isError && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-6 text-center">
-          <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">Error</h2>
-          <p className="dark:text-gray-300">No se pudo cargar tu historial. Por favor, intenta de nuevo más tarde.</p>
+          <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">{t('historyPage.error.title')}</h2>
+          <p className="dark:text-gray-300">{t('historyPage.error.message')}</p>
         </div>
       )}
-      
+
       {/* Sin historial */}
       {!isLoading && !isError && filteredVideos.length === 0 && (
         <div className="bg-white dark:bg-[#3E355F] rounded-lg shadow-md p-8 text-center">
           <Clock className="mx-auto h-12 w-12 text-gray-400 dark:text-brand-secondary/70 mb-4" />
           <h2 className="text-xl font-semibold mb-2 dark:text-white">
-            {periodFilter === 'all' 
-              ? "No has visto ningún video aún" 
-              : `No has visto videos en los últimos ${periodFilter} días`}
+            {periodFilter === 'all'
+              ? t('historyPage.empty.allPeriod')
+              : t('historyPage.empty.period', { days: periodFilter })
+            }
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Cuando veas videos, aparecerán aquí para que puedas llevar un seguimiento.
+            {t('historyPage.empty.message')}
           </p>
           <Link href="/" className="px-6 py-3 bg-[#1E3A8A] text-white rounded-md font-medium hover:bg-blue-800 transition duration-200 inline-block">
-            Explorar videos
+            {t('favoritesPage.exploreVideos')}
           </Link>
         </div>
       )}
@@ -264,7 +264,7 @@ export default function HistoryPage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Videos vistos
+                  {t('historyPage.stats.videosWatched')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -276,11 +276,11 @@ export default function HistoryPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Tiempo total
+                  {t('historyPage.stats.totalTime')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -292,11 +292,11 @@ export default function HistoryPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Promedio visto
+                  {t('historyPage.stats.avgWatched')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -308,11 +308,11 @@ export default function HistoryPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Último visto
+                  {t('historyPage.stats.lastWatched')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -331,7 +331,7 @@ export default function HistoryPage() {
             {/* Distribución por plataforma */}
             <Card>
               <CardHeader>
-                <CardTitle>Distribución por plataforma</CardTitle>
+                <CardTitle>{t('historyPage.charts.platformDistribution')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-64">
@@ -358,17 +358,17 @@ export default function HistoryPage() {
                     </ResponsiveContainer>
                   ) : (
                     <div className="flex items-center justify-center h-full text-gray-500">
-                      No hay datos suficientes
+                      {t('historyPage.charts.noData')}
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
-            
+
             {/* Distribución por categoría */}
             <Card>
               <CardHeader>
-                <CardTitle>Distribución por categoría</CardTitle>
+                <CardTitle>{t('historyPage.charts.categoryDistribution')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-64">
@@ -395,23 +395,23 @@ export default function HistoryPage() {
                     </ResponsiveContainer>
                   ) : (
                     <div className="flex items-center justify-center h-full text-gray-500">
-                      No hay datos suficientes
+                      {t('historyPage.charts.noData')}
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
           </div>
-          
+
           {/* Lista de videos vistos */}
-          <h2 className="text-xl font-bold mb-4 dark:text-white">Videos vistos recientemente</h2>
+          <h2 className="text-xl font-bold mb-4 dark:text-white">{t('historyPage.recentlyWatched')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredVideos.map((video) => (
               <div key={`${video.id}-${video.watchedAt}`} className="relative">
                 <VideoCard video={video} />
                 <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 text-sm">
                   <div className="flex justify-between items-center">
-                    <span>Visto: {new Date(video.watchedAt).toLocaleDateString()}</span>
+                    <span>{t('historyPage.watched')} {new Date(video.watchedAt).toLocaleDateString()}</span>
                     <span>{Math.round(video.completionPercentage)}%</span>
                   </div>
                 </div>

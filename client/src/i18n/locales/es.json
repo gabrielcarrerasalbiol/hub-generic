@@ -108,6 +108,216 @@
     "videoFound": "video encontrado",
     "videosFound": "videos encontrados"
   },
+  "trendingPage": {
+    "title": "Videos en Tendencia",
+    "subtitle": "Descubre los videos más populares de Aston Vila",
+    "viewTrendsAnalysis": "Ver análisis de tendencias",
+    "analysisDialogTitle": "Análisis de Tendencias",
+    "analysisDialogDesc": "Información detallada sobre los videos en tendencia de Aston Vila",
+    "tabs": {
+      "summary": "Resumen",
+      "platforms": "Plataformas",
+      "categories": "Categorías",
+      "top10": "Top 10"
+    },
+    "summary": {
+      "platformDistribution": "Distribución por Plataforma",
+      "categoryDistribution": "Distribución por Categoría",
+      "viewStats": "Estadísticas de visualizaciones",
+      "videosByAge": "Videos por antigüedad",
+      "totalViews": "Total de vistas:",
+      "avgPerVideo": "Promedio por video:",
+      "maxViews": "Vistas máximas:",
+      "minViews": "Vistas mínimas:",
+      "lastWeek": "Última semana",
+      "lastMonth": "Último mes",
+      "lastQuarter": "Último trimestre",
+      "older": "Más antiguos",
+      "noData": "No hay datos suficientes"
+    },
+    "platforms": {
+      "videosTotalViews": "{count} videos - {views} vistas totales",
+      "avgViews": "Promedio de vistas:",
+      "mostViewed": "Video más visto:",
+      "top3Videos": "Top 3 videos de {platform}:"
+    },
+    "categories": {
+      "noCategory": "Sin categoría",
+      "top3VideosCategory": "Top 3 videos de esta categoría:"
+    },
+    "top10": {
+      "title": "Top 10 Videos Más Vistos",
+      "noImage": "Sin imagen",
+      "views": "vistas"
+    },
+    "filters": {
+      "timeframe": "Periodo de tiempo",
+      "today": "Hoy",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mes",
+      "sortBy": "Ordenar por",
+      "mostViewed": "Más vistas",
+      "mostRecent": "Más recientes",
+      "titleAZ": "Título (A-Z)",
+      "titleZA": "Título (Z-A)",
+      "additionalFilters": "Filtros adicionales",
+      "searchByTitle": "Buscar por título",
+      "searchPlaceholder": "Escribe para buscar...",
+      "minViews": "Vistas mínimas",
+      "noMin": "Sin mínimo"
+    },
+    "stats": {
+      "totalVideos": "Total videos",
+      "totalViews": "Vistas totales",
+      "filtered": "Filtrados",
+      "avgViews": "Promedio de vistas"
+    },
+    "results": {
+      "videoFound": "Video Encontrado",
+      "videosFound": "Videos Encontrados",
+      "noVideosFound": "No se encontraron videos",
+      "noVideosDesc": "No hay videos que coincidan con los filtros seleccionados. Intenta modificar los criterios de búsqueda.",
+      "resetFilters": "Restablecer filtros",
+      "loadMore": "Cargar más videos",
+      "remaining": "restantes"
+    },
+    "categoriesMap": {
+      "matches": "Partidos",
+      "training": "Entrenamientos",
+      "pressConferences": "Ruedas de prensa",
+      "interviews": "Entrevistas",
+      "players": "Jugadores",
+      "analysis": "Análisis",
+      "historicMoments": "Momentos Históricos",
+      "noCategory": "Sin categoría",
+      "category": "Categoría {id}"
+    }
+  },
+  "featuredVideosPage": {
+    "title": "Videos Destacados",
+    "metaTitle": "Videos Destacados | Hub Aston Vila",
+    "metaDescription": "Los mejores videos destacados del Aston Vila seleccionados por nuestro equipo editorial.",
+    "description": "Descubre el contenido más relevante del Aston Vila seleccionado por nuestro equipo editorial.",
+    "platforms": {
+      "all": "Todas las plataformas",
+      "youtube": "YouTube",
+      "twitch": "Twitch",
+      "twitter": "Twitter",
+      "tiktok": "TikTok",
+      "instagram": "Instagram"
+    },
+    "empty": {
+      "title": "No hay videos destacados",
+      "allDescription": "Aún no tenemos videos destacados para mostrarte.",
+      "platformDescription": "No hay videos destacados de {platform} en este momento."
+    }
+  },
+  "favoritesPage": {
+    "title": "Mis Favoritos",
+    "description": "Aquí encontrarás todos tus videos favoritos del Aston Vila guardados en un solo lugar.",
+    "restricted": {
+      "title": "Acceso restringido",
+      "message": "Inicia sesión para ver tus favoritos"
+    },
+    "error": {
+      "title": "Error",
+      "message": "No se pudieron cargar tus videos favoritos. Por favor, intenta de nuevo más tarde."
+    },
+    "empty": {
+      "title": "No tienes favoritos guardados",
+      "message": "Cuando marques videos como favoritos, aparecerán aquí para que puedas verlos fácilmente."
+    },
+    "exploreVideos": "Explorar videos"
+  },
+  "subscriptionsPage": {
+    "title": "Mis canales",
+    "searchPlaceholder": "Buscar canales...",
+    "loading": "Cargando tus canales...",
+    "noDescription": "Sin descripción",
+    "notifications": {
+      "active": "Notificaciones activas",
+      "inactive": "Notificaciones inactivas"
+    },
+    "toasts": {
+      "enabled": {
+        "title": "Notificaciones activadas",
+        "message": "Recibirás alertas cuando se publiquen nuevos videos"
+      },
+      "disabled": {
+        "title": "Notificaciones desactivadas",
+        "message": "Ya no recibirás alertas de nuevos videos"
+      },
+      "error": {
+        "title": "Error al actualizar preferencias",
+        "message": "No se pudieron actualizar las preferencias de notificaciones"
+      },
+      "unsubscribed": {
+        "title": "Suscripción cancelada",
+        "message": "Ya no recibirás actualizaciones de este canal"
+      },
+      "unsubscribeError": {
+        "title": "Error al cancelar suscripción",
+        "message": "No se pudo cancelar la suscripción, intenta nuevamente"
+      }
+    },
+    "dialog": {
+      "title": "¿Eliminar canal?",
+      "description": "¿Estás seguro que deseas eliminar <strong>{title}</strong> de tus canales? Ya no recibirás notificaciones de nuevos videos de este canal.",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    },
+    "empty": {
+      "withSearch": "No se encontraron canales que coincidan con tu búsqueda.",
+      "withoutSearch": "No tienes canales guardados en tu lista."
+    },
+    "clearSearch": "Limpiar búsqueda"
+  },
+  "historyPage": {
+    "title": "Mi Historial",
+    "description": "Revisa tus videos vistos y analiza tus estadísticas de visualización.",
+    "tabs": {
+      "all": "Todo",
+      "last7": "Últimos 7 días",
+      "last30": "Últimos 30 días",
+      "last90": "Últimos 90 días"
+    },
+    "error": {
+      "title": "Error",
+      "message": "No se pudo cargar tu historial. Por favor, intenta de nuevo más tarde."
+    },
+    "empty": {
+      "allPeriod": "No has visto ningún video aún",
+      "period": "No has visto videos en los últimos {days} días",
+      "message": "Cuando veas videos, aparecerán aquí para que puedas llevar un seguimiento."
+    },
+    "stats": {
+      "videosWatched": "Videos vistos",
+      "totalTime": "Tiempo total",
+      "avgWatched": "Promedio visto",
+      "lastWatched": "Último visto",
+      "seconds": "segundos",
+      "minutes": "minutos",
+      "hours": "horas",
+      "timeFormat": "{h} h {m} min"
+    },
+    "charts": {
+      "platformDistribution": "Distribución por plataforma",
+      "categoryDistribution": "Distribución por categoría",
+      "noData": "No hay datos suficientes"
+    },
+    "recentlyWatched": "Videos vistos recientemente",
+    "watched": "Visto:",
+    "categoriesMap": {
+      "matches": "Partidos",
+      "training": "Entrenamientos",
+      "pressConferences": "Ruedas de prensa",
+      "interviews": "Entrevistas",
+      "players": "Jugadores",
+      "analysis": "Análisis",
+      "historicMoments": "Momentos Históricos",
+      "default": "Categoría {id}"
+    }
+  },
   "channel": {
     "subscribe": "Suscribirse",
     "subscribed": "Suscrito",

@@ -105,6 +105,216 @@
     "videoFound": "video found",
     "videosFound": "videos found"
   },
+  "trendingPage": {
+    "title": "Trending Videos",
+    "subtitle": "Discover the most popular Aston Vila videos",
+    "viewTrendsAnalysis": "View trends analysis",
+    "analysisDialogTitle": "Trends Analysis",
+    "analysisDialogDesc": "Detailed information about Aston Vila trending videos",
+    "tabs": {
+      "summary": "Summary",
+      "platforms": "Platforms",
+      "categories": "Categories",
+      "top10": "Top 10"
+    },
+    "summary": {
+      "platformDistribution": "Distribution by Platform",
+      "categoryDistribution": "Distribution by Category",
+      "viewStats": "View Statistics",
+      "videosByAge": "Videos by Age",
+      "totalViews": "Total views:",
+      "avgPerVideo": "Average per video:",
+      "maxViews": "Maximum views:",
+      "minViews": "Minimum views:",
+      "lastWeek": "Last week",
+      "lastMonth": "Last month",
+      "lastQuarter": "Last quarter",
+      "older": "Older",
+      "noData": "No sufficient data"
+    },
+    "platforms": {
+      "videosTotalViews": "{count} videos - {views} total views",
+      "avgViews": "Average views:",
+      "mostViewed": "Most viewed video:",
+      "top3Videos": "Top 3 videos from {platform}:"
+    },
+    "categories": {
+      "noCategory": "No category",
+      "top3VideosCategory": "Top 3 videos from this category:"
+    },
+    "top10": {
+      "title": "Top 10 Most Viewed Videos",
+      "noImage": "No image",
+      "views": "views"
+    },
+    "filters": {
+      "timeframe": "Time period",
+      "today": "Today",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "sortBy": "Sort by",
+      "mostViewed": "Most viewed",
+      "mostRecent": "Most recent",
+      "titleAZ": "Title (A-Z)",
+      "titleZA": "Title (Z-A)",
+      "additionalFilters": "Additional filters",
+      "searchByTitle": "Search by title",
+      "searchPlaceholder": "Type to search...",
+      "minViews": "Minimum views",
+      "noMin": "No minimum"
+    },
+    "stats": {
+      "totalVideos": "Total videos",
+      "totalViews": "Total views",
+      "filtered": "Filtered",
+      "avgViews": "Average views"
+    },
+    "results": {
+      "videoFound": "Video Found",
+      "videosFound": "Videos Found",
+      "noVideosFound": "No videos found",
+      "noVideosDesc": "No videos match the selected filters. Try modifying the search criteria.",
+      "resetFilters": "Reset filters",
+      "loadMore": "Load more videos",
+      "remaining": "remaining"
+    },
+    "categoriesMap": {
+      "matches": "Matches",
+      "training": "Training",
+      "pressConferences": "Press Conferences",
+      "interviews": "Interviews",
+      "players": "Players",
+      "analysis": "Analysis",
+      "historicMoments": "Historic Moments",
+      "noCategory": "No category",
+      "category": "Category {id}"
+    }
+  },
+  "featuredVideosPage": {
+    "title": "Featured Videos",
+    "metaTitle": "Featured Videos | Aston Vila Hub",
+    "metaDescription": "The best featured Aston Vila videos selected by our editorial team.",
+    "description": "Discover the most relevant Aston Vila content selected by our editorial team.",
+    "platforms": {
+      "all": "All Platforms",
+      "youtube": "YouTube",
+      "twitch": "Twitch",
+      "twitter": "Twitter",
+      "tiktok": "TikTok",
+      "instagram": "Instagram"
+    },
+    "empty": {
+      "title": "No featured videos",
+      "allDescription": "We don't have featured videos to show you yet.",
+      "platformDescription": "There are no featured videos from {platform} at this moment."
+    }
+  },
+  "favoritesPage": {
+    "title": "My Favorites",
+    "description": "Here you'll find all your favorite Aston Vila videos saved in one place.",
+    "restricted": {
+      "title": "Restricted Access",
+      "message": "Log in to view your favorites"
+    },
+    "error": {
+      "title": "Error",
+      "message": "Could not load your favorite videos. Please try again later."
+    },
+    "empty": {
+      "title": "No saved favorites",
+      "message": "When you mark videos as favorites, they will appear here for easy access."
+    },
+    "exploreVideos": "Explore videos"
+  },
+  "subscriptionsPage": {
+    "title": "My channels",
+    "searchPlaceholder": "Search channels...",
+    "loading": "Loading your channels...",
+    "noDescription": "No description",
+    "notifications": {
+      "active": "Notifications active",
+      "inactive": "Notifications inactive"
+    },
+    "toasts": {
+      "enabled": {
+        "title": "Notifications enabled",
+        "message": "You will receive alerts when new videos are published"
+      },
+      "disabled": {
+        "title": "Notifications disabled",
+        "message": "You will no longer receive alerts for new videos"
+      },
+      "error": {
+        "title": "Error updating preferences",
+        "message": "Could not update notification preferences"
+      },
+      "unsubscribed": {
+        "title": "Subscription canceled",
+        "message": "You will no longer receive updates from this channel"
+      },
+      "unsubscribeError": {
+        "title": "Error canceling subscription",
+        "message": "Could not cancel subscription, please try again"
+      }
+    },
+    "dialog": {
+      "title": "Remove channel?",
+      "description": "Are you sure you want to remove <strong>{title}</strong> from your channels? You will no longer receive notifications of new videos from this channel.",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "empty": {
+      "withSearch": "No channels found that match your search.",
+      "withoutSearch": "You don't have any saved channels in your list."
+    },
+    "clearSearch": "Clear search"
+  },
+  "historyPage": {
+    "title": "My History",
+    "description": "Review your watched videos and analyze your viewing statistics.",
+    "tabs": {
+      "all": "All",
+      "last7": "Last 7 days",
+      "last30": "Last 30 days",
+      "last90": "Last 90 days"
+    },
+    "error": {
+      "title": "Error",
+      "message": "Could not load your history. Please try again later."
+    },
+    "empty": {
+      "allPeriod": "You haven't watched any videos yet",
+      "period": "You haven't watched videos in the last {days} days",
+      "message": "When you watch videos, they will appear here so you can keep track."
+    },
+    "stats": {
+      "videosWatched": "Videos watched",
+      "totalTime": "Total time",
+      "avgWatched": "Average watched",
+      "lastWatched": "Last watched",
+      "seconds": "seconds",
+      "minutes": "minutes",
+      "hours": "hours",
+      "timeFormat": "{h} h {m} min"
+    },
+    "charts": {
+      "platformDistribution": "Distribution by platform",
+      "categoryDistribution": "Distribution by category",
+      "noData": "No sufficient data"
+    },
+    "recentlyWatched": "Recently watched videos",
+    "watched": "Watched:",
+    "categoriesMap": {
+      "matches": "Matches",
+      "training": "Training",
+      "pressConferences": "Press Conferences",
+      "interviews": "Interviews",
+      "players": "Players",
+      "analysis": "Analysis",
+      "historicMoments": "Historic Moments",
+      "default": "Category {id}"
+    }
+  },
   "channel": {
     "subscribe": "Subscribe",
     "subscribed": "Subscribed",
