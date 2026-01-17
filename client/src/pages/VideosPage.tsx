@@ -15,8 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Grid, Search, Filter, SlidersHorizontal, LayoutGrid, ArrowDownAZ, ArrowUpAZ, Flame, Clock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function VideosPage() {
+  const { t } = useTranslation();
   const [location] = useLocation();
   const { query, setQuery, debouncedSearch } = useSearch();
   
@@ -231,24 +233,24 @@ export default function VideosPage() {
         {/* Encabezado y filtros principales */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-brand-primary mb-1">Explorador de Videos</h1>
+            <h1 className="text-2xl font-bold text-brand-primary mb-1">{t('videosPage.title')}</h1>
             <p className="text-slate-600 text-sm">
-              Descubre todos los videos relacionados con el Real Madrid
+              {t('videosPage.subtitle')}
             </p>
           </div>
-          
+
           <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full md:w-auto">
             <div className="relative w-full md:w-auto">
               <Input
                 type="search"
-                placeholder="Buscar videos..."
+                placeholder={t('videosPage.searchPlaceholder')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="pr-8 min-w-[200px] md:min-w-[300px] border-slate-300"
               />
               <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
             </div>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -256,35 +258,35 @@ export default function VideosPage() {
               onClick={() => setIsFilterOpen(!isFilterOpen)}
             >
               <Filter className="h-4 w-4" />
-              Filtros
+              {t('videosPage.filters')}
             </Button>
-            
+
             <Select value={sort} onValueChange={(value) => setSort(value as any)}>
               <SelectTrigger className="w-full md:w-auto border-slate-300">
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="h-4 w-4" />
-                  <span>Ordenar</span>
+                  <span>{t('videosPage.sort')}</span>
                 </div>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">
                   <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" /> Más recientes
+                    <Clock className="h-4 w-4" /> {t('videosPage.sortNewest')}
                   </div>
                 </SelectItem>
                 <SelectItem value="popular">
                   <div className="flex items-center gap-2">
-                    <Flame className="h-4 w-4" /> Más populares
+                    <Flame className="h-4 w-4" /> {t('videosPage.sortPopular')}
                   </div>
                 </SelectItem>
                 <SelectItem value="az">
                   <div className="flex items-center gap-2">
-                    <ArrowDownAZ className="h-4 w-4" /> A-Z
+                    <ArrowDownAZ className="h-4 w-4" /> {t('videosPage.sortAZ')}
                   </div>
                 </SelectItem>
                 <SelectItem value="za">
                   <div className="flex items-center gap-2">
-                    <ArrowUpAZ className="h-4 w-4" /> Z-A
+                    <ArrowUpAZ className="h-4 w-4" /> {t('videosPage.sortZA')}
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -297,21 +299,21 @@ export default function VideosPage() {
           <div className="rounded-lg border border-slate-200 p-4 mb-4 bg-white shadow-sm">
             <div className="flex flex-col space-y-4">
               <div>
-                <h3 className="text-sm font-medium mb-2">Plataformas</h3>
+                <h3 className="text-sm font-medium mb-2">{t('videosPage.platforms')}</h3>
                 <div className="flex flex-wrap gap-2">
-                  <PlatformFilters 
-                    selectedPlatform={platform} 
-                    onSelectPlatform={(p) => setPlatform(p as PlatformType)} 
+                  <PlatformFilters
+                    selectedPlatform={platform}
+                    onSelectPlatform={(p) => setPlatform(p as PlatformType)}
                   />
                 </div>
               </div>
 
               <div>
-                <h3 className="text-sm font-medium mb-2">Categorías</h3>
+                <h3 className="text-sm font-medium mb-2">{t('videosPage.categories')}</h3>
                 <div className="flex flex-wrap gap-2">
-                  <CategoryFilters 
-                    selectedCategory={category} 
-                    onSelectCategory={setCategory} 
+                  <CategoryFilters
+                    selectedCategory={category}
+                    onSelectCategory={setCategory}
                   />
                 </div>
               </div>
@@ -323,7 +325,7 @@ export default function VideosPage() {
                   onClick={resetFilters}
                   className="text-brand-primary"
                 >
-                  Restablecer filtros
+                  {t('videosPage.resetFilters')}
                 </Button>
               </div>
             </div>
@@ -334,22 +336,22 @@ export default function VideosPage() {
         <div className="md:hidden">
           <Tabs defaultValue="platforms">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="platforms">Plataformas</TabsTrigger>
-              <TabsTrigger value="categories">Categorías</TabsTrigger>
+              <TabsTrigger value="platforms">{t('videosPage.platforms')}</TabsTrigger>
+              <TabsTrigger value="categories">{t('videosPage.categories')}</TabsTrigger>
             </TabsList>
             <TabsContent value="platforms" className="mt-2">
               <div className="flex flex-wrap gap-2">
-                <PlatformFilters 
-                  selectedPlatform={platform} 
-                  onSelectPlatform={(p) => setPlatform(p as PlatformType)} 
+                <PlatformFilters
+                  selectedPlatform={platform}
+                  onSelectPlatform={(p) => setPlatform(p as PlatformType)}
                 />
               </div>
             </TabsContent>
             <TabsContent value="categories" className="mt-2">
               <div className="flex flex-wrap gap-2">
-                <CategoryFilters 
-                  selectedCategory={category} 
-                  onSelectCategory={setCategory} 
+                <CategoryFilters
+                  selectedCategory={category}
+                  onSelectCategory={setCategory}
                 />
               </div>
             </TabsContent>
@@ -365,19 +367,19 @@ export default function VideosPage() {
                 <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
                   <Filter className="h-8 w-8 text-amber-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-brand-primary mb-2">Próximamente</h3>
+                <h3 className="text-xl font-semibold text-brand-primary mb-2">{t('videosPage.comingSoon')}</h3>
                 <p className="text-gray-600 mb-4 max-w-xl mx-auto">
-                  Estamos trabajando para incorporar contenido de <span className="font-semibold capitalize">{platform}</span> a nuestro Hub Madridista.
+                  {t('videosPage.comingSoonMessage', { platform: <span className="font-semibold capitalize">{platform}</span> })}
                 </p>
                 <p className="text-sm text-gray-500 mb-6">
-                  Muy pronto podrás disfrutar de los mejores videos de Real Madrid desde esta plataforma.
+                  {t('videosPage.comingSoonMessage2')}
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="border-brand-secondary text-brand-primary hover:bg-brand-secondary/10"
                   onClick={() => setPlatform("all")}
                 >
-                  Ver todos los videos
+                  {t('videosPage.viewAllVideos')}
                 </Button>
               </div>
             </div>
@@ -406,16 +408,16 @@ export default function VideosPage() {
                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                   <Search className="h-8 w-8 text-slate-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-brand-primary mb-2">No se encontraron resultados</h3>
+                <h3 className="text-xl font-semibold text-brand-primary mb-2">{t('videosPage.noResults')}</h3>
                 <p className="text-gray-600 mb-6 max-w-xl mx-auto">
-                  No hay videos que coincidan con los filtros actuales. Intenta cambiar tus criterios de búsqueda.
+                  {t('videosPage.noResultsMessage')}
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="border-brand-secondary text-brand-primary hover:bg-brand-secondary/10"
                   onClick={resetFilters}
                 >
-                  Restablecer filtros
+                  {t('videosPage.resetFilters')}
                 </Button>
               </div>
             </div>
@@ -424,7 +426,7 @@ export default function VideosPage() {
               {/* Encabezado de resultados */}
               <div className="flex justify-between items-center mb-4">
                 <p className="text-sm text-slate-600">
-                  {sortedVideos.length} {sortedVideos.length === 1 ? "video encontrado" : "videos encontrados"}
+                  {sortedVideos.length} {sortedVideos.length === 1 ? t('videosPage.videoFound') : t('videosPage.videosFound')}
                 </p>
                 <div className="flex items-center gap-2">
                   <Button

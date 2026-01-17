@@ -86,6 +86,28 @@
     "noVideos": "No hay videos disponibles",
     "loadMore": "Cargar más"
   },
+  "videosPage": {
+    "title": "Explorador de Videos",
+    "subtitle": "Descubre todos los videos relacionados con el Aston Vila",
+    "searchPlaceholder": "Buscar videos...",
+    "filters": "Filtros",
+    "sort": "Ordenar",
+    "sortNewest": "Más recientes",
+    "sortPopular": "Más populares",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "platforms": "Plataformas",
+    "categories": "Categorías",
+    "resetFilters": "Restablecer filtros",
+    "comingSoon": "Próximamente",
+    "comingSoonMessage": "Estamos trabajando para incorporar contenido de {platform} a nuestro Hub Aston Vila.",
+    "comingSoonMessage2": "Muy pronto podrás disfrutar de los mejores videos de Aston Vila desde esta plataforma.",
+    "viewAllVideos": "Ver todos los videos",
+    "noResults": "No se encontraron resultados",
+    "noResultsMessage": "No hay videos que coincidan con los filtros actuales. Intenta cambiar tus criterios de búsqueda.",
+    "videoFound": "video encontrado",
+    "videosFound": "videos encontrados"
+  },
   "channel": {
     "subscribe": "Suscribirse",
     "subscribed": "Suscrito",
