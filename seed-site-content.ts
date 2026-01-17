@@ -1,5 +1,5 @@
-import { db } from './server/db';
-import { siteConfig } from './server/db/schema';
+import { db } from './server/db/index.js';
+import { siteConfig } from './server/db/schema.js';
 import { eq } from 'drizzle-orm';
 
 const contentConfig = [
