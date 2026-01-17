@@ -660,4 +660,170 @@
       "processes": "Processes"
     }
   }
+,
+  "admin": {
+    "users": {
+      "title": "User Management",
+      "description": "Manage users, roles and permissions",
+      "search": "Search users...",
+      "addUser": "Add User",
+      "table": {
+        "id": "ID",
+        "username": "Username",
+        "email": "Email",
+        "name": "Name",
+        "role": "Role",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "roles": {
+        "superadmin": "Superadmin",
+        "admin": "Admin",
+        "premium": "Premium",
+        "free": "Free"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "changeRole": "Change Role"
+      },
+      "messages": {
+        "userUpdated": "User updated successfully",
+        "userDeleted": "User deleted successfully",
+        "error": "Error processing request"
+      }
+    },
+    "videos": {
+      "title": "Video Management",
+      "description": "Manage all platform videos",
+      "search": "Search videos...",
+      "addVideo": "Add Video",
+      "filters": {
+        "all": "All",
+        "platform": "Platform",
+        "category": "Category",
+        "status": "Status"
+      },
+      "table": {
+        "thumbnail": "Thumbnail",
+        "title": "Title",
+        "platform": "Platform",
+        "views": "Views",
+        "publishedAt": "Published",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "feature": "Feature",
+        "unfeature": "Unfeature"
+      }
+    },
+    "loginLogs": {
+      "title": "Access Logs",
+      "description": "Login history records",
+      "search": "Search logs...",
+      "table": {
+        "user": "User",
+        "ip": "IP",
+        "userAgent": "Browser",
+        "timestamp": "Date & Time",
+        "status": "Status"
+      },
+      "status": {
+        "success": "Success",
+        "failed": "Failed"
+      }
+    },
+    "featured": {
+      "title": "Featured Videos",
+      "description": "Manage featured videos on homepage",
+      "addFeatured": "Add Featured",
+      "remove": "Remove",
+      "order": "Order"
+    },
+    "premium": {
+      "title": "Premium Channels",
+      "description": "Manage exclusive premium channels",
+      "addChannel": "Add Channel",
+      "table": {
+        "name": "Name",
+        "platform": "Platform",
+        "subscribers": "Subscribers",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "recommended": {
+      "title": "Recommended Channels",
+      "description": "Manage recommended channels",
+      "addChannel": "Add Channel"
+    },
+    "polls": {
+      "title": "Polls",
+      "description": "Manage polls and voting",
+      "createPoll": "Create Poll",
+      "table": {
+        "question": "Question",
+        "votes": "Votes",
+        "status": "Status",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "closed": "Closed"
+      }
+    },
+    "tasks": {
+      "title": "Scheduled Tasks",
+      "description": "Manage automated system tasks",
+      "addTask": "Add Task",
+      "table": {
+        "name": "Name",
+        "schedule": "Schedule",
+        "lastRun": "Last Run",
+        "nextRun": "Next Run",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "run": "Run",
+        "enable": "Enable",
+        "disable": "Disable",
+        "edit": "Edit"
+      }
+    },
+    "processes": {
+      "title": "System Processes",
+      "description": "Running processes monitor",
+      "refresh": "Refresh",
+      "table": {
+        "name": "Name",
+        "status": "Status",
+        "cpu": "CPU",
+        "memory": "Memory",
+        "uptime": "Uptime",
+        "actions": "Actions"
+      }
+    },
+    "common": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "close": "Close",
+      "confirm": "Confirm",
+      "loading": "Loading...",
+      "noData": "No data available",
+      "error": "Error",
+      "success": "Success",
+      "search": "Search",
+      "filter": "Filter",
+      "clear": "Clear",
+      "export": "Export",
+      "import": "Import"
+    }
+  }
 }

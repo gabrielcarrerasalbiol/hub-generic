@@ -703,4 +703,170 @@
       "processes": "Procesos"
     }
   }
+,
+  "admin": {
+    "users": {
+      "title": "Gestión de Usuarios",
+      "description": "Administra usuarios, roles y permisos",
+      "search": "Buscar usuarios...",
+      "addUser": "Añadir Usuario",
+      "table": {
+        "id": "ID",
+        "username": "Usuario",
+        "email": "Email",
+        "name": "Nombre",
+        "role": "Rol",
+        "createdAt": "Creado",
+        "actions": "Acciones"
+      },
+      "roles": {
+        "superadmin": "Superadmin",
+        "admin": "Admin",
+        "premium": "Premium",
+        "free": "Gratis"
+      },
+      "actions": {
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "changeRole": "Cambiar Rol"
+      },
+      "messages": {
+        "userUpdated": "Usuario actualizado correctamente",
+        "userDeleted": "Usuario eliminado correctamente",
+        "error": "Error al procesar la solicitud"
+      }
+    },
+    "videos": {
+      "title": "Gestión de Vídeos",
+      "description": "Administra todos los vídeos de la plataforma",
+      "search": "Buscar vídeos...",
+      "addVideo": "Añadir Vídeo",
+      "filters": {
+        "all": "Todos",
+        "platform": "Plataforma",
+        "category": "Categoría",
+        "status": "Estado"
+      },
+      "table": {
+        "thumbnail": "Miniatura",
+        "title": "Título",
+        "platform": "Plataforma",
+        "views": "Vistas",
+        "publishedAt": "Publicado",
+        "actions": "Acciones"
+      },
+      "actions": {
+        "view": "Ver",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "feature": "Destacar",
+        "unfeature": "Quitar destacado"
+      }
+    },
+    "loginLogs": {
+      "title": "Registros de Acceso",
+      "description": "Historial de inicios de sesión",
+      "search": "Buscar logs...",
+      "table": {
+        "user": "Usuario",
+        "ip": "IP",
+        "userAgent": "Navegador",
+        "timestamp": "Fecha y Hora",
+        "status": "Estado"
+      },
+      "status": {
+        "success": "Exitoso",
+        "failed": "Fallido"
+      }
+    },
+    "featured": {
+      "title": "Vídeos Destacados",
+      "description": "Gestiona los vídeos destacados en la página principal",
+      "addFeatured": "Añadir Destacado",
+      "remove": "Quitar",
+      "order": "Orden"
+    },
+    "premium": {
+      "title": "Canales Premium",
+      "description": "Gestiona los canales premium exclusivos",
+      "addChannel": "Añadir Canal",
+      "table": {
+        "name": "Nombre",
+        "platform": "Plataforma",
+        "subscribers": "Suscriptores",
+        "status": "Estado",
+        "actions": "Acciones"
+      }
+    },
+    "recommended": {
+      "title": "Canales Recomendados",
+      "description": "Gestiona los canales recomendados",
+      "addChannel": "Añadir Canal"
+    },
+    "polls": {
+      "title": "Encuestas",
+      "description": "Gestiona encuestas y votaciones",
+      "createPoll": "Crear Encuesta",
+      "table": {
+        "question": "Pregunta",
+        "votes": "Votos",
+        "status": "Estado",
+        "createdAt": "Creado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "active": "Activa",
+        "closed": "Cerrada"
+      }
+    },
+    "tasks": {
+      "title": "Tareas Programadas",
+      "description": "Gestiona tareas automáticas del sistema",
+      "addTask": "Añadir Tarea",
+      "table": {
+        "name": "Nombre",
+        "schedule": "Programación",
+        "lastRun": "Última Ejecución",
+        "nextRun": "Próxima Ejecución",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "actions": {
+        "run": "Ejecutar",
+        "enable": "Activar",
+        "disable": "Desactivar",
+        "edit": "Editar"
+      }
+    },
+    "processes": {
+      "title": "Procesos del Sistema",
+      "description": "Monitor de procesos en ejecución",
+      "refresh": "Actualizar",
+      "table": {
+        "name": "Nombre",
+        "status": "Estado",
+        "cpu": "CPU",
+        "memory": "Memoria",
+        "uptime": "Tiempo Activo",
+        "actions": "Acciones"
+      }
+    },
+    "common": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "close": "Cerrar",
+      "confirm": "Confirmar",
+      "loading": "Cargando...",
+      "noData": "No hay datos disponibles",
+      "error": "Error",
+      "success": "Éxito",
+      "search": "Buscar",
+      "filter": "Filtrar",
+      "clear": "Limpiar",
+      "export": "Exportar",
+      "import": "Importar"
+    }
+  }
 }
