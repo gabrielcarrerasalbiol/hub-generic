@@ -41,7 +41,7 @@ export default function AdminPage() {
       </div>
       
       <Tabs defaultValue="users" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-10">
+        <TabsList className={`mb-6 grid w-full ${isSuperAdmin() ? 'grid-cols-10' : 'grid-cols-9'}`}>
           {isSuperAdmin() && (
             <TabsTrigger value="config" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
