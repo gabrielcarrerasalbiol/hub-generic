@@ -442,19 +442,19 @@ export default function AboutPage() {
       <section className="bg-[#1E3A8A] text-white py-12">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Hub Madridista</h2>
-          <p className="text-sm text-white/70 mb-4">La mejor plataforma de contenido para aficionados del Real Madrid</p>
+          <p className="text-sm text-white/70 mb-4">{t('footer.description')}</p>
           <div className="flex justify-center gap-6">
             <Link href="/terminos">
-              <p className="text-sm text-white/70 hover:text-white transition">Términos y Condiciones</p>
+              <p className="text-sm text-white/70 hover:text-white transition">{t('footer.terms')}</p>
             </Link>
             <Link href="/privacidad">
-              <p className="text-sm text-white/70 hover:text-white transition">Política de Privacidad</p>
+              <p className="text-sm text-white/70 hover:text-white transition">{t('footer.privacy')}</p>
             </Link>
             <Link href="/contacto">
-              <p className="text-sm text-white/70 hover:text-white transition">Contacto</p>
+              <p className="text-sm text-white/70 hover:text-white transition">{t('footer.contact')}</p>
             </Link>
           </div>
-          <p className="mt-6 text-xs text-white/50">© 2025 Hub Madridista. Todos los derechos reservados.</p>
+          <p className="mt-6 text-xs text-white/50">{t('footer.rights')}</p>
         </div>
       </section>
     </main>
