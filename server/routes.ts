@@ -33,7 +33,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
 import { ZodError } from "zod";
-import { isAuthenticated, isAdmin, isPremium } from "./auth";
+import { isAuthenticated, isAdmin, isPremium, isSuperAdmin } from "./auth";
 import { handleNewsletterSubscription } from './api/mailchimpService';
 import { isValidEmail } from './api/emailService';
 import { sendShareEmail } from './api/shareService';
@@ -4571,7 +4571,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin endpoint to get all configs with metadata
-  app.get("/api/admin/site-config", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+  app.get("/api/admin/site-config", isAuthenticated, isSuperAdmin, async (req: Request, res: Response) => {
     try {
       const configs = await db.select().from(schema.siteConfig);
       res.json(configs);
@@ -4582,7 +4582,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update or create site config
-  app.put("/api/admin/site-config/:key", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+  app.put("/api/admin/site-config/:key", isAuthenticated, isSuperAdmin, async (req: Request, res: Response) => {
     try {
       const { key } = req.params;
       const { value, type, category, description } = req.body;
@@ -4642,7 +4642,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete site config
-  app.delete("/api/admin/site-config/:key", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+  app.delete("/api/admin/site-config/:key", isAuthenticated, isSuperAdmin, async (req: Request, res: Response) => {
     try {
       await db.delete(schema.siteConfig)
         .where(eq(schema.siteConfig.key, req.params.key));
@@ -4655,7 +4655,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Bulk update site configs
-  app.post("/api/admin/site-config/bulk", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+  app.post("/api/admin/site-config/bulk", isAuthenticated, isSuperAdmin, async (req: Request, res: Response) => {
     try {
       const { configs } = req.body;
       const userId = req.user!.id;
@@ -4718,7 +4718,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Upload image endpoint for site config
-  app.post("/api/admin/upload-image", isAuthenticated, isAdmin, async (req: Request, res: Response) => {
+  app.post("/api/admin/upload-image", isAuthenticated, isSuperAdmin, async (req: Request, res: Response) => {
     try {
       const { image, filename } = req.body;
       

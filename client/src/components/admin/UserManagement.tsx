@@ -33,7 +33,7 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
-  const { isAdmin } = useAuth();
+  const { isAdmin, isSuperAdmin } = useAuth();
 
   useEffect(() => {
     if (!isAdmin()) return;
@@ -72,7 +72,7 @@ export default function UserManagement() {
       // Actualizar usuario en la lista local
       setUsers(users.map(user => 
         user.id === userId 
-          ? { ...user, role: role as 'free' | 'premium' | 'admin' }
+          ? { ...user, role: role as 'free' | 'premium' | 'admin' | 'superadmin' }
           : user
       ));
       
@@ -155,11 +155,13 @@ export default function UserManagement() {
                     <TableCell>
                       <Badge 
                         variant={
+                          user.role === 'superadmin' ? 'destructive' :
                           user.role === 'admin' ? 'destructive' : 
                           user.role === 'premium' ? 'default' : 
                           'secondary'
                         }
                       >
+                        {user.role === 'superadmin' && 'Superadmin'}
                         {user.role === 'admin' && 'Administrador'}
                         {user.role === 'premium' && 'Premium'}
                         {user.role === 'free' && 'Free'}
@@ -177,6 +179,9 @@ export default function UserManagement() {
                           <SelectItem value="free">Free</SelectItem>
                           <SelectItem value="premium">Premium</SelectItem>
                           <SelectItem value="admin">Admin</SelectItem>
+                          {isSuperAdmin() && (
+                            <SelectItem value="superadmin">Superadmin</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     </TableCell>

@@ -390,9 +390,26 @@ export function isAdmin(req: Request, res: Response, next: NextFunction) {
 
   const user = req.user as User;
   
-  if (user.role !== 'admin') {
+  if (user.role !== 'admin' && user.role !== 'superadmin') {
     return res.status(403).json({
       error: 'Necesitas ser administrador para acceder a este recurso'
+    });
+  }
+
+  next();
+}
+
+// Middleware para verificar si el usuario es superadministrador
+export function isSuperAdmin(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }
+
+  const user = req.user as User;
+  
+  if (user.role !== 'superadmin') {
+    return res.status(403).json({
+      error: 'Necesitas ser superadministrador para acceder a este recurso'
     });
   }
 
@@ -407,7 +424,7 @@ export function isPremium(req: Request, res: Response, next: NextFunction) {
 
   const user = req.user as User;
   
-  if (user.role !== 'premium' && user.role !== 'admin') {
+  if (user.role !== 'premium' && user.role !== 'admin' && user.role !== 'superadmin') {
     return res.status(403).json({
       error: 'Necesitas ser usuario premium para acceder a este recurso'
     });

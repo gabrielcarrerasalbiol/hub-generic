@@ -33,6 +33,7 @@ interface AuthState {
   changePassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
   checkAuth: () => boolean;
   isAdmin: () => boolean;
+  isSuperAdmin: () => boolean;
   isPremium: () => boolean;
   isFree: () => boolean;
   getUserRole: () => string | null;
@@ -47,7 +48,7 @@ export interface UserAuth {
   email: string | null;
   name: string | null;
   profilePicture: string | null;
-  role: 'free' | 'premium' | 'admin';
+  role: 'free' | 'premium' | 'admin' | 'superadmin';
 }
 
 interface AuthResponse {
@@ -410,12 +411,17 @@ export const useAuth = create<AuthState>((set, get) => {
   
     isAdmin: () => {
       const { user } = get();
-      return user?.role === 'admin';
+      return user?.role === 'admin' || user?.role === 'superadmin';
+    },
+  
+    isSuperAdmin: () => {
+      const { user } = get();
+      return user?.role === 'superadmin';
     },
   
     isPremium: () => {
       const { user } = get();
-      return user?.role === 'premium' || user?.role === 'admin';
+      return user?.role === 'premium' || user?.role === 'admin' || user?.role === 'superadmin';
     },
   
     isFree: () => {

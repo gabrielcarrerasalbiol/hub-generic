@@ -12,7 +12,7 @@ export const users = pgTable("users", {
   profilePicture: text("profile_picture"),
   googleId: text("google_id").unique(),
   appleId: text("apple_id").unique(),
-  role: text("role", { enum: ["free", "premium", "admin"] }).default("free").notNull(),
+  role: text("role", { enum: ["free", "premium", "admin", "superadmin"] }).default("free").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -246,7 +246,7 @@ export type InsertViewHistory = z.infer<typeof insertViewHistorySchema>;
 export type ViewHistory = typeof viewHistory.$inferSelect;
 
 // Tipos de roles de usuario
-export const UserRole = z.enum(["free", "premium", "admin"]);
+export const UserRole = z.enum(["free", "premium", "admin", "superadmin"]);
 export type UserRole = z.infer<typeof UserRole>;
 
 // Platform type for frontend filtering

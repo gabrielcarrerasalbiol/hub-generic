@@ -50,7 +50,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
   
   // Calcular estos valores a partir del estado actual
   const isAuthenticated = !!token;
-  const userIsAdmin = user?.role === 'admin';
+  const userIsAdmin = user?.role === 'admin' || user?.role === 'superadmin';
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
