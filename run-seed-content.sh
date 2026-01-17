@@ -1,20 +1,45 @@
 #!/bin/bash
 
-# Load environment variables from PM2 if available
-if command -v pm2 &> /dev/null; then
-  echo "🔍 Loading DATABASE_URL from PM2 environment..."
-  export DATABASE_URL=$(pm2 env 0 | grep DATABASE_URL | cut -d'=' -f2-)
+echo "🔍 Loading environment variables..."
+
+# Try to load from .env.production if exists
+if [ -f ".env.production" ]; then
+  echo "📝 Loading from .env.production..."
+  export $(cat .env.production | grep -v '^#' | grep -v '^$' | xargs)
 fi
 
-# If DATABASE_URL is still not set, try to construct it from defaults
-if [ -z "$DATABASE_URL" ]; then
-  echo "⚠️  DATABASE_URL not found in PM2, using default PostgreSQL connection..."
-  export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/hub_generic"
+# Try to load from .env if exists  
+if [ -f ".env" ]; then
+  echo "📝 Loading from .env..."
+  export $(cat .env | grep -v '^#' | grep -v '^$' | xargs)
 fi
 
-echo "📊 Using DATABASE_URL: ${DATABASE_URL:0:20}..." # Show first 20 chars only for security
+# Check if DATABASE_URL or PROD_DATABASE_URL is set
+if [ -z "$DATABASE_URL" ] && [ -z "$PROD_DATABASE_URL" ]; then
+  echo ""
+  echo "❌ ERROR: No DATABASE_URL found!"
+  echo ""
+  echo "Please set DATABASE_URL or PROD_DATABASE_URL in one of:"
+  echo "  • .env.production"
+  echo "  • .env"
+  echo "  • Environment variable"
+  echo ""
+  echo "Example:"
+  echo "  export DATABASE_URL='postgresql://user:pass@host.neon.tech/dbname?sslmode=require'"
+  echo ""
+  exit 1
+fi
+
+# Use PROD_DATABASE_URL if DATABASE_URL is not set
+if [ -z "$DATABASE_URL" ] && [ -n "$PROD_DATABASE_URL" ]; then
+  export DATABASE_URL="$PROD_DATABASE_URL"
+  echo "✅ Using PROD_DATABASE_URL as DATABASE_URL"
+fi
+
+echo "📊 Database host: $(echo $DATABASE_URL | grep -oP '(?<=@)[^:]+' || echo 'localhost')"
 
 # Run the seed script
+echo ""
 echo "🌱 Running seed script..."
 npx tsx seed-site-content.ts
 
