@@ -23,33 +23,70 @@ import { classifyContentWithGemini, generateVideoSummary } from './gemini';
 import { sendNewVideoNotificationEmail } from './emailService';
 import { processVideoNotifications } from './notificationService';
 import { AIService } from '../services/aiService';
+import { db } from '../db';
+import * as schema from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 /**
- * Busca nuevos videos en YouTube relacionados con el Real Madrid 
- * y los categoriza automáticamente usando IA
- * Prioriza contenido en español y de canales con alto índice de visualizaciones
+ * Get YouTube search configuration from site config database
  */
-export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total: number, added: number, error?: string}> {
+async function getYouTubeSearchConfig(): Promise<{ searchTerms: string[], defaultLanguage: string }> {
   try {
-    // Términos de búsqueda en español para encontrar videos de Real Madrid
-    const searchTerms = [
+    const searchTermsConfig = await db.select()
+      .from(schema.siteConfig)
+      .where(eq(schema.siteConfig.key, 'youtube.search.terms'))
+      .limit(1);
+    
+    const languageConfig = await db.select()
+      .from(schema.siteConfig)
+      .where(eq(schema.siteConfig.key, 'youtube.search.language'))
+      .limit(1);
+    
+    let searchTerms = [
       "Real Madrid highlights",
       "Real Madrid mejores momentos",
       "Real Madrid goles",
-      "Real Madrid análisis",
-      "Real Madrid noticias",
-      "Real Madrid jugadores",
-      "Real Madrid Vinicius",
-      "Real Madrid Bellingham",
-      "Real Madrid Ancelotti",
-      "Real Madrid historia",
-      "Real Madrid fichajes",
-      "Real Madrid la liga",
-      "Real Madrid Champions",
-      "Real Madrid resumen partido",
-      "Real Madrid entrevistas",
-      "Real Madrid rueda de prensa"
+      "Real Madrid análisis"
     ];
+    
+    // Parse search terms from config if available
+    if (searchTermsConfig[0]?.value) {
+      try {
+        const parsed = JSON.parse(searchTermsConfig[0].value);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          searchTerms = parsed;
+        }
+      } catch (e) {
+        console.error('Error parsing search terms config:', e);
+      }
+    }
+    
+    const defaultLanguage = languageConfig[0]?.value || 'es';
+    
+    return { searchTerms, defaultLanguage };
+  } catch (error) {
+    console.error('Error fetching YouTube search config:', error);
+    // Return default values if config fetch fails
+    return {
+      searchTerms: [
+        "Real Madrid highlights",
+        "Real Madrid mejores momentos",
+        "Real Madrid goles",
+        "Real Madrid análisis"
+      ],
+      defaultLanguage: 'es'
+    };
+  }
+}
+
+/**
+ * Busca nuevos videos en YouTube usando los términos configurables
+ * y los categoriza automáticamente usando IA
+ */
+export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total: number, added: number, error?: string}> {
+  try {
+    // Get search configuration from database
+    const { searchTerms, defaultLanguage } = await getYouTubeSearchConfig();
     
     // Seleccionar un término de búsqueda aleatorio para diversificar resultados
     const randomIndex = Math.floor(Math.random() * searchTerms.length);
@@ -62,8 +99,8 @@ export async function fetchAndProcessNewVideos(maxResults = 15): Promise<{total:
     const orderIndex = Math.floor(Math.random() * searchOrders.length);
     const selectedOrder = searchOrders[orderIndex];
     
-    // Buscar videos en YouTube (con preferencia para español y el orden seleccionado)
-    const searchResults = await searchYouTubeVideos(searchQuery, maxResults, '', 'es', selectedOrder);
+    // Buscar videos en YouTube (con el idioma configurado y el orden seleccionado)
+    const searchResults = await searchYouTubeVideos(searchQuery, maxResults, '', defaultLanguage, selectedOrder);
     if (!searchResults.items || searchResults.items.length === 0) {
       return { total: 0, added: 0, error: "No se encontraron videos" };
     }

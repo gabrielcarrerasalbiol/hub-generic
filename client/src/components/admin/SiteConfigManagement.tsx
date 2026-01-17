@@ -206,6 +206,28 @@ export default function SiteConfigManagement() {
     'seo.default.description': 'Hub Madridista - La plataforma definitiva con los mejores videos y contenido del Real Madrid de todas las plataformas en un solo lugar',
     'seo.default.keywords': 'Real Madrid, fútbol, LaLiga, Champions League, videos, noticias, jugadores, análisis',
     'seo.og.image': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/1200px-Real_Madrid_CF.svg.png',
+    
+    // YouTube Search Configuration
+    'youtube.search.terms': JSON.stringify([
+      "Real Madrid highlights",
+      "Real Madrid mejores momentos",
+      "Real Madrid goles",
+      "Real Madrid análisis",
+      "Real Madrid noticias",
+      "Real Madrid jugadores",
+      "Real Madrid Vinicius",
+      "Real Madrid Bellingham",
+      "Real Madrid Ancelotti",
+      "Real Madrid historia",
+      "Real Madrid fichajes",
+      "Real Madrid la liga",
+      "Real Madrid Champions",
+      "Real Madrid resumen partido",
+      "Real Madrid entrevistas",
+      "Real Madrid rueda de prensa"
+    ]),
+    'youtube.search.language': 'es',
+    'youtube.search.enabled': 'true',
   });
 
   // Fetch existing configs
@@ -241,9 +263,14 @@ export default function SiteConfigManagement() {
         let type: SiteConfigItem['type'] = 'text';
         let category = 'general';
         
-        if (key.includes('.colors.') || key.includes('.url')) {
+        // Detect JSON type for arrays
+        if (key === 'youtube.search.terms') {
+          type = 'json';
+          category = 'youtube';
+        } else if (key.includes('.colors.') || key.includes('.url')) {
           type = 'text';
         }
+        
         if (key.startsWith('site.')) {
           if (key.includes('.colors.')) category = 'branding';
           else if (key.includes('.logo.') || key.includes('.favicon.')) category = 'branding';
@@ -254,6 +281,8 @@ export default function SiteConfigManagement() {
           category = 'social';
         } else if (key.startsWith('seo.')) {
           category = 'seo';
+        } else if (key.startsWith('youtube.')) {
+          category = 'youtube';
         }
         
         return {
@@ -394,7 +423,7 @@ export default function SiteConfigManagement() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="branding" className="gap-2">
             <Palette className="h-4 w-4" />
             Marca
@@ -406,6 +435,10 @@ export default function SiteConfigManagement() {
           <TabsTrigger value="banners" className="gap-2">
             <Sparkles className="h-4 w-4" />
             Banners
+          </TabsTrigger>
+          <TabsTrigger value="youtube" className="gap-2">
+            <Video className="h-4 w-4" />
+            YouTube
           </TabsTrigger>
           <TabsTrigger value="social" className="gap-2">
             <Mail className="h-4 w-4" />
@@ -853,6 +886,95 @@ export default function SiteConfigManagement() {
                   onChange={(e) => handleInputChange('social.youtube.url', e.target.value)}
                   placeholder="https://www.youtube.com/hubmadridista"
                 />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* YouTube Search Tab */}
+        <TabsContent value="youtube" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configuración de Búsqueda en YouTube</CardTitle>
+              <CardDescription>
+                Configura los términos de búsqueda e idioma para la importación automática de videos de YouTube
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="youtube-enabled">Búsqueda Automática Habilitada</Label>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="youtube-enabled"
+                    checked={configData['youtube.search.enabled'] === 'true'}
+                    onCheckedChange={(checked) => handleInputChange('youtube.search.enabled', checked ? 'true' : 'false')}
+                  />
+                  <Label htmlFor="youtube-enabled" className="text-sm text-muted-foreground cursor-pointer">
+                    {configData['youtube.search.enabled'] === 'true' ? 'Activada' : 'Desactivada'}
+                  </Label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="youtube-language">Idioma Preferido</Label>
+                <Select
+                  value={configData['youtube.search.language'] || 'es'}
+                  onValueChange={(value) => handleInputChange('youtube.search.language', value)}
+                >
+                  <SelectTrigger id="youtube-language">
+                    <SelectValue placeholder="Seleccionar idioma" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="es">Español (es)</SelectItem>
+                    <SelectItem value="en">English (en)</SelectItem>
+                    <SelectItem value="fr">Français (fr)</SelectItem>
+                    <SelectItem value="de">Deutsch (de)</SelectItem>
+                    <SelectItem value="it">Italiano (it)</SelectItem>
+                    <SelectItem value="pt">Português (pt)</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  Idioma preferido para la búsqueda de videos
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="youtube-terms">Términos de Búsqueda</Label>
+                <Textarea
+                  id="youtube-terms"
+                  value={(() => {
+                    try {
+                      const terms = JSON.parse(configData['youtube.search.terms'] || '[]');
+                      return Array.isArray(terms) ? terms.join('\n') : '';
+                    } catch {
+                      return '';
+                    }
+                  })()}
+                  onChange={(e) => {
+                    const terms = e.target.value.split('\n').filter(t => t.trim());
+                    handleInputChange('youtube.search.terms', JSON.stringify(terms));
+                  }}
+                  placeholder="Real Madrid highlights&#10;Real Madrid goles&#10;Real Madrid análisis"
+                  rows={12}
+                  className="font-mono text-sm"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Ingresa un término de búsqueda por línea. Estos se usarán de manera aleatoria para buscar videos en YouTube.
+                </p>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
+                <h4 className="font-semibold mb-2 flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  Cómo funciona
+                </h4>
+                <ul className="text-sm space-y-1 text-muted-foreground">
+                  <li>• El sistema selecciona aleatoriamente un término de búsqueda de la lista</li>
+                  <li>• Busca videos en YouTube usando ese término</li>
+                  <li>• Prioriza videos con el idioma seleccionado</li>
+                  <li>• Los videos se categorizan automáticamente usando IA</li>
+                  <li>• Puedes agregar términos específicos (jugadores, eventos, etc.)</li>
+                </ul>
               </div>
             </CardContent>
           </Card>
