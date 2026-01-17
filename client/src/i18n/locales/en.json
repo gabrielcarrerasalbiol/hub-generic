@@ -567,4 +567,80 @@
       "description": "The owner does not guarantee the permanent availability of the Website or the absence of errors. It will not be responsible for damages arising from the use of the Website, unless they result from willful misconduct or gross negligence."
     }
   }
+,
+  "adminConfig": {
+    "title": "Site Configuration",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "tabs": {
+      "branding": "Branding",
+      "content": "Content",
+      "banners": "Banners",
+      "youtube": "YouTube",
+      "social": "Social",
+      "seo": "SEO"
+    },
+    "branding": {
+      "title": "Brand Identity",
+      "description": "Configure site name, logo and colors",
+      "siteName": "Site Name",
+      "tagline": "Tagline",
+      "logoUrl": "Logo URL",
+      "logoAlt": "Logo Alternative Text",
+      "faviconUrl": "Favicon URL",
+      "primaryColor": "Primary Color",
+      "secondaryColor": "Secondary Color",
+      "accentColor": "Accent Color"
+    },
+    "youtube": {
+      "title": "YouTube Search Configuration",
+      "description": "Configure search terms and language for automatic YouTube video import",
+      "enabled": "Automatic Search Enabled",
+      "active": "Active",
+      "inactive": "Inactive",
+      "language": "Preferred Language",
+      "languageDescription": "Preferred language for video search",
+      "searchTerms": "Search Terms",
+      "searchTermsPlaceholder": "Real Madrid highlights\nReal Madrid goals\nReal Madrid analysis",
+      "searchTermsDescription": "Enter one search term per line. These will be randomly used to search for videos on YouTube.",
+      "howItWorks": "How it works",
+      "howItWorksItems": {
+        "random": "The system randomly selects a search term from the list",
+        "search": "Searches for videos on YouTube using that term",
+        "language": "Prioritizes videos with the selected language",
+        "categorize": "Videos are automatically categorized using AI",
+        "customize": "You can add specific terms (players, events, etc.)"
+      },
+      "languages": {
+        "es": "Spanish (es)",
+        "en": "English (en)",
+        "fr": "French (fr)",
+        "de": "German (de)",
+        "it": "Italian (it)",
+        "pt": "Portuguese (pt)"
+      }
+    },
+    "social": {
+      "title": "Social Media and Contact",
+      "description": "Configure contact information and social links",
+      "contactEmail": "Contact Email",
+      "contactPhone": "Contact Phone",
+      "twitterUrl": "Twitter/X URL",
+      "facebookUrl": "Facebook URL",
+      "instagramUrl": "Instagram URL",
+      "youtubeUrl": "YouTube URL"
+    },
+    "seo": {
+      "title": "SEO and Metadata",
+      "description": "Configure metadata for search engine optimization",
+      "defaultTitle": "Default Title",
+      "defaultDescription": "Default Description",
+      "keywords": "Keywords",
+      "ogImage": "Open Graph Image (URL)"
+    },
+    "notifications": {
+      "saved": "Configuration saved successfully",
+      "error": "Error saving configuration"
+    }
+  }
 }

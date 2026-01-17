@@ -11,6 +11,7 @@ import { Settings, Save, Upload, Palette, FileText, Globe, Mail, Loader2, Sparkl
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import ContentTabsManager from '@/components/admin/ContentTabsManager';
+import { useLanguage } from '@/hooks/use-language';
 
 interface SiteConfigItem {
   id: number;
@@ -30,6 +31,7 @@ interface ConfigFormData {
 export default function SiteConfigManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('branding');
   const [configData, setConfigData] = useState<ConfigFormData>({
     // Branding

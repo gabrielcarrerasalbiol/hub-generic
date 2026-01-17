@@ -610,4 +610,80 @@
       "description": "El titular no garantiza la disponibilidad permanente del Sitio Web ni la ausencia de errores. No será responsable de daños derivados del uso del Sitio Web, salvo que se derive de una actuación dolosa o negligente grave."
     }
   }
+,
+  "adminConfig": {
+    "title": "Configuración del Sitio",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando...",
+    "tabs": {
+      "branding": "Marca",
+      "content": "Contenido",
+      "banners": "Banners",
+      "youtube": "YouTube",
+      "social": "Social",
+      "seo": "SEO"
+    },
+    "branding": {
+      "title": "Identidad de Marca",
+      "description": "Configura el nombre, logo y colores del sitio",
+      "siteName": "Nombre del Sitio",
+      "tagline": "Eslogan",
+      "logoUrl": "URL del Logo",
+      "logoAlt": "Texto Alternativo del Logo",
+      "faviconUrl": "URL del Favicon",
+      "primaryColor": "Color Primario",
+      "secondaryColor": "Color Secundario",
+      "accentColor": "Color de Acento"
+    },
+    "youtube": {
+      "title": "Configuración de Búsqueda en YouTube",
+      "description": "Configura los términos de búsqueda e idioma para la importación automática de videos de YouTube",
+      "enabled": "Búsqueda Automática Habilitada",
+      "active": "Activada",
+      "inactive": "Desactivada",
+      "language": "Idioma Preferido",
+      "languageDescription": "Idioma preferido para la búsqueda de videos",
+      "searchTerms": "Términos de Búsqueda",
+      "searchTermsPlaceholder": "Real Madrid highlights\nReal Madrid goles\nReal Madrid análisis",
+      "searchTermsDescription": "Ingresa un término de búsqueda por línea. Estos se usarán de manera aleatoria para buscar videos en YouTube.",
+      "howItWorks": "Cómo funciona",
+      "howItWorksItems": {
+        "random": "El sistema selecciona aleatoriamente un término de búsqueda de la lista",
+        "search": "Busca videos en YouTube usando ese término",
+        "language": "Prioriza videos con el idioma seleccionado",
+        "categorize": "Los videos se categorizan automáticamente usando IA",
+        "customize": "Puedes agregar términos específicos (jugadores, eventos, etc.)"
+      },
+      "languages": {
+        "es": "Español (es)",
+        "en": "English (en)",
+        "fr": "Français (fr)",
+        "de": "Deutsch (de)",
+        "it": "Italiano (it)",
+        "pt": "Português (pt)"
+      }
+    },
+    "social": {
+      "title": "Redes Sociales y Contacto",
+      "description": "Configura la información de contacto y enlaces sociales",
+      "contactEmail": "Correo de Contacto",
+      "contactPhone": "Teléfono de Contacto",
+      "twitterUrl": "URL de Twitter/X",
+      "facebookUrl": "URL de Facebook",
+      "instagramUrl": "URL de Instagram",
+      "youtubeUrl": "URL de YouTube"
+    },
+    "seo": {
+      "title": "SEO y Metadatos",
+      "description": "Configura los metadatos para optimización de motores de búsqueda",
+      "defaultTitle": "Título por Defecto",
+      "defaultDescription": "Descripción por Defecto",
+      "keywords": "Palabras Clave",
+      "ogImage": "Imagen Open Graph (URL)"
+    },
+    "notifications": {
+      "saved": "Configuración guardada correctamente",
+      "error": "Error al guardar la configuración"
+    }
+  }
 }
