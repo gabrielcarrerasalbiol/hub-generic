@@ -404,7 +404,7 @@ export default function SiteConfigManagement() {
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <Settings className="h-6 w-6" />
-            Configuración del Sitio
+            {t('adminConfig.title')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             Personaliza logos, textos, colores y contenido del sitio
@@ -420,7 +420,7 @@ export default function SiteConfigManagement() {
           ) : (
             <Save className="h-4 w-4" />
           )}
-          Guardar Cambios
+          {saveMutation.isPending ? t('adminConfig.saving') : t('adminConfig.saveChanges')}
         </Button>
       </div>
 
@@ -428,23 +428,23 @@ export default function SiteConfigManagement() {
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="branding" className="gap-2">
             <Palette className="h-4 w-4" />
-            Marca
+            {t('adminConfig.tabs.branding')}
           </TabsTrigger>
           <TabsTrigger value="content" className="gap-2">
             <FileText className="h-4 w-4" />
-            Contenido
+            {t('adminConfig.tabs.content')}
           </TabsTrigger>
           <TabsTrigger value="banners" className="gap-2">
             <Sparkles className="h-4 w-4" />
-            Banners
+            {t('adminConfig.tabs.banners')}
           </TabsTrigger>
           <TabsTrigger value="youtube" className="gap-2">
             <Video className="h-4 w-4" />
-            YouTube
+            {t('adminConfig.tabs.youtube')}
           </TabsTrigger>
           <TabsTrigger value="social" className="gap-2">
             <Mail className="h-4 w-4" />
-            Social
+            {t('adminConfig.tabs.social')}
           </TabsTrigger>
           <TabsTrigger value="seo" className="gap-2">
             <Globe className="h-4 w-4" />
@@ -897,14 +897,14 @@ export default function SiteConfigManagement() {
         <TabsContent value="youtube" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Configuración de Búsqueda en YouTube</CardTitle>
+              <CardTitle>{t('adminConfig.youtube.title')}</CardTitle>
               <CardDescription>
-                Configura los términos de búsqueda e idioma para la importación automática de videos de YouTube
+                {t('adminConfig.youtube.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="youtube-enabled">Búsqueda Automática Habilitada</Label>
+                <Label htmlFor="youtube-enabled">{t('adminConfig.youtube.enabled')}</Label>
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="youtube-enabled"
@@ -912,13 +912,13 @@ export default function SiteConfigManagement() {
                     onCheckedChange={(checked) => handleInputChange('youtube.search.enabled', checked ? 'true' : 'false')}
                   />
                   <Label htmlFor="youtube-enabled" className="text-sm text-muted-foreground cursor-pointer">
-                    {configData['youtube.search.enabled'] === 'true' ? 'Activada' : 'Desactivada'}
+                    {configData['youtube.search.enabled'] === 'true' ? t('adminConfig.youtube.active') : t('adminConfig.youtube.inactive')}
                   </Label>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="youtube-language">Idioma Preferido</Label>
+                <Label htmlFor="youtube-language">{t('adminConfig.youtube.language')}</Label>
                 <Select
                   value={configData['youtube.search.language'] || 'es'}
                   onValueChange={(value) => handleInputChange('youtube.search.language', value)}
@@ -927,21 +927,21 @@ export default function SiteConfigManagement() {
                     <SelectValue placeholder="Seleccionar idioma" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="es">Español (es)</SelectItem>
-                    <SelectItem value="en">English (en)</SelectItem>
-                    <SelectItem value="fr">Français (fr)</SelectItem>
-                    <SelectItem value="de">Deutsch (de)</SelectItem>
-                    <SelectItem value="it">Italiano (it)</SelectItem>
-                    <SelectItem value="pt">Português (pt)</SelectItem>
+                    <SelectItem value="es">{t('adminConfig.youtube.languages.es')}</SelectItem>
+                    <SelectItem value="en">{t('adminConfig.youtube.languages.en')}</SelectItem>
+                    <SelectItem value="fr">{t('adminConfig.youtube.languages.fr')}</SelectItem>
+                    <SelectItem value="de">{t('adminConfig.youtube.languages.de')}</SelectItem>
+                    <SelectItem value="it">{t('adminConfig.youtube.languages.it')}</SelectItem>
+                    <SelectItem value="pt">{t('adminConfig.youtube.languages.pt')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-muted-foreground">
-                  Idioma preferido para la búsqueda de videos
+                  {t('adminConfig.youtube.languageDescription')}
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="youtube-terms">Términos de Búsqueda</Label>
+                <Label htmlFor="youtube-terms">{t('adminConfig.youtube.searchTerms')}</Label>
                 <Textarea
                   id="youtube-terms"
                   value={(() => {
@@ -956,26 +956,26 @@ export default function SiteConfigManagement() {
                     const terms = e.target.value.split('\n').filter(t => t.trim());
                     handleInputChange('youtube.search.terms', JSON.stringify(terms));
                   }}
-                  placeholder="Real Madrid highlights&#10;Real Madrid goles&#10;Real Madrid análisis"
+                  placeholder={t('adminConfig.youtube.searchTermsPlaceholder')}
                   rows={12}
                   className="font-mono text-sm"
                 />
                 <p className="text-sm text-muted-foreground">
-                  Ingresa un término de búsqueda por línea. Estos se usarán de manera aleatoria para buscar videos en YouTube.
+                  {t('adminConfig.youtube.searchTermsDescription')}
                 </p>
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2 flex items-center gap-2">
                   <Settings className="h-4 w-4" />
-                  Cómo funciona
+                  {t('adminConfig.youtube.howItWorks')}
                 </h4>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• El sistema selecciona aleatoriamente un término de búsqueda de la lista</li>
-                  <li>• Busca videos en YouTube usando ese término</li>
-                  <li>• Prioriza videos con el idioma seleccionado</li>
-                  <li>• Los videos se categorizan automáticamente usando IA</li>
-                  <li>• Puedes agregar términos específicos (jugadores, eventos, etc.)</li>
+                  <li>• {t('adminConfig.youtube.howItWorksItems.random')}</li>
+                  <li>• {t('adminConfig.youtube.howItWorksItems.search')}</li>
+                  <li>• {t('adminConfig.youtube.howItWorksItems.language')}</li>
+                  <li>• {t('adminConfig.youtube.howItWorksItems.categorize')}</li>
+                  <li>• {t('adminConfig.youtube.howItWorksItems.customize')}</li>
                 </ul>
               </div>
             </CardContent>
